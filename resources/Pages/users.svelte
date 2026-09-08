@@ -126,7 +126,7 @@
 
 <Sidebar group="users" />
 
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-primary lg:pl-64">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground lg:pl-64">
 
   <section class="px-6 sm:px-10 lg:px-16 pt-20 lg:pt-8 pb-16">
     <div class="max-w-[1400px] mx-auto">
@@ -134,12 +134,12 @@
       <!-- Header row -->
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12" in:fly={{ y: 20, duration: 800 }}>
         <div>
-          <p class="font-heading text-xs uppercase tracking-[0.25em] text-muted-foreground mb-4">Manajemen</p>
-          <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground">
+          <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Manajemen</p>
+          <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
             Pengguna.
           </h1>
-          <p class="mt-5 text-lg text-muted-foreground leading-relaxed max-w-[52ch]">
-            Setiap orang yang memiliki tempat di sistem. Tambah, edit, atau hapus di sini.
+          <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
+            Kelola akun pengguna, peran, dan akses ke SIGAP.
           </p>
         </div>
 
@@ -159,7 +159,7 @@
 
       <!-- Table -->
       {#if users && users.length}
-        <div class="border border-border rounded-xl overflow-hidden bg-card" in:fly={{ y: 20, duration: 800, delay: 150 }}>
+        <div class="border border-border rounded-2xl overflow-hidden bg-card shadow-[0_8px_28px_rgba(32,36,38,0.025)] dark:shadow-none" in:fly={{ y: 20, duration: 800, delay: 150 }}>
           <div class="relative w-full overflow-x-auto">
             <table class="w-full caption-bottom text-sm">
               <thead>
@@ -224,7 +224,7 @@
         </div>
       {:else}
         <!-- Empty state -->
-        <div class="border border-border rounded-xl bg-card flex flex-col items-center justify-center py-24 px-8 text-center" in:fly={{ y: 20, duration: 800, delay: 150 }}>
+        <div class="border border-border rounded-2xl bg-card flex flex-col items-center justify-center py-24 px-8 text-center" in:fly={{ y: 20, duration: 800, delay: 150 }}>
           <div class="w-14 h-14 rounded-full bg-muted border border-border flex items-center justify-center mb-6">
             <Users class="h-6 w-6 text-muted-foreground" />
           </div>

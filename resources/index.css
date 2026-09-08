@@ -5,10 +5,10 @@
 
 @theme {
   --font-sans: 'Public Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-serif: 'Spectral', Georgia, Cambria, 'Times New Roman', Times, serif;
-  --font-heading: 'Spectral', Georgia, serif;
+  --font-serif: 'Public Sans', system-ui, sans-serif;
+  --font-heading: 'Public Sans', system-ui, sans-serif;
   --font-body: 'Public Sans', system-ui, sans-serif;
-  --font-mono-accent: 'Spline Sans Mono', 'SF Mono', ui-monospace, monospace;
+  --font-mono-accent: 'Public Sans', system-ui, sans-serif;
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -30,17 +30,17 @@
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
 
-  --color-primary-50: #f0f9ff;
-  --color-primary-100: #e0f2fe;
-  --color-primary-200: #bae6fd;
-  --color-primary-300: #7dd3fc;
-  --color-primary-400: #38bdf8;
-  --color-primary-500: #0ea5e9;
-  --color-primary-600: #0284c7;
-  --color-primary-700: #0369a1;
-  --color-primary-800: #075985;
-  --color-primary-900: #0c4a6e;
-  --color-primary-950: #082f49;
+  --color-primary-50: #fbf4f2;
+  --color-primary-100: #f5e8e4;
+  --color-primary-200: #ebcdc5;
+  --color-primary-300: #dfa997;
+  --color-primary-400: #d27b62;
+  --color-primary-500: #b9472f;
+  --color-primary-600: #9e3c28;
+  --color-primary-700: #7e3022;
+  --color-primary-800: #64271f;
+  --color-primary-900: #52221d;
+  --color-primary-950: #2d100d;
 
   --color-secondary-50: #f8fafc;
   --color-secondary-100: #f1f5f9;
@@ -54,17 +54,17 @@
   --color-secondary-900: #0f172a;
   --color-secondary-950: #020617;
 
-  --color-accent-50: #f0f9ff;
-  --color-accent-100: #e0f2fe;
-  --color-accent-200: #bae6fd;
-  --color-accent-300: #7dd3fc;
-  --color-accent-400: #38bdf8;
-  --color-accent-500: #0ea5e9;
-  --color-accent-600: #0284c7;
-  --color-accent-700: #0369a1;
-  --color-accent-800: #075985;
-  --color-accent-900: #0c4a6e;
-  --color-accent-950: #082f49;
+  --color-accent-50: #fbf4f2;
+  --color-accent-100: #f5e8e4;
+  --color-accent-200: #ebcdc5;
+  --color-accent-300: #dfa997;
+  --color-accent-400: #d27b62;
+  --color-accent-500: #b9472f;
+  --color-accent-600: #9e3c28;
+  --color-accent-700: #7e3022;
+  --color-accent-800: #64271f;
+  --color-accent-900: #52221d;
+  --color-accent-950: #2d100d;
 
   --color-info-50: #ecfeff;
   --color-info-100: #cffafe;
@@ -114,10 +114,10 @@
   --color-success-900: #064e3b;
   --color-success-950: #022c22;
 
-  --color-surface-light: #f8f8f8;
-  --color-surface-dark: #0a0a0a;
-  --color-surface-card-light: #f1f5f9;
-  --color-surface-card-dark: #0f0f0f;
+  --color-surface-light: #f6f5f1;
+  --color-surface-dark: #10110f;
+  --color-surface-card-light: #ffffff;
+  --color-surface-card-dark: #1a1c17;
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -132,7 +132,7 @@
   }
 
   [data-sonner-toast] {
-    border-radius: 2px !important;
+    border-radius: 14px !important;
     border: 1px solid hsl(var(--border)) !important;
     background: hsl(var(--background)) !important;
     color: hsl(var(--foreground)) !important;
@@ -141,7 +141,7 @@
   }
 
   [data-sonner-toast] [data-title] {
-    font-family: 'Spectral', Georgia, serif !important;
+    font-family: 'Public Sans', system-ui, sans-serif !important;
     font-size: 0.875rem !important;
     font-weight: 600 !important;
     letter-spacing: -0.01em !important;
@@ -172,13 +172,20 @@
   [data-sonner-toast] [data-close-button] {
     background: hsl(var(--secondary)) !important;
     border: 1px solid hsl(var(--border)) !important;
-    border-radius: 2px !important;
+    border-radius: 10px !important;
   }
 }
 
 @layer base {
   html {
     font-family: 'Public Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: hsl(var(--background));
+  }
+
+  body {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    letter-spacing: -0.005em;
   }
 
   body::-webkit-scrollbar {
@@ -194,4 +201,3 @@
     border-radius: 3px;
   }
 }
-

@@ -143,11 +143,11 @@
 </script>
 
 <Sidebar group="teacher-assignments" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-80 px-6 sm:px-10 lg:pr-16 pb-16">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10" in:fly={{ y: 20, duration: 800 }}>
     <div>
-      <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Data Master · Guru</p>
-      <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground">
+      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Data Master · Guru</p>
+      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
         Penugasan Guru.
       </h1>
       <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[60ch]">
@@ -163,14 +163,14 @@
   </div>
 
   {#if !permissions.canEdit}
-    <div class="rounded-lg border border-border bg-card p-8 text-center text-muted-foreground">Halaman ini hanya dapat diakses admin.</div>
+    <div class="rounded-2xl border border-border bg-card p-8 text-center text-muted-foreground">Halaman ini hanya dapat diakses admin.</div>
   {:else if teachers.length === 0}
-    <div class="rounded-lg border border-border bg-card p-8 text-center text-muted-foreground">Belum ada data guru. Tambahkan guru dari menu Guru terlebih dahulu.</div>
+    <div class="rounded-2xl border border-border bg-card p-8 text-center text-muted-foreground">Belum ada data guru. Tambahkan guru dari menu Guru terlebih dahulu.</div>
   {:else}
     <div class="grid grid-cols-1 xl:grid-cols-[minmax(15rem,22rem)_1fr] gap-6">
-      <section class="rounded-lg border border-border bg-card overflow-hidden">
+      <section class="rounded-2xl border border-border bg-card overflow-hidden">
         <div class="px-5 py-4 border-b border-border">
-          <p class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Daftar Guru</p>
+          <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Daftar Guru</p>
           <p class="mt-1 text-sm text-muted-foreground">Pilih guru untuk mengatur kelas.</p>
         </div>
         <div class="divide-y divide-border">
@@ -199,11 +199,11 @@
         </div>
       </section>
 
-      <section class="rounded-lg border border-border bg-card p-5 sm:p-7">
+      <section class="rounded-2xl border border-border bg-card p-5 sm:p-7">
         {#if selectedTeacher}
           <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-7">
             <div>
-              <p class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">Pengaturan penugasan</p>
+              <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground mb-2">Pengaturan penugasan</p>
               <h2 class="font-heading text-2xl font-semibold tracking-[-0.02em]">{teacherName(selectedTeacher)}</h2>
               <p class="mt-1 text-sm text-muted-foreground">@{selectedTeacher.user_username || 'Username belum tersedia'}</p>
             </div>
@@ -252,10 +252,10 @@
     </div>
 
     {#if selectedTeacher}
-      <section class="mt-6 rounded-lg border border-border bg-card overflow-hidden">
+      <section class="mt-6 rounded-2xl border border-border bg-card overflow-hidden">
         <div class="px-5 py-4 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <p class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Jadwal mengajar · {teacherName(selectedTeacher)}</p>
+            <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Jadwal mengajar · {teacherName(selectedTeacher)}</p>
             <p class="mt-1 text-sm text-muted-foreground">Kelas yang bisa dijadwalkan mengikuti kelas yang diampu di atas.</p>
           </div>
           <a href="/schedules" use:inertia class="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">

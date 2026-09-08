@@ -28,10 +28,10 @@
 
 <Sidebar group="qr-settings" />
 
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-80 px-6 sm:px-10 lg:pr-16 pb-16">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div in:fly={{ y: 20, duration: 700 }}>
-    <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Pengaturan Absen</p>
-    <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground mb-2">Pengaturan QR Absen</h1>
+    <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Pengaturan Absen</p>
+    <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground mb-2">Pengaturan QR Absen</h1>
     <p class="text-sm text-muted-foreground max-w-[52ch]">
       Atur interval refresh QR code untuk absen guru harian. QR code berputar setiap {interval} menit untuk mencegah penyalinan kode.
     </p>
@@ -39,9 +39,9 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10" in:fly={{ y: 20, duration: 700, delay: 100 }}>
     <!-- Settings card -->
-    <div class="bg-card border border-border rounded-lg overflow-hidden">
+    <div class="bg-card border border-border rounded-2xl overflow-hidden">
       <div class="px-5 py-3 bg-secondary/60 border-b border-border">
-        <span class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Interval Refresh</span>
+        <span class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Interval Refresh</span>
       </div>
       <div class="p-5">
         <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); if (permissions.canEdit) save(); }}>
@@ -63,9 +63,9 @@
     </div>
 
     <!-- Display link card -->
-    <div class="bg-card border border-border rounded-lg overflow-hidden">
+    <div class="bg-card border border-border rounded-2xl overflow-hidden">
       <div class="px-5 py-3 bg-secondary/60 border-b border-border">
-        <span class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Layar QR Absen</span>
+        <span class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Layar QR Absen</span>
       </div>
       <div class="p-5 flex flex-col gap-4">
         <p class="text-sm text-muted-foreground leading-relaxed">

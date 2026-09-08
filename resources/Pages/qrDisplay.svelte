@@ -50,18 +50,18 @@
   <div class="w-full max-w-3xl flex flex-col items-center" in:fly={{ y: 20, duration: 700 }}>
     <!-- Header -->
     <div class="text-center mb-8">
-      <p class="font-mono-accent text-[11px] uppercase tracking-[0.3em] text-muted-foreground mb-3">Absensi Guru Harian</p>
-      <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,6vw,4rem)] text-foreground">{schoolName}</h1>
-      <p class="font-mono-accent text-sm text-muted-foreground mt-3">{currentTime}</p>
+      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-primary mb-3">Absensi Guru Harian</p>
+      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,6vw,4rem)] text-foreground">{schoolName}</h1>
+      <p class="text-sm font-medium tabular-nums text-muted-foreground mt-3">{currentTime}</p>
     </div>
 
     <!-- QR card -->
-    <div class="bg-card border border-border rounded-2xl p-8 shadow-sm w-full flex flex-col items-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+    <div class="bg-card border border-border rounded-[28px] p-8 shadow-[0_18px_55px_rgba(32,36,38,0.06)] dark:shadow-none w-full flex flex-col items-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       {#if isLoading && !qrData}
         <div class="w-[320px] h-[320px] flex items-center justify-center text-muted-foreground text-sm">Memuat QR code...</div>
       {:else if qrData}
         <img src={qrData.dataUrl} alt="QR Absen" class="w-[320px] h-[320px] rounded-lg" />
-        <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mt-5">Scan untuk konfirmasi kehadiran</p>
+        <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground mt-5">Scan untuk konfirmasi kehadiran</p>
       {:else}
         <div class="w-[320px] h-[320px] flex items-center justify-center text-muted-foreground text-sm">Gagal memuat QR code</div>
       {/if}
@@ -70,8 +70,8 @@
       {#if qrData}
         <div class="w-full mt-6">
           <div class="flex justify-between items-baseline mb-2">
-            <span class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-muted-foreground">QR berputar dalam</span>
-            <span class="font-mono-accent text-sm text-foreground tabular-nums">{secondsLeft}s</span>
+            <span class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">QR berputar dalam</span>
+            <span class="text-sm font-semibold text-foreground tabular-nums">{secondsLeft}s</span>
           </div>
           <div class="h-1 bg-secondary rounded-full overflow-hidden">
             <div class="h-full bg-primary transition-[width] duration-1000 ease-linear" style="width: {progressPct}%"></div>
@@ -81,7 +81,7 @@
     </div>
 
     <!-- Footer -->
-    <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground/70 mt-8">
+    <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground/70 mt-8">
       Interval {qrRefreshInterval} menit · Refresh otomatis
     </p>
   </div>

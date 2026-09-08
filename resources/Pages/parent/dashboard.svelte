@@ -28,20 +28,20 @@
 
 <Sidebar group="parent" />
 
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-primary pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div in:fly={{ y: 20, duration: 700 }}>
-    <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Orang Tua</p>
-    <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground mb-8">Anak Saya</h1>
+    <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Orang Tua</p>
+    <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground mb-8">Anak Saya</h1>
   </div>
 
   {#if children.length === 0}
-    <div class="bg-card border border-border rounded-lg px-6 py-12 text-center">
+    <div class="bg-card border border-border rounded-2xl px-6 py-12 text-center">
       <p class="text-sm text-muted-foreground">Belum ada data anak terdaftar.</p>
     </div>
   {:else}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       {#each children as child}
-        <article class="bg-card border border-border rounded-lg overflow-hidden">
+        <article class="bg-card border border-border rounded-2xl overflow-hidden">
           <header class="px-5 py-3 border-b border-border bg-secondary/40 flex items-center justify-between">
             <span class="font-heading text-sm font-semibold text-foreground truncate">{child.name}</span>
             <span class="font-mono-accent text-[10px] text-muted-foreground shrink-0">NIS {child.nis}</span>
@@ -76,7 +76,7 @@
       <h2 class="font-heading font-semibold tracking-[-0.02em] mb-3">Pengumuman</h2>
       <div class="flex flex-col gap-3">
         {#each announcements as announcement (announcement.id)}
-          <article class="bg-card border border-border rounded-lg px-5 py-4">
+          <article class="bg-card border border-border rounded-2xl px-5 py-4">
             <div class="flex items-baseline justify-between gap-4">
               <h3 class="font-heading text-sm font-semibold text-foreground">{announcement.title}</h3>
               <span class="text-[10px] text-muted-foreground font-mono-accent shrink-0">{new Date(announcement.created_at).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</span>

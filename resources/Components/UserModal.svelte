@@ -79,13 +79,10 @@
   <div use:portal>
     <div {...dialogApi.getBackdropProps()} class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"></div>
     <div {...dialogApi.getPositionerProps()}>
-      <div {...dialogApi.getContentProps()} class="bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-xl border border-border shadow-lg sm:max-w-md font-body overflow-hidden">
+      <div {...dialogApi.getContentProps()} class="bg-card fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-2xl border border-border shadow-[0_24px_80px_rgba(0,0,0,0.18)] sm:max-w-md font-body overflow-hidden">
 
         <div class="px-6 pt-6 pb-5 border-b border-border flex items-start justify-between gap-4">
           <div>
-            <p class="font-heading text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-2">
-              {mode === 'create' ? 'Pengguna baru' : 'Edit pengguna'}
-            </p>
             <h2 {...dialogApi.getTitleProps()} class="font-heading font-semibold text-xl tracking-tight text-foreground">
               {mode === 'create' ? 'Tambah pengguna' : 'Perbarui pengguna'}
             </h2>
@@ -123,7 +120,7 @@
               <Label class="text-xs uppercase tracking-widest font-heading text-muted-foreground">Roles</Label>
               <div class="grid grid-cols-2 gap-2">
                 {#each availableRoles as role}
-                  <div class="flex items-center gap-3 border border-border rounded-xl p-3 cursor-pointer hover:border-foreground/30 transition-colors">
+                  <div class="flex items-center gap-3 border border-border rounded-xl p-3 cursor-pointer hover:border-foreground/20 hover:bg-secondary/40 transition-colors">
                     <Switch checked={hasRole(role.slug)} onCheckedChange={(c: boolean) => toggleRole(role.slug, c)} id="role-{role.slug}" />
                     <div class="min-w-0">
                       <Label for="role-{role.slug}" class="text-sm font-heading font-medium cursor-pointer capitalize">{role.name}</Label>

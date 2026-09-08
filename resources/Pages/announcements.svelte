@@ -77,11 +77,11 @@
 {/snippet}
 
 <Sidebar group="announcements" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-80 px-6 sm:px-10 lg:pr-16 pb-16">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12" in:fly={{ y: 20, duration: 800 }}>
     <div>
-      <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Informasi Sekolah</p>
-      <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground">
+      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Informasi Sekolah</p>
+      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
         Pengumuman.
       </h1>
       <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
@@ -99,7 +99,7 @@
     <div class="flex flex-col gap-0">
       <Label for="body" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Isi</Label>
       <textarea id="body" bind:value={body} required rows={5}
-        class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"></textarea>
+        class="w-full rounded-xl border border-input bg-card px-3.5 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-[color,box-shadow] focus:border-ring focus:ring-2 focus:ring-ring/30"></textarea>
     </div>
     <div class="flex justify-end gap-2 pt-4 border-t border-border mt-2">
       <Button variant="outline" onclick={() => isOpen = false}>Batal</Button>

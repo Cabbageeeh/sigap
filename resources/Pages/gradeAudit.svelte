@@ -58,11 +58,11 @@
 </script>
 
 <Sidebar group="grade-audit" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-80 px-6 sm:px-10 lg:pr-16 pb-16">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12" in:fly={{ y: 20, duration: 800 }}>
     <div>
-      <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Integritas Data</p>
-      <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground">
+      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Integritas Data</p>
+      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
         Audit Nilai.
       </h1>
       <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
@@ -72,7 +72,7 @@
   </div>
 
   {#if !canView}
-    <div class="bg-card border border-border rounded-lg px-6 py-12 text-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+    <div class="bg-card border border-border rounded-2xl px-6 py-12 text-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       <p class="text-sm text-muted-foreground">Anda tidak memiliki akses ke riwayat audit nilai.</p>
     </div>
   {:else}

@@ -144,7 +144,7 @@
 </script>
 
 <div data-slot="qr-scanner" class={cn('flex flex-col gap-3', className)}>
-  <div class="relative aspect-square w-full overflow-hidden rounded-sm border border-border bg-muted">
+  <div class="relative aspect-square w-full overflow-hidden rounded-2xl border border-border bg-muted">
     <div id={containerId} class="h-full w-full [&_video]:h-full [&_video]:w-full [&_video]:object-cover"></div>
 
     {#if scannerLive}

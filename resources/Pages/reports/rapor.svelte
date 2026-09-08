@@ -41,22 +41,22 @@
 
 <Sidebar group="grades" />
 
-<div class="print-body min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-80 px-6 sm:px-10 lg:pr-16 pb-16">
+<div class="print-body min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div class="no-print flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
     <div>
-      <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Rapor Siswa</p>
-      <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground">Rapor</h1>
+      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Rapor Siswa</p>
+      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">Rapor</h1>
     </div>
     <Button onclick={() => window.print()}><Printer class="w-4 h-4 mr-1" /> Cetak Rapor</Button>
   </div>
 
   {#if isParent && !gradesPublished}
-    <div class="bg-card border border-border rounded-lg px-6 py-12 text-center">
+    <div class="bg-card border border-border rounded-2xl px-6 py-12 text-center">
       <Lock class="w-8 h-8 mx-auto mb-4 text-muted-foreground" />
       <p class="text-sm text-muted-foreground">Nilai belum dipublikasikan oleh sekolah. Silakan cek kembali nanti.</p>
     </div>
   {:else}
-    <div class="print-sheet bg-card border border-border rounded-lg overflow-hidden max-w-[820px] mx-auto">
+    <div class="print-sheet bg-card border border-border rounded-2xl overflow-hidden max-w-[820px] mx-auto">
       <header class="px-8 py-6 border-b border-border text-center">
         <h2 class="font-heading font-semibold text-xl tracking-tight">LAPORAN HASIL BELAJAR SISWA</h2>
         <p class="text-sm text-muted-foreground mt-1">Tahun Ajaran {yearName}</p>

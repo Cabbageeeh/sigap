@@ -178,10 +178,10 @@
 
   function navLinkClasses(item: MenuLink): string {
     return cn(
-      'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+      'flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
       isActive(item)
-        ? 'bg-primary/10 text-primary font-medium'
-        : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60',
+        ? 'bg-primary/[0.09] text-primary font-semibold dark:bg-primary/[0.12]'
+        : 'text-muted-foreground hover:text-foreground hover:bg-secondary/70',
     );
   }
 
@@ -196,7 +196,7 @@
     <button
       onclick={() => isNotificationsOpen = !isNotificationsOpen}
       aria-label="Notifikasi"
-      class="relative inline-flex items-center justify-center w-9 h-9 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors cursor-pointer"
+      class="relative inline-flex items-center justify-center w-9 h-9 rounded-xl border border-border bg-card text-muted-foreground hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer"
     >
       <Bell class="h-4 w-4" />
       {#if unreadCount > 0}
@@ -204,7 +204,7 @@
       {/if}
     </button>
     {#if isNotificationsOpen}
-      <div class="absolute {direction === 'top-full' ? 'top-full mt-2' : 'bottom-full mb-2'} right-0 w-80 max-h-96 overflow-y-auto bg-card border border-border rounded-lg shadow-lg z-50">
+      <div class="absolute {direction === 'top-full' ? 'top-full mt-2' : 'bottom-full mb-2'} right-0 w-80 max-h-96 overflow-y-auto bg-card border border-border rounded-2xl shadow-[0_18px_60px_rgba(0,0,0,0.14)] z-50">
         <div class="flex items-center justify-between px-4 py-2.5 border-b border-border sticky top-0 bg-card">
           <p class="font-heading text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Notifikasi</p>
           {#if unreadCount > 0}
@@ -234,7 +234,7 @@
   {#each visibleMenuSections as section (section.label ?? 'dashboard')}
     <div class={section.label ? 'mt-5' : ''}>
       {#if section.label}
-        <p class="px-3 mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">{section.label}</p>
+        <p class="px-3 mb-2 text-[9px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/65">{section.label}</p>
       {/if}
       <div class="flex flex-col gap-0.5">
         {#each section.links as item (item.href)}
@@ -259,7 +259,7 @@
 {/snippet}
 
 <!-- ───────────── MOBILE TOP BAR ───────────── -->
-<div class="lg:hidden fixed inset-x-0 top-0 z-40 h-16 bg-background border-b border-border flex items-center justify-between px-4">
+<div class="lg:hidden fixed inset-x-0 top-0 z-40 h-16 bg-card/95 border-b border-border flex items-center justify-between px-4 backdrop-blur-xl">
   <button {...sheetApi.getTriggerProps()} onclick={() => isMenuOpen = !isMenuOpen} aria-label="Buka menu" class="p-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
     <Menu class="h-5 w-5" />
   </button>
@@ -277,7 +277,7 @@
   <div use:portal>
     <div {...sheetApi.getBackdropProps()} onclick={() => isMenuOpen = false} class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"></div>
     <div {...sheetApi.getPositionerProps()}>
-      <div {...sheetApi.getContentProps()} class="bg-background fixed inset-y-0 left-0 z-50 h-full w-[84%] max-w-[300px] border-r border-border flex flex-col transition ease-in-out duration-300 font-body">
+      <div {...sheetApi.getContentProps()} class="bg-card fixed inset-y-0 left-0 z-50 h-full w-[84%] max-w-[300px] border-r border-border flex flex-col transition ease-in-out duration-300 font-body">
         <div class="flex items-center justify-between px-5 h-[4.5rem] border-b border-border shrink-0">
           <a href="/" use:inertia onclick={() => isMenuOpen = false} class="flex items-center gap-2">
             <SigapIcon size={30} showText={false} />
@@ -295,7 +295,7 @@
         </nav>
         <div class="shrink-0 border-t border-border p-4">
           {#if user}
-            <a href="/profile" use:inertia onclick={() => isMenuOpen = false} class="flex items-center gap-3 mb-3 rounded-md p-1 -m-1 hover:bg-secondary/60 transition-colors">
+            <a href="/profile" use:inertia onclick={() => isMenuOpen = false} class="flex items-center gap-3 mb-3 rounded-xl p-2 -m-2 hover:bg-secondary/70 transition-colors">
               <div class="flex w-9 h-9 shrink-0 rounded-full bg-muted border border-border items-center justify-center">
                 <span class="text-xs font-heading font-medium text-foreground">{user.name.slice(0, 2).toUpperCase()}</span>
               </div>
@@ -304,7 +304,7 @@
                 <p class="text-xs text-muted-foreground truncate">@{user.username}</p>
               </div>
             </a>
-            <button onclick={handleLogout} class="w-full inline-flex items-center justify-center gap-2 h-10 rounded-md border border-border text-sm text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors cursor-pointer">
+            <button onclick={handleLogout} class="w-full inline-flex items-center justify-center gap-2 h-10 rounded-xl border border-border bg-card text-sm text-muted-foreground hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer">
               <LogOut class="h-4 w-4" />
               Keluar
             </button>
@@ -316,7 +316,7 @@
 {/if}
 
 <!-- ───────────── DESKTOP SIDEBAR ───────────── -->
-<aside data-slot="sidebar" class="hidden lg:flex fixed inset-y-0 left-0 z-30 w-64 bg-background border-r border-border flex-col">
+<aside data-slot="sidebar" class="hidden lg:flex fixed inset-y-0 left-0 z-30 w-64 bg-card border-r border-border flex-col">
   <div class="h-[4.5rem] shrink-0 flex items-center gap-3 px-5 border-b border-border">
     <SigapIcon size={30} showText={false} />
     <div class="min-w-0">
@@ -330,7 +330,7 @@
   </nav>
 
   <div class="shrink-0 border-t border-border p-4">
-    <a href="/profile" use:inertia class="flex items-center gap-3 mb-3 rounded-md p-1 -m-1 hover:bg-secondary/60 transition-colors">
+    <a href="/profile" use:inertia class="flex items-center gap-3 mb-3 rounded-xl p-2 -m-2 hover:bg-secondary/70 transition-colors">
       <div class="flex w-9 h-9 shrink-0 rounded-full bg-muted border border-border items-center justify-center">
         <span class="text-xs font-heading font-medium text-foreground">{user?.name.slice(0, 2).toUpperCase() ?? ''}</span>
       </div>
@@ -341,7 +341,7 @@
     </a>
     <div class="flex items-center gap-2">
       {@render notificationBell()}
-      <button onclick={handleLogout} class="flex-1 inline-flex items-center justify-center gap-2 h-9 rounded-md border border-border text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors cursor-pointer">
+      <button onclick={handleLogout} class="flex-1 inline-flex items-center justify-center gap-2 h-9 rounded-xl border border-border bg-card text-xs text-muted-foreground hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer">
         <LogOut class="h-3.5 w-3.5" />
         Keluar
       </button>

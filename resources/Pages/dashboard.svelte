@@ -27,6 +27,11 @@
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Selamat pagi' : hour < 18 ? 'Selamat sore' : 'Selamat malam';
+  const today = new Intl.DateTimeFormat('id-ID', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  }).format(new Date());
 
   function hasPermission(slug: string): boolean {
     if (!currentUser) return false;
@@ -37,24 +42,29 @@
 
 <Sidebar group="dashboard" />
 
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-primary lg:pl-64">
-  <section class="px-6 sm:px-10 lg:px-8 pt-20 lg:pt-8 pb-12">
-    <div in:fly={{ y: 20, duration: 800 }}>
-      <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">{greeting}</p>
-      <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground">
-        {currentUser?.name?.split(' ')[0] || 'Pengguna'}.
-      </h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground lg:pl-64">
+  <div class="mx-auto max-w-[1500px] px-5 pb-16 pt-20 sm:px-8 lg:px-8 lg:pt-8">
+    <section class="mb-8" in:fly={{ y: 16, duration: 550 }}>
+      <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+        <div>
+          <p class="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{today} · {greeting}</p>
+          <h1 class="font-heading text-[clamp(2rem,5vw,3.35rem)] font-semibold leading-[1] tracking-[-0.045em] text-foreground">
+            Selamat datang, {currentUser?.name?.split(' ')[0] || 'Pengguna'}.
+          </h1>
+          <p class="mt-3 max-w-[58ch] text-sm leading-6 text-muted-foreground">
+            {activeYear ? 'Ringkasan data sekolah dan akses kerja utama tersedia di bawah.' : 'Atur tahun ajaran aktif dan profil sekolah untuk mulai menggunakan SIGAP.'}
+          </p>
+        </div>
         {#if activeYear}
-          Tahun ajaran {activeYear.name}. Pilih aksi cepat di bawah.
-        {:else}
-          Selamat datang. Atur tahun ajaran aktif dan lokasi sekolah untuk memulai.
+          <div class="self-start rounded-xl border border-border bg-card px-3.5 py-2.5 sm:self-auto">
+            <p class="text-[9px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Tahun ajaran aktif</p>
+            <p class="mt-0.5 text-sm font-semibold text-foreground">{activeYear.name}</p>
+          </div>
         {/if}
-      </p>
-    </div>
-  </section>
+      </div>
+    </section>
 
-  <section class="px-6 sm:px-10 lg:px-8 pb-16">
+    <section>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" in:fly={{ y: 20, duration: 800, delay: 150 }}>
       <StatCard label="Siswa" value={stats?.totalStudents ?? 0} />
       <StatCard label="Guru" value={stats?.totalTeachers ?? 0} />
@@ -62,7 +72,12 @@
       <StatCard label="Mapel" value={stats?.totalSubjects ?? 0} />
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 auto-rows-[minmax(160px,auto)]">
+    <div class="mb-4 mt-10">
+      <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">Ruang kerja</p>
+      <h2 class="mt-1.5 text-xl font-semibold tracking-[-0.025em] text-foreground">Akses utama</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-[minmax(170px,auto)]">
       {#if hasPermission('classes.view') && hasPermission('students.view')}
         <BentoCard title="Kelas & Siswa" description="Kelola kelas lalu buka daftar siswa per kelas.">
           <a href="/classes" use:inertia class="mt-auto inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
@@ -118,5 +133,6 @@
         </BentoCard>
       {/if}
     </div>
-  </section>
+    </section>
+  </div>
 </div>

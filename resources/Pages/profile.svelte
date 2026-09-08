@@ -67,19 +67,19 @@
 
 <Sidebar group="profile" />
 
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-primary lg:pl-64">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground lg:pl-64">
 
   <section class="px-6 sm:px-10 lg:px-16 pt-20 lg:pt-8 pb-16">
     <div class="max-w-[1400px] mx-auto">
 
       <!-- Page header -->
       <div class="mb-12" in:fly={{ y: 20, duration: 800 }}>
-        <p class="font-heading text-xs uppercase tracking-[0.25em] text-muted-foreground mb-4">Akun</p>
-        <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground">
+        <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Akun</p>
+        <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
           Profil.
         </h1>
-        <p class="mt-5 text-lg text-muted-foreground leading-relaxed max-w-[52ch]">
-          Wajah yang dilihat sistem. Perbarui nama, foto, atau kata sandi Anda.
+        <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
+          Kelola identitas akun, foto profil, dan keamanan akses Anda.
         </p>
       </div>
 
@@ -89,7 +89,7 @@
         <div class="lg:col-span-4 flex flex-col gap-6">
 
           <!-- Identity card -->
-          <div class="border border-border rounded-xl bg-card p-6">
+          <div class="border border-border rounded-2xl bg-card p-6 shadow-[0_8px_28px_rgba(32,36,38,0.025)] dark:shadow-none">
             <div class="flex items-center gap-4 mb-6">
               <div class="relative shrink-0">
                 <div class="w-16 h-16 rounded-full bg-muted border border-border overflow-hidden">
@@ -120,12 +120,12 @@
           </div>
 
           <!-- Security note -->
-          <div class="border border-border rounded-xl bg-card p-5 flex items-start gap-3">
+          <div class="border border-border rounded-2xl bg-card p-5 flex items-start gap-3">
             <div class="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 mt-0.5">
               <Shield class="w-4 h-4 text-primary" />
             </div>
             <div>
-              <p class="font-heading text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-1">Terenkripsi</p>
+              <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground mb-1">Keamanan akun</p>
               <p class="text-xs text-muted-foreground leading-relaxed">Data Anda terenkripsi saat disimpan dan saat dikirim di backend SIGAP.</p>
             </div>
           </div>
@@ -137,17 +137,17 @@
 
             <!-- Tab triggers -->
             <div {...tabsApi.getListProps()} class="border border-border rounded-xl inline-flex h-auto w-fit items-stretch bg-card p-1 gap-0.5 mb-8">
-              <button {...tabsApi.getTriggerProps({ value: "personal" })} class="data-[selected]:bg-foreground data-[selected]:text-background text-muted-foreground hover:text-foreground inline-flex items-center justify-center rounded-lg px-5 py-2 text-sm font-heading font-medium whitespace-nowrap transition-colors">
+              <button {...tabsApi.getTriggerProps({ value: "personal" })} class="data-[selected]:bg-foreground data-[selected]:text-background text-muted-foreground hover:text-foreground inline-flex items-center justify-center rounded-2xl px-5 py-2 text-sm font-heading font-medium whitespace-nowrap transition-colors">
                 Info Pribadi
               </button>
-              <button {...tabsApi.getTriggerProps({ value: "security" })} class="data-[selected]:bg-foreground data-[selected]:text-background text-muted-foreground hover:text-foreground inline-flex items-center justify-center rounded-lg px-5 py-2 text-sm font-heading font-medium whitespace-nowrap transition-colors">
+              <button {...tabsApi.getTriggerProps({ value: "security" })} class="data-[selected]:bg-foreground data-[selected]:text-background text-muted-foreground hover:text-foreground inline-flex items-center justify-center rounded-2xl px-5 py-2 text-sm font-heading font-medium whitespace-nowrap transition-colors">
                 Keamanan
               </button>
             </div>
 
             <!-- Personal info -->
             <div {...tabsApi.getContentProps({ value: "personal" })} class="flex-1 outline-none">
-              <div class="border border-border rounded-xl bg-card p-6 sm:p-8">
+              <div class="border border-border rounded-2xl bg-card p-6 sm:p-8">
                 <div class="mb-6">
                   <h3 class="text-xl font-heading font-semibold tracking-tight text-foreground">Informasi pribadi</h3>
                   <p class="text-sm text-muted-foreground mt-1">Perbarui detail pribadi dan profil publik Anda.</p>
@@ -176,7 +176,7 @@
 
             <!-- Security -->
             <div {...tabsApi.getContentProps({ value: "security" })} class="flex-1 outline-none">
-              <div class="border border-border rounded-xl bg-card p-6 sm:p-8">
+              <div class="border border-border rounded-2xl bg-card p-6 sm:p-8">
                 <div class="mb-6">
                   <h3 class="text-xl font-heading font-semibold tracking-tight text-foreground">Ubah kata sandi</h3>
                   <p class="text-sm text-muted-foreground mt-1">Gunakan kata sandi yang panjang dan acak untuk keamanan akun Anda.</p>

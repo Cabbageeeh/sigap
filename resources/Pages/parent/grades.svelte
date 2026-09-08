@@ -24,25 +24,25 @@
 
 <Sidebar group="parent" />
 
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-primary pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div in:fly={{ y: 20, duration: 700 }}>
-    <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Rapor Anak</p>
-    <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground mb-8">{studentName ? `Nilai ${studentName}` : 'Nilai Anak'}</h1>
+    <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Rapor Anak</p>
+    <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground mb-8">{studentName ? `Nilai ${studentName}` : 'Nilai Anak'}</h1>
   </div>
 
   {#if !gradesPublished}
-    <div class="bg-card border border-border rounded-lg px-6 py-12 text-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+    <div class="bg-card border border-border rounded-2xl px-6 py-12 text-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       <Lock class="w-8 h-8 mx-auto mb-4 text-muted-foreground" />
       <p class="text-sm text-muted-foreground">Nilai belum dipublikasikan oleh sekolah. Silakan cek kembali nanti.</p>
     </div>
   {:else if summaries.length === 0}
-    <div class="bg-card border border-border rounded-lg px-6 py-12 text-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+    <div class="bg-card border border-border rounded-2xl px-6 py-12 text-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       <p class="text-sm text-muted-foreground">Belum ada nilai.</p>
     </div>
   {:else}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       {#each summaries as summary}
-        <article class="bg-card border border-border rounded-lg overflow-hidden">
+        <article class="bg-card border border-border rounded-2xl overflow-hidden">
           <header class="px-5 py-3 border-b border-border bg-secondary/40 flex items-center justify-between">
             <span class="font-heading text-sm font-semibold text-foreground truncate">{summary.subject_name}</span>
             <span class="font-mono-accent text-[10px] text-muted-foreground shrink-0">KKM {summary.kkm}</span>
@@ -79,11 +79,11 @@
   {#if gradesPublished && progression.length > 0}
     <section class="mt-10" in:fly={{ y: 20, duration: 700, delay: 150 }}>
       <div class="mb-4">
-        <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2">Riwayat Penilaian</p>
+        <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-2">Riwayat Penilaian</p>
         <h2 class="font-heading font-semibold tracking-tight text-xl">Perkembangan Akademik</h2>
         <p class="text-sm text-muted-foreground mt-1">Perubahan nilai anak dari setiap penilaian yang sudah dipublikasikan.</p>
       </div>
-      <div class="bg-card border border-border rounded-lg overflow-hidden">
+      <div class="bg-card border border-border rounded-2xl overflow-hidden">
         {#each progression as point (point.id)}
           <article class="px-5 py-4 border-b border-border last:border-b-0">
             <div class="flex items-start justify-between gap-4">

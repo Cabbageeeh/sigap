@@ -6,12 +6,11 @@
   import { Toast } from '$lib/toast'
   import SigapIcon from '../../Components/SigapIcon.svelte'
   import DarkModeToggle from '../../Components/DarkModeToggle.svelte'
-  import { fly, fade } from 'svelte/transition'
-  import { ArrowRight, Eye, EyeOff, Sparkles } from '@lucide/svelte'
-
   import Button from '../../Components/Button.svelte'
   import Input from '../../Components/Input.svelte'
   import Label from '../../Components/Label.svelte'
+  import { fade, fly } from 'svelte/transition'
+  import { ArrowRight, Eye, EyeOff } from '@lucide/svelte'
 
   interface RegisterForm {
     username: string
@@ -20,17 +19,10 @@
     password_confirmation: string
   }
 
-  let form: RegisterForm = $state({
-    username: '',
-    password: '',
-    name: '',
-    password_confirmation: '',
-  })
-
+  let form: RegisterForm = $state({ username: '', password: '', name: '', password_confirmation: '' })
   let showPassword = $state(false)
   let showConfirm = $state(false)
   let isLoading = $state(false)
-
   let { error }: { error?: string } = $props()
 
   $effect(() => {
@@ -38,8 +30,8 @@
   })
 
   async function submitForm(): Promise<void> {
-    if (form.password != form.password_confirmation) {
-      Toast('Passwords do not match', 'error')
+    if (form.password !== form.password_confirmation) {
+      Toast('Kata sandi tidak cocok', 'error')
       return
     }
     isLoading = true
@@ -49,129 +41,80 @@
   }
 
   function generatePassword(): void {
-    const retVal = password_generator(10)
-    form.password = retVal
-    form.password_confirmation = retVal
+    const generated = password_generator(10)
+    form.password = generated
+    form.password_confirmation = generated
   }
 </script>
 
-<div class="relative min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-primary overflow-hidden">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground">
+  <header class="px-4 pt-4 sm:px-6 lg:px-8">
+    <nav class="mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl border border-border bg-card/90 px-4 shadow-[0_8px_30px_rgba(32,36,38,0.04)] backdrop-blur-xl sm:px-5 dark:shadow-none">
+      <a href="/" use:inertia class="flex items-center gap-3" aria-label="SIGAP Beranda"><SigapIcon size={30} /></a>
+      <div class="flex items-center gap-2">
+        <a href="/login" use:inertia class="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">Masuk</a>
+        <DarkModeToggle />
+      </div>
+    </nav>
+  </header>
 
-  <!-- ───────────── FULL-BLEED IMAGE BACKGROUND ───────────── -->
-  <img
-    src="/public/landing/register.webp"
-    alt="A quiet beginning"
-    class="absolute inset-0 w-full h-full object-cover grayscale contrast-110 brightness-[0.45]"
-  />
-  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/60"></div>
-  <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent"></div>
+  <main class="flex min-h-[calc(100dvh-5rem)] items-center justify-center px-4 py-12 sm:px-6">
+    <div class="w-full max-w-[620px]" in:fly={{ y: 16, duration: 500 }}>
+      <div class="mb-8">
+        <p class="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Buat akun</p>
+        <h1 class="text-[clamp(2rem,6vw,3.25rem)] font-semibold leading-[1] tracking-[-0.045em]">Siapkan akses ke SIGAP.</h1>
+        <p class="mt-4 max-w-lg text-sm leading-6 text-muted-foreground">Lengkapi identitas akun. Hak akses dan peran pengguna tetap ditentukan oleh pengelola sekolah.</p>
+      </div>
 
-  <!-- ───────────── NAV (floating, like landing) ───────────── -->
-  <nav class="relative z-20 flex items-center justify-between h-16 px-6 sm:px-10 lg:px-16">
-    <a href="/" use:inertia class="flex items-center gap-2 group">
-      <SigapIcon size={30} />
-    </a>
-    <div class="flex items-center gap-5 text-sm">
-      <a href="/" use:inertia class="text-white/60 hover:text-white transition-colors">Home</a>
-      <span class="w-px h-4 bg-white/20"></span>
-      <DarkModeToggle />
-    </div>
-  </nav>
+      <section class="rounded-[24px] border border-border bg-card p-5 shadow-[0_18px_55px_rgba(32,36,38,0.06)] sm:p-7 dark:shadow-none">
+        {#if error}
+          <div in:fade={{ duration: 160 }} role="alert" class="mb-5 rounded-xl border border-destructive/25 bg-destructive/[0.05] px-4 py-3 text-sm leading-6 text-destructive">{error}</div>
+        {/if}
 
-  <!-- ───────────── CONTENT: centered editorial, on image ───────────── -->
-  <div class="relative z-10 flex flex-col items-center justify-center text-center min-h-[calc(100dvh-4rem)] px-6 sm:px-10 lg:px-16 pb-20">
-    <div class="w-full max-w-[520px]" in:fly={{ y: 30, duration: 1000, delay: 100 }}>
-
-      <p in:fade={{ duration: 700 }} class="font-heading text-xs uppercase tracking-[0.25em] text-white/50 mb-6">
-        A foundation for building with AI
-      </p>
-
-      <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[0.95] text-[clamp(3rem,8vw,6rem)] text-white" in:fly={{ y: 28, duration: 1000, delay: 150 }}>
-        Begin<br />
-        <span class="italic font-medium text-primary leading-[1.05] pb-1">quietly.</span>
-      </h1>
-
-      <p in:fly={{ y: 22, duration: 1000, delay: 300 }} class="mt-6 text-lg text-white/60 leading-relaxed max-w-[44ch] mx-auto">
-        A blank repository, a willing machine, an afternoon. That is all.
-      </p>
-
-      {#if error}
-        <div in:fade={{ duration: 200 }} role="alert" class="mt-8 rounded-xl border border-red-400/30 bg-red-500/10 backdrop-blur-sm px-4 py-3 text-sm text-red-200 text-left">
-          {error}
-        </div>
-      {/if}
-
-      <!-- form: glass inputs on image -->
-      <form class="mt-10 flex flex-col gap-5 text-left" onsubmit={(e) => { e.preventDefault(); submitForm() }}>
-        <div class="flex flex-col gap-2">
-          <Label for="name" class="text-xs uppercase tracking-[0.2em] font-heading text-white/50">Full name</Label>
-          <Input bind:value={form.name} required type="text" name="name" id="name" placeholder="Your name" class="rounded-xl h-12 text-base text-white bg-white/5 border-white/15 backdrop-blur-md placeholder:text-white/30 focus-visible:border-primary focus-visible:ring-primary/30" />
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <Label for="username" class="text-xs uppercase tracking-[0.2em] font-heading text-white/50">Username</Label>
-          <Input bind:value={form.username} required type="text" name="username" id="username" placeholder="username Anda" class="rounded-xl h-12 text-base text-white bg-white/5 border-white/15 backdrop-blur-md placeholder:text-white/30 focus-visible:border-primary focus-visible:ring-primary/30" />
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div class="flex flex-col gap-2">
-            <Label for="password" class="text-xs uppercase tracking-[0.2em] font-heading text-white/50">Password</Label>
-            <div class="relative">
-              <Input bind:value={form.password} required type={showPassword ? 'text' : 'password'} name="password" id="password" placeholder="••••••••" class="pr-10 rounded-xl h-12 text-base text-white bg-white/5 border-white/15 backdrop-blur-md placeholder:text-white/30 focus-visible:border-primary focus-visible:ring-primary/30" />
-              <button type="button" onclick={() => (showPassword = !showPassword)} class="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors cursor-pointer" aria-label={showPassword ? 'Hide password' : 'Show password'}>
-                {#if showPassword}
-                  <EyeOff class="w-4 h-4" />
-                {:else}
-                  <Eye class="w-4 h-4" />
-                {/if}
-              </button>
+        <form class="flex flex-col gap-5" onsubmit={(event) => { event.preventDefault(); submitForm() }}>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div class="flex flex-col gap-2">
+              <Label for="name" class="text-xs font-semibold text-foreground">Nama lengkap</Label>
+              <Input bind:value={form.name} required type="text" name="name" id="name" placeholder="Nama pengguna" class="h-12" />
+            </div>
+            <div class="flex flex-col gap-2">
+              <Label for="username" class="text-xs font-semibold text-foreground">Username</Label>
+              <Input bind:value={form.username} required type="text" name="username" id="username" placeholder="Username" class="h-12" />
             </div>
           </div>
-          <div class="flex flex-col gap-2">
-            <Label for="confirm-password" class="text-xs uppercase tracking-[0.2em] font-heading text-white/50">Confirm</Label>
-            <div class="relative">
-              <Input bind:value={form.password_confirmation} required type={showConfirm ? 'text' : 'password'} name="confirm-password" id="confirm-password" placeholder="••••••••" class="pr-10 rounded-xl h-12 text-base text-white bg-white/5 border-white/15 backdrop-blur-md placeholder:text-white/30 focus-visible:border-primary focus-visible:ring-primary/30" />
-              <button type="button" onclick={() => (showConfirm = !showConfirm)} class="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors cursor-pointer" aria-label={showConfirm ? 'Hide password' : 'Show password'}>
-                {#if showConfirm}
-                  <EyeOff class="w-4 h-4" />
-                {:else}
-                  <Eye class="w-4 h-4" />
-                {/if}
-              </button>
+
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div class="flex flex-col gap-2">
+              <Label for="password" class="text-xs font-semibold text-foreground">Kata sandi</Label>
+              <div class="relative">
+                <Input bind:value={form.password} required type={showPassword ? 'text' : 'password'} name="password" id="password" placeholder="••••••••" class="h-12 pr-11" />
+                <button type="button" onclick={() => (showPassword = !showPassword)} class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground" aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}>
+                  {#if showPassword}<EyeOff class="h-4 w-4" />{:else}<Eye class="h-4 w-4" />{/if}
+                </button>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <Label for="confirm-password" class="text-xs font-semibold text-foreground">Konfirmasi kata sandi</Label>
+              <div class="relative">
+                <Input bind:value={form.password_confirmation} required type={showConfirm ? 'text' : 'password'} name="confirm-password" id="confirm-password" placeholder="••••••••" class="h-12 pr-11" />
+                <button type="button" onclick={() => (showConfirm = !showConfirm)} class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground" aria-label={showConfirm ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}>
+                  {#if showConfirm}<EyeOff class="h-4 w-4" />{:else}<Eye class="h-4 w-4" />{/if}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <button
-          type="button"
-          onclick={generatePassword}
-          class="self-start inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-primary transition-colors cursor-pointer group"
-        >
-          <Sparkles class="w-3.5 h-3.5 transition-transform group-hover:scale-110" />
-          Generate a secure one
-        </button>
+          <button type="button" onclick={generatePassword} class="self-start text-xs font-semibold text-primary transition-colors hover:text-primary/80">Buat kata sandi acak</button>
 
-        <div class="flex flex-wrap items-center justify-center gap-5 pt-3">
-          <Button type="submit" disabled={isLoading} size="lg" class="rounded-xl px-7 h-12 text-sm normal-case tracking-normal font-heading font-medium">
-            {#if isLoading}
-              Creating account...
-            {:else}
-              Begin
-              <ArrowRight class="w-4 h-4" />
-            {/if}
-          </Button>
-          <a href="/login" use:inertia class="text-sm text-white/50 hover:text-white transition-colors inline-flex items-center gap-1.5 group">
-            Have an account?
-            <span class="text-white underline underline-offset-4 decoration-white/30">Sign in</span>
-          </a>
-        </div>
-      </form>
+          <div class="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <a href="/login" use:inertia class="text-sm text-muted-foreground transition-colors hover:text-foreground">Sudah punya akun? <span class="font-semibold text-foreground">Masuk</span></a>
+            <Button type="submit" disabled={isLoading} size="lg" class="h-12">
+              {isLoading ? 'Membuat akun...' : 'Buat akun'}
+              {#if !isLoading}<ArrowRight class="h-4 w-4" />{/if}
+            </Button>
+          </div>
+        </form>
+      </section>
     </div>
-  </div>
-
-  <!-- ───────────── FOOTER (on image) ───────────── -->
-  <footer class="absolute bottom-0 inset-x-0 z-10 px-6 sm:px-10 lg:px-16 py-6 flex justify-between items-center text-xs text-white/40">
-    <span>&copy; {new Date().getFullYear()} SIGAP</span>
-    <span class="font-heading uppercase tracking-[0.2em]">A foundation for building with AI</span>
-  </footer>
+  </main>
 </div>

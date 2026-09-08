@@ -71,7 +71,7 @@
   }
 </script>
 
-<header class="fixed inset-x-0 top-0 z-50 bg-background border-b border-border">
+<header class="fixed inset-x-0 top-0 z-50 bg-card/95 border-b border-border backdrop-blur-xl">
   <nav class="h-16 px-6 sm:px-10 lg:px-16 flex items-center justify-between">
 
     <div class="flex items-center gap-8">
@@ -117,20 +117,20 @@
             </div>
           </button>
           <div use:portal {...menuApi.getPositionerProps()}>
-            <div {...menuApi.getContentProps()} class="bg-background text-foreground z-50 min-w-[12rem] rounded-sm border border-border p-1.5 shadow-lg outline-none font-body">
+            <div {...menuApi.getContentProps()} class="bg-card text-foreground z-50 min-w-[12rem] rounded-2xl border border-border p-1.5 shadow-[0_18px_60px_rgba(0,0,0,0.14)] outline-none font-body">
               <div class="px-3 py-2.5">
                 <p class="text-sm font-heading font-semibold tracking-tight">{user.name}</p>
                 <p class="text-xs text-muted-foreground mt-0.5">@{user.username}</p>
               </div>
               <div class="h-px bg-border my-1"></div>
-              <div {...menuApi.getItemProps({ value: "logout" })} onclick={handleLogout} class="data-[highlighted]:bg-muted relative flex cursor-pointer items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors duration-150 outline-hidden select-none text-muted-foreground hover:text-foreground">
+              <div {...menuApi.getItemProps({ value: "logout" })} onclick={handleLogout} class="data-[highlighted]:bg-muted relative flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm transition-colors duration-150 outline-hidden select-none text-muted-foreground hover:text-foreground">
                 <LogOut class="h-4 w-4" />
                 <span>Keluar</span>
               </div>
             </div>
           </div>
         {:else}
-          <a href="/login" use:inertia class="inline-flex items-center gap-1.5 px-5 h-9 rounded-sm bg-primary text-primary-foreground text-sm font-heading font-medium hover:bg-primary/90 transition-colors">
+          <a href="/login" use:inertia class="inline-flex items-center gap-1.5 px-5 h-9 rounded-xl bg-foreground text-background text-sm font-heading font-semibold hover:bg-foreground/90 transition-colors dark:bg-primary dark:text-primary-foreground">
             Masuk
             <ArrowUpRight class="w-3.5 h-3.5" />
           </a>
@@ -148,7 +148,7 @@
           <div use:portal>
             <div {...sheetApi.getBackdropProps()} class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"></div>
             <div {...sheetApi.getPositionerProps()}>
-              <div {...sheetApi.getContentProps()} class="bg-background fixed inset-y-0 left-0 z-50 h-full w-[80%] max-w-sm border-r border-border p-6 shadow-xl transition ease-in-out duration-300 font-body">
+              <div {...sheetApi.getContentProps()} class="bg-card fixed inset-y-0 left-0 z-50 h-full w-[80%] max-w-sm border-r border-border p-6 shadow-xl transition ease-in-out duration-300 font-body">
                 <div class="flex items-center justify-between">
                   <a href="/" use:inertia onclick={() => isMenuOpen = false} class="group">
                     <SigapIcon class="group-hover:opacity-80" />
@@ -165,7 +165,7 @@
                         href={item.href}
                         use:inertia
                         onclick={() => isMenuOpen = false}
-                        class="flex items-center justify-between px-3 py-3 rounded-sm transition-colors duration-200
+                        class="flex items-center justify-between px-3 py-3 rounded-xl transition-colors duration-200
                           {item.group === group
                             ? 'bg-muted text-foreground'
                             : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}"
@@ -189,12 +189,12 @@
                           <p class="text-xs text-muted-foreground truncate">@{user.username}</p>
                         </div>
                       </div>
-                      <button onclick={handleLogout} class="w-full inline-flex items-center justify-center gap-2 h-10 rounded-sm border border-border text-sm text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors cursor-pointer">
+                      <button onclick={handleLogout} class="w-full inline-flex items-center justify-center gap-2 h-10 rounded-xl border border-border text-sm text-muted-foreground hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer">
                         <LogOut class="h-4 w-4" />
                         Keluar
                       </button>
                     {:else}
-                      <a href="/login" use:inertia onclick={() => isMenuOpen = false} class="inline-flex items-center justify-center gap-1.5 h-10 rounded-sm bg-primary text-primary-foreground text-sm font-heading font-medium hover:bg-primary/90 transition-colors">
+                      <a href="/login" use:inertia onclick={() => isMenuOpen = false} class="inline-flex items-center justify-center gap-1.5 h-10 rounded-xl bg-foreground px-4 text-background text-sm font-heading font-semibold hover:bg-foreground/90 transition-colors dark:bg-primary dark:text-primary-foreground">
                         Masuk
                         <ArrowUpRight class="w-3.5 h-3.5" />
                       </a>

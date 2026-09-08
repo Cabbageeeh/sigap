@@ -76,13 +76,12 @@
   <div use:portal>
     <div {...dialogApi.getBackdropProps()} class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"></div>
     <div {...dialogApi.getPositionerProps()}>
-      <div {...dialogApi.getContentProps()} class="bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-xl border border-border shadow-lg sm:max-w-lg font-body overflow-hidden">
+      <div {...dialogApi.getContentProps()} class="bg-card fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-2xl border border-border shadow-[0_24px_80px_rgba(0,0,0,0.18)] sm:max-w-lg font-body overflow-hidden">
 
         <div class="px-6 pt-6 pb-5 border-b border-border flex items-start justify-between gap-4">
           <div>
-            <p class="font-heading text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-2">{mode === 'create' ? 'New role' : 'Edit role'}</p>
-            <h2 {...dialogApi.getTitleProps()} class="font-heading font-semibold text-xl tracking-tight text-foreground">{mode === 'create' ? 'Create a role' : 'Update role'}</h2>
-            <p {...dialogApi.getDescriptionProps()} class="text-sm text-muted-foreground font-body mt-1">{mode === 'create' ? 'Define a new role and assign permissions.' : 'Update role details and permissions.'}</p>
+            <h2 {...dialogApi.getTitleProps()} class="font-heading font-semibold text-xl tracking-tight text-foreground">{mode === 'create' ? 'Tambah peran' : 'Perbarui peran'}</h2>
+            <p {...dialogApi.getDescriptionProps()} class="text-sm text-muted-foreground font-body mt-1">{mode === 'create' ? 'Tentukan nama peran dan hak akses yang diperlukan.' : 'Perbarui detail peran dan hak aksesnya.'}</p>
           </div>
           <button {...dialogApi.getCloseTriggerProps()} class="text-muted-foreground hover:text-foreground transition-colors p-1 -mt-1 -mr-1 shrink-0">
             <X class="w-5 h-5" />
@@ -94,8 +93,8 @@
           <div class="px-6 py-5 flex flex-col gap-5 max-h-[65vh] overflow-y-auto">
             <div class="grid grid-cols-2 gap-3">
               <div class="flex flex-col gap-2">
-                <Label for="role-name" class="text-xs uppercase tracking-widest font-heading text-muted-foreground">Name</Label>
-                <Input id="role-name" type="text" bind:value={form.name} placeholder="e.g. Editor" class="h-11" required />
+                <Label for="role-name" class="text-xs uppercase tracking-widest font-heading text-muted-foreground">Nama</Label>
+                <Input id="role-name" type="text" bind:value={form.name} placeholder="Contoh: Operator" class="h-11" required />
               </div>
               <div class="flex flex-col gap-2">
                 <Label for="role-slug" class="text-xs uppercase tracking-widest font-heading text-muted-foreground">Slug</Label>
@@ -104,13 +103,13 @@
             </div>
             <div class="flex flex-col gap-2">
               <Label for="role-desc" class="text-xs uppercase tracking-widest font-heading text-muted-foreground">
-                Description <span class="normal-case tracking-normal text-muted-foreground/70">(optional)</span>
+                Deskripsi <span class="normal-case tracking-normal text-muted-foreground/70">(opsional)</span>
               </Label>
-              <Input id="role-desc" type="text" bind:value={form.description} placeholder="Describe what this role can do" class="h-11" />
+              <Input id="role-desc" type="text" bind:value={form.description} placeholder="Jelaskan tanggung jawab peran ini" class="h-11" />
             </div>
 
             <div class="flex flex-col gap-3">
-              <Label class="text-xs uppercase tracking-widest font-heading text-muted-foreground">Permissions</Label>
+              <Label class="text-xs uppercase tracking-widest font-heading text-muted-foreground">Hak akses</Label>
               {#each Object.entries(groupedPermissions) as [resource, perms]}
                 <div class="border border-border rounded-xl overflow-hidden">
                   <div class="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/30">
@@ -133,17 +132,17 @@
                 </div>
               {/each}
               {#if Object.keys(groupedPermissions).length === 0}
-                <p class="text-xs text-muted-foreground">No permissions defined yet.</p>
+                <p class="text-xs text-muted-foreground">Belum ada hak akses yang tersedia.</p>
               {/if}
             </div>
           </div>
         </form>
 
         <div class="px-6 py-4 border-t border-border flex gap-2 justify-end">
-          <Button variant="outline" onclick={handleClose} disabled={isSubmitting}>Cancel</Button>
+          <Button variant="outline" onclick={handleClose} disabled={isSubmitting}>Batal</Button>
           <Button type="submit" form="role-form" disabled={isSubmitting}>
             {#if isSubmitting}<Loader2 class="w-4 h-4 animate-spin" />{/if}
-            {mode === 'create' ? 'Create role' : 'Save changes'}
+            {mode === 'create' ? 'Buat peran' : 'Simpan perubahan'}
           </Button>
         </div>
       </div>

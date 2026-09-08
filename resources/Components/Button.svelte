@@ -4,15 +4,15 @@
 	import { type VariantProps, tv } from "tailwind-variants";
 
 	export const buttonVariants = tv({
-		base: "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex shrink-0 items-center justify-center gap-2 rounded-sm font-heading text-sm font-medium whitespace-nowrap transition-all duration-200 outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 cursor-pointer hover:scale-[1.02] active:scale-[0.98]",
+			base: "focus-visible:border-ring focus-visible:ring-ring/40 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex shrink-0 items-center justify-center gap-2 rounded-xl font-heading text-sm font-semibold whitespace-nowrap transition-colors duration-150 outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 cursor-pointer",
 		variants: {
 			variant: {
-				default: "bg-primary text-primary-foreground hover:bg-primary/90",
+					default: "bg-foreground text-background hover:bg-foreground/88 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/88",
 				destructive:
 					"bg-destructive hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-white",
 				outline:
-					"bg-background hover:border-foreground/30 hover:text-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 border border-border",
-				secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+						"bg-card text-foreground hover:bg-secondary hover:border-foreground/20 dark:bg-card dark:border-border dark:hover:bg-secondary border border-border",
+					secondary: "bg-secondary text-secondary-foreground hover:bg-muted",
 				ghost: "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
 				link: "text-primary underline-offset-4 hover:underline",
 			},

@@ -122,25 +122,25 @@
 {/snippet}
 
 <Sidebar group="grades" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-80 px-6 sm:px-10 lg:pr-16 pb-16">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8" in:fly={{ y: 20, duration: 800 }}>
     <div>
-      <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Penilaian</p>
-      <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground">Nilai.</h1>
+      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Penilaian</p>
+      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">Nilai.</h1>
       <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">Input nilai tugas, ulangan, UTS, dan UAS sesuai kelas serta mapel yang diampu.</p>
     </div>
     {#if permissions.canCreate && !confirmationRequired}<Button onclick={openCreate} size="lg">Tambah Nilai</Button>{/if}
   </div>
 
   {#if confirmationRequired}
-    <div class="bg-card border border-primary/30 rounded-lg p-6 max-w-2xl" in:fly={{ y: 20, duration: 700, delay: 100 }}>
-      <p class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-primary mb-3">Akses terkunci</p>
+    <div class="bg-card border border-primary/30 rounded-2xl p-6 max-w-2xl" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-primary mb-3">Akses terkunci</p>
       <h2 class="font-heading text-xl font-semibold text-foreground">Konfirmasi kehadiran diperlukan.</h2>
       <p class="text-sm text-muted-foreground mt-2 leading-relaxed">Scan QR sekolah sekali setiap hari sebelum membuka daftar kelas dan mengisi nilai.</p>
       <a href="/teacher/confirm" use:inertia class="inline-flex mt-5"><Button>Scan QR Absen</Button></a>
     </div>
   {:else}
-    <div class="bg-card border border-border rounded-lg p-4 mb-8 flex flex-col sm:flex-row gap-3 items-end" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+    <div class="bg-card border border-border rounded-2xl p-4 mb-8 flex flex-col sm:flex-row gap-3 items-end" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       <div class="flex flex-col gap-1 flex-1 w-full">
         <Label for="filter-class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Kelas</Label>
         <Select id="filter-class" bind:value={filterClassId} placeholder="Pilih kelas">

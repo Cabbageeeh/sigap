@@ -85,16 +85,16 @@
 
 <Sidebar group="teacher-confirm" />
 
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-primary pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div in:fly={{ y: 20, duration: 700 }}>
-    <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Verifikasi Kehadiran</p>
-    <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground mb-2">Konfirmasi Kehadiran</h1>
+    <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Verifikasi Kehadiran</p>
+    <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground mb-2">Konfirmasi Kehadiran</h1>
     <p class="text-sm text-muted-foreground mb-8">Scan QR sekolah sekali setiap hari untuk mencatat kehadiran.</p>
   </div>
 
   {#if alreadyConfirmed}
-    <div class="bg-card border border-primary/30 rounded-lg p-6 max-w-2xl" in:fly={{ y: 20, duration: 700, delay: 100 }}>
-      <p class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-primary mb-3">Sudah terverifikasi</p>
+    <div class="bg-card border border-primary/30 rounded-2xl p-6 max-w-2xl" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-primary mb-3">Sudah terverifikasi</p>
       <h2 class="font-heading text-xl font-semibold text-foreground">Kehadiran hari ini sudah tercatat.</h2>
       <p class="text-sm text-muted-foreground mt-2">Buka jadwal untuk melihat kelas dan mapel yang Anda ajar hari ini.</p>
       <a href="/teacher/schedule" use:inertia class="inline-flex mt-5">
@@ -102,9 +102,9 @@
       </a>
     </div>
   {:else if !qrTokenValid}
-    <div class="bg-card border border-border rounded-lg overflow-hidden max-w-2xl" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+    <div class="bg-card border border-border rounded-2xl overflow-hidden max-w-2xl" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       <div class="px-5 py-3 bg-secondary/60 border-b border-border">
-        <span class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Scan QR Absen</span>
+        <span class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Scan QR Absen</span>
       </div>
       <div class="p-5">
         <h2 class="font-heading text-xl font-semibold text-foreground">
@@ -123,14 +123,14 @@
       </div>
     </div>
   {:else}
-    <div class="mb-6 rounded-lg border border-primary/30 bg-primary/5 px-5 py-4" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+    <div class="mb-6 rounded-2xl border border-primary/30 bg-primary/5 px-5 py-4" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       <p class="font-heading font-medium text-foreground">QR absen valid</p>
       <p class="text-sm text-muted-foreground mt-1">Satu langkah lagi: pastikan lokasi aktif, lalu kirim konfirmasi.</p>
     </div>
 
-    <div class="bg-card border border-border rounded-lg overflow-hidden max-w-2xl" in:fly={{ y: 20, duration: 700, delay: 150 }}>
+    <div class="bg-card border border-border rounded-2xl overflow-hidden max-w-2xl" in:fly={{ y: 20, duration: 700, delay: 150 }}>
       <div class="px-5 py-3 bg-secondary/60 border-b border-border flex items-center justify-between">
-        <span class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Lokasi Anda</span>
+        <span class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Lokasi Anda</span>
         {#if coords}
           <span class="flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-primary"></span>

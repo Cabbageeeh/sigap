@@ -38,17 +38,17 @@
   }
 </script>
 
-<div data-slot="data-table" class={cn("overflow-x-auto rounded-lg border border-border bg-card", className)}>
+<div data-slot="data-table" class={cn("overflow-x-auto rounded-2xl border border-border bg-card shadow-[0_8px_28px_rgba(32,36,38,0.025)] dark:shadow-none", className)}>
   <table class="w-full text-sm">
-    <thead class="bg-secondary/60 border-b border-border">
+    <thead class="bg-secondary/70 border-b border-border">
       <tr>
         {#each columns as col}
-          <th class={cn("px-4 py-3 text-left font-mono-accent text-[10px] uppercase tracking-[0.15em] font-medium text-muted-foreground", alignClass(col.align), col.class)}>
+          <th class={cn("px-4 py-3.5 text-left font-heading text-[10px] uppercase tracking-[0.13em] font-semibold text-muted-foreground", alignClass(col.align), col.class)}>
             {col.label}
           </th>
         {/each}
         {#if rowAction}
-          <th class="px-4 py-3 text-right font-mono-accent text-[10px] uppercase tracking-[0.15em] font-medium text-muted-foreground">Aksi</th>
+          <th class="px-4 py-3.5 text-right font-heading text-[10px] uppercase tracking-[0.13em] font-semibold text-muted-foreground">Aksi</th>
         {/if}
       </tr>
     </thead>
@@ -61,9 +61,9 @@
         </tr>
       {:else}
         {#each rows as row (row[keyField])}
-          <tr class="hover:bg-secondary/30 transition-colors">
+          <tr class="hover:bg-secondary/35 transition-colors">
             {#each columns as col}
-              <td class={cn("px-4 py-3 text-foreground font-body whitespace-nowrap", alignClass(col.align), col.class)}>
+              <td class={cn("px-4 py-3.5 text-foreground font-body whitespace-nowrap", alignClass(col.align), col.class)}>
                 {String(cellValue(row, col.key) ?? '-')}
               </td>
             {/each}

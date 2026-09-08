@@ -40,19 +40,19 @@
 
 <Sidebar group="teacher" />
 
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-primary pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div in:fly={{ y: 20, duration: 700 }}>
-    <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Jadwal Hari Ini</p>
-    <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground mb-8">Jadwal Mengajar</h1>
+    <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Jadwal Hari Ini</p>
+    <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground mb-8">Jadwal Mengajar</h1>
   </div>
 
   {#if !isTeacher}
-    <div class="bg-card border border-border rounded-lg px-6 py-12 text-center">
+    <div class="bg-card border border-border rounded-2xl px-6 py-12 text-center">
       <p class="text-sm text-muted-foreground">Halaman ini hanya tersedia untuk guru.</p>
     </div>
   {:else if !confirmedToday}
-    <div class="bg-card border border-primary/30 rounded-lg px-6 py-10 max-w-2xl" in:fly={{ y: 20, duration: 700, delay: 100 }}>
-      <p class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-primary mb-3">Akses terkunci</p>
+    <div class="bg-card border border-primary/30 rounded-2xl px-6 py-10 max-w-2xl" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-primary mb-3">Akses terkunci</p>
       <h2 class="font-heading text-xl font-semibold text-foreground">Konfirmasi kehadiran sebelum membuka jadwal.</h2>
       <p class="text-sm text-muted-foreground mt-2 leading-relaxed">Scan QR sekolah sekali setiap hari langsung dari halaman ini. Setelah verifikasi berhasil, daftar kelas dan menu penilaian hari ini akan terbuka.</p>
       <div class="flex flex-wrap gap-2 mt-5">
@@ -73,20 +73,20 @@
       {/if}
     </div>
   {:else if schedules.length === 0}
-    <div class="bg-card border border-border rounded-lg px-6 py-12 text-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
-      <p class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-primary mb-3">Kehadiran terverifikasi</p>
+    <div class="bg-card border border-border rounded-2xl px-6 py-12 text-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-primary mb-3">Kehadiran terverifikasi</p>
       <p class="text-sm text-muted-foreground">Tidak ada jadwal mengajar untuk hari ini.</p>
     </div>
   {:else}
-    <div class="mb-5 rounded-lg border border-primary/30 bg-primary/5 px-5 py-4" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+    <div class="mb-5 rounded-2xl border border-primary/30 bg-primary/5 px-5 py-4" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       <p class="font-heading font-medium text-foreground">Kehadiran hari ini terverifikasi.</p>
       <p class="text-sm text-muted-foreground mt-1">Pilih kelas dan mapel untuk membuka jurnal atau mencatat nilai.</p>
     </div>
 
-    <div class="bg-card border border-border rounded-lg overflow-hidden" in:fly={{ y: 20, duration: 700, delay: 150 }}>
+    <div class="bg-card border border-border rounded-2xl overflow-hidden" in:fly={{ y: 20, duration: 700, delay: 150 }}>
       <div class="px-5 py-3 bg-secondary/60 border-b border-border flex items-center justify-between">
-        <span class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Kelas · Mapel</span>
-        <span class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Akses</span>
+        <span class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Kelas · Mapel</span>
+        <span class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Akses</span>
       </div>
 
       <div class="divide-y divide-border">

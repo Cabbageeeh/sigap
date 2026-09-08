@@ -22,7 +22,7 @@
     data-slot="select"
     bind:value
     class={cn(
-      "border-input bg-secondary/40 font-body flex h-10 w-full min-w-0 appearance-none rounded-sm border px-3 pr-9 py-1 text-sm transition-[color,box-shadow] outline-none focus-visible:bg-background disabled:cursor-not-allowed disabled:opacity-50",
+      "border-input bg-card dark:bg-input/30 font-body flex h-10 w-full min-w-0 appearance-none rounded-xl border px-3.5 pr-9 py-1 text-sm transition-[color,box-shadow] outline-none focus-visible:bg-card disabled:cursor-not-allowed disabled:opacity-50",
       "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
       "aria-invalid:ring-destructive/20 aria-invalid:border-destructive",
       !value && "text-muted-foreground",

@@ -45,8 +45,8 @@
     <a href="/headmaster/dashboard" use:inertia class="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors mb-6">
       <ArrowLeft class="w-4 h-4" /> Kembali ke pengawasan
     </a>
-    <p class="font-mono-accent text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Detail Kehadiran Guru</p>
-    <h1 class="font-heading font-semibold tracking-[-0.03em] leading-[1] text-[clamp(2rem,5vw,3.5rem)] text-foreground">
+    <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Detail Kehadiran Guru</p>
+    <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
       {summary.teacher_name}
     </h1>
     <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[60ch]">

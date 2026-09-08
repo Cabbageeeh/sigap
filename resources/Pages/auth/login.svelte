@@ -5,12 +5,11 @@
   import { Toast } from '$lib/toast'
   import SigapIcon from '../../Components/SigapIcon.svelte'
   import DarkModeToggle from '../../Components/DarkModeToggle.svelte'
-  import { fly, fade } from 'svelte/transition'
-  import { ArrowRight, Eye, EyeOff } from '@lucide/svelte'
-
   import Button from '../../Components/Button.svelte'
   import Input from '../../Components/Input.svelte'
   import Label from '../../Components/Label.svelte'
+  import { fade, fly } from 'svelte/transition'
+  import { ArrowRight, Eye, EyeOff } from '@lucide/svelte'
 
   interface LoginForm {
     username: string
@@ -20,7 +19,6 @@
   let form: LoginForm = $state({ username: '', password: '' })
   let showPassword = $state(false)
   let isLoading = $state(false)
-
   let { error }: { error?: string } = $props()
 
   $effect(() => {
@@ -35,139 +33,62 @@
   }
 </script>
 
-<div class="min-h-[100dvh] bg-secondary/30 text-foreground font-body antialiased selection:bg-primary/20 selection:text-primary flex flex-col">
-
-  <!-- Top bar -->
-  <nav class="flex items-center justify-between h-16 px-6 sm:px-10 shrink-0">
-    <a href="/" use:inertia class="flex items-center gap-3 group">
-      <SigapIcon size={30} />
-    </a>
-    <div class="flex items-center gap-4">
-      <a href="/" use:inertia class="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-        Beranda
+<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground">
+  <header class="px-4 pt-4 sm:px-6 lg:px-8">
+    <nav class="mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl border border-border bg-card/90 px-4 shadow-[0_8px_30px_rgba(32,36,38,0.04)] backdrop-blur-xl sm:px-5 dark:shadow-none">
+      <a href="/" use:inertia class="flex items-center gap-3" aria-label="SIGAP Beranda">
+        <SigapIcon size={30} />
       </a>
-      <span class="w-px h-4 bg-border"></span>
-      <DarkModeToggle />
-    </div>
-  </nav>
+      <div class="flex items-center gap-2">
+        <a href="/" use:inertia class="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">Beranda</a>
+        <DarkModeToggle />
+      </div>
+    </nav>
+  </header>
 
-  <!-- Centered ledger card -->
-  <div class="flex-1 flex items-center justify-center px-6 py-12">
-    <div class="w-full max-w-[440px]" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+  <main class="flex min-h-[calc(100dvh-5rem)] items-center justify-center px-4 py-12 sm:px-6">
+    <div class="w-full max-w-[460px]" in:fly={{ y: 16, duration: 500 }}>
+      <div class="mb-8">
+        <p class="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Akses SIGAP</p>
+        <h1 class="text-[clamp(2rem,6vw,3.25rem)] font-semibold leading-[1] tracking-[-0.045em]">Selamat datang kembali.</h1>
+        <p class="mt-4 max-w-md text-sm leading-6 text-muted-foreground">Masuk dengan akun yang diberikan sekolah untuk melanjutkan ke ruang kerja Anda.</p>
+      </div>
 
-      <article class="bg-card border border-border rounded-lg overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_-8px_rgba(0,0,0,0.06)]">
-
-        <!-- Card header bar -->
-        <header class="px-6 py-4 border-b border-border bg-secondary/60 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-primary"></span>
-            <span class="font-mono-accent text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Masuk ke akun</span>
+      <section class="rounded-[24px] border border-border bg-card p-5 shadow-[0_18px_55px_rgba(32,36,38,0.06)] sm:p-7 dark:shadow-none">
+        {#if error}
+          <div in:fade={{ duration: 160 }} role="alert" class="mb-5 rounded-xl border border-destructive/25 bg-destructive/[0.05] px-4 py-3 text-sm leading-6 text-destructive">
+            {error}
           </div>
-          <span class="font-mono-accent text-[10px] text-muted-foreground">SIGAP</span>
-        </header>
+        {/if}
 
-        <!-- Card body -->
-        <div class="px-6 py-6">
-          <h2 class="font-heading text-xl font-semibold tracking-[-0.02em] text-foreground mb-1">
-            Selamat datang kembali.
-          </h2>
-          <p class="text-sm text-muted-foreground leading-relaxed mb-6">
-            Masuk dengan akun yang dibuat admin sekolah Anda.
-          </p>
+        <form class="flex flex-col gap-5" onsubmit={(event) => { event.preventDefault(); submitForm() }}>
+          <div class="flex flex-col gap-2">
+            <Label for="username" class="text-xs font-semibold text-foreground">Username</Label>
+            <Input bind:value={form.username} required type="text" name="username" id="username" placeholder="Masukkan username" class="h-12" />
+          </div>
 
-          <!-- Error alert -->
-          {#if error}
-            <div in:fade={{ duration: 200 }} role="alert" class="mb-5 rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3 flex items-start gap-3">
-              <span class="w-2 h-2 rounded-full bg-destructive shrink-0 mt-1.5"></span>
-              <span class="text-sm text-destructive leading-relaxed">{error}</span>
+          <div class="flex flex-col gap-2">
+            <Label for="password" class="text-xs font-semibold text-foreground">Kata sandi</Label>
+            <div class="relative">
+              <Input bind:value={form.password} required type={showPassword ? 'text' : 'password'} name="password" id="password" placeholder="••••••••" class="h-12 pr-11" />
+              <button type="button" onclick={() => (showPassword = !showPassword)} class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground" aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}>
+                {#if showPassword}<EyeOff class="h-4 w-4" />{:else}<Eye class="h-4 w-4" />{/if}
+              </button>
             </div>
-          {/if}
+          </div>
 
-          <!-- Form -->
-          <form class="flex flex-col gap-5" onsubmit={(e) => { e.preventDefault(); submitForm() }}>
+          <Button type="submit" disabled={isLoading} size="lg" class="mt-1 h-12 w-full">
+            {isLoading ? 'Memproses...' : 'Masuk'}
+            {#if !isLoading}<ArrowRight class="h-4 w-4" />{/if}
+          </Button>
+        </form>
 
-            <!-- Username -->
-            <div class="flex flex-col gap-2">
-              <Label for="username" class="font-mono-accent text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
-                Username
-              </Label>
-              <Input
-                bind:value={form.username}
-                required
-                type="text"
-                name="username"
-                id="username"
-                placeholder="username Anda"
-                class="h-11 rounded-md text-sm"
-              />
-            </div>
-
-            <!-- Password -->
-            <div class="flex flex-col gap-2">
-              <Label for="password" class="font-mono-accent text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
-                Kata Sandi
-              </Label>
-              <div class="relative">
-                <Input
-                  bind:value={form.password}
-                  required
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  id="password"
-                  placeholder="••••••••"
-                  class="h-11 rounded-md text-sm pr-10"
-                />
-                <button
-                  type="button"
-                  onclick={() => (showPassword = !showPassword)}
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                  aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
-                >
-                  {#if showPassword}
-                    <EyeOff class="w-4 h-4" />
-                  {:else}
-                    <Eye class="w-4 h-4" />
-                  {/if}
-                </button>
-              </div>
-            </div>
-
-            <!-- Submit -->
-            <div class="pt-1">
-              <Button
-                type="submit"
-                disabled={isLoading}
-                size="lg"
-                class="w-full h-11 rounded-md justify-center"
-              >
-                {#if isLoading}
-                  Memproses...
-                {:else}
-                  Masuk
-                  <ArrowRight class="w-4 h-4" />
-                {/if}
-              </Button>
-            </div>
-          </form>
+        <div class="mt-6 border-t border-border pt-5 text-sm text-muted-foreground">
+          Belum memiliki akun? <span class="font-semibold text-foreground">Hubungi administrator sekolah.</span>
         </div>
+      </section>
 
-        <!-- Card footer bar -->
-        <footer class="px-6 py-4 border-t border-border bg-secondary/30 flex items-center justify-between">
-          <span class="text-xs text-muted-foreground">Belum punya akun?</span>
-          <span class="text-xs text-foreground font-medium">Hubungi admin sekolah</span>
-        </footer>
-      </article>
-
-      <!-- Below card note -->
-      <p class="mt-5 text-center font-mono-accent text-[10px] text-muted-foreground">
-        SIGAP tidak menyediakan pendaftaran publik &middot; MIT License
-      </p>
+      <p class="mt-5 text-center text-[11px] text-muted-foreground">SIGAP tidak menyediakan pendaftaran publik.</p>
     </div>
-  </div>
-
-  <!-- Bottom bar -->
-  <footer class="shrink-0 px-6 sm:px-10 py-4 flex items-center justify-between">
-    <span class="font-mono-accent text-[10px] text-muted-foreground">&copy; {new Date().getFullYear()} SIGAP</span>
-    <span class="font-mono-accent text-[10px] text-muted-foreground">Trust-first school management</span>
-  </footer>
+  </main>
 </div>
