@@ -218,9 +218,9 @@ export interface StudentForm {
 
 export interface TeacherForm {
   id: string | null;
-  user_id: string;
-  employee_id: string;
-  phone: string;
+  nip: string;
+  name: string;
+  subject_ids: string[];
 }
 
 export interface ParentForm {
@@ -337,15 +337,15 @@ export function studentToForm(student: Student): StudentForm {
 }
 
 export function createEmptyTeacherForm(): TeacherForm {
-  return { id: null, user_id: '', employee_id: '', phone: '' };
+  return { id: null, nip: '', name: '', subject_ids: [] };
 }
 
-export function teacherToForm(teacher: Teacher): TeacherForm {
+export function teacherToForm(teacher: Teacher & { user_name?: string | null }): TeacherForm {
   return {
     id: teacher.id,
-    user_id: teacher.user_id,
-    employee_id: teacher.employee_id || '',
-    phone: teacher.phone || '',
+    nip: teacher.employee_id || '',
+    name: teacher.user_name || '',
+    subject_ids: [],
   };
 }
 

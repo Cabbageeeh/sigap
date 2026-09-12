@@ -11,10 +11,8 @@ export const findAllTeachersForAssignment = (): Array<Teacher & { user_name: str
     INNER JOIN users u ON u.id = t.user_id
     ORDER BY COALESCE(u.name, u.username)
   `;
-export const findUsersForTeacherSelect = (): { id: string; name: string | null; username: string }[] =>
-  SQLite.many<{ id: string; name: string | null; username: string }>`
-    SELECT id, name, username FROM users ORDER BY COALESCE(name, username)
-  `;
+export const findTeacherByEmployeeId = (employeeId: string): Teacher | undefined =>
+  SQLite.one<Teacher>`SELECT * FROM teachers WHERE employee_id = ${employeeId}`;
 export const findTeacherUsersForSchedule = (): { id: string; name: string | null; username: string }[] =>
   SQLite.many<{ id: string; name: string | null; username: string }>`
     SELECT u.id, u.name, u.username

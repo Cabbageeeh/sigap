@@ -28,6 +28,7 @@
     subjects?: Subject[];
     schedules?: TeacherScheduleRow[];
     selectedYearId?: string;
+    selectedTeacherId?: string;
   }
 
   let {
@@ -39,10 +40,11 @@
     subjects = [],
     schedules = [],
     selectedYearId = '',
+    selectedTeacherId: initialTeacherId = '',
   }: Props = $props();
 
   let currentYearId = $state(selectedYearId);
-  let selectedTeacherId = $state(teachers[0]?.id ?? '');
+  let selectedTeacherId = $state(initialTeacherId && teachers.some(teacher => teacher.id === initialTeacherId) ? initialTeacherId : teachers[0]?.id ?? '');
   let assignedClassIds = $state<string[]>([]);
   let homeroomClassId = $state('');
   let isSaving = $state(false);

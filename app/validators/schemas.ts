@@ -39,7 +39,7 @@ export const UpdateUserSchema = z.object({
   student_id: z.string().uuid('ID siswa tidak valid').optional().nullable(),
 }).refine(
   data => data.name !== undefined || data.username !== undefined ||
-          data.password !== undefined || data.roles !== undefined || data.student_id !== undefined,
+    data.password !== undefined || data.roles !== undefined || data.student_id !== undefined,
   { message: 'Minimal satu kolom wajib diubah', path: ['_root'] }
 );
 
@@ -70,7 +70,7 @@ export const UpdateRoleSchema = z.object({
   permissions: z.array(z.string()).optional(),
 }).refine(
   data => data.name !== undefined || data.slug !== undefined ||
-          data.description !== undefined || data.permissions !== undefined,
+    data.description !== undefined || data.permissions !== undefined,
   { message: 'At least one field is required to update', path: ['_root'] }
 );
 
@@ -125,14 +125,18 @@ export const UpdateStudentSchema = StudentSchema.partial().refine(
 );
 
 export const TeacherSchema = z.object({
-  user_id: z.string().uuid('Invalid user ID'),
-  employee_id: z.string().max(50, 'Employee ID must be at most 50 characters').optional().nullable(),
-  phone: z.string().max(20, 'Phone must be at most 20 characters').optional().nullable(),
+  nip: z.string().trim().min(4, 'NIP minimal 4 karakter').max(50, 'NIP maksimal 50 karakter'),
+  name: z.string().trim().min(2, 'Nama minimal 2 karakter').max(100, 'Nama maksimal 100 karakter'),
+  subject_ids: z.array(z.string().uuid('ID mata pelajaran tidak valid')).max(50, 'Maksimal 50 mata pelajaran').default([]),
 });
 
-export const UpdateTeacherSchema = TeacherSchema.partial().refine(
-  data => data.user_id !== undefined || data.employee_id !== undefined || data.phone !== undefined,
-  { message: 'At least one field is required to update', path: ['_root'] }
+export const UpdateTeacherSchema = z.object({
+  nip: z.string().trim().min(4, 'NIP minimal 4 karakter').max(50, 'NIP maksimal 50 karakter').optional(),
+  name: z.string().trim().min(2, 'Nama minimal 2 karakter').max(100, 'Nama maksimal 100 karakter').optional(),
+  subject_ids: z.array(z.string().uuid('ID mata pelajaran tidak valid')).max(50, 'Maksimal 50 mata pelajaran').optional(),
+}).refine(
+  data => data.nip !== undefined || data.name !== undefined || data.subject_ids !== undefined,
+  { message: 'Minimal satu field wajib diisi untuk update', path: ['_root'] }
 );
 export const TeacherClassAssignmentsSchema = z.object({
   academic_year_id: z.string().uuid('ID tahun ajaran tidak valid'),

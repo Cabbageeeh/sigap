@@ -29,6 +29,7 @@ export const teacherAssignmentsPage = (req: NaraRequest, res: NaraResponse) => {
       subjects: [],
       schedules: [],
       selectedYearId: '',
+      selectedTeacherId: '',
     });
   }
 
@@ -38,16 +39,22 @@ export const teacherAssignmentsPage = (req: NaraRequest, res: NaraResponse) => {
   const classes = selectedYearId ? findClassesByAcademicYear(selectedYearId) : [];
   const assignments = selectedYearId ? findTeacherClassAssignmentsByAcademicYear(selectedYearId) : [];
   const schedules = selectedYearId ? findSchedulesByYearWithDetails(selectedYearId) : [];
+  const teachers = findAllTeachersForAssignment();
+  const requestedTeacherId = queryString(req, 'teacher_id');
+  const selectedTeacherId = requestedTeacherId && teachers.some(teacher => teacher.id === requestedTeacherId)
+    ? requestedTeacherId
+    : '';
 
   return res.inertia('teacherAssignments', {
     permissions: { canEdit: true },
-    teachers: findAllTeachersForAssignment(),
+    teachers,
     classes,
     years,
     assignments,
     subjects: findAllSubjects(),
     schedules,
     selectedYearId,
+    selectedTeacherId,
   });
 };
 
