@@ -10,9 +10,9 @@
 
 ## Stats
 
-- Files indexed: 271
-- Total lines: 27118
-- Total exports: 809
+- Files indexed: 273
+- Total lines: 27288
+- Total exports: 800
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -65,7 +65,7 @@
 - `reports.ts` (20L) — classSubjectReport
 - `roles.ts` (154L) — rolesPage, listRoles, permissionsData, addRole, editRole, removeRole
 - `schedules.ts` (116L) — schedulesPage, listSchedules, scheduleData, addSchedule, editSchedule, removeSchedule
-- `schoolLocations.ts` (111L) — schoolLocationsPage, listSchoolLocations, activeSchoolLocationData, schoolLocationData, addSchoolLocation, editSchoolLocation, removeSchoolLocation, activateSchoolLocation
+- `schoolLocations.ts` (53L) — schoolLocationsPage, saveSchoolProfile
 - `studentAttendance.ts` (104L) — studentAttendancePage, listAttendanceByJournal, listAttendanceByStudent, saveAttendance, removeAttendance
 - `students.ts` (196L) — studentsPage, classStudentsPage, listStudents, studentsByClass, studentData, addStudent, editStudent, removeStudent, +2
 - `subjects.ts` (86L) — subjectsPage, listSubjects, subjectData, addSubject, editSubject, removeSubject
@@ -104,7 +104,7 @@
 - `parents.ts` (57L) — findAllParents, findParentById, findParentByUserId, getParentsPaginated, createParent, updateParent, deleteParent, ParentListItem
 - `roles.ts` (123L) — findAllRoles, findRoleById, findRoleBySlug, createRole, updateRole, deleteRole, getRolePermissions, getPermissionsForRoles, +10
 - `schedules.ts` (72L) — findAllSchedules, findScheduleById, findSchedulesByClass, findSchedulesByTeacher, findTeacherSchedulesByDay, findSchedulesByDay, createSchedule, updateSchedule, +4
-- `schoolLocations.ts` (40L) — findAllSchoolLocations, findSchoolLocationById, findActiveSchoolLocation, createSchoolLocation, updateSchoolLocation, deleteSchoolLocation, setActiveSchoolLocation
+- `schoolLocations.ts` (25L) — findSchoolLocationById, findActiveSchoolLocation, createSchoolLocation, updateSchoolLocation
 - `sessions.ts` (50L) — findSessionById, createSession, deleteSession, deleteSessionsByUserId, cleanupExpiredSessions, getUserBySessionId
 - `stats.ts` (67L) — getDashboardStats, getClassSubjectStats, DashboardStats, ClassSubjectStats
 - `studentAttendance.ts` (56L) — findAllStudentAttendance, findStudentAttendanceById, findAttendanceByJournal, findAttendanceByStudent, findAttendanceBySchedule, createStudentAttendance, upsertStudentAttendance, updateStudentAttendance, +2
@@ -134,13 +134,13 @@
 
 ### app/types/
 
-- `models.ts` (280L) — User, Session, Role, Permission, Asset, UserRole, RolePermission, AcademicYear, +20
-- `shared.ts` (400L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +35
+- `models.ts` (284L) — User, Session, Role, Permission, Asset, UserRole, RolePermission, AcademicYear, +20
+- `shared.ts` (404L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +35
 
 ### app/validators/
 
-- `index.ts` (90L) — zodToErrors
-- `schemas.ts` (299L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +62
+- `index.ts` (88L) — zodToErrors
+- `schemas.ts` (306L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +60
 
 ### migrations/
 
@@ -181,6 +181,7 @@
 - `20260830000001_align_operator_roles.ts` (67L) — up
 - `20260830000002_one_daily_teacher_confirmation.ts` (10L) — up, down
 - `20260902000001_scope_parent_accounts.ts` (64L) — up
+- `20260912000001_add_school_profile_columns.ts` (14L) — up, down
 
 ### resources/
 
@@ -225,7 +226,7 @@
 - `qrSettings.svelte` (86L)
 - `roles.svelte` (283L)
 - `schedules.svelte` (139L)
-- `schoolLocations.svelte` (88L)
+- `schoolLocations.svelte` (168L)
 - `studentAttendance.svelte` (30L)
 - `students.svelte` (236L)
 - `subjects.svelte` (79L)
@@ -289,12 +290,12 @@
 
 ### resources/types/
 
-- `forms.ts` (438L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +36
+- `forms.ts` (449L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +36
 - `index.ts` (15L)
 
 ### routes/
 
-- `web.ts` ★ (230L)
+- `web.ts` ★ (224L)
 
 ### scripts/
 
@@ -348,6 +349,7 @@
 - `reports.test.ts` (33L)
 - `roles.test.ts` (135L)
 - `schedules.test.ts` (118L)
+- `schoolLocations.test.ts` (131L)
 - `studentAttendance.test.ts` (53L)
 - `students.test.ts` (155L)
 - `teacherAssignments.test.ts` (84L)
@@ -632,13 +634,7 @@
 ### `app/handlers/schoolLocations.ts`
 
 - `const` **schoolLocationsPage**
-- `const` **listSchoolLocations**
-- `const` **activeSchoolLocationData**
-- `const` **schoolLocationData**
-- `const` **addSchoolLocation**
-- `const` **editSchoolLocation**
-- `const` **removeSchoolLocation**
-- `const` **activateSchoolLocation**
+- `const` **saveSchoolProfile**
 
 ### `app/handlers/studentAttendance.ts`
 
@@ -910,13 +906,10 @@
 
 ### `app/queries/schoolLocations.ts`
 
-- `const` **findAllSchoolLocations**
 - `const` **findSchoolLocationById**
 - `const` **findActiveSchoolLocation**
 - `const` **createSchoolLocation**
 - `const` **updateSchoolLocation**
-- `const` **deleteSchoolLocation**
-- `const` **setActiveSchoolLocation**
 
 ### `app/queries/sessions.ts`
 
@@ -1235,8 +1228,7 @@
 - `const` **UpdateParentSchema**
 - `const` **ScheduleSchema**
 - `const` **UpdateScheduleSchema**
-- `const` **SchoolLocationSchema**
-- `const` **UpdateSchoolLocationSchema**
+- `const` **SchoolProfileSchema**
 - `const` **QrSettingsSchema**
 - `const` **TeacherConfirmationSchema**
 - `const` **JournalSchema**
@@ -1270,8 +1262,7 @@
 - `type` **UpdateParentInput**
 - `type` **ScheduleInput**
 - `type` **UpdateScheduleInput**
-- `type` **SchoolLocationInput**
-- `type` **UpdateSchoolLocationInput**
+- `type` **SchoolProfileInput**
 - `type` **QrSettingsInput**
 - `type` **TeacherConfirmationInput**
 - `type` **JournalInput**
@@ -1463,6 +1454,11 @@
 ### `migrations/20260902000001_scope_parent_accounts.ts`
 
 - `fn` **up**
+
+### `migrations/20260912000001_add_school_profile_columns.ts`
+
+- `const` **up**
+- `const` **down**
 
 ### `resources/Components/Badge.svelte`
 
@@ -1758,7 +1754,7 @@
 - `resources/Pages/reports/rapor.svelte` → `../../Components/Button.svelte`, `../../Components/Sidebar.svelte`, `../../types`, `@lucide/svelte`
 - `resources/Pages/roles.svelte` → `../Components/Button.svelte`, `../Components/RoleModal.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/schedules.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/schoolLocations.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Sidebar.svelte`, `../Components/Switch.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/schoolLocations.svelte` → `../Components/Badge.svelte`, `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/studentAttendance.svelte` → `../Components/DataTable.svelte`, `../Components/Sidebar.svelte`, `../types`
 - `resources/Pages/students.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Pagination.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/subjects.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
@@ -1798,6 +1794,7 @@
 - `tests/handlers/reports.test.ts` → `../../app/handlers/reports`, `../helpers/mocks`, `@queries/stats`
 - `tests/handlers/roles.test.ts` → `../../app/handlers/roles`, `../helpers/mocks`, `@queries/roles`, `@queries/users`
 - `tests/handlers/schedules.test.ts` → `../../app/handlers/schedules`, `../helpers/mocks`, `@queries/academicYears`, `@queries/classes`, `@queries/schedules`, `@queries/subjects`, `@queries/teacherClassAssignments`, `@queries/teachers`, `@queries/users`
+- `tests/handlers/schoolLocations.test.ts` → `../../app/handlers/schoolLocations`, `../helpers/mocks`, `@queries/schoolLocations`, `@queries/users`
 - `tests/handlers/studentAttendance.test.ts` → `../../app/handlers/studentAttendance`, `../helpers/mocks`, `@queries/journals`, `@queries/studentAttendance`
 - `tests/handlers/students.test.ts` → `../../app/core/types`, `../../app/handlers/students`, `../helpers/mocks`, `@queries/classes`, `@queries/students`, `@queries/users`, `@services/StudentCsvParser`
 - `tests/handlers/teacherAssignments.test.ts` → `../../app/handlers/teacherAssignments`, `../helpers/mocks`, `@queries/teacherClassAssignments`, `@queries/teachers`, `@queries/users`

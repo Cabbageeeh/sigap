@@ -181,19 +181,27 @@ export const UpdateScheduleSchema = ScheduleSchema.partial().refine(
   { message: 'At least one field is required to update', path: ['_root'] }
 );
 
-export const SchoolLocationSchema = z.object({
-  name: z.string().min(1, 'Nama sekolah wajib diisi').max(100, 'Nama maksimal 100 karakter'),
-  address: z.string().max(500, 'Alamat maksimal 500 karakter').optional().nullable(),
-  latitude: z.number().optional().nullable(),
-  longitude: z.number().optional().nullable(),
-  radius_meters: z.number().int().positive('Radius harus positif').optional().nullable(),
-  is_active: z.number().optional(),
+export const SchoolProfileSchema = z.object({
+  name: z.string().trim().min(1, 'Nama sekolah wajib diisi').max(100, 'Nama maksimal 100 karakter'),
+  npsn: z.string().trim().max(20, 'NPSN maksimal 20 karakter').optional().nullable(),
+  headmaster_name: z.string().trim().max(100, 'Nama kepala sekolah maksimal 100 karakter').optional().nullable(),
+  phone: z.string().trim().max(20, 'Telepon maksimal 20 karakter').optional().nullable(),
+  email: z.string().trim().email('Email tidak valid').max(100, 'Email maksimal 100 karakter').optional().nullable(),
+  address: z.string().trim().max(500, 'Alamat maksimal 500 karakter').optional().nullable(),
+  latitude: z.number().min(-90, 'Latitude minimal -90').max(90, 'Latitude maksimal 90').optional().nullable(),
+  longitude: z.number().min(-180, 'Longitude minimal -180').max(180, 'Longitude maksimal 180').optional().nullable(),
+  radius_meters: z.number().int('Radius harus bilangan bulat').positive('Radius harus positif').max(100000, 'Radius maksimal 100000 meter').optional().nullable(),
+}).superRefine((data, context) => {
+  const geo = [data.latitude, data.longitude, data.radius_meters];
+  const filled = geo.filter(value => value !== undefined && value !== null).length;
+  if (filled > 0 && filled < 3) {
+    context.addIssue({
+      code: 'custom',
+      path: ['radius_meters'],
+      message: 'Latitude, longitude, dan radius wajib diisi semua untuk mengaktifkan geofencing',
+    });
+  }
 });
-
-export const UpdateSchoolLocationSchema = SchoolLocationSchema.partial().refine(
-  data => Object.values(data).some(v => v !== undefined),
-  { message: 'At least one field is required to update', path: ['_root'] }
-);
 
 export const QrSettingsSchema = z.object({
   qr_refresh_interval: z.number().int().min(1, 'Interval minimal 1 menit').max(1440, 'Interval maksimal 1440 menit (24 jam)'),
@@ -285,8 +293,7 @@ export type TeacherClassAssignmentsInput = z.infer<typeof TeacherClassAssignment
 export type UpdateParentInput = z.infer<typeof UpdateParentSchema>;
 export type ScheduleInput = z.infer<typeof ScheduleSchema>;
 export type UpdateScheduleInput = z.infer<typeof UpdateScheduleSchema>;
-export type SchoolLocationInput = z.infer<typeof SchoolLocationSchema>;
-export type UpdateSchoolLocationInput = z.infer<typeof UpdateSchoolLocationSchema>;
+export type SchoolProfileInput = z.infer<typeof SchoolProfileSchema>;
 export type QrSettingsInput = z.infer<typeof QrSettingsSchema>;
 export type TeacherConfirmationInput = z.infer<typeof TeacherConfirmationSchema>;
 export type JournalInput = z.infer<typeof JournalSchema>;

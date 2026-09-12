@@ -131,13 +131,7 @@ Route.delete('/schedules/:id', [Auth], schedules.removeSchedule);
 
 // School Locations
 Route.get('/school-locations', [Auth], schoolLocations.schoolLocationsPage);
-Route.get('/school-locations/data', [Auth], schoolLocations.listSchoolLocations);
-Route.get('/school-locations/active', [Auth], schoolLocations.activeSchoolLocationData);
-Route.get('/school-locations/:id', [Auth], schoolLocations.schoolLocationData);
-Route.post('/school-locations', [Auth], schoolLocations.addSchoolLocation);
-Route.put('/school-locations/:id', [Auth], schoolLocations.editSchoolLocation);
-Route.delete('/school-locations/:id', [Auth], schoolLocations.removeSchoolLocation);
-Route.post('/school-locations/:id/activate', [Auth], schoolLocations.activateSchoolLocation);
+Route.put('/school-locations', [Auth], schoolLocations.saveSchoolProfile);
 
 // Teacher Confirmations (anti-fraud)
 Route.get('/teacher/confirm', [Auth], teacherConfirmations.confirmPage);

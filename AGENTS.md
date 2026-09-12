@@ -152,7 +152,7 @@ Server (ultimate-express)
 |`announcements`|id (uuid), title, body, author_user_id|belongs to `users`|
 |`notifications`|id (uuid), user_id, type, title, body, read_at|belongs to `users`|
 | `schedules` | id (uuid), class_id, subject_id, teacher_user_id, day_of_week, start_time, end_time, academic_year_id | belongs to `classes`, `subjects`, `users`, `academic_years` |
-| `school_locations` | id (uuid), name, address, latitude (nullable), longitude (nullable), radius_meters (nullable), is_active | school profile (lat/long/radius kept for backward compat, no longer required) |
+| `school_locations` | id (uuid), name, npsn (nullable), headmaster_name (nullable), phone (nullable), email (nullable), address, latitude (nullable), longitude (nullable), radius_meters (nullable), is_active | school profile; geofence enforced when lat/long/radius all set |
 | `teacher_confirmations` | id (uuid), schedule_id (nullable), teacher_user_id, photo_url (nullable), latitude, longitude, distance_meters, is_inside_school, confirmation_date, confirmed_at | belongs to `schedules` (optional), `users`; one per teacher per day in QR flow |
 | `app_settings` | key (text), value (text), updated_at | key-value store for app settings (qr_refresh_interval, etc) |
 | `journals` | id (uuid), schedule_id, teacher_confirmation_id, date, material | belongs to `schedules`, `teacher_confirmations` |

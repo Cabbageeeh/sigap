@@ -169,6 +169,10 @@ export interface Schedule {
 export interface SchoolLocation {
   id: string;
   name: string;
+  npsn: string | null;
+  headmaster_name: string | null;
+  phone: string | null;
+  email: string | null;
   address: string | null;
   latitude: number | null;
   longitude: number | null;

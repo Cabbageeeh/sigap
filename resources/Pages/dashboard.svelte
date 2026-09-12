@@ -126,9 +126,9 @@
       {/if}
 
       {#if hasPermission('school_locations.view')}
-        <BentoCard title="Lokasi Sekolah" description="Atur lokasi aktif untuk verifikasi.">
+        <BentoCard title="Profil Sekolah" description="Identitas sekolah dan geofencing absensi.">
           <a href="/school-locations" use:inertia class="mt-auto inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
-            Kelola lokasi <ArrowRight class="w-4 h-4" />
+            Kelola profil <ArrowRight class="w-4 h-4" />
           </a>
         </BentoCard>
       {/if}

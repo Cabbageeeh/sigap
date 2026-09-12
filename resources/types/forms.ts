@@ -242,10 +242,15 @@ export interface ScheduleForm {
 }
 
 export interface SchoolLocationForm {
-  id: string | null;
   name: string;
+  npsn: string;
+  headmaster_name: string;
+  phone: string;
+  email: string;
   address: string;
-  is_active: boolean;
+  latitude: string;
+  longitude: string;
+  radius_meters: string;
 }
 
 export interface QrSettingsForm {
@@ -380,15 +385,21 @@ export function scheduleToForm(schedule: Schedule): ScheduleForm {
 }
 
 export function createEmptySchoolLocationForm(): SchoolLocationForm {
-  return { id: null, name: '', address: '', is_active: false };
+  return { name: '', npsn: '', headmaster_name: '', phone: '', email: '', address: '', latitude: '', longitude: '', radius_meters: '' };
 }
 
-export function schoolLocationToForm(location: SchoolLocation): SchoolLocationForm {
+export function schoolLocationToForm(location: SchoolLocation | null): SchoolLocationForm {
+  if (!location) return createEmptySchoolLocationForm();
   return {
-    id: location.id,
     name: location.name,
+    npsn: location.npsn || '',
+    headmaster_name: location.headmaster_name || '',
+    phone: location.phone || '',
+    email: location.email || '',
     address: location.address || '',
-    is_active: location.is_active === 1,
+    latitude: location.latitude === null ? '' : String(location.latitude),
+    longitude: location.longitude === null ? '' : String(location.longitude),
+    radius_meters: location.radius_meters === null ? '' : String(location.radius_meters),
   };
 }
 
