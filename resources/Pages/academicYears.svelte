@@ -24,15 +24,23 @@
 
   const displayYears = $derived(years.map(year => ({
     ...year,
+    name_display: year.is_active === 1 ? `${year.name} (Sedang Berjalan)` : year.name,
+    start_display: new Date(year.start_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+    end_display: new Date(year.end_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+    active_status: year.is_active === 1 ? 'Aktif' : 'Nonaktif',
     grades_status: year.is_grades_published === 1 ? 'Dipublikasikan' : 'Draft',
   })));
 
   let isOpen = $state(false);
   let isDeleteOpen = $state(false);
+  let isActivateOpen = $state(false);
+  let isPublishOpen = $state(false);
   let isComponentsOpen = $state(false);
   let form: AcademicYearForm = $state(createEmptyAcademicYearForm());
   let selected: AcademicYear | null = $state(null);
   let componentYear: AcademicYear | null = $state(null);
+  let activateYear: AcademicYear | null = $state(null);
+  let publishYear: AcademicYear | null = $state(null);
   let componentRows = $state<{ type: string; name: string; weight: number }[]>([]);
   let startInput = $state('');
   let endInput = $state('');
@@ -80,12 +88,15 @@
     }
   }
 
-  function setActive(id: string): void {
-    api(() => axios.post(`/academic-years/${id}/activate`)).then(() => router.visit('/academic-years', { preserveScroll: true }));
+  function confirmActivate(year: AcademicYear): void { activateYear = year; isActivateOpen = true; }
+  function activate(): void {
+    if (!activateYear) return;
+    api(() => axios.post(`/academic-years/${activateYear!.id}/activate`)).then(() => router.visit('/academic-years', { preserveScroll: true }));
   }
-
-  function togglePublish(year: AcademicYear): void {
-    api(() => axios.post(`/academic-years/${year.id}/publish-grades`)).then(() => router.visit('/academic-years', { preserveScroll: true }));
+  function confirmPublish(year: AcademicYear): void { publishYear = year; isPublishOpen = true; }
+  function publish(): void {
+    if (!publishYear) return;
+    api(() => axios.post(`/academic-years/${publishYear!.id}/publish-grades`)).then(() => router.visit('/academic-years', { preserveScroll: true }));
   }
 
   async function openComponents(year: AcademicYear): Promise<void> {
@@ -109,20 +120,20 @@
   }
 
   const columns = [
-    { key: 'name', label: 'Nama' },
-    { key: 'start_at', label: 'Mulai' },
-    { key: 'end_at', label: 'Selesai' },
-    { key: 'is_active', label: 'Aktif' },
-    { key: 'grades_status', label: 'Nilai' },
+    { key: 'name_display', label: 'Nama' },
+    { key: 'start_display', label: 'Mulai' },
+    { key: 'end_display', label: 'Selesai' },
+    { key: 'active_status', label: 'Aktif' },
+    { key: 'grades_status', label: 'Status Rapor' },
   ];
 </script>
 
 {#snippet rowActions(year: AcademicYear)}
   {#if permissions.canEdit}
     <Button variant="ghost" onclick={() => openComponents(year)}>Bobot</Button>
-    <Button variant="ghost" onclick={() => togglePublish(year)}>{year.is_grades_published === 1 ? 'Tarik Publikasi' : 'Publikasikan'}</Button>
+    <Button variant="ghost" onclick={() => confirmPublish(year)}>{year.is_grades_published === 1 ? 'Tarik Publikasi' : 'Publikasikan'}</Button>
     <Button variant="ghost" size="icon" onclick={() => openEdit(year)}><Pencil class="w-4 h-4" /></Button>
-    <Button variant="ghost" onclick={() => setActive(year.id)}>Aktifkan</Button>
+    <Button variant="ghost" onclick={() => confirmActivate(year)}>Aktifkan</Button>
   {/if}
   {#if permissions.canDelete}
     <Button variant="ghost" size="icon" onclick={() => confirmDelete(year)}><Trash2 class="w-4 h-4 text-destructive" /></Button>
@@ -184,4 +195,6 @@
   </form>
 </Modal>
 
-<ConfirmDialog bind:open={isDeleteOpen} title="Hapus Tahun Ajaran" onConfirm={remove} destructive />
+<ConfirmDialog bind:open={isDeleteOpen} title="Hapus Tahun Ajaran" description="Tahun ajaran yang dihapus tidak bisa dikembalikan. Lanjutkan?" confirmLabel="Hapus" cancelLabel="Batal" onConfirm={remove} destructive />
+<ConfirmDialog bind:open={isActivateOpen} title="Aktifkan Tahun Ajaran" description="Periode lain yang sedang aktif akan dinonaktifkan. Lanjutkan?" confirmLabel="Aktifkan" cancelLabel="Batal" onConfirm={activate} />
+<ConfirmDialog bind:open={isPublishOpen} title={publishYear?.is_grades_published === 1 ? 'Tarik Publikasi Nilai' : 'Publikasikan Nilai'} description={publishYear?.is_grades_published === 1 ? 'Nilai akan disembunyikan lagi dari orang tua. Lanjutkan?' : 'Semua orang tua akan menerima notifikasi nilai dipublikasikan. Lanjutkan?'} confirmLabel={publishYear?.is_grades_published === 1 ? 'Tarik' : 'Publikasikan'} cancelLabel="Batal" onConfirm={publish} />

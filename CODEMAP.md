@@ -11,7 +11,7 @@
 ## Stats
 
 - Files indexed: 273
-- Total lines: 27288
+- Total lines: 27301
 - Total exports: 800
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
@@ -212,7 +212,7 @@
 
 ### resources/Pages/
 
-- `academicYears.svelte` (188L)
+- `academicYears.svelte` (201L)
 - `announcements.svelte` (112L)
 - `classes.svelte` (107L)
 - `dashboard.svelte` (139L)
