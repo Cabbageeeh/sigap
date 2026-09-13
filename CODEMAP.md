@@ -11,7 +11,7 @@
 ## Stats
 
 - Files indexed: 276
-- Total lines: 28136
+- Total lines: 28139
 - Total exports: 810
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
@@ -228,7 +228,7 @@
 - `qrSettings.svelte` (86L)
 - `roles.svelte` (283L)
 - `schedules.svelte` (321L)
-- `schoolLocations.svelte` (175L)
+- `schoolLocations.svelte` (178L)
 - `studentAttendance.svelte` (30L)
 - `students.svelte` (236L)
 - `subjects.svelte` (79L)

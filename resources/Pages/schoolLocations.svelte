@@ -21,15 +21,18 @@
 
   const geofenceActive = $derived(profile !== null && profile !== undefined && profile.latitude !== null && profile.longitude !== null && profile.radius_meters !== null);
 
-  function toNumberOrNull(value: string): number | null {
+  function toNumberOrNull(value: string | number | null | undefined): number | null {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number') return Number.isNaN(value) ? null : value;
     const trimmed = value.trim();
     if (!trimmed) return null;
     const parsed = Number(trimmed);
     return Number.isNaN(parsed) ? null : parsed;
   }
 
-  function toStringOrNull(value: string): string | null {
-    const trimmed = value.trim();
+  function toStringOrNull(value: string | number | null | undefined): string | null {
+    if (value === null || value === undefined) return null;
+    const trimmed = String(value).trim();
     return trimmed ? trimmed : null;
   }
 
