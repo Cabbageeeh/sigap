@@ -46,6 +46,7 @@
       latitude: toNumberOrNull(form.latitude),
       longitude: toNumberOrNull(form.longitude),
       radius_meters: toNumberOrNull(form.radius_meters),
+      start_time: toStringOrNull(form.start_time),
     };
     const result = await api(() => axios.put('/school-locations', payload));
     isSaving = false;
@@ -151,6 +152,12 @@
             <div class="flex flex-col gap-0"><Label for="school-lng" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Longitude</Label><Input id="school-lng" type="number" step="any" bind:value={form.longitude} disabled={!permissions.canEdit} placeholder="cth. 106.8" /></div>
           </div>
           <div class="flex flex-col gap-0"><Label for="school-radius" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Radius (meter)</Label><Input id="school-radius" type="number" step="1" min="1" bind:value={form.radius_meters} disabled={!permissions.canEdit} placeholder="cth. 200" /></div>
+        </div>
+        <div class="rounded-xl border border-border bg-secondary/20 px-4 py-3 mt-5 mb-5 text-sm text-muted-foreground">
+          Konfirmasi setelah jam masuk standar ditandai <strong class="text-foreground">Terlambat</strong> di log kehadiran guru.
+        </div>
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-0"><Label for="school-start" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Jam Masuk Standar</Label><Input id="school-start" type="time" bind:value={form.start_time} disabled={!permissions.canEdit} /></div>
         </div>
       </section>
     </form>

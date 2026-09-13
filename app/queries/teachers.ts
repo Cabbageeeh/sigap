@@ -13,6 +13,12 @@ export const findAllTeachersForAssignment = (): Array<Teacher & { user_name: str
   `;
 export const findTeacherByEmployeeId = (employeeId: string): Teacher | undefined =>
   SQLite.one<Teacher>`SELECT * FROM teachers WHERE employee_id = ${employeeId}`;
+
+export const countActiveTeachers = (): number =>
+  SQLite.get<{ count: number }>(
+    `SELECT COUNT(*) as count FROM teachers t INNER JOIN users u ON u.id = t.user_id WHERE u.is_active = 1`
+  )?.count ?? 0;
+
 export const findTeacherUsersForSchedule = (): { id: string; name: string | null; username: string }[] =>
   SQLite.many<{ id: string; name: string | null; username: string }>`
     SELECT u.id, u.name, u.username

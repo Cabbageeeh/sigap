@@ -37,6 +37,7 @@ export const saveSchoolProfile = (req: NaraRequest, res: NaraResponse) => {
     latitude: parsed.data.latitude ?? null,
     longitude: parsed.data.longitude ?? null,
     radius_meters: parsed.data.radius_meters ?? null,
+    start_time: parsed.data.start_time ?? null,
   };
 
   try {

@@ -5,17 +5,57 @@ import { randomUUID } from 'crypto';
 export const findAllTeacherConfirmations = (): TeacherConfirmation[] =>
   SQLite.many<TeacherConfirmation>`SELECT * FROM teacher_confirmations ORDER BY confirmed_at DESC`;
 
-export const findAllTeacherConfirmationLogs = (): TeacherConfirmationLogView[] =>
-  SQLite.many<TeacherConfirmationLogView>`
-    SELECT tc.id,
-           COALESCE(u.name, u.username) AS teacher_name,
-           u.username AS teacher_username,
-           COALESCE(tc.confirmation_date, tc.confirmed_at) AS confirmation_date,
-           tc.confirmed_at
-    FROM teacher_confirmations tc
-    INNER JOIN users u ON u.id = tc.teacher_user_id
-    ORDER BY tc.confirmed_at DESC
-  `;
+export interface ConfirmationLogFilters {
+  page: number;
+  limit: number;
+  startMs?: number;
+  endMs?: number;
+  teacherUserId?: string;
+}
+
+export const getConfirmationLogsPaginated = (filters: ConfirmationLogFilters): { data: TeacherConfirmationLogView[]; total: number } => {
+  const conditions: string[] = [];
+  const params: unknown[] = [];
+  if (filters.teacherUserId) {
+    conditions.push('tc.teacher_user_id = ?');
+    params.push(filters.teacherUserId);
+  }
+  if (filters.startMs !== undefined) {
+    conditions.push('tc.confirmed_at >= ?');
+    params.push(filters.startMs);
+  }
+  if (filters.endMs !== undefined) {
+    conditions.push('tc.confirmed_at < ?');
+    params.push(filters.endMs);
+  }
+  const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+  const countRow = SQLite.get<{ count: number }>(
+    `SELECT COUNT(*) as count FROM teacher_confirmations tc ${where}`,
+    params
+  );
+  const data = SQLite.all<TeacherConfirmationLogView>(
+    `SELECT tc.id,
+            COALESCE(u.name, u.username) AS teacher_name,
+            u.username AS teacher_username,
+            COALESCE(tc.confirmation_date, tc.confirmed_at) AS confirmation_date,
+            tc.confirmed_at
+     FROM teacher_confirmations tc
+     INNER JOIN users u ON u.id = tc.teacher_user_id
+     ${where}
+     ORDER BY tc.confirmed_at DESC
+     LIMIT ? OFFSET ?`,
+    [...params, filters.limit, (filters.page - 1) * filters.limit]
+  );
+  return { data, total: countRow?.count ?? 0 };
+};
+
+export const countTeachersConfirmedOn = (dayStartMs: number): number => {
+  const row = SQLite.get<{ count: number }>(
+    `SELECT COUNT(DISTINCT teacher_user_id) as count FROM teacher_confirmations WHERE confirmed_at >= ? AND confirmed_at < ?`,
+    [dayStartMs, dayStartMs + 86400000]
+  );
+  return row?.count ?? 0;
+};
 
 export const findTeacherConfirmationById = (id: string): TeacherConfirmation | undefined =>
   SQLite.one<TeacherConfirmation>`SELECT * FROM teacher_confirmations WHERE id = ${id}`;

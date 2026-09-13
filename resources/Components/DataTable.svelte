@@ -1,3 +1,12 @@
+<script lang="ts" module>
+  export interface DataTableCell {
+    columnKey: string;
+    label: string;
+    row: Record<string, unknown>;
+    value: unknown;
+  }
+</script>
+
 <script lang="ts" generics="T extends Record<string, unknown>">
   import type { Snippet } from 'svelte';
   import { cn } from '$lib/utils.js';
@@ -16,6 +25,7 @@
     class: className,
     emptyMessage = 'Tidak ada data',
     rowAction,
+    cell,
   }: {
     columns: Column[];
     rows: T[];
@@ -23,6 +33,7 @@
     class?: string;
     emptyMessage?: string;
     rowAction?: Snippet<[T]>;
+    cell?: Snippet<[DataTableCell]>;
   } = $props();
 
   function cellValue(row: T, key: string | keyof T): unknown {
@@ -64,7 +75,11 @@
           <tr class="hover:bg-secondary/35 transition-colors">
             {#each columns as col}
               <td class={cn("px-4 py-3.5 text-foreground font-body whitespace-nowrap", alignClass(col.align), col.class)}>
-                {String(cellValue(row, col.key) ?? '-')}
+                {#if cell}
+                  {@render cell({ columnKey: String(col.key), label: col.label, row: row as Record<string, unknown>, value: cellValue(row, col.key) })}
+                {:else}
+                  {String(cellValue(row, col.key) ?? '-')}
+                {/if}
               </td>
             {/each}
             {#if rowAction}

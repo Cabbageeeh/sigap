@@ -31,6 +31,7 @@ const validBody = {
   latitude: -6.2,
   longitude: 106.8,
   radius_meters: 200,
+  start_time: '07:00',
 };
 
 describe('schoolLocations handler', () => {

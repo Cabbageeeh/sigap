@@ -191,6 +191,7 @@ export const SchoolProfileSchema = z.object({
   latitude: z.number().min(-90, 'Latitude minimal -90').max(90, 'Latitude maksimal 90').optional().nullable(),
   longitude: z.number().min(-180, 'Longitude minimal -180').max(180, 'Longitude maksimal 180').optional().nullable(),
   radius_meters: z.number().int('Radius harus bilangan bulat').positive('Radius harus positif').max(100000, 'Radius maksimal 100000 meter').optional().nullable(),
+  start_time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Format jam masuk harus HH:MM (contoh 07:00)').optional().nullable(),
 }).superRefine((data, context) => {
   const geo = [data.latitude, data.longitude, data.radius_meters];
   const filled = geo.filter(value => value !== undefined && value !== null).length;

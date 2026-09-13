@@ -251,6 +251,7 @@ export interface SchoolLocationForm {
   latitude: string;
   longitude: string;
   radius_meters: string;
+  start_time: string;
 }
 
 export interface QrSettingsForm {
@@ -385,7 +386,7 @@ export function scheduleToForm(schedule: Schedule): ScheduleForm {
 }
 
 export function createEmptySchoolLocationForm(): SchoolLocationForm {
-  return { name: '', npsn: '', headmaster_name: '', phone: '', email: '', address: '', latitude: '', longitude: '', radius_meters: '' };
+  return { name: '', npsn: '', headmaster_name: '', phone: '', email: '', address: '', latitude: '', longitude: '', radius_meters: '', start_time: '' };
 }
 
 export function schoolLocationToForm(location: SchoolLocation | null): SchoolLocationForm {
@@ -400,6 +401,7 @@ export function schoolLocationToForm(location: SchoolLocation | null): SchoolLoc
     latitude: location.latitude === null ? '' : String(location.latitude),
     longitude: location.longitude === null ? '' : String(location.longitude),
     radius_meters: location.radius_meters === null ? '' : String(location.radius_meters),
+    start_time: location.start_time || '',
   };
 }
 

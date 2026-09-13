@@ -4,10 +4,11 @@ import { mockRequest, mockResponse, mockUser } from '../helpers/mocks';
 vi.mock('@queries/teacherConfirmations', () => ({
   findTeacherConfirmationById: vi.fn(),
   findAllTeacherConfirmations: vi.fn(() => []),
-  findAllTeacherConfirmationLogs: vi.fn(() => []),
   findConfirmationsByTeacher: vi.fn(() => []),
   createTeacherConfirmation: vi.fn(),
   findTodayConfirmationByTeacher: vi.fn(),
+  getConfirmationLogsPaginated: vi.fn(() => ({ data: [], total: 0 })),
+  countTeachersConfirmedOn: vi.fn(() => 0),
 }));
 vi.mock('@queries/schedules', () => ({ findScheduleById: vi.fn() }));
 vi.mock('@queries/schoolLocations', () => ({ findActiveSchoolLocation: vi.fn(() => null) }));
@@ -23,15 +24,22 @@ vi.mock('@queries/users', () => ({
   hasPermission: vi.fn(() => true),
 }));
 vi.mock('@queries/teacherClassAssignments', () => ({ isTeacherUser: vi.fn(() => true) }));
+vi.mock('@queries/teachers', () => ({
+  findAllTeachersForAssignment: vi.fn(() => []),
+  countActiveTeachers: vi.fn(() => 0),
+}));
 vi.mock('@services/Logger', () => ({
   default: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-import { submitTeacherConfirmation } from '../../app/handlers/teacherConfirmations';
-import { createTeacherConfirmation, findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
+import { submitTeacherConfirmation, teacherConfirmationsPage } from '../../app/handlers/teacherConfirmations';
+import { createTeacherConfirmation, findTodayConfirmationByTeacher, getConfirmationLogsPaginated, countTeachersConfirmedOn } from '@queries/teacherConfirmations';
 import { findActiveSchoolLocation } from '@queries/schoolLocations';
+import { findAllTeachersForAssignment, countActiveTeachers } from '@queries/teachers';
 import { haversineDistance } from '@services/Geolocation';
 import { verifyQrToken } from '@services/QrCode';
+import { isAdmin } from '@queries/users';
+import { isTeacherUser } from '@queries/teacherClassAssignments';
 
 const teacher = mockUser({ id: 'teacher-1', roles: ['teacher'] });
 const validBody = { qr_token: 'signed-qr-token' };
@@ -139,5 +147,92 @@ describe('teacher QR confirmation workflow', () => {
       distance_meters: 15,
       is_inside_school: 1,
     }));
+  });
+});
+
+describe('teacher confirmations log page', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(getConfirmationLogsPaginated).mockReturnValue({ data: [], total: 0 });
+    vi.mocked(findActiveSchoolLocation).mockReturnValue({ start_time: '07:00' } as never);
+  });
+
+  it('redirects guests to login', () => {
+    const inertia = vi.fn();
+    const res = mockResponse({ inertia });
+    teacherConfirmationsPage(mockRequest({ user: undefined }), res);
+    expect(res._redirectUrl).toBe('/login');
+    expect(inertia).not.toHaveBeenCalled();
+  });
+
+  it('scopes teachers to their own logs without a summary', () => {
+    vi.mocked(isAdmin).mockReturnValue(false);
+    vi.mocked(isTeacherUser).mockReturnValue(true);
+    const inertia = vi.fn();
+    const res = mockResponse({ inertia });
+    teacherConfirmationsPage(mockRequest({ user: teacher, query: { teacher_id: 'other-teacher' } }), res);
+
+    expect(getConfirmationLogsPaginated).toHaveBeenCalledWith({
+      page: 1,
+      limit: 20,
+      startMs: undefined,
+      endMs: undefined,
+      teacherUserId: 'teacher-1',
+    });
+    expect(inertia).toHaveBeenCalledWith('teacherConfirmations', expect.objectContaining({
+      summary: null,
+      teachers: [],
+      isOwnView: true,
+      schoolStartTime: '07:00',
+    }));
+  });
+
+  it('applies date and teacher filters with a summary for oversight', () => {
+    vi.mocked(isAdmin).mockReturnValue(true);
+    vi.mocked(isTeacherUser).mockReturnValue(false);
+    vi.mocked(countTeachersConfirmedOn).mockReturnValue(5);
+    vi.mocked(countActiveTeachers).mockReturnValue(12);
+    vi.mocked(findAllTeachersForAssignment).mockReturnValue([{ user_id: 'teacher-1' }] as never);
+    const inertia = vi.fn();
+    const res = mockResponse({ inertia });
+    teacherConfirmationsPage(mockRequest({
+      user: mockUser({ id: 'admin-1' }),
+      query: { start_date: '2026-09-01', end_date: '2026-09-07', teacher_id: 'teacher-1', page: '2' },
+    }), res);
+
+    const startMs = new Date('2026-09-01T00:00:00').getTime();
+    const endMs = new Date('2026-09-07T00:00:00').getTime() + 86400000;
+    expect(getConfirmationLogsPaginated).toHaveBeenCalledWith({
+      page: 2,
+      limit: 20,
+      startMs,
+      endMs,
+      teacherUserId: 'teacher-1',
+    });
+    expect(inertia).toHaveBeenCalledWith('teacherConfirmations', expect.objectContaining({
+      summary: { confirmed: 5, total: 12 },
+      isOwnView: false,
+      filters: { start_date: '2026-09-01', end_date: '2026-09-07', teacher_id: 'teacher-1' },
+    }));
+  });
+
+  it('ignores malformed date filters', () => {
+    vi.mocked(isAdmin).mockReturnValue(true);
+    vi.mocked(isTeacherUser).mockReturnValue(false);
+    const inertia = vi.fn();
+    const res = mockResponse({ inertia });
+    teacherConfirmationsPage(mockRequest({
+      user: mockUser({ id: 'admin-1' }),
+      query: { start_date: 'not-a-date', end_date: '2026-13-99' },
+    }), res);
+
+    expect(getConfirmationLogsPaginated).toHaveBeenCalledWith({
+      page: 1,
+      limit: 20,
+      startMs: undefined,
+      endMs: undefined,
+      teacherUserId: undefined,
+    });
+    expect(inertia).toHaveBeenCalled();
   });
 });

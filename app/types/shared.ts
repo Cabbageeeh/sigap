@@ -177,6 +177,7 @@ export interface SchoolLocation {
   latitude: number | null;
   longitude: number | null;
   radius_meters: number | null;
+  start_time: string | null;
   is_active: number;
   created_at?: number;
 }

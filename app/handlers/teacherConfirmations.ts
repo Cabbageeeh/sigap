@@ -1,9 +1,10 @@
 import type { NaraRequest, NaraResponse } from '@core';
-import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationError, queryString, isUniqueConstraintError } from '@core';
+import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationError, queryInt, queryString, isUniqueConstraintError } from '@core';
 import Logger from '@services/Logger';
-import { findTeacherConfirmationById, findAllTeacherConfirmations, findAllTeacherConfirmationLogs, findConfirmationsByTeacher, createTeacherConfirmation, findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
+import { findTeacherConfirmationById, findAllTeacherConfirmations, findConfirmationsByTeacher, createTeacherConfirmation, findTodayConfirmationByTeacher, getConfirmationLogsPaginated, countTeachersConfirmedOn } from '@queries/teacherConfirmations';
 import { findScheduleById } from '@queries/schedules';
 import { findActiveSchoolLocation } from '@queries/schoolLocations';
+import { findAllTeachersForAssignment, countActiveTeachers } from '@queries/teachers';
 import { haversineDistance, validateCoordinates } from '@services/Geolocation';
 import { verifyQrToken } from '@services/QrCode';
 import { isAdmin, hasPermission } from '@queries/users';
@@ -14,14 +15,52 @@ import type { TeacherConfirmation } from '@types';
 const isTeacherActor = (userId: string): boolean => !isAdmin(userId) && isTeacherUser(userId);
 const canView = (userId: string): boolean => isAdmin(userId) || hasPermission(userId, 'confirmations.view');
 
+const DATE_PARAM_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+const parseDateParam = (value: string): number | null => {
+  if (!DATE_PARAM_PATTERN.test(value)) return null;
+  const ms = new Date(`${value}T00:00:00`).getTime();
+  return Number.isNaN(ms) ? null : ms;
+};
+
+const startOfToday = (): number => {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  return start.getTime();
+};
+
 export const teacherConfirmationsPage = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return res.redirect('/login');
   const userId = req.user.id;
-  const permissions = { canView: canView(userId) };
-  const records = canView(userId)
-    ? (isTeacherActor(userId) ? findConfirmationsByTeacher(userId) : findAllTeacherConfirmationLogs())
-    : [];
-  return res.inertia('teacherConfirmations', { permissions, records });
+  const allowed = canView(userId);
+  const ownView = allowed && isTeacherActor(userId);
+  const page = queryInt(req, 'page', 1);
+  const limit = queryInt(req, 'limit', 20);
+  const startDate = queryString(req, 'start_date');
+  const endDate = queryString(req, 'end_date');
+  const teacherFilter = queryString(req, 'teacher_id');
+  const startMs = parseDateParam(startDate);
+  const endDayMs = parseDateParam(endDate);
+  const result = allowed
+    ? getConfirmationLogsPaginated({
+      page,
+      limit,
+      startMs: startMs ?? undefined,
+      endMs: endDayMs !== null ? endDayMs + 86400000 : undefined,
+      teacherUserId: ownView ? userId : (teacherFilter || undefined),
+    })
+    : { data: [], total: 0 };
+  const totalPages = Math.ceil(result.total / limit);
+  return res.inertia('teacherConfirmations', {
+    permissions: { canView: allowed },
+    records: result.data,
+    meta: { total: result.total, page, limit, totalPages, hasNext: page < totalPages, hasPrev: page > 1 },
+    filters: { start_date: startDate, end_date: endDate, teacher_id: teacherFilter },
+    summary: allowed && !ownView ? { confirmed: countTeachersConfirmedOn(startOfToday()), total: countActiveTeachers() } : null,
+    schoolStartTime: allowed ? findActiveSchoolLocation()?.start_time ?? null : null,
+    teachers: allowed && !ownView ? findAllTeachersForAssignment() : [],
+    isOwnView: ownView,
+  });
 };
 
 export const confirmPage = (req: NaraRequest, res: NaraResponse) => {
