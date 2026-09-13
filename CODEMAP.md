@@ -10,9 +10,9 @@
 
 ## Stats
 
-- Files indexed: 275
-- Total lines: 27873
-- Total exports: 806
+- Files indexed: 276
+- Total lines: 28136
+- Total exports: 810
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -64,7 +64,7 @@
 - `rapor.ts` (51L) — raporPage
 - `reports.ts` (20L) — classSubjectReport
 - `roles.ts` (154L) — rolesPage, listRoles, permissionsData, addRole, editRole, removeRole
-- `schedules.ts` (116L) — schedulesPage, listSchedules, scheduleData, addSchedule, editSchedule, removeSchedule
+- `schedules.ts` (186L) — schedulesPage, listSchedules, scheduleData, addSchedule, editSchedule, removeSchedule
 - `schoolLocations.ts` (54L) — schoolLocationsPage, saveSchoolProfile
 - `studentAttendance.ts` (104L) — studentAttendancePage, listAttendanceByJournal, listAttendanceByStudent, saveAttendance, removeAttendance
 - `students.ts` (196L) — studentsPage, classStudentsPage, listStudents, studentsByClass, studentData, addStudent, editStudent, removeStudent, +2
@@ -103,7 +103,7 @@
 - `notifications.ts` (41L) — createGradePublishedNotifications, findNotificationsByUser, getUnreadNotificationCount, markAllNotificationsRead
 - `parents.ts` (57L) — findAllParents, findParentById, findParentByUserId, getParentsPaginated, createParent, updateParent, deleteParent, ParentListItem
 - `roles.ts` (123L) — findAllRoles, findRoleById, findRoleBySlug, createRole, updateRole, deleteRole, getRolePermissions, getPermissionsForRoles, +10
-- `schedules.ts` (72L) — findAllSchedules, findScheduleById, findSchedulesByClass, findSchedulesByTeacher, findTeacherSchedulesByDay, findSchedulesByDay, createSchedule, updateSchedule, +4
+- `schedules.ts` (83L) — findAllSchedules, findScheduleById, findSchedulesByClass, findSchedulesByTeacher, findTeacherSchedulesByDay, findSchedulesByDay, createSchedule, updateSchedule, +5
 - `schoolLocations.ts` (25L) — findSchoolLocationById, findActiveSchoolLocation, createSchoolLocation, updateSchoolLocation
 - `sessions.ts` (50L) — findSessionById, createSession, deleteSession, deleteSessionsByUserId, cleanupExpiredSessions, getUserBySessionId
 - `stats.ts` (67L) — getDashboardStats, getClassSubjectStats, DashboardStats, ClassSubjectStats
@@ -183,6 +183,7 @@
 - `20260902000001_scope_parent_accounts.ts` (64L) — up
 - `20260912000001_add_school_profile_columns.ts` (14L) — up, down
 - `20260913000001_add_school_start_time.ts` (8L) — up, down
+- `20260913000002_add_missing_updated_at.ts` (12L) — up, down
 
 ### resources/
 
@@ -226,7 +227,7 @@
 - `qrDisplay.svelte` (89L)
 - `qrSettings.svelte` (86L)
 - `roles.svelte` (283L)
-- `schedules.svelte` (312L)
+- `schedules.svelte` (321L)
 - `schoolLocations.svelte` (175L)
 - `studentAttendance.svelte` (30L)
 - `students.svelte` (236L)
@@ -327,7 +328,7 @@
 
 ### tests/
 
-- `conventions.test.ts` (70L)
+- `conventions.test.ts` (118L) — down
 
 ### tests/core/
 
@@ -349,7 +350,7 @@
 - `rapor.test.ts` (43L)
 - `reports.test.ts` (33L)
 - `roles.test.ts` (135L)
-- `schedules.test.ts` (118L)
+- `schedules.test.ts` (231L)
 - `schoolLocations.test.ts` (132L)
 - `studentAttendance.test.ts` (53L)
 - `students.test.ts` (155L)
@@ -903,6 +904,7 @@
 - `const` **updateSchedule**
 - `const` **deleteSchedule**
 - `const` **findSchedulesByYearWithDetails**
+- `const` **findSchedulesByYearAndDayWithDetails**
 - `iface` **TeacherDailySchedule**
 - `iface` **ScheduleWithDetails**
 
@@ -1470,6 +1472,11 @@
 - `const` **up**
 - `const` **down**
 
+### `migrations/20260913000002_add_missing_updated_at.ts`
+
+- `const` **up**
+- `const` **down**
+
 ### `resources/Components/Badge.svelte`
 
 - `const` **badgeVariants**
@@ -1637,6 +1644,10 @@
 ### `seeds/08_qr_settings.ts`
 
 - `fn` **run**
+
+### `tests/conventions.test.ts`
+
+- `const` **down**
 
 ### `tests/helpers/mocks.ts`
 

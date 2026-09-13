@@ -69,3 +69,14 @@ export const findSchedulesByYearWithDetails = (academicYearId: string): Schedule
     WHERE s.academic_year_id = ${academicYearId}
     ORDER BY s.day_of_week, s.start_time
   `;
+
+export const findSchedulesByYearAndDayWithDetails = (academicYearId: string, dayOfWeek: number): ScheduleWithDetails[] =>
+  SQLite.many<ScheduleWithDetails>`
+    SELECT s.*, c.name AS class_name, sub.name AS subject_name, COALESCE(u.name, u.username) AS teacher_name
+    FROM schedules s
+    INNER JOIN classes c ON c.id = s.class_id
+    INNER JOIN subjects sub ON sub.id = s.subject_id
+    LEFT JOIN users u ON u.id = s.teacher_user_id
+    WHERE s.academic_year_id = ${academicYearId} AND s.day_of_week = ${dayOfWeek}
+    ORDER BY s.start_time
+  `;

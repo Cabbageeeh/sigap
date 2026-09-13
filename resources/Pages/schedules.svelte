@@ -56,6 +56,15 @@
   const subjectNames = $derived(new Map(subjects.map(item => [item.id, item.name])));
   const teacherNames = $derived(new Map(teachers.map(item => [item.id, item.name || item.username])));
   const yearClasses = $derived(selectedYearId ? classes.filter(item => item.academic_year_id === selectedYearId) : classes);
+  const activeYearId = $derived(years.find(item => item.is_active === 1)?.id ?? years[0]?.id ?? '');
+  const modalClasses = $derived(form.academic_year_id ? classes.filter(item => item.academic_year_id === form.academic_year_id) : classes);
+
+  $effect(() => {
+    const yearId = form.academic_year_id;
+    if (yearId && form.class_id && !classes.some(item => item.id === form.class_id && item.academic_year_id === yearId)) {
+      form.class_id = '';
+    }
+  });
 
   const filtered = $derived(schedules.filter(schedule => {
     if (selectedYearId && schedule.academic_year_id !== selectedYearId) return false;
@@ -123,7 +132,7 @@
       ...createEmptyScheduleForm(),
       class_id: mode === 'class' ? selectedClassId : '',
       teacher_user_id: mode === 'teacher' ? selectedTeacherId : '',
-      academic_year_id: selectedYearId,
+      academic_year_id: selectedYearId || activeYearId,
     };
   }
 
@@ -267,8 +276,13 @@
   {/if}
 </div>
 
-<Modal bind:open={isOpen} title={selected ? 'Edit Jadwal' : 'Tambah Jadwal'} description="Tambah atau ubah jadwal pelajaran. Atur hari, jam, kelas, mapel, dan guru.">
+<Modal bind:open={isOpen} title={selected ? 'Edit Jadwal' : 'Tambah Jadwal'} description="Tambah atau ubah jadwal pelajaran. Atur tahun ajaran, hari, jam, kelas, mapel, dan guru.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
+    <div class="flex flex-col gap-0"><Label for="year" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Tahun Ajaran</Label>
+      <Select id="year" bind:value={form.academic_year_id} placeholder="Pilih tahun ajaran">
+        {#each years as y}<option value={y.id}>{y.name}</option>{/each}
+      </Select>
+    </div>
     <div class="flex flex-col gap-0"><Label for="day" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Hari</Label>
       <Select id="day" bind:value={form.day_of_week} placeholder="Pilih hari">
         {#each ALL_DAYS as i}<option value={i}>{DAY_NAMES[i]}</option>{/each}
@@ -278,7 +292,7 @@
     <div class="flex flex-col gap-0"><Label for="end" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Selesai</Label><Input id="end" type="time" bind:value={endTimeInput} required /></div>
     <div class="flex flex-col gap-0"><Label for="class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Kelas</Label>
       <Select id="class" bind:value={form.class_id} placeholder="Pilih kelas">
-        {#each classes as c}<option value={c.id}>{c.name}</option>{/each}
+        {#each modalClasses as c}<option value={c.id}>{c.name}</option>{/each}
       </Select>
     </div>
     <div class="flex flex-col gap-0"><Label for="subject" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Mapel</Label>
@@ -289,11 +303,6 @@
     <div class="flex flex-col gap-0"><Label for="teacher" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Guru</Label>
       <Select id="teacher" bind:value={form.teacher_user_id} placeholder="Pilih guru">
         {#each teachers as t}<option value={t.id}>{t.name || t.username}</option>{/each}
-      </Select>
-    </div>
-    <div class="flex flex-col gap-0"><Label for="year" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Tahun Ajaran</Label>
-      <Select id="year" bind:value={form.academic_year_id} placeholder="Pilih tahun ajaran">
-        {#each years as y}<option value={y.id}>{y.name}</option>{/each}
       </Select>
     </div>
     <div class="flex justify-between gap-2 pt-4 border-t border-border mt-2">

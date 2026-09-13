@@ -67,3 +67,51 @@ describe('convention: CODEMAP.md freshness', () => {
     expect(content).toMatch(/Total exports: \d+/);
   });
 });
+
+describe('convention: SQLite.update tables have updated_at', () => {
+  function tableColumns(): Map<string, Set<string>> {
+    const columns = new Map<string, Set<string>>();
+    const ensure = (table: string): Set<string> => {
+      if (!columns.has(table)) columns.set(table, new Set());
+      return columns.get(table)!;
+    };
+    const dir = path.join(ROOT, 'migrations');
+    for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.ts'))) {
+      const content = fs.readFileSync(path.join(dir, file), 'utf-8');
+      const up = content.split('export const down')[0];
+      const createPattern = /CREATE TABLE (?:IF NOT EXISTS )?([a-z_]+)\s*\(([\s\S]*?)\);/g;
+      let match: RegExpExecArray | null;
+      while ((match = createPattern.exec(up)) !== null) {
+        for (const line of match[2].split('\n')) {
+          const col = line.trim().match(/^([a-z_][a-z0-9_]*)\s+(?:TEXT|INTEGER|REAL|BLOB|NUMERIC)/i);
+          if (col) ensure(match[1].toLowerCase()).add(col[1].toLowerCase());
+        }
+      }
+      const alterPattern = /ALTER TABLE ([a-z_]+) ADD COLUMN ([a-z_][a-z0-9_]*)/gi;
+      while ((match = alterPattern.exec(up)) !== null) {
+        ensure(match[1].toLowerCase()).add(match[2].toLowerCase());
+      }
+      const dropPattern = /ALTER TABLE ([a-z_]+) DROP COLUMN ([a-z_][a-z0-9_]*)/gi;
+      while ((match = dropPattern.exec(up)) !== null) {
+        columns.get(match[1].toLowerCase())?.delete(match[2].toLowerCase());
+      }
+    }
+    return columns;
+  }
+
+  it('every table updated via SQLite.update has an updated_at column', () => {
+    const updatePattern = /SQLite\.update\('([a-z_]+)'/g;
+    const tables = new Set<string>();
+    const dir = path.join(ROOT, 'app/queries');
+    for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.ts'))) {
+      const content = fs.readFileSync(path.join(dir, file), 'utf-8');
+      let match: RegExpExecArray | null;
+      while ((match = updatePattern.exec(content)) !== null) tables.add(match[1]);
+    }
+    expect(tables.size).toBeGreaterThan(0);
+    const columns = tableColumns();
+    for (const table of tables) {
+      expect(columns.get(table)?.has('updated_at') ?? false, `${table} is updated via SQLite.update but has no updated_at column — add a migration`).toBe(true);
+    }
+  });
+});
