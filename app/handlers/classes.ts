@@ -40,8 +40,8 @@ export const listClasses = (req: NaraRequest, res: NaraResponse) => {
   const data = academicYearId
     ? findClassesByAcademicYear(academicYearId)
     : grade
-    ? findClassesByGrade(grade)
-    : findAllClasses();
+      ? findClassesByGrade(grade)
+      : findAllClasses();
 
   return jsonSuccess(res, 'OK', data);
 };
@@ -102,7 +102,12 @@ export const removeClass = (req: NaraRequest, res: NaraResponse) => {
   const id = req.params.id;
   if (!id) return jsonError(res, 'ID required', 400);
 
-  const ok = deleteClass(id);
-  if (!ok) return jsonError(res, 'Not found', 404);
-  return jsonSuccess(res, 'Class deleted');
+  try {
+    const ok = deleteClass(id);
+    if (!ok) return jsonError(res, 'Not found', 404);
+    return jsonSuccess(res, 'Class deleted');
+  } catch (error: unknown) {
+    Logger.error('Failed to delete class', error as Error);
+    return jsonServerError(res, 'Gagal menghapus kelas');
+  }
 };

@@ -10,9 +10,9 @@
 
 ## Stats
 
-- Files indexed: 276
-- Total lines: 28139
-- Total exports: 810
+- Files indexed: 277
+- Total lines: 28227
+- Total exports: 812
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -49,7 +49,7 @@
 - `assets.ts` (209L) — avatarMiddleware, uploadAsset, serveDistAsset, servePublicAsset
 - `attendance.ts` (32L) — attendanceReportData
 - `auth.ts` (94L) — loginPage, submitLogin, logout, changePassword
-- `classes.ts` (109L) — classesPage, listClasses, classData, addClass, editClass, removeClass
+- `classes.ts` (114L) — classesPage, listClasses, classData, addClass, editClass, removeClass
 - `dashboard.ts` (29L) — dashboardPage
 - `gradeAudit.ts` (39L) — gradeAuditPage, gradeAuditData
 - `grades.ts` (245L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, editGrade, removeGrade
@@ -177,13 +177,14 @@
 - `20260820000003_rename_user_email_to_username.ts` (46L) — up, down
 - `20260820000004_school_profile_for_qr_flow.ts` (40L) — up, down
 - `20260820000005_create_app_settings.ts` (12L) — up, down
-- `20260820000006_teacher_confirmations_for_qr.ts` (58L) — up, down
+- `20260820000006_teacher_confirmations_for_qr.ts` (99L) — up, down
 - `20260830000001_align_operator_roles.ts` (67L) — up
 - `20260830000002_one_daily_teacher_confirmation.ts` (10L) — up, down
 - `20260902000001_scope_parent_accounts.ts` (64L) — up
 - `20260912000001_add_school_profile_columns.ts` (14L) — up, down
 - `20260913000001_add_school_start_time.ts` (8L) — up, down
 - `20260913000002_add_missing_updated_at.ts` (12L) — up, down
+- `20260914000001_repair_journals_fk.ts` (42L) — up, down
 
 ### resources/
 
@@ -1477,6 +1478,11 @@
 - `const` **up**
 - `const` **down**
 
+### `migrations/20260914000001_repair_journals_fk.ts`
+
+- `const` **up**
+- `const` **down**
+
 ### `resources/Components/Badge.svelte`
 
 - `const` **badgeVariants**
@@ -1740,8 +1746,10 @@
 - `app/types/shared.ts` → `../types`
 - `migrations/20260820000002_backfill_teacher_class_assignments.ts` → `../app/services/SQLite`
 - `migrations/20260820000003_rename_user_email_to_username.ts` → `../app/services/SQLite`
+- `migrations/20260820000006_teacher_confirmations_for_qr.ts` → `@services/SQLite`
 - `migrations/20260830000001_align_operator_roles.ts` → `../app/services/SQLite`
 - `migrations/20260902000001_scope_parent_accounts.ts` → `../app/services/SQLite`
+- `migrations/20260914000001_repair_journals_fk.ts` → `@services/SQLite`
 - `resources/app.ts` → `@inertiajs/svelte`
 - `resources/Components/Can.svelte` → `@inertiajs/svelte`
 - `resources/Components/ConfirmDialog.svelte` → `./Button.svelte`, `./Modal.svelte`

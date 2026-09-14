@@ -1,4 +1,15 @@
-export const up = `
+import type SQLite from '@services/SQLite';
+
+// Rebuilds teacher_confirmations with nullable schedule_id/photo_url and a
+// confirmation_date column for the QR flow. ALTER TABLE RENAME rewrites FK
+// references in dependent tables (journals.teacher_confirmation_id) to the
+// _old name, so the rewritten references are patched back via
+// writable_schema before the old table is dropped — otherwise the drop
+// cascade-deletes journal rows and leaves a dangling FK that breaks every
+// DELETE cascading through schedules -> journals.
+export const up = (sqlite: typeof SQLite): void => {
+  const db = sqlite.raw();
+  db.exec(`
 ALTER TABLE teacher_confirmations RENAME TO teacher_confirmations_old;
 CREATE TABLE teacher_confirmations (
   id TEXT PRIMARY KEY NOT NULL,
@@ -25,10 +36,26 @@ CREATE INDEX IF NOT EXISTS idx_teacher_confirmations_schedule_id ON teacher_conf
 CREATE INDEX IF NOT EXISTS idx_teacher_confirmations_teacher_user_id ON teacher_confirmations (teacher_user_id);
 CREATE INDEX IF NOT EXISTS idx_teacher_confirmations_confirmed_at ON teacher_confirmations (confirmed_at);
 CREATE INDEX IF NOT EXISTS idx_teacher_confirmations_confirmation_date ON teacher_confirmations (teacher_user_id, confirmation_date);
-DROP TABLE teacher_confirmations_old;
-`;
+  `);
+  db.unsafeMode(true);
+  try {
+    db.exec('PRAGMA writable_schema = ON');
+    db.prepare(`
+      UPDATE sqlite_master
+      SET sql = replace(sql, 'teacher_confirmations_old', 'teacher_confirmations')
+      WHERE type = 'table' AND name != 'teacher_confirmations_old'
+        AND sql LIKE '%teacher_confirmations_old%'
+    `).run();
+    db.exec('PRAGMA writable_schema = OFF');
+  } finally {
+    db.unsafeMode(false);
+  }
+  db.exec('DROP TABLE teacher_confirmations_old');
+};
 
-export const down = `
+export const down = (sqlite: typeof SQLite): void => {
+  const db = sqlite.raw();
+  db.exec(`
 ALTER TABLE teacher_confirmations RENAME TO teacher_confirmations_new;
 CREATE TABLE teacher_confirmations (
   id TEXT PRIMARY KEY NOT NULL,
@@ -53,5 +80,19 @@ DROP INDEX IF EXISTS idx_teacher_confirmations_confirmed_at;
 CREATE INDEX IF NOT EXISTS idx_teacher_confirmations_schedule_id ON teacher_confirmations (schedule_id);
 CREATE INDEX IF NOT EXISTS idx_teacher_confirmations_teacher_user_id ON teacher_confirmations (teacher_user_id);
 CREATE INDEX IF NOT EXISTS idx_teacher_confirmations_confirmed_at ON teacher_confirmations (confirmed_at);
-DROP TABLE teacher_confirmations_new;
-`;
+  `);
+  db.unsafeMode(true);
+  try {
+    db.exec('PRAGMA writable_schema = ON');
+    db.prepare(`
+      UPDATE sqlite_master
+      SET sql = replace(sql, 'teacher_confirmations_new', 'teacher_confirmations')
+      WHERE type = 'table' AND name != 'teacher_confirmations_new'
+        AND sql LIKE '%teacher_confirmations_new%'
+    `).run();
+    db.exec('PRAGMA writable_schema = OFF');
+  } finally {
+    db.unsafeMode(false);
+  }
+  db.exec('DROP TABLE teacher_confirmations_new');
+};
