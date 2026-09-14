@@ -62,6 +62,53 @@ export const findGradesByClassSubject = (classId: string, subjectId: string): Gr
 export const findGradesByTeacher = (teacherUserId: string): Grade[] =>
   SQLite.many<Grade>`SELECT * FROM grades WHERE teacher_user_id = ${teacherUserId} ORDER BY date DESC`;
 
+export const findGradeByUniqueKey = (studentId: string, subjectId: string, classId: string, type: string): Grade | undefined =>
+  SQLite.one<Grade>`SELECT * FROM grades WHERE student_id = ${studentId} AND subject_id = ${subjectId} AND class_id = ${classId} AND type = ${type}`;
+
+export interface BulkGradeEntry {
+  student_id: string;
+  score: number;
+}
+
+export interface BulkGradeResult {
+  grade_id: string;
+  student_id: string;
+  action: 'create' | 'update';
+  old_score: number | null;
+  new_score: number;
+}
+
+export const upsertGradesBulk = (
+  classId: string,
+  subjectId: string,
+  type: Grade['type'],
+  entries: BulkGradeEntry[],
+  teacherUserId: string,
+): BulkGradeResult[] => {
+  const now = Date.now();
+  return SQLite.transaction(() => {
+    const results: BulkGradeResult[] = [];
+    for (const entry of entries) {
+      const existing = findGradeByUniqueKey(entry.student_id, subjectId, classId, type);
+      if (existing) {
+        if (existing.score === entry.score) continue;
+        updateGrade(existing.id, { score: entry.score });
+        results.push({ grade_id: existing.id, student_id: entry.student_id, action: 'update', old_score: existing.score, new_score: entry.score });
+      } else {
+        const item = createGrade({ student_id: entry.student_id, subject_id: subjectId, class_id: classId, type, score: entry.score, date: now, teacher_user_id: teacherUserId });
+        results.push({ grade_id: item.id, student_id: entry.student_id, action: 'create', old_score: null, new_score: entry.score });
+      }
+    }
+    return results;
+  });
+};
+
+export interface GradeWithNames extends Grade {
+  student_name: string;
+  subject_name: string;
+  class_name: string;
+}
+
 export const getGradesPaginated = (
   page: number,
   limit: number,
@@ -69,7 +116,7 @@ export const getGradesPaginated = (
   classId?: string,
   subjectId?: string,
   teacherUserId?: string,
-): { data: Grade[]; total: number } => {
+): { data: GradeWithNames[]; total: number } => {
   const conditions: string[] = ['1=1'];
   const params: (string | number)[] = [];
 
@@ -92,8 +139,13 @@ export const getGradesPaginated = (
 
   const where = conditions.join(' AND ');
   const countRow = SQLite.get<{ count: number }>(`SELECT COUNT(*) as count FROM grades g WHERE ${where}`, params);
-  const data = SQLite.all<Grade>(
-    `SELECT g.* FROM grades g WHERE ${where} ORDER BY g.date DESC LIMIT ? OFFSET ?`,
+  const data = SQLite.all<GradeWithNames>(
+    `SELECT g.*, st.name AS student_name, sub.name AS subject_name, c.name AS class_name
+     FROM grades g
+     JOIN students st ON st.id = g.student_id
+     JOIN subjects sub ON sub.id = g.subject_id
+     JOIN classes c ON c.id = g.class_id
+     WHERE ${where} ORDER BY g.date DESC LIMIT ? OFFSET ?`,
     [...params, limit, (page - 1) * limit],
   );
 
@@ -154,23 +206,27 @@ export const getClassSubjectSummary = (classId: string, subjectId: string): Clas
   );
   if (!meta) return null;
 
-  const gradeRows = SQLite.all<{ student_id: string; student_name: string; nis: string; type: string; score: number }>(
-    `SELECT g.student_id, st.name AS student_name, st.nis, g.type, g.score
+  const gradeRows = SQLite.all<{ student_id: string; type: string; score: number; grade_id: string }>(
+    `SELECT g.student_id, g.type, g.score, g.id AS grade_id
      FROM grades g
-     JOIN students st ON st.id = g.student_id
-     WHERE g.class_id = ? AND g.subject_id = ?
-     ORDER BY st.name`,
+     WHERE g.class_id = ? AND g.subject_id = ?`,
     [classId, subjectId]
   );
 
-  const byStudent = new Map<string, { student_id: string; student_name: string; nis: string; scores: Record<string, number | null> }>();
+  const allStudents = SQLite.all<{ id: string; name: string; nis: string }>(
+    'SELECT id, name, nis FROM students WHERE class_id = ? ORDER BY name',
+    [classId],
+  );
+
+  const byStudent = new Map<string, { student_id: string; student_name: string; nis: string; scores: Record<string, number | null>; grade_ids: Record<string, string> }>();
+  for (const st of allStudents) {
+    byStudent.set(st.id, { student_id: st.id, student_name: st.name, nis: st.nis, scores: {}, grade_ids: {} });
+  }
   for (const row of gradeRows) {
-    let entry = byStudent.get(row.student_id);
-    if (!entry) {
-      entry = { student_id: row.student_id, student_name: row.student_name, nis: row.nis, scores: {} };
-      byStudent.set(row.student_id, entry);
-    }
+    const entry = byStudent.get(row.student_id);
+    if (!entry) continue;
     entry.scores[row.type] = row.score;
+    entry.grade_ids[row.type] = row.grade_id;
   }
 
   const components = findComponentsByYear(meta.yearId);
@@ -181,6 +237,7 @@ export const getClassSubjectSummary = (classId: string, subjectId: string): Clas
       student_name: entry.student_name,
       nis: entry.nis,
       scores: entry.scores,
+      grade_ids: entry.grade_ids,
       final_score: finalScore,
       kkm: meta.kkm,
       predikat: predikatOf(finalScore, meta.kkm),
@@ -195,7 +252,7 @@ export const getStudentGradeSummaries = (studentId: string): { published: boolea
   const published = getGradesPublicationForStudent(studentId);
 
   const meta = SQLite.get<{ yearId: string }>(
-    `SELECT c.academic_year_id AS yearId FROM students st JOIN classes c ON c.id = st.class_id WHERE st.id = ?`,
+    `SELECT c.academic_year_id AS yearId FROM students st JOIN classes c ON c.id = st.class_id WHERE st.id = ? `,
     [studentId]
   );
   if (!meta) return { published, summaries: [] };
@@ -205,7 +262,7 @@ export const getStudentGradeSummaries = (studentId: string): { published: boolea
      FROM grades g
      JOIN subjects s ON s.id = g.subject_id
      WHERE g.student_id = ?
-     ORDER BY s.name`,
+  ORDER BY s.name`,
     [studentId]
   );
 
@@ -251,7 +308,7 @@ export const getStudentContext = (studentId: string): { class_name: string; year
      FROM students st
      JOIN classes c ON c.id = st.class_id
      JOIN academic_years ay ON ay.id = c.academic_year_id
-     WHERE st.id = ?`,
+     WHERE st.id = ? `,
     [studentId]
   );
   return row ?? null;

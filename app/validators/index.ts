@@ -44,6 +44,7 @@ export {
   UpdateJournalSchema,
   StudentAttendanceSchema,
   GradeSchema,
+  BulkGradesSchema,
   GradeComponentsSchema,
   AnnouncementSchema,
   UpdateAnnouncementSchema,

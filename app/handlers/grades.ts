@@ -1,7 +1,7 @@
 import type { NaraRequest, NaraResponse } from '@core';
 import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationError, jsonPaginated, queryInt, queryString } from '@core';
 import Logger from '@services/Logger';
-import { getGradesPaginated, findGradeById, findGradesByStudent, findGradesByStudentForTeacher, createGrade, updateGrade, deleteGrade, getClassSubjectSummary } from '@queries/grades';
+import { getGradesPaginated, findGradeById, findGradesByStudent, findGradesByStudentForTeacher, createGrade, updateGrade, deleteGrade, getClassSubjectSummary, upsertGradesBulk } from '@queries/grades';
 import { logGradeChange } from '@queries/gradeAuditLogs';
 import { findAllStudents, findStudentsByTeacherUser, findStudentById } from '@queries/students';
 import { findAllSubjects } from '@queries/subjects';
@@ -15,7 +15,7 @@ import {
 } from '@queries/teacherClassAssignments';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
-import { GradeSchema, zodToErrors } from '@validators';
+import { GradeSchema, BulkGradesSchema, zodToErrors } from '@validators';
 
 const isTeacherActor = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && isTeacherUser(userId);
 const canView = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && hasPermission(userId, 'grades.view');
@@ -165,6 +165,37 @@ export const addGrade = (req: NaraRequest, res: NaraResponse) => {
   } catch (error: unknown) {
     Logger.error('Failed to create grade', error as Error);
     return jsonServerError(res, 'Failed to create grade');
+  }
+};
+
+export const saveGradesBulk = (req: NaraRequest, res: NaraResponse) => {
+  if (!req.user) return jsonError(res, 'Unauthorized', 401);
+  if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'grades.create')) return jsonError(res, 'Forbidden', 403);
+  if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+
+  const parsed = BulkGradesSchema.safeParse(req.body);
+  if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
+
+  const { class_id, subject_id, type, entries } = parsed.data;
+  if (!canManageGradeInClass(req.user.id, 'grades.create', class_id, subject_id)) {
+    return jsonError(res, 'Guru hanya dapat mengisi nilai untuk mapel dan kelas yang diampu', 403, 'GRADE_SCOPE_FORBIDDEN');
+  }
+  for (const entry of entries) {
+    if (findStudentById(entry.student_id)?.class_id !== class_id) return invalidStudentClass(res);
+  }
+
+  try {
+    const results = upsertGradesBulk(class_id, subject_id, type, entries, req.user.id);
+    for (const r of results) {
+      logGradeChange({
+        grade_id: r.grade_id, student_id: r.student_id, subject_id, class_id, type,
+        action: r.action, old_score: r.old_score, new_score: r.new_score, user_id: req.user.id,
+      });
+    }
+    return jsonSuccess(res, `${results.length} nilai berhasil disimpan`, { saved: results.length });
+  } catch (error: unknown) {
+    Logger.error('Failed to bulk save grades', error as Error);
+    return jsonServerError(res, 'Failed to save grades');
   }
 };
 

@@ -11,8 +11,8 @@
 ## Stats
 
 - Files indexed: 283
-- Total lines: 28742
-- Total exports: 823
+- Total lines: 28896
+- Total exports: 830
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -52,7 +52,7 @@
 - `classes.ts` (114L) — classesPage, listClasses, classData, addClass, editClass, removeClass
 - `dashboard.ts` (31L) — dashboardPage
 - `gradeAudit.ts` (39L) — gradeAuditPage, gradeAuditData
-- `grades.ts` (245L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, editGrade, removeGrade
+- `grades.ts` (276L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, editGrade, removeGrade
 - `headmaster.ts` (102L) — headmasterDashboardPage, headmasterDashboardData, headmasterReportsPage, headmasterClassGradesPage, headmasterTeacherAttendancePage, listOutsideConfirmations
 - `home.ts` (17L) — landingPage
 - `index.ts` (30L)
@@ -96,7 +96,7 @@
 - `classes.ts` (95L) — findAllClasses, findAllClassesWithHomeroom, findClassesByAcademicYearWithHomeroom, findClassById, findClassByName, findClassesByAcademicYear, findClassesByGrade, findClassesByTeacherUser, +5
 - `gradeAuditLogs.ts` (39L) — logGradeChange, getGradeAuditLogsPaginated
 - `gradeComponents.ts` (20L) — findGradeComponentsByYear, upsertGradeComponents
-- `grades.ts` (259L) — findAllGrades, findGradeById, findGradesByStudent, findGradesByStudentForTeacher, findGradesByClassSubject, findGradesByTeacher, getGradesPaginated, createGrade, +8
+- `grades.ts` (316L) — findAllGrades, findGradeById, findGradesByStudent, findGradesByStudentForTeacher, findGradesByClassSubject, findGradesByTeacher, findGradeByUniqueKey, upsertGradesBulk, +13
 - `headmaster.ts` (429L) — getTodaySessions, getMissedSessions, getJournalCompleteness, getGradeProgress, getClassOverview, getTeacherAttendanceOverview, getTeacherAttendanceHistory, findClassGradeDetails, +5
 - `index.ts` (25L)
 - `journals.ts` (44L) — findAllJournals, findJournalById, findJournalsBySchedule, findJournalsByTeacher, findJournalsByDateRange, createJournal, updateJournal, deleteJournal
@@ -135,12 +135,12 @@
 ### app/types/
 
 - `models.ts` (285L) — User, Session, Role, Permission, Asset, UserRole, RolePermission, AcademicYear, +20
-- `shared.ts` (405L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +35
+- `shared.ts` (406L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +35
 
 ### app/validators/
 
-- `index.ts` (88L) — zodToErrors
-- `schemas.ts` (307L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +60
+- `index.ts` (89L) — zodToErrors
+- `schemas.ts` (317L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +61
 
 ### migrations/
 
@@ -229,11 +229,11 @@
 - `classes.svelte` (101L)
 - `dashboard.svelte` (167L)
 - `gradeAudit.svelte` (77L)
-- `grades.svelte` (224L)
+- `grades.svelte` (286L)
 - `journals.svelte` (85L)
 - `landing.svelte` (610L)
 - `parents.svelte` (81L)
-- `profile.svelte` (215L)
+- `profile.svelte` (206L)
 - `qrDisplay.svelte` (91L)
 - `qrSettings.svelte` (90L)
 - `roles.svelte` (273L)
@@ -307,7 +307,7 @@
 
 ### routes/
 
-- `web.ts` ★ (224L)
+- `web.ts` ★ (225L)
 
 ### scripts/
 
@@ -564,6 +564,7 @@
 - `const` **gradesByStudent**
 - `const` **gradeData**
 - `const` **addGrade**
+- `const` **saveGradesBulk**
 - `const` **editGrade**
 - `const` **removeGrade**
 
@@ -825,6 +826,8 @@
 - `const` **findGradesByStudentForTeacher**
 - `const` **findGradesByClassSubject**
 - `const` **findGradesByTeacher**
+- `const` **findGradeByUniqueKey**
+- `const` **upsertGradesBulk**
 - `const` **getGradesPaginated**
 - `const` **createGrade**
 - `const` **updateGrade**
@@ -835,6 +838,9 @@
 - `const` **getStudentGradeSummaries**
 - `const` **findGradeProgressionByStudent**
 - `const` **getStudentContext**
+- `iface` **BulkGradeEntry**
+- `iface` **BulkGradeResult**
+- `iface` **GradeWithNames**
 
 ### `app/queries/headmaster.ts`
 
@@ -1258,6 +1264,7 @@
 - `const` **UpdateJournalSchema**
 - `const` **StudentAttendanceSchema**
 - `const` **GradeSchema**
+- `const` **BulkGradesSchema**
 - `const` **GradeComponentsSchema**
 - `const` **AnnouncementSchema**
 - `const` **UpdateAnnouncementSchema**
@@ -1795,7 +1802,7 @@
 - `resources/Pages/classes.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/dashboard.svelte` → `../Components/BentoCard.svelte`, `../Components/Sidebar.svelte`, `../Components/StatCard.svelte`, `../Components/charts/AttendanceDonut.svelte`, `../Components/charts/AttendanceTrendChart.svelte`, `../Components/charts/ClassSizeBars.svelte`, `../Components/charts/ConfirmationWeekChart.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/gradeAudit.svelte` → `../Components/DataTable.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../types`
-- `resources/Pages/grades.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/grades.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/class-grades.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/dashboard.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../Components/StatCard.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/reports.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../Components/StatCard.svelte`, `../../types`
@@ -1806,7 +1813,7 @@
 - `resources/Pages/parent/dashboard.svelte` → `../../Components/Sidebar.svelte`, `../../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/parent/grades.svelte` → `../../Components/Sidebar.svelte`, `../../types`, `@lucide/svelte`
 - `resources/Pages/parents.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/profile.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Sidebar.svelte`, `@lucide/svelte`, `@zag-js/svelte`, `@zag-js/tabs`
+- `resources/Pages/profile.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `@lucide/svelte`, `@zag-js/svelte`, `@zag-js/tabs`
 - `resources/Pages/qrDisplay.svelte` → `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`
 - `resources/Pages/qrSettings.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/reports/rapor.svelte` → `../../Components/Button.svelte`, `../../Components/Sidebar.svelte`, `../../types`, `@lucide/svelte`

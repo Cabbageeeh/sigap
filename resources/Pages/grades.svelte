@@ -2,134 +2,140 @@
   import { inertia, router } from '@inertiajs/svelte';
   import axios from 'axios';
   import { api } from '$lib/api';
+  import { Toast } from '$lib/toast';
   import Sidebar from '../Components/Sidebar.svelte';
-  import DataTable from '../Components/DataTable.svelte';
   import Button from '../Components/Button.svelte';
   import Input from '../Components/Input.svelte';
   import Label from '../Components/Label.svelte';
-  import Modal from '../Components/Modal.svelte';
-  import ConfirmDialog from '../Components/ConfirmDialog.svelte';
   import Select from '../Components/Select.svelte';
-  import Pagination from '../Components/Pagination.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
-  import type { Grade, GradeForm, Student, Subject, Class, AcademicYear, PaginationMeta, ClassSubjectSummary } from '../types';
-  import { createEmptyGradeForm, gradeToForm } from '../types';
-  import { Pencil, Trash2, FileSpreadsheet, LockKeyhole, Plus } from '@lucide/svelte';
+  import type { Student, Subject, Class, AcademicYear, ClassSubjectSummary } from '../types';
+  import { FileSpreadsheet, LockKeyhole, Save, Loader2 } from '@lucide/svelte';
   import { fly } from 'svelte/transition';
+
+  const GRADE_TYPES = [
+    { value: 'task', label: 'Tugas' },
+    { value: 'daily_quiz', label: 'Kuis Harian' },
+    { value: 'midterm', label: 'UTS' },
+    { value: 'final', label: 'UAS' },
+  ] as const;
+  type GradeType = (typeof GRADE_TYPES)[number]['value'];
 
   let {
     permissions,
-    grades = [],
     students = [],
     subjects = [],
     classes = [],
     years = [],
-    meta,
     summary = null,
     classId = '',
     subjectId = '',
     confirmationRequired = false,
   }: {
     permissions: { canCreate?: boolean; canEdit?: boolean; canDelete?: boolean };
-    grades?: Grade[];
     students?: Student[];
     subjects?: Subject[];
     classes?: Class[];
     years?: AcademicYear[];
-    meta?: PaginationMeta;
     summary?: ClassSubjectSummary | null;
     classId?: string;
     subjectId?: string;
     confirmationRequired?: boolean;
   } = $props();
 
-  let isOpen = $state(false);
-  let isDeleteOpen = $state(false);
-  let form: GradeForm = $state(createEmptyGradeForm());
-  let selected: Grade | null = $state(null);
-
   let filterClassId = $state(classId);
   let filterSubjectId = $state(subjectId);
+  let filterType = $state<GradeType>('task');
 
-  function openCreate(): void {
-    form = { ...createEmptyGradeForm(), class_id: filterClassId, subject_id: filterSubjectId };
-    selected = null;
-    isOpen = true;
-  }
-  function openEdit(item: Grade): void { selected = item; form = gradeToForm(item); isOpen = true; }
-  function confirmDelete(item: Grade): void { selected = item; isDeleteOpen = true; }
+  let editingCell = $state<string | null>(null);
+  let editValue = $state('');
+  let pending = $state<Record<string, number>>({});
+  let isSaving = $state(false);
 
-  async function submit(): Promise<void> {
-    form.date = selected ? form.date : Date.now();
-    const result = selected
-      ? await api(() => axios.put(`/grades/${selected!.id}`, form))
-      : await api(() => axios.post('/grades', form));
-    if (result.success) { isOpen = false; router.visit('/grades', { preserveScroll: true }); }
-  }
-  async function remove(): Promise<void> {
-    if (!selected) return;
-    const result = await api(() => axios.delete(`/grades/${selected!.id}`));
-    if (result.success) { isDeleteOpen = false; router.visit('/grades', { preserveScroll: true }); }
-  }
+  const canEdit = $derived(!!permissions.canEdit || !!permissions.canCreate);
+  const typeLabel = $derived(GRADE_TYPES.find(t => t.value === filterType)?.label ?? filterType);
 
   function showRekap(): void {
     if (!filterClassId || !filterSubjectId) return;
-    router.visit(`/grades?class_id=${filterClassId}&subject_id=${filterSubjectId}&page=1`);
+    pending = {};
+    editingCell = null;
+    router.visit(`/grades?class_id=${filterClassId}&subject_id=${filterSubjectId}`, { preserveScroll: true });
   }
 
-  const summaryColumns = $derived.by(() => {
-    const s = summary;
-    if (!s) return [] as { key: string; label: string; align?: 'left' | 'center' | 'right' }[];
-    return [
-      { key: 'student_name', label: 'Siswa' },
-      ...s.components.map(c => ({ key: c.type, label: c.name, align: 'right' as const })),
-      { key: 'final_score', label: 'Nilai Akhir', align: 'right' as const },
-      { key: 'kkm', label: 'KKM', align: 'center' as const },
-      { key: 'predikat', label: 'Predikat', align: 'center' as const },
-      { key: 'status', label: 'Status', align: 'center' as const },
-    ];
-  });
+  function cellKey(studentId: string): string {
+    return `${studentId}:${filterType}`;
+  }
 
-  const summaryRows = $derived.by(() => {
-    const s = summary;
-    if (!s) return [] as Record<string, unknown>[];
-    return s.rows.map(row => {
-      const display: Record<string, unknown> = {
-        student_id: row.student_id,
-        student_name: row.student_name,
-        nis: row.nis,
-        final_score: row.final_score ?? '—',
-        kkm: row.kkm,
-        predikat: row.predikat ?? '—',
-        status: row.is_passed === null ? '—' : row.is_passed ? 'Tuntas' : 'Belum Tuntas',
-      };
-      for (const component of s.components) display[component.type] = row.scores[component.type] ?? '—';
-      return display;
-    });
-  });
+  function displayScore(row: ClassSubjectSummary['rows'][number]): number | null {
+    const key = cellKey(row.student_id);
+    if (key in pending) return pending[key];
+    return row.scores[filterType] ?? null;
+  }
 
-  const columns = [
-    { key: 'student_id', label: 'Siswa' },
-    { key: 'subject_id', label: 'Mapel' },
-    { key: 'class_id', label: 'Kelas' },
-    { key: 'type', label: 'Jenis' },
-    { key: 'score', label: 'Nilai' },
-  ];
+  function isDirty(row: ClassSubjectSummary['rows'][number]): boolean {
+    return cellKey(row.student_id) in pending;
+  }
+
+  function startEdit(row: ClassSubjectSummary['rows'][number]): void {
+    if (!canEdit) return;
+    editingCell = cellKey(row.student_id);
+    const current = displayScore(row);
+    editValue = current === null ? '' : String(current);
+  }
+
+  function commitEdit(row: ClassSubjectSummary['rows'][number]): void {
+    if (editingCell !== cellKey(row.student_id)) return;
+    editingCell = null;
+    const trimmed = editValue.trim();
+    if (trimmed === '') return;
+    const score = Number(trimmed);
+    if (Number.isNaN(score) || score < 0 || score > 100) {
+      Toast('Nilai harus antara 0 dan 100', 'error');
+      return;
+    }
+    const original = row.scores[filterType] ?? null;
+    const key = cellKey(row.student_id);
+    if (original === score) {
+      const { [key]: _drop, ...rest } = pending;
+      pending = rest;
+      return;
+    }
+    pending = { ...pending, [key]: score };
+  }
+
+  function onCellKeydown(e: KeyboardEvent, row: ClassSubjectSummary['rows'][number]): void {
+    if (e.key === 'Enter') { e.preventDefault(); commitEdit(row); }
+    if (e.key === 'Escape') { editingCell = null; }
+  }
+
+  const pendingCount = $derived(Object.keys(pending).length);
+
+  async function saveAll(): Promise<void> {
+    if (!summary || pendingCount === 0 || isSaving) return;
+    const entries = Object.entries(pending).map(([key, score]) => ({
+      student_id: key.split(':')[0],
+      score,
+    }));
+    isSaving = true;
+    const result = await api(() => axios.post('/grades/bulk', {
+      class_id: filterClassId,
+      subject_id: filterSubjectId,
+      type: filterType,
+      entries,
+    }), { showSuccessToast: false });
+    isSaving = false;
+    if (result.success) {
+      Toast(`${entries.length} nilai berhasil disimpan`, 'success');
+      pending = {};
+      router.visit(`/grades?class_id=${filterClassId}&subject_id=${filterSubjectId}`, { preserveScroll: true });
+    }
+  }
 </script>
-
-{#snippet rowActions(item: Grade)}
-  {#if permissions.canEdit}<Button variant="ghost" size="icon" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}
-  {#if permissions.canDelete}<Button variant="ghost" size="icon" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4 text-destructive" /></Button>{/if}
-{/snippet}
 
 <Sidebar group="grades" />
 <PageShell>
-  <PageHeader eyebrow="Penilaian" title="Nilai." description="Input nilai tugas, ulangan, UTS, dan UAS sesuai kelas serta mapel yang diampu.">
-    {#snippet actions()}
-      {#if permissions.canCreate && !confirmationRequired}<Button onclick={openCreate} size="lg"><Plus class="w-4 h-4" /> Tambah Nilai</Button>{/if}
-    {/snippet}
-  </PageHeader>
+  <PageHeader eyebrow="Penilaian" title="Nilai." description="Pilih kelas, mapel, dan jenis penilaian — lalu isi nilai langsung di tabel rekap." />
 
   {#if confirmationRequired}
     <div class="relative overflow-hidden bg-card border border-primary/30 rounded-2xl p-6 max-w-2xl shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none" in:fly={{ y: 20, duration: 700, delay: 100 }}>
@@ -149,75 +155,131 @@
         <div class="flex flex-col gap-1 flex-1 w-full">
           <Label for="filter-class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Kelas</Label>
           <Select id="filter-class" bind:value={filterClassId} placeholder="Pilih kelas">
-            <option value="">Semua kelas</option>
+            <option value="">Pilih kelas</option>
             {#each classes as c}<option value={c.id}>{c.name}</option>{/each}
           </Select>
         </div>
         <div class="flex flex-col gap-1 flex-1 w-full">
           <Label for="filter-subject" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Mapel</Label>
           <Select id="filter-subject" bind:value={filterSubjectId} placeholder="Pilih mapel">
-            <option value="">Semua mapel</option>
+            <option value="">Pilih mapel</option>
             {#each subjects as s}<option value={s.id}>{s.name}</option>{/each}
           </Select>
         </div>
-        <Button onclick={showRekap}><FileSpreadsheet class="w-4 h-4 mr-1" /> Lihat Rekap</Button>
+        <div class="flex flex-col gap-1 flex-1 w-full">
+          <Label for="filter-type" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Jenis Penilaian</Label>
+          <Select id="filter-type" bind:value={filterType}>
+            {#each GRADE_TYPES as t}<option value={t.value}>{t.label}</option>{/each}
+          </Select>
+        </div>
+        <Button onclick={showRekap} disabled={!filterClassId || !filterSubjectId}><FileSpreadsheet class="w-4 h-4 mr-1" /> Lihat Rekap</Button>
       </div>
     </div>
 
     {#if summary}
-      <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 150 }}>
+      <div in:fly={{ y: 20, duration: 700, delay: 150 }}>
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-3">
             <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><FileSpreadsheet class="h-4.5 w-4.5 text-primary" /></span>
-            <h2 class="font-heading font-semibold tracking-[-0.02em]">Rekap Nilai — {summary.subjectName} ({summary.className})</h2>
+            <div>
+              <h2 class="font-heading font-semibold tracking-[-0.02em]">Rekap Nilai — {summary.subjectName} ({summary.className})</h2>
+              <p class="text-xs text-muted-foreground mt-0.5">
+                {#if canEdit}Klik sel kolom <strong class="text-foreground">{typeLabel}</strong> untuk mengisi nilai.{:else}Mode lihat saja.{/if}
+              </p>
+            </div>
           </div>
           <p class="text-xs text-muted-foreground font-mono-accent">KKM {summary.kkm}</p>
         </div>
-        <DataTable columns={summaryColumns} rows={summaryRows} keyField="student_id" emptyMessage="Belum ada nilai untuk kelas dan mapel ini." />
+
+        <div class="relative overflow-x-auto rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+          <div class="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
+          <table class="w-full text-sm">
+            <thead class="bg-secondary/50 border-b border-border">
+              <tr>
+                <th class="px-4 py-3.5 text-left font-heading text-[10px] uppercase tracking-[0.13em] font-semibold text-muted-foreground">Siswa</th>
+                {#each summary.components as c}
+                  <th class="px-4 py-3.5 text-right font-heading text-[10px] uppercase tracking-[0.13em] font-semibold {c.type === filterType ? 'text-primary' : 'text-muted-foreground'}">
+                    {c.name}{#if c.type === filterType} <span class="normal-case">· edit</span>{/if}
+                  </th>
+                {/each}
+                <th class="px-4 py-3.5 text-right font-heading text-[10px] uppercase tracking-[0.13em] font-semibold text-muted-foreground">Nilai Akhir</th>
+                <th class="px-4 py-3.5 text-center font-heading text-[10px] uppercase tracking-[0.13em] font-semibold text-muted-foreground">Predikat</th>
+                <th class="px-4 py-3.5 text-center font-heading text-[10px] uppercase tracking-[0.13em] font-semibold text-muted-foreground">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border">
+              {#if summary.rows.length === 0}
+                <tr><td colspan={summary.components.length + 4} class="px-4 py-12 text-center text-sm text-muted-foreground">Belum ada siswa di kelas ini.</td></tr>
+              {:else}
+                {#each summary.rows as row (row.student_id)}
+                  <tr class="odd:bg-secondary/[0.12] hover:bg-secondary/40 transition-colors">
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <p class="font-medium text-foreground">{row.student_name}</p>
+                      <p class="text-xs text-muted-foreground font-mono-accent">{row.nis}</p>
+                    </td>
+                    {#each summary.components as c}
+                      {@const editable = canEdit && c.type === filterType}
+                      {@const val = c.type === filterType ? displayScore(row) : (row.scores[c.type] ?? null)}
+                      <td
+                        class="px-4 py-3 text-right whitespace-nowrap {editable ? 'cursor-cell' : ''} {c.type === filterType ? 'bg-primary/[0.04]' : ''}"
+                        onclick={() => editable && startEdit(row)}
+                      >
+                        {#if editingCell === cellKey(row.student_id) && c.type === filterType}
+                          <input
+                            type="number" min="0" max="100" step="1"
+                            bind:value={editValue}
+                            onblur={() => commitEdit(row)}
+                            onkeydown={(e) => onCellKeydown(e, row)}
+                            class="w-16 rounded-lg border border-primary/50 bg-card px-2 py-1 text-right text-sm font-semibold outline-none ring-2 ring-primary/20"
+                            autofocus
+                          />
+                        {:else if val === null}
+                          <span class="text-muted-foreground/60">—</span>
+                        {:else}
+                          <span class="font-mono-accent font-medium {isDirty(row) && c.type === filterType ? 'text-primary' : 'text-foreground'}">{val}</span>
+                          {#if isDirty(row) && c.type === filterType}<span class="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-primary align-middle"></span>{/if}
+                        {/if}
+                      </td>
+                    {/each}
+                    <td class="px-4 py-3 text-right font-mono-accent font-semibold text-foreground whitespace-nowrap">{row.final_score ?? '—'}</td>
+                    <td class="px-4 py-3 text-center whitespace-nowrap">{row.predikat ?? '—'}</td>
+                    <td class="px-4 py-3 text-center whitespace-nowrap">
+                      {#if row.is_passed === null}
+                        <span class="text-muted-foreground/60">—</span>
+                      {:else}
+                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-heading font-semibold {row.is_passed ? 'bg-success-500/10 text-success-600 dark:text-success-400' : 'bg-destructive/10 text-destructive'}">
+                          {row.is_passed ? 'Tuntas' : 'Belum Tuntas'}
+                        </span>
+                      {/if}
+                    </td>
+                  </tr>
+                {/each}
+              {/if}
+            </tbody>
+          </table>
+        </div>
+
+        {#if canEdit}
+          <div class="sticky bottom-4 z-20 mt-4 flex justify-end">
+            <div class="flex items-center gap-3 rounded-2xl border border-border bg-card/90 px-4 py-3 shadow-[0_8px_30px_-8px_rgba(32,36,38,0.25)] backdrop-blur-md dark:bg-card/80">
+              <p class="text-xs text-muted-foreground">{pendingCount > 0 ? `${pendingCount} perubahan belum disimpan` : 'Tidak ada perubahan'}</p>
+              <Button onclick={saveAll} disabled={pendingCount === 0 || isSaving} size="lg">
+                {#if isSaving}<Loader2 class="h-4 w-4 animate-spin" />{:else}<Save class="h-4 w-4" />{/if}
+                {isSaving ? 'Menyimpan...' : 'Simpan Semua Perubahan'}
+              </Button>
+            </div>
+          </div>
+        {/if}
+      </div>
+    {:else}
+      <div class="relative overflow-hidden rounded-2xl border border-border bg-card flex flex-col items-center justify-center py-20 px-8 text-center shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none" in:fly={{ y: 20, duration: 700, delay: 150 }}>
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
+        <div class="w-14 h-14 rounded-full bg-muted border border-border flex items-center justify-center mb-5">
+          <FileSpreadsheet class="h-6 w-6 text-muted-foreground" />
+        </div>
+        <h3 class="font-heading font-semibold text-lg tracking-tight text-foreground mb-1.5">Pilih kelas dan mapel</h3>
+        <p class="text-sm text-muted-foreground max-w-sm">Tabel rekap nilai akan tampil di sini dan bisa langsung diedit per jenis penilaian.</p>
       </div>
     {/if}
-
-    <DataTable columns={columns} rows={grades} rowAction={rowActions} />
-    {#if meta}<Pagination {meta} />{/if}
   {/if}
-
-<Modal bind:open={isOpen} title={selected ? 'Edit Nilai' : 'Tambah Nilai'} description="Tambah atau ubah nilai siswa. Pilih siswa, mapel, kelas, dan jenis penilaian.">
-  <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
-    <div class="flex flex-col gap-0"><Label for="student" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Siswa</Label>
-      <Select id="student" bind:value={form.student_id} placeholder="Pilih siswa">
-        {#each students as s}<option value={s.id}>{s.name}</option>{/each}
-      </Select>
-    </div>
-    <div class="flex flex-col gap-0"><Label for="subject" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Mapel</Label>
-      <Select id="subject" bind:value={form.subject_id} placeholder="Pilih mapel">
-        {#each subjects as s}<option value={s.id}>{s.name}</option>{/each}
-      </Select>
-    </div>
-    <div class="flex flex-col gap-0"><Label for="class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Kelas</Label>
-      <Select id="class" bind:value={form.class_id} placeholder="Pilih kelas">
-        {#each classes as c}<option value={c.id}>{c.name}</option>{/each}
-      </Select>
-    </div>
-    <div class="flex flex-col gap-0"><Label for="year" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Tahun Ajaran</Label>
-      <Select id="year" bind:value={form.academic_year_id} placeholder="Pilih tahun ajaran">
-        {#each years as y}<option value={y.id}>{y.name}</option>{/each}
-      </Select>
-    </div>
-    <div class="flex flex-col gap-0"><Label for="type" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Jenis</Label>
-      <Select id="type" bind:value={form.type} placeholder="Pilih jenis penilaian">
-        <option value="task">Tugas</option>
-        <option value="daily_quiz">Ulangan Harian</option>
-        <option value="midterm">UTS</option>
-        <option value="final">UAS</option>
-      </Select>
-    </div>
-    <div class="flex flex-col gap-0"><Label for="score" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Nilai</Label><Input id="score" type="number" bind:value={form.score} required /></div>
-    <div class="flex justify-end gap-2 pt-4 border-t border-border mt-2">
-      <Button variant="outline" onclick={() => isOpen = false}>Batal</Button>
-      <Button type="submit">{selected ? 'Perbarui' : 'Buat'}</Button>
-    </div>
-  </form>
-</Modal>
-
-<ConfirmDialog bind:open={isDeleteOpen} title="Hapus Nilai" onConfirm={remove} destructive />
 </PageShell>

@@ -258,6 +258,7 @@ export interface GradeSummaryRow {
   student_name: string;
   nis: string;
   scores: Record<string, number | null>;
+  grade_ids: Record<string, string>;
   final_score: number | null;
   kkm: number;
   predikat: string | null;

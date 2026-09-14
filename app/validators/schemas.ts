@@ -249,6 +249,16 @@ export const GradeSchema = z.object({
   teacher_user_id: z.string().uuid('Invalid teacher user ID').optional(),
 });
 
+export const BulkGradesSchema = z.object({
+  class_id: z.string().uuid('Invalid class ID'),
+  subject_id: z.string().uuid('Invalid subject ID'),
+  type: z.enum(['task', 'daily_quiz', 'midterm', 'final']),
+  entries: z.array(z.object({
+    student_id: z.string().uuid('Invalid student ID'),
+    score: z.number().min(0, 'Score must be at least 0').max(100, 'Score must be at most 100'),
+  })).min(1, 'At least one entry is required').max(200),
+});
+
 export const GradeComponentsSchema = z.object({
   components: z.array(z.object({
     type: z.enum(['task', 'daily_quiz', 'midterm', 'final']),
