@@ -10,9 +10,9 @@
 
 ## Stats
 
-- Files indexed: 277
-- Total lines: 28227
-- Total exports: 812
+- Files indexed: 283
+- Total lines: 28742
+- Total exports: 823
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -50,7 +50,7 @@
 - `attendance.ts` (32L) — attendanceReportData
 - `auth.ts` (94L) — loginPage, submitLogin, logout, changePassword
 - `classes.ts` (114L) — classesPage, listClasses, classData, addClass, editClass, removeClass
-- `dashboard.ts` (29L) — dashboardPage
+- `dashboard.ts` (31L) — dashboardPage
 - `gradeAudit.ts` (39L) — gradeAuditPage, gradeAuditData
 - `grades.ts` (245L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, editGrade, removeGrade
 - `headmaster.ts` (102L) — headmasterDashboardPage, headmasterDashboardData, headmasterReportsPage, headmasterClassGradesPage, headmasterTeacherAttendancePage, listOutsideConfirmations
@@ -106,7 +106,7 @@
 - `schedules.ts` (83L) — findAllSchedules, findScheduleById, findSchedulesByClass, findSchedulesByTeacher, findTeacherSchedulesByDay, findSchedulesByDay, createSchedule, updateSchedule, +5
 - `schoolLocations.ts` (25L) — findSchoolLocationById, findActiveSchoolLocation, createSchoolLocation, updateSchoolLocation
 - `sessions.ts` (50L) — findSessionById, createSession, deleteSession, deleteSessionsByUserId, cleanupExpiredSessions, getUserBySessionId
-- `stats.ts` (67L) — getDashboardStats, getClassSubjectStats, DashboardStats, ClassSubjectStats
+- `stats.ts` (184L) — getDashboardStats, getDashboardCharts, getClassSubjectStats, DashboardStats, AttendanceTrendPoint, AttendanceStatusSlice, ClassSizePoint, ConfirmationWeekPoint, +2
 - `studentAttendance.ts` (56L) — findAllStudentAttendance, findStudentAttendanceById, findAttendanceByJournal, findAttendanceByStudent, findAttendanceBySchedule, createStudentAttendance, upsertStudentAttendance, updateStudentAttendance, +2
 - `students.ts` (110L) — findAllStudents, findStudentById, findAllNis, importStudents, findStudentsByClass, findStudentsByParent, findStudentsForParentSelect, linkStudentToParent, +7
 - `subjects.ts` (33L) — findAllSubjects, findSubjectById, findSubjectByCode, createSubject, updateSubject, deleteSubject
@@ -193,50 +193,59 @@
 ### resources/Components/
 
 - `Badge.svelte` (51L) — badgeVariants, BadgeVariant
-- `BentoCard.svelte` (37L)
+- `BentoCard.svelte` (39L)
 - `Button.svelte` (83L) — buttonVariants, ButtonVariant, ButtonSize, ButtonProps
 - `Can.svelte` (40L)
 - `ConfirmDialog.svelte` (42L)
 - `DarkModeToggle.svelte` (27L)
-- `DataTable.svelte` (96L) — DataTableCell
+- `DataTable.svelte` (97L) — DataTableCell
 - `Header.svelte` (213L)
 - `Input.svelte` (51L)
 - `Label.svelte` (23L)
 - `Modal.svelte` (58L)
+- `PageHeader.svelte` (39L)
+- `PageShell.svelte` (21L)
 - `Pagination.svelte` (69L)
 - `QrScanner.svelte` (209L)
 - `RoleModal.svelte` (152L)
 - `Select.svelte` (40L)
 - `Sidebar.svelte` (352L)
 - `SigapIcon.svelte` (46L)
-- `StatCard.svelte` (39L)
+- `StatCard.svelte` (81L)
 - `Switch.svelte` (52L)
 - `UserModal.svelte` (165L)
 
+### resources/Components/charts/
+
+- `AttendanceDonut.svelte` (66L)
+- `AttendanceTrendChart.svelte` (87L)
+- `ClassSizeBars.svelte` (29L)
+- `ConfirmationWeekChart.svelte` (36L)
+
 ### resources/Pages/
 
-- `academicYears.svelte` (201L)
-- `announcements.svelte` (112L)
-- `classes.svelte` (107L)
-- `dashboard.svelte` (139L)
-- `gradeAudit.svelte` (85L)
-- `grades.svelte` (215L)
-- `journals.svelte` (91L)
+- `academicYears.svelte` (193L)
+- `announcements.svelte` (106L)
+- `classes.svelte` (101L)
+- `dashboard.svelte` (167L)
+- `gradeAudit.svelte` (77L)
+- `grades.svelte` (224L)
+- `journals.svelte` (85L)
 - `landing.svelte` (610L)
-- `parents.svelte` (87L)
+- `parents.svelte` (81L)
 - `profile.svelte` (215L)
-- `qrDisplay.svelte` (89L)
-- `qrSettings.svelte` (86L)
-- `roles.svelte` (283L)
-- `schedules.svelte` (321L)
-- `schoolLocations.svelte` (178L)
-- `studentAttendance.svelte` (30L)
-- `students.svelte` (236L)
-- `subjects.svelte` (79L)
-- `teacherAssignments.svelte` (335L)
-- `teacherConfirmations.svelte` (155L)
-- `teachers.svelte` (130L)
-- `users.svelte` (256L)
+- `qrDisplay.svelte` (91L)
+- `qrSettings.svelte` (90L)
+- `roles.svelte` (273L)
+- `schedules.svelte` (320L)
+- `schoolLocations.svelte` (233L)
+- `studentAttendance.svelte` (23L)
+- `students.svelte` (233L)
+- `subjects.svelte` (73L)
+- `teacherAssignments.svelte` (366L)
+- `teacherConfirmations.svelte` (150L)
+- `teachers.svelte` (124L)
+- `users.svelte` (247L)
 
 ### resources/Pages/auth/
 
@@ -293,7 +302,7 @@
 
 ### resources/types/
 
-- `forms.ts` (451L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +36
+- `forms.ts` (482L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +41
 - `index.ts` (15L)
 
 ### routes/
@@ -928,8 +937,14 @@
 ### `app/queries/stats.ts`
 
 - `const` **getDashboardStats**
+- `const` **getDashboardCharts**
 - `const` **getClassSubjectStats**
 - `iface` **DashboardStats**
+- `iface` **AttendanceTrendPoint**
+- `iface` **AttendanceStatusSlice**
+- `iface` **ClassSizePoint**
+- `iface` **ConfirmationWeekPoint**
+- `iface` **DashboardCharts**
 - `iface` **ClassSubjectStats**
 
 ### `app/queries/studentAttendance.ts`
@@ -1580,6 +1595,11 @@
 - `iface` **UserForm**
 - `iface` **RoleForm**
 - `iface` **DashboardStats**
+- `iface` **AttendanceTrendPoint**
+- `iface` **AttendanceStatusSlice**
+- `iface` **ClassSizePoint**
+- `iface` **ConfirmationWeekPoint**
+- `iface` **DashboardCharts**
 - `iface` **AcademicYearForm**
 - `iface` **ClassForm**
 - `iface` **SubjectForm**
@@ -1752,6 +1772,10 @@
 - `migrations/20260914000001_repair_journals_fk.ts` → `@services/SQLite`
 - `resources/app.ts` → `@inertiajs/svelte`
 - `resources/Components/Can.svelte` → `@inertiajs/svelte`
+- `resources/Components/charts/AttendanceDonut.svelte` → `../../types`
+- `resources/Components/charts/AttendanceTrendChart.svelte` → `../../types`
+- `resources/Components/charts/ClassSizeBars.svelte` → `../../types`
+- `resources/Components/charts/ConfirmationWeekChart.svelte` → `../../types`
 - `resources/Components/ConfirmDialog.svelte` → `./Button.svelte`, `./Modal.svelte`
 - `resources/Components/DarkModeToggle.svelte` → `./Button.svelte`, `@lucide/svelte`
 - `resources/Components/Header.svelte` → `./DarkModeToggle.svelte`, `./SigapIcon.svelte`, `@inertiajs/svelte`, `@lucide/svelte`, `@zag-js/dialog`, `@zag-js/menu`, `@zag-js/svelte`
@@ -1764,39 +1788,40 @@
 - `resources/Components/Switch.svelte` → `@zag-js/svelte`, `@zag-js/switch`
 - `resources/Components/UserModal.svelte` → `../types`, `./Button.svelte`, `./Input.svelte`, `./Label.svelte`, `./Select.svelte`, `./Switch.svelte`, `@lucide/svelte`, `@zag-js/dialog`, `@zag-js/svelte`
 - `resources/lib/permissions.ts` → `@inertiajs/svelte`
-- `resources/Pages/academicYears.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../Components/Switch.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/announcements.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/academicYears.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../Components/Switch.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/announcements.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/auth/login.svelte` → `../../Components/Button.svelte`, `../../Components/DarkModeToggle.svelte`, `../../Components/Input.svelte`, `../../Components/Label.svelte`, `../../Components/SigapIcon.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/auth/register.svelte` → `../../Components/Button.svelte`, `../../Components/DarkModeToggle.svelte`, `../../Components/Input.svelte`, `../../Components/Label.svelte`, `../../Components/SigapIcon.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/classes.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/dashboard.svelte` → `../Components/BentoCard.svelte`, `../Components/Sidebar.svelte`, `../Components/StatCard.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/gradeAudit.svelte` → `../Components/DataTable.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../types`
-- `resources/Pages/grades.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Pagination.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/classes.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/dashboard.svelte` → `../Components/BentoCard.svelte`, `../Components/Sidebar.svelte`, `../Components/StatCard.svelte`, `../Components/charts/AttendanceDonut.svelte`, `../Components/charts/AttendanceTrendChart.svelte`, `../Components/charts/ClassSizeBars.svelte`, `../Components/charts/ConfirmationWeekChart.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/gradeAudit.svelte` → `../Components/DataTable.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../types`
+- `resources/Pages/grades.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/class-grades.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/dashboard.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../Components/StatCard.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/reports.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../Components/StatCard.svelte`, `../../types`
 - `resources/Pages/headmaster/teacher-attendance.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../Components/StatCard.svelte`, `../../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/journals.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/journals.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/landing.svelte` → `../Components/DarkModeToggle.svelte`, `../Components/SigapIcon.svelte`, `@inertiajs/svelte`
 - `resources/Pages/parent/attendance.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../types`
 - `resources/Pages/parent/dashboard.svelte` → `../../Components/Sidebar.svelte`, `../../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/parent/grades.svelte` → `../../Components/Sidebar.svelte`, `../../types`, `@lucide/svelte`
-- `resources/Pages/parents.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Pagination.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/parents.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/profile.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Sidebar.svelte`, `@lucide/svelte`, `@zag-js/svelte`, `@zag-js/tabs`
-- `resources/Pages/qrSettings.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Sidebar.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/qrDisplay.svelte` → `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`
+- `resources/Pages/qrSettings.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/reports/rapor.svelte` → `../../Components/Button.svelte`, `../../Components/Sidebar.svelte`, `../../types`, `@lucide/svelte`
-- `resources/Pages/roles.svelte` → `../Components/Button.svelte`, `../Components/RoleModal.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/schedules.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/schoolLocations.svelte` → `../Components/Badge.svelte`, `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/studentAttendance.svelte` → `../Components/DataTable.svelte`, `../Components/Sidebar.svelte`, `../types`
-- `resources/Pages/students.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Pagination.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/subjects.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/roles.svelte` → `../Components/Button.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/RoleModal.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/schedules.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/schoolLocations.svelte` → `../Components/Badge.svelte`, `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/studentAttendance.svelte` → `../Components/DataTable.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `../types`
+- `resources/Pages/students.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/subjects.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/teacher/confirm.svelte` → `../../Components/Button.svelte`, `../../Components/QrScanner.svelte`, `../../Components/Sidebar.svelte`, `@inertiajs/svelte`
 - `resources/Pages/teacher/schedule.svelte` → `../../Components/Button.svelte`, `../../Components/QrScanner.svelte`, `../../Components/Sidebar.svelte`, `@inertiajs/svelte`
-- `resources/Pages/teacherAssignments.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/teacherConfirmations.svelte` → `../Components/Badge.svelte`, `../Components/Button.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Pagination.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/teachers.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/users.svelte` → `../Components/Button.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../Components/UserModal.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/teacherAssignments.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/teacherConfirmations.svelte` → `../Components/Badge.svelte`, `../Components/Button.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/teachers.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/users.svelte` → `../Components/Button.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../Components/UserModal.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/types/index.ts` → `./types`
 - `routes/web.ts` → `@core`, `@handlers/academicYears`, `@handlers/announcements`, `@handlers/assets`, `@handlers/attendance`, `@handlers/auth`, `@handlers/classes`, `@handlers/dashboard`, `@handlers/gradeAudit`, `@handlers/grades`, `@handlers/headmaster`, `@handlers/home`, `@handlers/journals`, `@handlers/notifications`, `@handlers/parent`, `@handlers/parents`, `@handlers/qrSettings`, `@handlers/rapor`, `@handlers/reports`, `@handlers/roles`, `@handlers/schedules`, `@handlers/schoolLocations`, `@handlers/studentAttendance`, `@handlers/students`, `@handlers/subjects`, `@handlers/teacherAssignments`, `@handlers/teacherConfirmations`, `@handlers/teacherSchedule`, `@handlers/teachers`, `@handlers/users`, `@middlewares/auth`, `@middlewares/rateLimit`
 - `scripts/eval-agent.ts` → `@handlers/evaltests`
