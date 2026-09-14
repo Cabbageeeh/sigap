@@ -8,10 +8,11 @@
   import Input from '../Components/Input.svelte';
   import Label from '../Components/Label.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import type { AcademicYear, Class, Schedule, Subject, Teacher, TeacherClassAssignment } from '../types';
   import { timestampToTimeInput, timeInputToTimestamp } from '$lib/utils/datetime';
-  import { ArrowRight, CalendarClock, Check, Plus, Save, Trash2, UserRound } from '@lucide/svelte';
-  import { fly } from 'svelte/transition';
+  import { ArrowRight, CalendarClock, Check, ClipboardList, Plus, Save, Trash2, UserRound } from '@lucide/svelte';
 
   interface TeacherScheduleRow extends Schedule {
     class_name: string;
@@ -62,6 +63,9 @@
   const selectedAssignments = $derived(assignments.filter(assignment => assignment.teacher_id === selectedTeacherId));
   const assignedClasses = $derived(classes.filter(classItem => assignedClassIds.includes(classItem.id)));
   const teacherSchedules = $derived(selectedTeacher ? schedules.filter(schedule => schedule.teacher_user_id === selectedTeacher.user_id) : []);
+
+  const teacherInitial = (teacher: Teacher): string => teacherName(teacher).charAt(0).toUpperCase();
+  const homeroomCount = $derived(assignments.filter(a => a.is_homeroom === 1).length);
 
   $effect(() => {
     assignedClassIds = selectedAssignments.map(assignment => assignment.class_id);
@@ -145,69 +149,92 @@
 </script>
 
 <Sidebar group="teacher-assignments" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10" in:fly={{ y: 20, duration: 800 }}>
-    <div>
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Data Master · Guru</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-        Penugasan Guru.
-      </h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[60ch]">
-        Tentukan kelas yang diampu setiap guru, lalu susun jadwal mengajarnya (mapel, kelas, hari, jam) pada bagian bawah. Satu guru dapat ditetapkan sebagai wali kelas untuk satu kelas pada setiap tahun ajaran.
-      </p>
-    </div>
-    <div class="flex items-center gap-3 min-w-56">
-      <Label for="academic-year" class="sr-only">Tahun ajaran</Label>
-      <Select id="academic-year" bind:value={currentYearId} onchange={changeYear} placeholder="Pilih tahun ajaran">
-        {#each years as year}<option value={year.id}>{year.name}</option>{/each}
-      </Select>
-    </div>
-  </div>
+<PageShell>
+  <PageHeader eyebrow="Data Master · Guru" title="Penugasan Guru." description="Tentukan kelas yang diampu setiap guru, lalu susun jadwal mengajarnya (mapel, kelas, hari, jam) pada bagian bawah. Satu guru dapat ditetapkan sebagai wali kelas untuk satu kelas pada setiap tahun ajaran.">
+    {#snippet actions()}
+      <div class="flex items-center gap-3 min-w-56">
+        <Label for="academic-year" class="sr-only">Tahun ajaran</Label>
+        <Select id="academic-year" bind:value={currentYearId} onchange={changeYear} placeholder="Pilih tahun ajaran">
+          {#each years as year}<option value={year.id}>{year.name}</option>{/each}
+        </Select>
+      </div>
+    {/snippet}
+  </PageHeader>
 
   {#if !permissions.canEdit}
     <div class="rounded-2xl border border-border bg-card p-8 text-center text-muted-foreground">Halaman ini hanya dapat diakses admin.</div>
   {:else if teachers.length === 0}
     <div class="rounded-2xl border border-border bg-card p-8 text-center text-muted-foreground">Belum ada data guru. Tambahkan guru dari menu Guru terlebih dahulu.</div>
   {:else}
+    <div class="mb-6 grid grid-cols-3 gap-4">
+      <div class="relative overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+        <div class="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-info-500/[0.08] blur-2xl"></div>
+        <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Guru</p>
+        <p class="mt-2 font-heading text-2xl font-bold tracking-[-0.03em]">{teachers.length}</p>
+      </div>
+      <div class="relative overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+        <div class="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-warning-500/[0.08] blur-2xl"></div>
+        <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Kelas TA ini</p>
+        <p class="mt-2 font-heading text-2xl font-bold tracking-[-0.03em]">{classes.length}</p>
+      </div>
+      <div class="relative overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+        <div class="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-primary/[0.08] blur-2xl"></div>
+        <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Wali kelas</p>
+        <p class="mt-2 font-heading text-2xl font-bold tracking-[-0.03em]">{homeroomCount}</p>
+      </div>
+    </div>
+
     <div class="grid grid-cols-1 xl:grid-cols-[minmax(15rem,22rem)_1fr] gap-6">
-      <section class="rounded-2xl border border-border bg-card overflow-hidden">
-        <div class="px-5 py-4 border-b border-border">
-          <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Daftar Guru</p>
-          <p class="mt-1 text-sm text-muted-foreground">Pilih guru untuk mengatur kelas.</p>
+      <section class="relative overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
+        <div class="relative px-5 py-4 border-b border-border flex items-center gap-3">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><UserRound class="h-4.5 w-4.5 text-primary" /></span>
+          <div>
+            <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Daftar Guru</p>
+            <p class="mt-1 text-sm text-muted-foreground">Pilih guru untuk mengatur kelas.</p>
+          </div>
         </div>
         <div class="divide-y divide-border">
           {#each teachers as teacher (teacher.id)}
+            {@const active = selectedTeacherId === teacher.id}
             <button
               type="button"
-              class={`w-full text-left px-5 py-4 transition-colors cursor-pointer ${selectedTeacherId === teacher.id ? 'bg-primary/10 text-primary' : 'hover:bg-secondary/40'}`}
-              aria-pressed={selectedTeacherId === teacher.id}
+              class={`relative w-full text-left px-5 py-4 transition-colors cursor-pointer ${active ? 'bg-primary/[0.07]' : 'hover:bg-secondary/40'}`}
+              aria-pressed={active}
               onclick={() => selectedTeacherId = teacher.id}
             >
+              {#if active}<span class="absolute inset-y-0 left-0 w-1 bg-primary"></span>{/if}
               <span class="flex items-center gap-3">
-                <span class={`flex items-center justify-center h-8 w-8 rounded-full border ${selectedTeacherId === teacher.id ? 'border-primary/40 bg-primary/15' : 'border-border bg-secondary/50'}`}>
-                  <UserRound class="h-4 w-4" />
+                <span class={`flex items-center justify-center h-9 w-9 rounded-full border font-heading text-xs font-semibold ${active ? 'border-primary/40 bg-primary/15 text-primary' : 'border-border bg-secondary/50 text-muted-foreground'}`}>
+                  {teacherInitial(teacher)}
                 </span>
                 <span class="min-w-0">
-                  <span class="block truncate font-medium">{teacherName(teacher)}</span>
+                  <span class={`block truncate font-medium ${active ? 'text-primary' : ''}`}>{teacherName(teacher)}</span>
                   <span class="block truncate text-xs text-muted-foreground">{teacher.employee_id || teacher.user_username || 'NIP belum diisi'}</span>
                 </span>
               </span>
               <span class="mt-3 flex items-center justify-between text-xs text-muted-foreground">
                 <span>{assignments.filter(assignment => assignment.teacher_id === teacher.id).length} kelas diampu</span>
-                {#if assignments.some(assignment => assignment.teacher_id === teacher.id && assignment.is_homeroom === 1)}<span class="text-primary">Wali kelas</span>{/if}
+                {#if assignments.some(assignment => assignment.teacher_id === teacher.id && assignment.is_homeroom === 1)}
+                  <span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-heading font-semibold text-primary">Wali kelas</span>
+                {/if}
               </span>
             </button>
           {/each}
         </div>
       </section>
 
-      <section class="rounded-2xl border border-border bg-card p-5 sm:p-7">
+      <section class="relative overflow-hidden rounded-2xl border border-border bg-card p-5 sm:p-7 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
         {#if selectedTeacher}
-          <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-7">
-            <div>
-              <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground mb-2">Pengaturan penugasan</p>
-              <h2 class="font-heading text-2xl font-semibold tracking-[-0.02em]">{teacherName(selectedTeacher)}</h2>
-              <p class="mt-1 text-sm text-muted-foreground">@{selectedTeacher.user_username || 'Username belum tersedia'}</p>
+          <div class="relative flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-7">
+            <div class="flex items-center gap-3">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 shrink-0"><ClipboardList class="h-4.5 w-4.5 text-primary" /></span>
+              <div>
+                <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground mb-1">Pengaturan penugasan</p>
+                <h2 class="font-heading text-2xl font-semibold tracking-[-0.02em]">{teacherName(selectedTeacher)}</h2>
+                <p class="mt-1 text-sm text-muted-foreground">@{selectedTeacher.user_username || 'Username belum tersedia'}</p>
+              </div>
             </div>
             <Button onclick={submit} disabled={isSaving}>
               <Save class="h-4 w-4" />
@@ -215,7 +242,7 @@
             </Button>
           </div>
 
-          <div class="rounded-md border border-border bg-secondary/20 px-4 py-3 mb-6 text-sm text-muted-foreground">
+          <div class="relative rounded-xl border border-border bg-secondary/20 px-4 py-3 mb-6 text-sm text-muted-foreground">
             Pilih semua kelas yang diampu. Tandai satu kelas sebagai <strong class="text-foreground">wali kelas</strong> jika guru ini menjadi wali kelasnya.
           </div>
 
@@ -225,10 +252,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               {#each classes as classItem (classItem.id)}
                 {@const assigned = assignedClassIds.includes(classItem.id)}
-                <div class={`rounded-md border p-4 transition-colors ${assigned ? 'border-primary/50 bg-primary/5' : 'border-border bg-background'}`}>
+                <div class={`rounded-xl border p-4 transition-all duration-150 ${assigned ? 'border-primary/50 bg-primary/[0.06] shadow-[0_4px_16px_-6px_rgba(185,71,47,0.15)]' : 'border-border bg-background hover:border-foreground/20'}`}>
                   <button type="button" class="w-full text-left cursor-pointer" onclick={() => toggleClass(classItem.id)} aria-pressed={assigned}>
                     <span class="flex items-start gap-3">
-                      <span class={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border ${assigned ? 'border-primary bg-primary text-primary-foreground' : 'border-border'}`}>
+                      <span class={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors ${assigned ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card'}`}>
                         {#if assigned}<Check class="h-3.5 w-3.5" />{/if}
                       </span>
                       <span>
@@ -254,11 +281,15 @@
     </div>
 
     {#if selectedTeacher}
-      <section class="mt-6 rounded-2xl border border-border bg-card overflow-hidden">
-        <div class="px-5 py-4 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Jadwal mengajar · {teacherName(selectedTeacher)}</p>
-            <p class="mt-1 text-sm text-muted-foreground">Kelas yang bisa dijadwalkan mengikuti kelas yang diampu di atas.</p>
+      <section class="relative mt-6 overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
+        <div class="relative px-5 py-4 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 shrink-0"><CalendarClock class="h-4.5 w-4.5 text-primary" /></span>
+            <div>
+              <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">Jadwal mengajar · {teacherName(selectedTeacher)}</p>
+              <p class="mt-1 text-sm text-muted-foreground">Kelas yang bisa dijadwalkan mengikuti kelas yang diampu di atas.</p>
+            </div>
           </div>
           <a href="/schedules" use:inertia class="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
             Semua jadwal <ArrowRight class="w-4 h-4" />
@@ -268,7 +299,7 @@
         {#if assignedClasses.length === 0}
           <p class="px-5 py-8 text-center text-sm text-muted-foreground">Tetapkan kelas yang diampu di atas terlebih dahulu sebelum menyusun jadwal.</p>
         {:else}
-          <form class="grid grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_1fr_auto] gap-3 items-end p-5 border-b border-border" onsubmit={(e) => { e.preventDefault(); void submitSchedule(); }}>
+          <form class="grid grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_1fr_auto] gap-3 items-end p-5 border-b border-border bg-secondary/15" onsubmit={(e) => { e.preventDefault(); void submitSchedule(); }}>
             <div class="flex flex-col gap-0">
               <Label for="schedule-class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Kelas</Label>
               <Select id="schedule-class" bind:value={scheduleClassId} placeholder="Pilih kelas">
@@ -303,10 +334,10 @@
 
           <div class="divide-y divide-border">
             {#each teacherSchedules as schedule (schedule.id)}
-              <div class="flex items-center justify-between gap-4 px-5 py-3.5">
+              <div class="flex items-center justify-between gap-4 px-5 py-3.5 transition-colors hover:bg-secondary/30">
                 <div class="flex items-center gap-3 min-w-0">
-                  <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-primary/40 bg-primary/15">
-                    <CalendarClock class="h-4 w-4 text-primary" />
+                  <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                    <CalendarClock class="h-4.5 w-4.5 text-primary" />
                   </span>
                   <div class="min-w-0">
                     <p class="truncate font-medium">{schedule.class_name} · {schedule.subject_name}</p>
@@ -331,4 +362,4 @@
     </div>
     <ConfirmDialog bind:open={isDeleteScheduleOpen} title="Hapus Jadwal" description="Jadwal mengajar ini akan dihapus permanen." onConfirm={removeSchedule} destructive />
   {/if}
-</div>
+</PageShell>
