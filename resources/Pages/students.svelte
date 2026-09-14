@@ -11,9 +11,11 @@
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
   import Select from '../Components/Select.svelte';
   import Pagination from '../Components/Pagination.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import type { Student, StudentForm, Class, User } from '../types';
   import { createEmptyStudentForm, studentToForm } from '../types';
-  import { ArrowLeft, Pencil, Trash2, Upload } from '@lucide/svelte';
+  import { ArrowLeft, Pencil, Plus, Trash2, Upload } from '@lucide/svelte';
   import { fly } from 'svelte/transition';
 
   let {
@@ -133,31 +135,26 @@
 {/snippet}
 
 <Sidebar group={classScoped ? 'classes' : 'students'} />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8" in:fly={{ y: 20, duration: 800 }}>
-    <div>
-      {#if classScoped && classContext}
-        <a href="/classes" use:inertia class="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors mb-6">
-          <ArrowLeft class="w-4 h-4" /> Kembali ke daftar kelas
-        </a>
-      {/if}
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Manajemen Siswa</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-        {classScoped && classContext ? `Siswa ${classContext.name}.` : 'Siswa.'}
-      </h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
-        {classScoped && classContext
-          ? `Kelola daftar siswa kelas ${classContext.name}. Gunakan pencarian untuk menemukan siswa dengan cepat.`
-          : 'Pilih kelas untuk mengelola data siswa secara lebih terarah.'}
-      </p>
-    </div>
-    {#if permissions.canCreate}
-      <div class="flex gap-2">
+<PageShell>
+  {#if classScoped && classContext}
+    <a href="/classes" use:inertia class="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors mb-6" in:fly={{ y: 20, duration: 800 }}>
+      <ArrowLeft class="w-4 h-4" /> Kembali ke daftar kelas
+    </a>
+  {/if}
+  <PageHeader
+    eyebrow="Manajemen Siswa"
+    title={classScoped && classContext ? `Siswa ${classContext.name}.` : 'Siswa.'}
+    description={classScoped && classContext
+      ? `Kelola daftar siswa kelas ${classContext.name}. Gunakan pencarian untuk menemukan siswa dengan cepat.`
+      : 'Pilih kelas untuk mengelola data siswa secara lebih terarah.'}
+  >
+    {#snippet actions()}
+      {#if permissions.canCreate}
         <Button variant="outline" onclick={openImport}><Upload class="w-4 h-4 mr-1" /> Import CSV</Button>
-        <Button onclick={openCreate} size="lg">Tambah Siswa</Button>
-      </div>
-    {/if}
-  </div>
+        <Button onclick={openCreate} size="lg"><Plus class="w-4 h-4" /> Tambah Siswa</Button>
+      {/if}
+    {/snippet}
+  </PageHeader>
   <div class="flex flex-col md:flex-row gap-3 mb-6">
     {#if !classScoped}
       <Select id="student-class-filter" bind:value={selectedClassId} onchange={selectClass}>
@@ -172,7 +169,6 @@
   </div>
   <DataTable {columns} rows={displayRows} rowAction={rowActions} />
   {#if meta}<Pagination {meta} />{/if}
-</div>
 
 <Modal bind:open={isOpen} title={selected ? 'Edit Siswa' : 'Tambah Siswa'} description={classScoped && classContext ? `Tambah atau ubah data siswa kelas ${classContext.name}.` : 'Tambah atau ubah data siswa. Isi NIS, nama, kelas, dan orang tua.'}>
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
@@ -233,3 +229,4 @@
 </Modal>
 
 <ConfirmDialog bind:open={isDeleteOpen} title="Hapus Siswa" onConfirm={remove} destructive />
+</PageShell>

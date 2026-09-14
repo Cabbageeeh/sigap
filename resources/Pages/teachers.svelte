@@ -12,8 +12,9 @@
   import Pagination from '../Components/Pagination.svelte';
   import type { Teacher, TeacherForm, Subject, PaginationMeta } from '../types';
   import { createEmptyTeacherForm, teacherToForm } from '../types';
-  import { CalendarClock, Pencil, Trash2 } from '@lucide/svelte';
-  import { fly } from 'svelte/transition';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
+  import { CalendarClock, Pencil, Plus, Search, Trash2 } from '@lucide/svelte';
 
   type TeacherRow = Teacher & { user_name: string | null; user_username: string; subject_names: string | null };
 
@@ -77,28 +78,20 @@
 {/snippet}
 
 <Sidebar group="teachers" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8" in:fly={{ y: 20, duration: 800 }}>
-    <div>
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Manajemen Guru</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-        Guru.
-      </h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
-        Data guru terdaftar beserta NIP dan mata pelajaran. Tambah, edit, atau hapus.
-      </p>
-    </div>
-    {#if permissions.canCreate}<Button onclick={openCreate} size="lg">Tambah Guru</Button>{/if}
-  </div>
+<PageShell>
+  <PageHeader eyebrow="Manajemen Guru" title="Guru." description="Data guru terdaftar beserta NIP dan mata pelajaran. Tambah, edit, atau hapus.">
+    {#snippet actions()}
+      {#if permissions.canCreate}<Button onclick={openCreate} size="lg"><Plus class="w-4 h-4" /> Tambah Guru</Button>{/if}
+    {/snippet}
+  </PageHeader>
   <div class="flex flex-col md:flex-row gap-3 mb-6">
     <form class="flex flex-1 gap-2" onsubmit={(event) => { event.preventDefault(); submitSearch(); }}>
       <Input type="search" placeholder="Cari NIP atau nama guru..." bind:value={searchValue} class="flex-1" />
-      <Button type="submit" variant="outline">Cari</Button>
+      <Button type="submit" variant="outline"><Search class="w-4 h-4" /> Cari</Button>
     </form>
   </div>
   <DataTable {columns} rows={teachers} rowAction={rowActions} />
   {#if meta}<Pagination {meta} />{/if}
-</div>
 
 <Modal bind:open={isOpen} title={selected ? 'Edit Guru' : 'Tambah Guru'} description={selected ? 'Ubah NIP, nama, dan kompetensi mata pelajaran guru.' : 'Akun login dibuat otomatis: guru_[4 digit terakhir NIP] dengan kata sandi guru123.'}>
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
@@ -127,3 +120,4 @@
 </Modal>
 
 <ConfirmDialog bind:open={isDeleteOpen} title="Hapus Guru" onConfirm={remove} destructive />
+</PageShell>

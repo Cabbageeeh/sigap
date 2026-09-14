@@ -9,8 +9,9 @@
   import Label from '../Components/Label.svelte';
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import { Pencil, Trash2, Megaphone } from '@lucide/svelte';
-  import { fly } from 'svelte/transition';
   import type { AnnouncementView } from '../types';
 
   let { canManage = false, announcements = [] }: { canManage?: boolean; announcements?: AnnouncementView[] } = $props();
@@ -77,21 +78,13 @@
 {/snippet}
 
 <Sidebar group="announcements" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12" in:fly={{ y: 20, duration: 800 }}>
-    <div>
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Informasi Sekolah</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-        Pengumuman.
-      </h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
-        Informasi resmi sekolah yang terlihat di dashboard guru, orang tua, dan kepala sekolah.
-      </p>
-    </div>
-    {#if canManage}<Button onclick={openCreate} size="lg"><Megaphone class="w-4 h-4 mr-1" /> Buat Pengumuman</Button>{/if}
-  </div>
+<PageShell>
+  <PageHeader eyebrow="Informasi Sekolah" title="Pengumuman." description="Informasi resmi sekolah yang terlihat di dashboard guru, orang tua, dan kepala sekolah.">
+    {#snippet actions()}
+      {#if canManage}<Button onclick={openCreate} size="lg"><Megaphone class="w-4 h-4 mr-1" /> Buat Pengumuman</Button>{/if}
+    {/snippet}
+  </PageHeader>
   <DataTable {columns} rows={displayRows} rowAction={rowActions} emptyMessage="Belum ada pengumuman." />
-</div>
 
 <Modal bind:open={isOpen} title={selected ? 'Edit Pengumuman' : 'Buat Pengumuman'} description="Tulis judul dan isi pengumuman.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
@@ -109,3 +102,4 @@
 </Modal>
 
 <ConfirmDialog bind:open={isDeleteOpen} title="Hapus Pengumuman" onConfirm={remove} destructive />
+</PageShell>

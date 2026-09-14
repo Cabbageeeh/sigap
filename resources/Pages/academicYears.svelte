@@ -12,11 +12,12 @@
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
   import Select from '../Components/Select.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import type { AcademicYear, AcademicYearForm, User } from '../types';
   import { createEmptyAcademicYearForm, academicYearToForm } from '../types';
   import { timestampToDateInput, dateInputToTimestamp } from '$lib/utils/datetime';
-  import { Pencil, Trash2 } from '@lucide/svelte';
-  import { fly } from 'svelte/transition';
+  import { Pencil, Plus, Trash2 } from '@lucide/svelte';
 
   let { permissions, years = [] }: { permissions: { canCreate?: boolean; canEdit?: boolean; canDelete?: boolean; canPublish?: boolean }; years?: AcademicYear[] } = $props();
 
@@ -142,24 +143,14 @@
 
 <Sidebar group="academic-years" />
 
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12" in:fly={{ y: 20, duration: 800 }}>
-    <div>
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Manajemen Tahun Ajaran</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-        Tahun Ajaran.
-      </h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
-        Atur periode tahun ajaran aktif untuk seluruh kegiatan sekolah.
-      </p>
-    </div>
-    {#if permissions.canCreate}
-      <Button onclick={openCreate} size="lg">Tambah Tahun</Button>
-    {/if}
-  </div>
+<PageShell>
+  <PageHeader eyebrow="Manajemen Tahun Ajaran" title="Tahun Ajaran." description="Atur periode tahun ajaran aktif untuk seluruh kegiatan sekolah.">
+    {#snippet actions()}
+      {#if permissions.canCreate}<Button onclick={openCreate} size="lg"><Plus class="w-4 h-4" /> Tambah Tahun</Button>{/if}
+    {/snippet}
+  </PageHeader>
 
   <DataTable {columns} rows={displayYears} rowAction={rowActions} />
-</div>
 
 <Modal bind:open={isOpen} title={selected ? 'Edit Tahun Ajaran' : 'Tambah Tahun Ajaran'} description="Tambah atau ubah tahun ajaran. Atur periode mulai dan selesai.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
@@ -198,3 +189,4 @@
 <ConfirmDialog bind:open={isDeleteOpen} title="Hapus Tahun Ajaran" description="Tahun ajaran yang dihapus tidak bisa dikembalikan. Lanjutkan?" confirmLabel="Hapus" cancelLabel="Batal" onConfirm={remove} destructive />
 <ConfirmDialog bind:open={isActivateOpen} title="Aktifkan Tahun Ajaran" description="Periode lain yang sedang aktif akan dinonaktifkan. Lanjutkan?" confirmLabel="Aktifkan" cancelLabel="Batal" onConfirm={activate} />
 <ConfirmDialog bind:open={isPublishOpen} title={publishYear?.is_grades_published === 1 ? 'Tarik Publikasi Nilai' : 'Publikasikan Nilai'} description={publishYear?.is_grades_published === 1 ? 'Nilai akan disembunyikan lagi dari orang tua. Lanjutkan?' : 'Semua orang tua akan menerima notifikasi nilai dipublikasikan. Lanjutkan?'} confirmLabel={publishYear?.is_grades_published === 1 ? 'Tarik' : 'Publikasikan'} cancelLabel="Batal" onConfirm={publish} />
+</PageShell>

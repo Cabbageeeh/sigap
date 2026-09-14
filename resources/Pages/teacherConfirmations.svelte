@@ -8,6 +8,8 @@
   import Select from '../Components/Select.svelte';
   import Badge from '../Components/Badge.svelte';
   import Pagination from '../Components/Pagination.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import type { TeacherConfirmationLogView, PaginationMeta } from '../types';
   import { UserCheck } from '@lucide/svelte';
   import { fly } from 'svelte/transition';
@@ -100,19 +102,12 @@
 {/snippet}
 
 <Sidebar group="teacher-confirmations" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="mb-8" in:fly={{ y: 20, duration: 800 }}>
-    <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Konfirmasi Guru</p>
-    <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-      Log Kehadiran Guru.
-    </h1>
-    <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
-      Riwayat konfirmasi kehadiran guru berdasarkan scan QR absen harian.
-    </p>
-  </div>
+<PageShell>
+  <PageHeader eyebrow="Konfirmasi Guru" title="Log Kehadiran Guru." description="Riwayat konfirmasi kehadiran guru berdasarkan scan QR absen harian." />
 
   {#if summary}
-    <section class="rounded-2xl border border-border bg-card p-5 flex items-center gap-4 mb-6" in:fly={{ y: 20, duration: 800, delay: 60 }}>
+    <section class="relative overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none p-5 flex items-center gap-4 mb-6" in:fly={{ y: 20, duration: 800, delay: 60 }}>
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
       <span class="flex items-center justify-center h-11 w-11 rounded-xl bg-primary/10 border border-primary/20 shrink-0">
         <UserCheck class="h-5 w-5 text-primary" />
       </span>
@@ -151,4 +146,4 @@
 
   <DataTable {columns} rows={displayRows} cell={timeCell} emptyMessage={hasFilters ? 'Tidak ada data yang cocok dengan filter.' : 'Belum ada konfirmasi kehadiran.'} />
   {#if meta}<Pagination {meta} />{/if}
-</div>
+</PageShell>

@@ -1,6 +1,8 @@
 <script lang="ts">
   import axios from 'axios';
   import { api } from '$lib/api';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import { fly } from 'svelte/transition';
 
   let { qrRefreshInterval = 5, schoolName = 'Sekolah' }: { qrRefreshInterval?: number; schoolName?: string } = $props();
@@ -46,21 +48,21 @@
   <title>Layar QR Absen — {schoolName}</title>
 </svelte:head>
 
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased flex flex-col items-center justify-center px-6 py-10">
+<PageShell bare class="flex min-h-[100dvh] flex-col items-center justify-center">
   <div class="w-full max-w-3xl flex flex-col items-center" in:fly={{ y: 20, duration: 700 }}>
     <!-- Header -->
-    <div class="text-center mb-8">
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-primary mb-3">Absensi Guru Harian</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,6vw,4rem)] text-foreground">{schoolName}</h1>
-      <p class="text-sm font-medium tabular-nums text-muted-foreground mt-3">{currentTime}</p>
-    </div>
+    <PageHeader eyebrow="Absensi Guru Harian" title={schoolName} class="sm:flex-col sm:items-center text-center mb-3" />
+    <p class="text-sm font-medium tabular-nums text-muted-foreground mb-8">{currentTime}</p>
 
     <!-- QR card -->
-    <div class="bg-card border border-border rounded-[28px] p-8 shadow-[0_18px_55px_rgba(32,36,38,0.06)] dark:shadow-none w-full flex flex-col items-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+    <div class="relative overflow-hidden bg-card border border-border rounded-[28px] p-8 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none w-full flex flex-col items-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
       {#if isLoading && !qrData}
         <div class="w-[320px] h-[320px] flex items-center justify-center text-muted-foreground text-sm">Memuat QR code...</div>
       {:else if qrData}
-        <img src={qrData.dataUrl} alt="QR Absen" class="w-[320px] h-[320px] rounded-lg" />
+        <div class="rounded-2xl bg-white p-4 ring-1 ring-border shadow-[0_8px_30px_-12px_rgba(32,36,38,0.18)]">
+          <img src={qrData.dataUrl} alt="QR Absen" class="w-[320px] h-[320px] rounded-lg" />
+        </div>
         <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground mt-5">Scan untuk konfirmasi kehadiran</p>
       {:else}
         <div class="w-[320px] h-[320px] flex items-center justify-center text-muted-foreground text-sm">Gagal memuat QR code</div>
@@ -85,4 +87,4 @@
       Interval {qrRefreshInterval} menit · Refresh otomatis
     </p>
   </div>
-</div>
+</PageShell>

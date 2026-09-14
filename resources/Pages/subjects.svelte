@@ -10,10 +10,11 @@
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
   import Select from '../Components/Select.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import type { Subject, SubjectForm } from '../types';
   import { createEmptySubjectForm, subjectToForm } from '../types';
-  import { Pencil, Trash2 } from '@lucide/svelte';
-  import { fly } from 'svelte/transition';
+  import { Pencil, Plus, Trash2 } from '@lucide/svelte';
 
   let { permissions, subjects = [] }: { permissions: { canCreate?: boolean; canEdit?: boolean; canDelete?: boolean }; subjects?: Subject[] } = $props();
 
@@ -47,21 +48,13 @@
 {/snippet}
 
 <Sidebar group="subjects" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12" in:fly={{ y: 20, duration: 800 }}>
-    <div>
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Manajemen Mapel</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-        Mapel.
-      </h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
-        Mata pelajaran yang diajarkan di sekolah. Atur kode dan nama mapel.
-      </p>
-    </div>
-    {#if permissions.canCreate}<Button onclick={openCreate} size="lg">Tambah Mapel</Button>{/if}
-  </div>
+<PageShell>
+  <PageHeader eyebrow="Manajemen Mapel" title="Mapel." description="Mata pelajaran yang diajarkan di sekolah. Atur kode dan nama mapel.">
+    {#snippet actions()}
+      {#if permissions.canCreate}<Button onclick={openCreate} size="lg"><Plus class="w-4 h-4" /> Tambah Mapel</Button>{/if}
+    {/snippet}
+  </PageHeader>
   <DataTable {columns} rows={subjects} rowAction={rowActions} />
-</div>
 
 <Modal bind:open={isOpen} title={selected ? 'Edit Mapel' : 'Tambah Mapel'} description="Tambah atau ubah mata pelajaran. Kode, nama, dan KKM wajib diisi.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
@@ -76,3 +69,4 @@
 </Modal>
 
 <ConfirmDialog bind:open={isDeleteOpen} title="Hapus Mapel" onConfirm={remove} destructive />
+</PageShell>

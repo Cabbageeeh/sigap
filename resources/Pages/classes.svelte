@@ -10,10 +10,11 @@
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
   import Select from '../Components/Select.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import type { Class, ClassForm, AcademicYear } from '../types';
   import { createEmptyClassForm, classToForm } from '../types';
-  import { ArrowRight, Pencil, Trash2 } from '@lucide/svelte';
-  import { fly } from 'svelte/transition';
+  import { ArrowRight, Pencil, Plus, Trash2 } from '@lucide/svelte';
 
   let {
     permissions,
@@ -71,21 +72,13 @@
 {/snippet}
 
 <Sidebar group="classes" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12" in:fly={{ y: 20, duration: 800 }}>
-    <div>
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Manajemen Kelas</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-        Kelas.
-      </h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
-        Daftar kelas sekolah per tahun ajaran. Kelola siswa dari kelas yang dipilih.
-      </p>
-    </div>
-    {#if permissions.canCreate}<Button onclick={openCreate} size="lg">Tambah Kelas</Button>{/if}
-  </div>
+<PageShell>
+  <PageHeader eyebrow="Manajemen Kelas" title="Kelas." description="Daftar kelas sekolah per tahun ajaran. Kelola siswa dari kelas yang dipilih.">
+    {#snippet actions()}
+      {#if permissions.canCreate}<Button onclick={openCreate} size="lg"><Plus class="w-4 h-4" /> Tambah Kelas</Button>{/if}
+    {/snippet}
+  </PageHeader>
   <DataTable {columns} rows={classes} rowAction={rowActions} />
-</div>
 
 <Modal bind:open={isOpen} title={selected ? 'Edit Kelas' : 'Tambah Kelas'} description="Tambah atau ubah data kelas. Pilih tahun ajaran yang aktif.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
@@ -104,3 +97,4 @@
 </Modal>
 
 <ConfirmDialog bind:open={isDeleteOpen} title="Hapus Kelas" description="Menghapus kelas akan menghapus seluruh data siswa di dalamnya." onConfirm={remove} destructive />
+</PageShell>

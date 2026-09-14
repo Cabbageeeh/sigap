@@ -1,6 +1,8 @@
 <script lang="ts">
   import Sidebar from '../Components/Sidebar.svelte';
   import DataTable from '../Components/DataTable.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import Pagination from '../Components/Pagination.svelte';
   import { fly } from 'svelte/transition';
   import type { GradeAuditLogRow, PaginationMeta } from '../types';
@@ -58,18 +60,8 @@
 </script>
 
 <Sidebar group="grade-audit" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12" in:fly={{ y: 20, duration: 800 }}>
-    <div>
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Integritas Data</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-        Audit Nilai.
-      </h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
-        Riwayat perubahan nilai: siapa yang mengubah, kapan, dan dari nilai berapa ke berapa.
-      </p>
-    </div>
-  </div>
+<PageShell>
+  <PageHeader eyebrow="Integritas Data" title="Audit Nilai." description="Riwayat perubahan nilai: siapa yang mengubah, kapan, dan dari nilai berapa ke berapa." />
 
   {#if !canView}
     <div class="bg-card border border-border rounded-2xl px-6 py-12 text-center" in:fly={{ y: 20, duration: 700, delay: 100 }}>
@@ -81,4 +73,4 @@
       {#if meta}<Pagination {meta} />{/if}
     </div>
   {/if}
-</div>
+</PageShell>

@@ -9,11 +9,12 @@
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
   import Select from '../Components/Select.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import type { Schedule, ScheduleForm, Class, Subject, AcademicYear } from '../types';
   import { createEmptyScheduleForm, scheduleToForm } from '../types';
   import { timestampToTimeInput, timeInputToTimestamp } from '$lib/utils/datetime';
-  import { Plus } from '@lucide/svelte';
-  import { fly } from 'svelte/transition';
+  import { Plus, Trash2 } from '@lucide/svelte';
 
   type TeacherOption = { id: string; name: string | null; username: string };
   type Mode = 'class' | 'teacher';
@@ -169,19 +170,12 @@
 </script>
 
 <Sidebar group="schedules" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8" in:fly={{ y: 20, duration: 800 }}>
-    <div>
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Manajemen Jadwal</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-        Jadwal Pelajaran.
-      </h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
-        Pilih kelas atau guru untuk melihat jadwal mingguan.
-      </p>
-    </div>
-    {#if permissions.canCreate}<Button onclick={openCreate} size="lg">Tambah Jadwal</Button>{/if}
-  </div>
+<PageShell>
+  <PageHeader eyebrow="Manajemen Jadwal" title="Jadwal Pelajaran." description="Pilih kelas atau guru untuk melihat jadwal mingguan.">
+    {#snippet actions()}
+      {#if permissions.canCreate}<Button onclick={openCreate} size="lg"><Plus class="w-4 h-4" /> Tambah Jadwal</Button>{/if}
+    {/snippet}
+  </PageHeader>
 
   <div class="flex flex-col lg:flex-row lg:items-end gap-3 mb-6">
     <div class="flex gap-1 rounded-xl border border-border bg-card p-1 w-fit">
@@ -214,11 +208,13 @@
   </div>
 
   {#if !hasSelection}
-    <div class="rounded-2xl border border-border bg-card p-10 text-center text-muted-foreground">
+    <div class="relative overflow-hidden rounded-2xl border border-border bg-card p-10 text-center text-muted-foreground shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
       {mode === 'class' ? 'Pilih kelas untuk melihat jadwalnya' : 'Pilih guru untuk melihat jadwal mengajarnya'}
     </div>
   {:else if slots.length === 0}
-    <div class="rounded-2xl border border-border bg-card p-10 text-center">
+    <div class="relative overflow-hidden rounded-2xl border border-border bg-card p-10 text-center shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
       <p class="text-muted-foreground">Belum ada jadwal {mode === 'class' ? 'untuk kelas ini' : 'untuk guru ini'}.</p>
       {#if permissions.canCreate}<Button onclick={openCreate} class="mt-4">Tambah Jadwal</Button>{/if}
     </div>
@@ -226,7 +222,9 @@
     {#if weekendCount > 0}
       <p class="mb-3 text-xs text-muted-foreground">Ada {weekendCount} jadwal di Sabtu/Minggu yang tidak ditampilkan di grid ini.</p>
     {/if}
-    <div class="overflow-x-auto rounded-2xl border border-border bg-card shadow-[0_8px_28px_rgba(32,36,38,0.025)] dark:shadow-none">
+    <div class="relative overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
+      <div class="overflow-x-auto">
       <table class="w-full min-w-[64rem] text-sm border-collapse">
         <thead class="bg-secondary/70 border-b border-border">
           <tr>
@@ -272,9 +270,9 @@
           {/each}
         </tbody>
       </table>
+      </div>
     </div>
   {/if}
-</div>
 
 <Modal bind:open={isOpen} title={selected ? 'Edit Jadwal' : 'Tambah Jadwal'} description="Tambah atau ubah jadwal pelajaran. Atur tahun ajaran, hari, jam, kelas, mapel, dan guru.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
@@ -307,7 +305,7 @@
     </div>
     <div class="flex justify-between gap-2 pt-4 border-t border-border mt-2">
       <div>
-        {#if selected && permissions.canDelete}<Button variant="ghost" class="text-destructive hover:text-destructive" onclick={removeFromEdit}>Hapus</Button>{/if}
+        {#if selected && permissions.canDelete}<Button variant="ghost" class="text-destructive hover:text-destructive" onclick={removeFromEdit}><Trash2 class="w-4 h-4" /> Hapus</Button>{/if}
       </div>
       <div class="flex gap-2">
         <Button variant="outline" onclick={() => isOpen = false}>Batal</Button>
@@ -318,3 +316,4 @@
 </Modal>
 
 <ConfirmDialog bind:open={isDeleteOpen} title="Hapus Jadwal" description="Jadwal yang dihapus tidak bisa dikembalikan. Lanjutkan?" confirmLabel="Hapus" cancelLabel="Batal" onConfirm={remove} destructive />
+</PageShell>

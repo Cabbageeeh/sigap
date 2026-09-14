@@ -11,9 +11,11 @@
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
   import Select from '../Components/Select.svelte';
   import Pagination from '../Components/Pagination.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import type { Grade, GradeForm, Student, Subject, Class, AcademicYear, PaginationMeta, ClassSubjectSummary } from '../types';
   import { createEmptyGradeForm, gradeToForm } from '../types';
-  import { Pencil, Trash2, FileSpreadsheet } from '@lucide/svelte';
+  import { Pencil, Trash2, FileSpreadsheet, LockKeyhole, Plus } from '@lucide/svelte';
   import { fly } from 'svelte/transition';
 
   let {
@@ -122,46 +124,53 @@
 {/snippet}
 
 <Sidebar group="grades" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8" in:fly={{ y: 20, duration: 800 }}>
-    <div>
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Penilaian</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">Nilai.</h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">Input nilai tugas, ulangan, UTS, dan UAS sesuai kelas serta mapel yang diampu.</p>
-    </div>
-    {#if permissions.canCreate && !confirmationRequired}<Button onclick={openCreate} size="lg">Tambah Nilai</Button>{/if}
-  </div>
+<PageShell>
+  <PageHeader eyebrow="Penilaian" title="Nilai." description="Input nilai tugas, ulangan, UTS, dan UAS sesuai kelas serta mapel yang diampu.">
+    {#snippet actions()}
+      {#if permissions.canCreate && !confirmationRequired}<Button onclick={openCreate} size="lg"><Plus class="w-4 h-4" /> Tambah Nilai</Button>{/if}
+    {/snippet}
+  </PageHeader>
 
   {#if confirmationRequired}
-    <div class="bg-card border border-primary/30 rounded-2xl p-6 max-w-2xl" in:fly={{ y: 20, duration: 700, delay: 100 }}>
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-primary mb-3">Akses terkunci</p>
-      <h2 class="font-heading text-xl font-semibold text-foreground">Konfirmasi kehadiran diperlukan.</h2>
-      <p class="text-sm text-muted-foreground mt-2 leading-relaxed">Scan QR sekolah sekali setiap hari sebelum membuka daftar kelas dan mengisi nilai.</p>
-      <a href="/teacher/confirm" use:inertia class="inline-flex mt-5"><Button>Scan QR Absen</Button></a>
+    <div class="relative overflow-hidden bg-card border border-primary/30 rounded-2xl p-6 max-w-2xl shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
+      <div class="relative flex items-center gap-3 mb-3">
+        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><LockKeyhole class="h-4.5 w-4.5 text-primary" /></span>
+        <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-primary">Akses terkunci</p>
+      </div>
+      <h2 class="relative font-heading text-xl font-semibold text-foreground">Konfirmasi kehadiran diperlukan.</h2>
+      <p class="relative text-sm text-muted-foreground mt-2 leading-relaxed">Scan QR sekolah sekali setiap hari sebelum membuka daftar kelas dan mengisi nilai.</p>
+      <a href="/teacher/confirm" use:inertia class="relative inline-flex mt-5"><Button>Scan QR Absen</Button></a>
     </div>
   {:else}
-    <div class="bg-card border border-border rounded-2xl p-4 mb-8 flex flex-col sm:flex-row gap-3 items-end" in:fly={{ y: 20, duration: 700, delay: 100 }}>
-      <div class="flex flex-col gap-1 flex-1 w-full">
-        <Label for="filter-class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Kelas</Label>
-        <Select id="filter-class" bind:value={filterClassId} placeholder="Pilih kelas">
-          <option value="">Semua kelas</option>
-          {#each classes as c}<option value={c.id}>{c.name}</option>{/each}
-        </Select>
+    <div class="relative overflow-hidden bg-card border border-border rounded-2xl p-4 mb-8 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none" in:fly={{ y: 20, duration: 700, delay: 100 }}>
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
+      <div class="relative flex flex-col sm:flex-row gap-3 items-end">
+        <div class="flex flex-col gap-1 flex-1 w-full">
+          <Label for="filter-class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Kelas</Label>
+          <Select id="filter-class" bind:value={filterClassId} placeholder="Pilih kelas">
+            <option value="">Semua kelas</option>
+            {#each classes as c}<option value={c.id}>{c.name}</option>{/each}
+          </Select>
+        </div>
+        <div class="flex flex-col gap-1 flex-1 w-full">
+          <Label for="filter-subject" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Mapel</Label>
+          <Select id="filter-subject" bind:value={filterSubjectId} placeholder="Pilih mapel">
+            <option value="">Semua mapel</option>
+            {#each subjects as s}<option value={s.id}>{s.name}</option>{/each}
+          </Select>
+        </div>
+        <Button onclick={showRekap}><FileSpreadsheet class="w-4 h-4 mr-1" /> Lihat Rekap</Button>
       </div>
-      <div class="flex flex-col gap-1 flex-1 w-full">
-        <Label for="filter-subject" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Mapel</Label>
-        <Select id="filter-subject" bind:value={filterSubjectId} placeholder="Pilih mapel">
-          <option value="">Semua mapel</option>
-          {#each subjects as s}<option value={s.id}>{s.name}</option>{/each}
-        </Select>
-      </div>
-      <Button onclick={showRekap}><FileSpreadsheet class="w-4 h-4 mr-1" /> Lihat Rekap</Button>
     </div>
 
     {#if summary}
       <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 150 }}>
-        <div class="flex items-baseline justify-between mb-3">
-          <h2 class="font-heading font-semibold tracking-[-0.02em]">Rekap Nilai — {summary.subjectName} ({summary.className})</h2>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><FileSpreadsheet class="h-4.5 w-4.5 text-primary" /></span>
+            <h2 class="font-heading font-semibold tracking-[-0.02em]">Rekap Nilai — {summary.subjectName} ({summary.className})</h2>
+          </div>
           <p class="text-xs text-muted-foreground font-mono-accent">KKM {summary.kkm}</p>
         </div>
         <DataTable columns={summaryColumns} rows={summaryRows} keyField="student_id" emptyMessage="Belum ada nilai untuk kelas dan mapel ini." />
@@ -171,7 +180,6 @@
     <DataTable columns={columns} rows={grades} rowAction={rowActions} />
     {#if meta}<Pagination {meta} />{/if}
   {/if}
-</div>
 
 <Modal bind:open={isOpen} title={selected ? 'Edit Nilai' : 'Tambah Nilai'} description="Tambah atau ubah nilai siswa. Pilih siswa, mapel, kelas, dan jenis penilaian.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
@@ -212,3 +220,4 @@
 </Modal>
 
 <ConfirmDialog bind:open={isDeleteOpen} title="Hapus Nilai" onConfirm={remove} destructive />
+</PageShell>

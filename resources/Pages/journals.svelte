@@ -10,11 +10,12 @@
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
   import Select from '../Components/Select.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import type { Journal, JournalForm, Schedule, TeacherConfirmation } from '../types';
   import { createEmptyJournalForm, journalToForm } from '../types';
   import { timestampToDateInput, dateInputToTimestamp } from '$lib/utils/datetime';
-  import { Pencil, Trash2 } from '@lucide/svelte';
-  import { fly } from 'svelte/transition';
+  import { Pencil, Plus, Trash2 } from '@lucide/svelte';
 
   let { permissions, journals = [], schedules = [], confirmations = [] }: { permissions: { canCreate?: boolean; canEdit?: boolean; canDelete?: boolean }; journals?: Journal[]; schedules?: Schedule[]; confirmations?: TeacherConfirmation[] } = $props();
 
@@ -50,21 +51,13 @@
 {/snippet}
 
 <Sidebar group="journals" />
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12" in:fly={{ y: 20, duration: 800 }}>
-    <div>
-      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Jurnal Mengajar</p>
-      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-        Jurnal.
-      </h1>
-      <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
-        Catatan harian kegiatan belajar mengajar per jadwal.
-      </p>
-    </div>
-    {#if permissions.canCreate}<Button onclick={openCreate} size="lg">Tambah Jurnal</Button>{/if}
-  </div>
+<PageShell>
+  <PageHeader eyebrow="Jurnal Mengajar" title="Jurnal." description="Catatan harian kegiatan belajar mengajar per jadwal.">
+    {#snippet actions()}
+      {#if permissions.canCreate}<Button onclick={openCreate} size="lg"><Plus class="w-4 h-4" /> Tambah Jurnal</Button>{/if}
+    {/snippet}
+  </PageHeader>
   <DataTable {columns} rows={journals} rowAction={rowActions} />
-</div>
 
 <Modal bind:open={isOpen} title={selected ? 'Edit Jurnal' : 'Tambah Jurnal'} description="Tambah atau ubah jurnal mengajar. Pilih jadwal dan konfirmasi terkait.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
@@ -88,3 +81,4 @@
 </Modal>
 
 <ConfirmDialog bind:open={isDeleteOpen} title="Hapus Jurnal" onConfirm={remove} destructive />
+</PageShell>
