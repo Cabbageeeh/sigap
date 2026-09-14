@@ -179,6 +179,37 @@ export interface DashboardStats {
   pendingConfirmations: number;
 }
 
+export interface AttendanceTrendPoint {
+  date: string;
+  present: number;
+  sick: number;
+  leave: number;
+  absent: number;
+}
+
+export interface AttendanceStatusSlice {
+  status: 'present' | 'sick' | 'leave' | 'absent';
+  count: number;
+}
+
+export interface ClassSizePoint {
+  name: string;
+  count: number;
+}
+
+export interface ConfirmationWeekPoint {
+  day: string;
+  confirmed: number;
+  scheduled: number;
+}
+
+export interface DashboardCharts {
+  attendanceTrend: AttendanceTrendPoint[];
+  statusBreakdown: AttendanceStatusSlice[];
+  classSizes: ClassSizePoint[];
+  confirmationWeek: ConfirmationWeekPoint[];
+}
+
 // =============================================================================
 // SIGAP Form Types
 // =============================================================================

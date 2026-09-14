@@ -4,13 +4,18 @@
   import Sidebar from '../Components/Sidebar.svelte';
   import StatCard from '../Components/StatCard.svelte';
   import BentoCard from '../Components/BentoCard.svelte';
-  import { ArrowRight } from '@lucide/svelte';
-  import type { User, DashboardStats } from '../types';
+  import AttendanceTrendChart from '../Components/charts/AttendanceTrendChart.svelte';
+  import AttendanceDonut from '../Components/charts/AttendanceDonut.svelte';
+  import ClassSizeBars from '../Components/charts/ClassSizeBars.svelte';
+  import ConfirmationWeekChart from '../Components/charts/ConfirmationWeekChart.svelte';
+  import { ArrowRight, GraduationCap, UserRound, School, BookOpen } from '@lucide/svelte';
+  import type { User, DashboardStats, DashboardCharts } from '../types';
 
   interface Props {
     stats?: DashboardStats;
     years?: { id: string; name: string }[];
     activeYear?: { id: string; name: string } | null;
+    charts?: DashboardCharts;
     classes?: { id: string; name: string }[];
     subjects?: { id: string; name: string }[];
   }
@@ -18,6 +23,7 @@
   let {
     stats,
     years = [],
+    charts,
     activeYear,
     classes = [],
     subjects = [],
@@ -66,11 +72,33 @@
 
     <section>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" in:fly={{ y: 20, duration: 800, delay: 150 }}>
-      <StatCard label="Siswa" value={stats?.totalStudents ?? 0} />
-      <StatCard label="Guru" value={stats?.totalTeachers ?? 0} />
-      <StatCard label="Kelas" value={stats?.totalClasses ?? 0} />
-      <StatCard label="Mapel" value={stats?.totalSubjects ?? 0} />
+      <StatCard label="Siswa" value={stats?.totalStudents ?? 0} icon={GraduationCap} tone="primary" />
+      <StatCard label="Guru" value={stats?.totalTeachers ?? 0} icon={UserRound} tone="info" />
+      <StatCard label="Kelas" value={stats?.totalClasses ?? 0} icon={School} tone="warning" />
+      <StatCard label="Mapel" value={stats?.totalSubjects ?? 0} icon={BookOpen} tone="success" />
     </div>
+
+    {#if charts}
+      <div class="mb-4 mt-10">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">Analitik</p>
+        <h2 class="mt-1.5 text-xl font-semibold tracking-[-0.025em] text-foreground">Kehadiran & kapasitas</h2>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <BentoCard title="Tren Kehadiran Siswa" description="Catatan hadir 14 hari terakhir." class="lg:col-span-2">
+          <AttendanceTrendChart data={charts.attendanceTrend} />
+        </BentoCard>
+        <BentoCard title="Status Kehadiran" description="Tahun ajaran aktif.">
+          <AttendanceDonut data={charts.statusBreakdown} />
+        </BentoCard>
+        <BentoCard title="Konfirmasi Guru" description="Minggu ini vs jadwal." class="lg:col-span-2">
+          <ConfirmationWeekChart data={charts.confirmationWeek} />
+        </BentoCard>
+        <BentoCard title="Siswa per Kelas" description="Tahun ajaran aktif.">
+          <ClassSizeBars data={charts.classSizes} />
+        </BentoCard>
+      </div>
+    {/if}
 
     <div class="mb-4 mt-10">
       <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">Ruang kerja</p>

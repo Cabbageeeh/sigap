@@ -1,5 +1,5 @@
 import type { NaraRequest, NaraResponse } from '@core';
-import { getDashboardStats } from '@queries/stats';
+import { getDashboardStats, getDashboardCharts } from '@queries/stats';
 import { findAllAcademicYears, findActiveAcademicYear } from '@queries/academicYears';
 import { findAllClasses } from '@queries/classes';
 import { findAllSubjects } from '@queries/subjects';
@@ -17,11 +17,13 @@ export const dashboardPage = (req: NaraRequest, res: NaraResponse) => {
   const canViewTeachers = userId ? isAdmin(userId) || hasPermission(userId, 'teachers.view') : false;
 
   const stats = canViewStudents ? getDashboardStats() : undefined;
+  const charts = canViewStudents ? getDashboardCharts() : undefined;
 
   return res.inertia('dashboard', {
     stats,
     years: findAllAcademicYears(),
     activeYear: findActiveAcademicYear(),
+    charts,
     classes: canViewStudents ? findAllClasses() : [],
     subjects: canViewTeachers ? findAllSubjects() : [],
   });
