@@ -2,8 +2,19 @@ import SQLite from '@services/SQLite';
 import type { Journal } from '@types';
 import { randomUUID } from 'crypto';
 
-export const findAllJournals = (): Journal[] =>
-  SQLite.many<Journal>`SELECT * FROM journals ORDER BY date DESC`;
+export interface JournalWithNames extends Journal {
+  class_name: string;
+  subject_name: string;
+}
+
+export const findAllJournals = (): JournalWithNames[] =>
+  SQLite.many<JournalWithNames>`
+    SELECT j.*, c.name AS class_name, sub.name AS subject_name FROM journals j
+    INNER JOIN schedules s ON j.schedule_id = s.id
+    INNER JOIN classes c ON c.id = s.class_id
+    INNER JOIN subjects sub ON sub.id = s.subject_id
+    ORDER BY j.date DESC
+  `;
 
 export const findJournalById = (id: string): Journal | undefined =>
   SQLite.one<Journal>`SELECT * FROM journals WHERE id = ${id}`;
@@ -11,10 +22,15 @@ export const findJournalById = (id: string): Journal | undefined =>
 export const findJournalsBySchedule = (scheduleId: string): Journal[] =>
   SQLite.many<Journal>`SELECT * FROM journals WHERE schedule_id = ${scheduleId} ORDER BY date DESC`;
 
-export const findJournalsByTeacher = (teacherUserId: string): Journal[] =>
-  SQLite.many<Journal>`
-    SELECT j.* FROM journals j
+export const findJournalByScheduleAndDate = (scheduleId: string, dayStart: number, dayEnd: number): Journal | undefined =>
+  SQLite.one<Journal>`SELECT * FROM journals WHERE schedule_id = ${scheduleId} AND date >= ${dayStart} AND date <= ${dayEnd}`;
+
+export const findJournalsByTeacher = (teacherUserId: string): JournalWithNames[] =>
+  SQLite.many<JournalWithNames>`
+    SELECT j.*, c.name AS class_name, sub.name AS subject_name FROM journals j
     INNER JOIN schedules s ON j.schedule_id = s.id
+    INNER JOIN classes c ON c.id = s.class_id
+    INNER JOIN subjects sub ON sub.id = s.subject_id
     WHERE s.teacher_user_id = ${teacherUserId}
     ORDER BY j.date DESC
   `;

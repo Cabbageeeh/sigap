@@ -222,15 +222,12 @@ export const TeacherConfirmationSchema = z.object({
 
 export const JournalSchema = z.object({
   schedule_id: z.string().uuid('Invalid schedule ID'),
-  teacher_confirmation_id: z.string().uuid('Invalid teacher confirmation ID'),
-  date: z.number({ message: 'Date is required' }),
   material: z.string().min(1, 'Material is required').max(2000, 'Material must be at most 2000 characters'),
 });
 
-export const UpdateJournalSchema = JournalSchema.partial().refine(
-  data => data.schedule_id !== undefined || data.teacher_confirmation_id !== undefined || data.date !== undefined || data.material !== undefined,
-  { message: 'At least one field is required to update', path: ['_root'] }
-);
+export const UpdateJournalSchema = z.object({
+  material: z.string().min(1, 'Material is required').max(2000, 'Material must be at most 2000 characters'),
+});
 
 export const StudentAttendanceSchema = z.object({
   student_id: z.string().uuid('Invalid student ID'),
