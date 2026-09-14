@@ -28,10 +28,12 @@ Reusable Svelte 5 UI components shared across pages. All use TypeScript and Tail
 | `Pagination.svelte` | Page navigation | `meta: PaginationMeta`, `preserveState?: boolean` |
 | `QrScanner.svelte` | In-web QR scanner (`html5-qrcode`, kamera + unggah gambar) | `onDetected`, `onError`, `autoStart`, `class` |
 | `RoleModal.svelte` | Create/edit role modal | Zag JS dialog — open/close via `bind:open` |
+| `PageHeader.svelte` | Page title block (eyebrow + title + description + actions) | `eyebrow`, `title`, `description`, `actions` (snippet) |
+| `PageShell.svelte` | Standard page wrapper (sidebar offset + max-width container) | `bare` (no sidebar offset), `class` |
 | `SigapIcon.svelte` | Reference logo image wrapper | — |
 | `Select.svelte` | Styled select dropdown | `value` (bindable), `placeholder`, `children` |
 | `Sidebar.svelte` | Left sidebar nav + mobile drawer | `group` (string — active nav section) |
-| `StatCard.svelte` | Dashboard statistic | `label`, `value`, `change`, `class` |
+| `StatCard.svelte` | Dashboard statistic | `label`, `value`, `change`, `icon`, `tone`, `class` |
 | `Switch.svelte` | Toggle switch | `checked` (bindable), `disabled`, `onCheckedChange` |
 | `UserModal.svelte` | Create/edit user modal | Zag JS dialog — open/close via `bind:open` |
 

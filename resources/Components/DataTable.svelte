@@ -49,9 +49,9 @@
   }
 </script>
 
-<div data-slot="data-table" class={cn("overflow-x-auto rounded-2xl border border-border bg-card shadow-[0_8px_28px_rgba(32,36,38,0.025)] dark:shadow-none", className)}>
+<div data-slot="data-table" class={cn("relative overflow-x-auto rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none", className)}>
   <table class="w-full text-sm">
-    <thead class="bg-secondary/70 border-b border-border">
+    <thead class="bg-secondary/50 border-b border-border">
       <tr>
         {#each columns as col}
           <th class={cn("px-4 py-3.5 text-left font-heading text-[10px] uppercase tracking-[0.13em] font-semibold text-muted-foreground", alignClass(col.align), col.class)}>
@@ -66,13 +66,14 @@
     <tbody class="divide-y divide-border">
       {#if rows.length === 0}
         <tr>
-          <td colspan={columns.length + (rowAction ? 1 : 0)} class="px-4 py-8 text-center text-sm text-muted-foreground font-body">
-            {emptyMessage}
+          <td colspan={columns.length + (rowAction ? 1 : 0)} class="px-4 py-12 text-center">
+            <p class="text-sm font-medium text-foreground">{emptyMessage}</p>
+            <p class="mt-1 text-xs text-muted-foreground">Data akan tampil di sini setelah ditambahkan.</p>
           </td>
         </tr>
       {:else}
         {#each rows as row (row[keyField])}
-          <tr class="hover:bg-secondary/35 transition-colors">
+          <tr class="hover:bg-secondary/40 transition-colors odd:bg-secondary/[0.12]">
             {#each columns as col}
               <td class={cn("px-4 py-3.5 text-foreground font-body whitespace-nowrap", alignClass(col.align), col.class)}>
                 {#if cell}
