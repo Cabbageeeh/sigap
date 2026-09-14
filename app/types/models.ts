@@ -232,7 +232,7 @@ export interface Grade {
   student_id: string;
   subject_id: string;
   class_id: string;
-  type: 'task' | 'daily_quiz' | 'midterm' | 'final';
+  type: string;
   score: number;
   date: number;
   teacher_user_id: string;

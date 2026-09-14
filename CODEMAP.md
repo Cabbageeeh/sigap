@@ -11,8 +11,8 @@
 ## Stats
 
 - Files indexed: 283
-- Total lines: 29338
-- Total exports: 834
+- Total lines: 29428
+- Total exports: 837
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -52,7 +52,7 @@
 - `classes.ts` (114L) — classesPage, listClasses, classData, addClass, editClass, removeClass
 - `dashboard.ts` (31L) — dashboardPage
 - `gradeAudit.ts` (39L) — gradeAuditPage, gradeAuditData
-- `grades.ts` (276L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, editGrade, removeGrade
+- `grades.ts` (305L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, addGradeComponentType, editGrade, +1
 - `headmaster.ts` (102L) — headmasterDashboardPage, headmasterDashboardData, headmasterReportsPage, headmasterClassGradesPage, headmasterTeacherAttendancePage, listOutsideConfirmations
 - `home.ts` (17L) — landingPage
 - `index.ts` (30L)
@@ -95,7 +95,7 @@
 - `assets.ts` (23L) — createAsset, findAssetsByUserId
 - `classes.ts` (95L) — findAllClasses, findAllClassesWithHomeroom, findClassesByAcademicYearWithHomeroom, findClassById, findClassByName, findClassesByAcademicYear, findClassesByGrade, findClassesByTeacherUser, +5
 - `gradeAuditLogs.ts` (39L) — logGradeChange, getGradeAuditLogsPaginated
-- `gradeComponents.ts` (20L) — findGradeComponentsByYear, upsertGradeComponents
+- `gradeComponents.ts` (29L) — findGradeComponentsByYear, upsertGradeComponents, addGradeComponent
 - `grades.ts` (316L) — findAllGrades, findGradeById, findGradesByStudent, findGradesByStudentForTeacher, findGradesByClassSubject, findGradesByTeacher, findGradeByUniqueKey, upsertGradesBulk, +13
 - `headmaster.ts` (429L) — getTodaySessions, getMissedSessions, getJournalCompleteness, getGradeProgress, getClassOverview, getTeacherAttendanceOverview, getTeacherAttendanceHistory, findClassGradeDetails, +5
 - `index.ts` (25L)
@@ -139,8 +139,8 @@
 
 ### app/validators/
 
-- `index.ts` (89L) — zodToErrors
-- `schemas.ts` (322L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +61
+- `index.ts` (90L) — zodToErrors
+- `schemas.ts` (330L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +62
 
 ### migrations/
 
@@ -229,7 +229,7 @@
 - `classes.svelte` (101L)
 - `dashboard.svelte` (167L)
 - `gradeAudit.svelte` (77L)
-- `grades.svelte` (286L)
+- `grades.svelte` (328L)
 - `journals.svelte` (262L)
 - `landing.svelte` (610L)
 - `parents.svelte` (81L)
@@ -307,7 +307,7 @@
 
 ### routes/
 
-- `web.ts` ★ (225L)
+- `web.ts` ★ (226L)
 
 ### scripts/
 
@@ -565,6 +565,7 @@
 - `const` **gradeData**
 - `const` **addGrade**
 - `const` **saveGradesBulk**
+- `const` **addGradeComponentType**
 - `const` **editGrade**
 - `const` **removeGrade**
 
@@ -817,6 +818,7 @@
 
 - `const` **findGradeComponentsByYear**
 - `const` **upsertGradeComponents**
+- `const` **addGradeComponent**
 
 ### `app/queries/grades.ts`
 
@@ -1269,6 +1271,7 @@
 - `const` **StudentAttendanceSchema**
 - `const` **GradeSchema**
 - `const` **BulkGradesSchema**
+- `const` **AddGradeComponentSchema**
 - `const` **GradeComponentsSchema**
 - `const` **AnnouncementSchema**
 - `const` **UpdateAnnouncementSchema**
@@ -1713,7 +1716,7 @@
 - `app/handlers/classes.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/dashboard.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/stats`, `@queries/subjects`, `@queries/users`
 - `app/handlers/gradeAudit.ts` → `@core`, `@queries/gradeAuditLogs`, `@queries/users`
-- `app/handlers/grades.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/gradeAuditLogs`, `@queries/grades`, `@queries/students`, `@queries/subjects`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@validators`
+- `app/handlers/grades.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/gradeAuditLogs`, `@queries/gradeComponents`, `@queries/grades`, `@queries/students`, `@queries/subjects`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/headmaster.ts` → `@core`, `@queries/classes`, `@queries/schoolLocations`, `@queries/stats`, `@queries/teacherConfirmations`, `@queries/teachers`, `@queries/users`
 - `app/handlers/home.ts` → `@core`, `@queries`
 - `app/handlers/journals.ts` → `@core`, `@queries/journals`, `@queries/schedules`, `@queries/studentAttendance`, `@queries/students`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@types`, `@validators`
@@ -1806,7 +1809,7 @@
 - `resources/Pages/classes.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/dashboard.svelte` → `../Components/BentoCard.svelte`, `../Components/Sidebar.svelte`, `../Components/StatCard.svelte`, `../Components/charts/AttendanceDonut.svelte`, `../Components/charts/AttendanceTrendChart.svelte`, `../Components/charts/ClassSizeBars.svelte`, `../Components/charts/ConfirmationWeekChart.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/gradeAudit.svelte` → `../Components/DataTable.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../types`
-- `resources/Pages/grades.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/grades.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/class-grades.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/dashboard.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../Components/StatCard.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/reports.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../Components/StatCard.svelte`, `../../types`

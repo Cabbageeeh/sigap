@@ -17,3 +17,12 @@ export const upsertGradeComponents = (academicYearId: string, items: { type: str
     }
   });
 };
+
+export const addGradeComponent = (academicYearId: string, type: string, name: string, weight = 0): void => {
+  SQLite.run(
+    `INSERT INTO grade_components (id, academic_year_id, type, name, weight, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT (academic_year_id, type) DO UPDATE SET name = excluded.name, updated_at = excluded.updated_at`,
+    [randomUUID(), academicYearId, type, name, weight, Date.now(), Date.now()]
+  );
+};

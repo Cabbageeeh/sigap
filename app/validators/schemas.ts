@@ -244,11 +244,13 @@ export const StudentAttendanceSchema = z.object({
   status: z.enum(['present', 'sick', 'leave', 'absent']),
 });
 
+const gradeTypeSlug = z.string().min(1, 'Type is required').max(50).regex(/^[a-z0-9_]+$/, 'Type must be lowercase slug');
+
 export const GradeSchema = z.object({
   student_id: z.string().uuid('Invalid student ID'),
   subject_id: z.string().uuid('Invalid subject ID'),
   class_id: z.string().uuid('Invalid class ID'),
-  type: z.enum(['task', 'daily_quiz', 'midterm', 'final']),
+  type: gradeTypeSlug,
   score: z.number().min(0, 'Score must be at least 0').max(100, 'Score must be at most 100'),
   date: z.number({ message: 'Date is required' }),
   teacher_user_id: z.string().uuid('Invalid teacher user ID').optional(),
@@ -257,21 +259,27 @@ export const GradeSchema = z.object({
 export const BulkGradesSchema = z.object({
   class_id: z.string().uuid('Invalid class ID'),
   subject_id: z.string().uuid('Invalid subject ID'),
-  type: z.enum(['task', 'daily_quiz', 'midterm', 'final']),
+  type: gradeTypeSlug,
   entries: z.array(z.object({
     student_id: z.string().uuid('Invalid student ID'),
     score: z.number().min(0, 'Score must be at least 0').max(100, 'Score must be at most 100'),
   })).min(1, 'At least one entry is required').max(200),
 });
 
+export const AddGradeComponentSchema = z.object({
+  class_id: z.string().uuid('Invalid class ID'),
+  subject_id: z.string().uuid('Invalid subject ID'),
+  name: z.string().min(1, 'Name is required').max(50, 'Name must be at most 50 characters'),
+});
+
 export const GradeComponentsSchema = z.object({
   components: z.array(z.object({
-    type: z.enum(['task', 'daily_quiz', 'midterm', 'final']),
+    type: gradeTypeSlug,
     name: z.string().min(1, 'Name is required').max(50, 'Name must be at most 50 characters'),
     weight: z.number().min(0, 'Weight must be at least 0').max(100, 'Weight must be at most 100'),
   })).min(1, 'At least one component is required'),
 }).refine(
-  data => Math.abs(data.components.reduce((sum, c) => sum + c.weight, 0) - 100) < 0.001,
+  data => Math.abs(data.components.filter(c => c.weight > 0).reduce((sum, c) => sum + c.weight, 0) - 100) < 0.001,
   { message: 'Weights must sum to 100', path: ['components'] }
 );
 

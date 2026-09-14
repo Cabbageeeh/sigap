@@ -11,8 +11,9 @@
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
   import type { Student, Subject, Class, AcademicYear, ClassSubjectSummary } from '../types';
-  import { FileSpreadsheet, LockKeyhole, Save, Loader2 } from '@lucide/svelte';
+  import { FileSpreadsheet, LockKeyhole, Save, Loader2, Plus } from '@lucide/svelte';
   import { fly } from 'svelte/transition';
+  import Modal from '../Components/Modal.svelte';
 
   const GRADE_TYPES = [
     { value: 'task', label: 'Tugas' },
@@ -20,7 +21,7 @@
     { value: 'midterm', label: 'UTS' },
     { value: 'final', label: 'UAS' },
   ] as const;
-  type GradeType = (typeof GRADE_TYPES)[number]['value'];
+
 
   let {
     permissions,
@@ -31,6 +32,7 @@
     summary = null,
     classId = '',
     subjectId = '',
+    type: typeProp = 'task',
     confirmationRequired = false,
   }: {
     permissions: { canCreate?: boolean; canEdit?: boolean; canDelete?: boolean };
@@ -41,26 +43,48 @@
     summary?: ClassSubjectSummary | null;
     classId?: string;
     subjectId?: string;
+    type?: string;
     confirmationRequired?: boolean;
   } = $props();
-
   let filterClassId = $state(classId);
   let filterSubjectId = $state(subjectId);
-  let filterType = $state<GradeType>('task');
+  let filterType = $state<string>(typeProp);
 
   let editingCell = $state<string | null>(null);
   let editValue = $state('');
   let pending = $state<Record<string, number>>({});
   let isSaving = $state(false);
+  let isTypeOpen = $state(false);
+  let newTypeName = $state('');
 
   const canEdit = $derived(!!permissions.canEdit || !!permissions.canCreate);
-  const typeLabel = $derived(GRADE_TYPES.find(t => t.value === filterType)?.label ?? filterType);
+  const typeOptions = $derived(
+    summary?.components?.length
+      ? summary.components.map(c => ({ value: c.type, label: c.name }))
+      : [...GRADE_TYPES],
+  );
+  const typeLabel = $derived(typeOptions.find(t => t.value === filterType)?.label ?? filterType);
 
   function showRekap(): void {
     if (!filterClassId || !filterSubjectId) return;
     pending = {};
     editingCell = null;
-    router.visit(`/grades?class_id=${filterClassId}&subject_id=${filterSubjectId}`, { preserveScroll: true });
+    router.visit(`/grades?class_id=${filterClassId}&subject_id=${filterSubjectId}&type=${filterType}`, { preserveScroll: true });
+  }
+
+  async function addType(): Promise<void> {
+    const name = newTypeName.trim();
+    if (!name || !filterClassId || !filterSubjectId) return;
+    const result = await api(() => axios.post('/grades/components', {
+      class_id: filterClassId,
+      subject_id: filterSubjectId,
+      name,
+    }));
+    if (result.success) {
+      isTypeOpen = false;
+      newTypeName = '';
+      router.visit(`/grades?class_id=${filterClassId}&subject_id=${filterSubjectId}`, { preserveScroll: true });
+    }
   }
 
   function cellKey(studentId: string): string {
@@ -87,7 +111,7 @@
   function commitEdit(row: ClassSubjectSummary['rows'][number]): void {
     if (editingCell !== cellKey(row.student_id)) return;
     editingCell = null;
-    const trimmed = editValue.trim();
+    const trimmed = String(editValue ?? '').trim();
     if (trimmed === '') return;
     const score = Number(trimmed);
     if (Number.isNaN(score) || score < 0 || score > 100) {
@@ -168,9 +192,14 @@
         </div>
         <div class="flex flex-col gap-1 flex-1 w-full">
           <Label for="filter-type" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Jenis Penilaian</Label>
-          <Select id="filter-type" bind:value={filterType}>
-            {#each GRADE_TYPES as t}<option value={t.value}>{t.label}</option>{/each}
-          </Select>
+          <div class="flex gap-1.5">
+            <Select id="filter-type" bind:value={filterType} class="flex-1">
+              {#each typeOptions as t}<option value={t.value}>{t.label}</option>{/each}
+            </Select>
+            {#if canEdit && filterClassId && filterSubjectId}
+              <Button variant="outline" size="icon" title="Tambah jenis nilai" onclick={() => isTypeOpen = true}><Plus class="w-4 h-4" /></Button>
+            {/if}
+          </div>
         </div>
         <Button onclick={showRekap} disabled={!filterClassId || !filterSubjectId}><FileSpreadsheet class="w-4 h-4 mr-1" /> Lihat Rekap</Button>
       </div>
@@ -226,7 +255,7 @@
                       >
                         {#if editingCell === cellKey(row.student_id) && c.type === filterType}
                           <input
-                            type="number" min="0" max="100" step="1"
+                            type="text" inputmode="decimal"
                             bind:value={editValue}
                             onblur={() => commitEdit(row)}
                             onkeydown={(e) => onCellKeydown(e, row)}
@@ -282,4 +311,17 @@
       </div>
     {/if}
   {/if}
+
+<Modal bind:open={isTypeOpen} title="Tambah Jenis Nilai" description="Jenis baru (misal Tugas 1, Praktikum) muncul sebagai kolom di rekap dan tidak mempengaruhi bobot nilai akhir.">
+  <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); addType(); }}>
+    <div class="flex flex-col gap-0">
+      <Label for="new-type" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Nama Jenis</Label>
+      <Input id="new-type" bind:value={newTypeName} placeholder="Tugas 1" required />
+    </div>
+    <div class="flex justify-end gap-2 pt-4 border-t border-border mt-2">
+      <Button variant="outline" onclick={() => isTypeOpen = false}>Batal</Button>
+      <Button type="submit" disabled={!newTypeName.trim()}>Tambah</Button>
+    </div>
+  </form>
+</Modal>
 </PageShell>

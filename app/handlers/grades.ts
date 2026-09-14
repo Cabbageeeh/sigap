@@ -15,7 +15,9 @@ import {
 } from '@queries/teacherClassAssignments';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
-import { GradeSchema, BulkGradesSchema, zodToErrors } from '@validators';
+import { GradeSchema, BulkGradesSchema, AddGradeComponentSchema, zodToErrors } from '@validators';
+import { addGradeComponent } from '@queries/gradeComponents';
+import { findClassById } from '@queries/classes';
 
 const isTeacherActor = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && isTeacherUser(userId);
 const canView = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && hasPermission(userId, 'grades.view');
@@ -83,10 +85,9 @@ export const gradesPage = (req: NaraRequest, res: NaraResponse) => {
     years: findAllAcademicYears(),
     meta: { total, page, limit, totalPages, hasNext: page < totalPages, hasPrev: page > 1 },
     summary,
-    attendanceConfirmed,
-    confirmationRequired: false,
     classId: classId ?? '',
     subjectId: subjectId ?? '',
+    type: queryString(req, 'type') ?? 'task',
   });
 };
 
@@ -196,6 +197,34 @@ export const saveGradesBulk = (req: NaraRequest, res: NaraResponse) => {
   } catch (error: unknown) {
     Logger.error('Failed to bulk save grades', error as Error);
     return jsonServerError(res, 'Failed to save grades');
+  }
+};
+
+export const addGradeComponentType = (req: NaraRequest, res: NaraResponse) => {
+  if (!req.user) return jsonError(res, 'Unauthorized', 401);
+  if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'grades.create')) return jsonError(res, 'Forbidden', 403);
+  if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+
+  const parsed = AddGradeComponentSchema.safeParse(req.body);
+  if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
+
+  const { class_id, subject_id, name } = parsed.data;
+  if (!canManageGradeInClass(req.user.id, 'grades.create', class_id, subject_id)) {
+    return jsonError(res, 'Guru hanya dapat menambah jenis nilai untuk mapel dan kelas yang diampu', 403, 'GRADE_SCOPE_FORBIDDEN');
+  }
+
+  const cls = findClassById(class_id);
+  if (!cls) return jsonError(res, 'Class not found', 404);
+
+  const type = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  if (!type) return jsonError(res, 'Nama jenis nilai tidak valid', 422, 'INVALID_TYPE_NAME');
+
+  try {
+    addGradeComponent(cls.academic_year_id, type, name, 0);
+    return jsonCreated(res, 'Jenis nilai ditambahkan', { type, name });
+  } catch (error: unknown) {
+    Logger.error('Failed to add grade component', error as Error);
+    return jsonServerError(res, 'Failed to add grade component');
   }
 };
 

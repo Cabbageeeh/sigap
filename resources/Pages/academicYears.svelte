@@ -111,7 +111,7 @@
 
   async function saveComponents(): Promise<void> {
     if (!componentYear) return;
-    const total = componentRows.reduce((sum, c) => sum + c.weight, 0);
+    const total = componentRows.filter(c => c.weight > 0).reduce((sum, c) => sum + c.weight, 0);
     if (Math.abs(total - 100) > 0.001) {
       Toast(`Total bobot harus 100 (sekarang ${total})`, 'error');
       return;
