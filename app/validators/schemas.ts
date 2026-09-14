@@ -223,10 +223,18 @@ export const TeacherConfirmationSchema = z.object({
 export const JournalSchema = z.object({
   schedule_id: z.string().uuid('Invalid schedule ID'),
   material: z.string().min(1, 'Material is required').max(2000, 'Material must be at most 2000 characters'),
+  attendance: z.array(z.object({
+    student_id: z.string().uuid('Invalid student ID'),
+    status: z.enum(['present', 'sick', 'leave', 'absent']),
+  })).max(200).optional(),
 });
 
 export const UpdateJournalSchema = z.object({
   material: z.string().min(1, 'Material is required').max(2000, 'Material must be at most 2000 characters'),
+  attendance: z.array(z.object({
+    student_id: z.string().uuid('Invalid student ID'),
+    status: z.enum(['present', 'sick', 'leave', 'absent']),
+  })).max(200).optional(),
 });
 
 export const StudentAttendanceSchema = z.object({

@@ -1,9 +1,10 @@
 import type { NaraRequest, NaraResponse } from '@core';
-import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationError } from '@core';
+import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationError, queryInt } from '@core';
 import Logger from '@services/Logger';
-import { findAttendanceByJournal, findAttendanceByStudent, findStudentAttendanceById, upsertStudentAttendance, deleteStudentAttendance } from '@queries/studentAttendance';
+import { findAttendanceByJournal, findAttendanceByStudent, findStudentAttendanceById, upsertStudentAttendance, deleteStudentAttendance, getAttendanceRecap } from '@queries/studentAttendance';
 import { findJournalById } from '@queries/journals';
 import { findScheduleById } from '@queries/schedules';
+import { findAllClasses, findClassesByTeacherUser } from '@queries/classes';
 import { isTeacherUser } from '@queries/teacherClassAssignments';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
 import { StudentAttendanceSchema, zodToErrors } from '@validators';
@@ -13,14 +14,28 @@ const canView = (userId: string): boolean => !hasRole(userId, 'parent') && !isAd
 export const studentAttendancePage = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return res.redirect('/login');
   const userId = req.user.id;
-  const permissions = {
-    canView: canView(userId),
-    canCreate: isTeacherActor(userId) && hasPermission(userId, 'attendance.create'),
-    canEdit: userId ? isTeacherActor(userId) && hasPermission(userId, 'attendance.edit') : false,
-    canDelete: userId ? isTeacherActor(userId) && hasPermission(userId, 'attendance.delete') : false,
-  };
-  const records = canView(userId) ? [] : findAttendanceByStudent('');
-  return res.inertia('studentAttendance', { permissions, records });
+
+  const teacherActor = isTeacherActor(userId);
+  const classes = teacherActor ? findClassesByTeacherUser(userId) : canView(userId) || isAdmin(userId) ? findAllClasses() : [];
+
+  const now = new Date();
+  const defaultTo = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).getTime();
+  const defaultFrom = defaultTo - 29 * 86400000;
+
+  const classId = (req.query.class_id as string | undefined) || classes[0]?.id || '';
+  const from = queryInt(req, 'from') || defaultFrom;
+  const to = queryInt(req, 'to') || defaultTo;
+
+  const selectedClass = classes.find(c => c.id === classId);
+  const recap = selectedClass
+    ? getAttendanceRecap(classId, from, to, teacherActor ? userId : undefined)
+    : [];
+
+  return res.inertia('studentAttendance', {
+    classes: classes.map(c => ({ id: c.id, name: c.name })),
+    recap,
+    filters: { class_id: classId, from, to },
+  });
 };
 
 export const listAttendanceByJournal = (req: NaraRequest, res: NaraResponse) => {

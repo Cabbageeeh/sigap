@@ -4,7 +4,8 @@ import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationErr
 import Logger from '@services/Logger';
 import { findAllJournals, findJournalById, findJournalsBySchedule, findJournalsByTeacher, findJournalByScheduleAndDate, createJournal, updateJournal, deleteJournal } from '@queries/journals';
 import { findScheduleById, findTeacherSchedulesByDay } from '@queries/schedules';
-import { findAttendanceByJournal } from '@queries/studentAttendance';
+import { findAttendanceByJournal, upsertStudentAttendance } from '@queries/studentAttendance';
+import { findStudentsByClass } from '@queries/students';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
 import { isAdmin, hasPermission } from '@queries/users';
 import { isTeacherUser } from '@queries/teacherClassAssignments';
@@ -46,12 +47,26 @@ export const journalsPage = (req: NaraRequest, res: NaraResponse) => {
       .map(j => [j.schedule_id, j] as const),
   );
 
+  const rosterByClass: Record<string, { id: string; name: string; nis: string }[]> = {};
+  const attendanceByJournal: Record<string, { student_id: string; status: string }[]> = {};
+  for (const s of todaySchedules) {
+    if (!rosterByClass[s.class_id]) {
+      rosterByClass[s.class_id] = findStudentsByClass(s.class_id).map(st => ({ id: st.id, name: st.name, nis: st.nis }));
+    }
+    const j = todayJournalBySchedule.get(s.id);
+    if (j) {
+      attendanceByJournal[j.id] = findAttendanceByJournal(j.id).map(a => ({ student_id: a.student_id, status: a.status }));
+    }
+  }
+
   return res.inertia('journals', {
     permissions,
     journals,
     todaySchedules,
     todayJournalIds: Object.fromEntries([...todayJournalBySchedule].map(([sid, j]) => [sid, j.id])),
     confirmedToday: teacherActor && userId ? !!findTodayConfirmationByTeacher(userId) : true,
+    rosterByClass,
+    attendanceByJournal,
   });
 };
 
@@ -119,18 +134,36 @@ export const addJournal = (req: NaraRequest, res: NaraResponse) => {
   const { start, end } = dayBounds();
   const existing = findJournalByScheduleAndDate(schedule.id, start, end);
 
-  try {
-    if (existing) {
-      const item = updateJournal(existing.id, { material: parsed.data.material, teacher_confirmation_id: confirmation.id });
-      return jsonSuccess(res, 'Journal updated', item);
+  const attendance = parsed.data.attendance ?? [];
+  const roster = new Set(findStudentsByClass(schedule.class_id).map(st => st.id));
+  for (const a of attendance) {
+    if (!roster.has(a.student_id)) {
+      return jsonError(res, 'Siswa tidak berada di kelas jadwal ini', 422, 'INVALID_STUDENT_CLASS');
     }
-    const item = createJournal({
-      schedule_id: schedule.id,
-      teacher_confirmation_id: confirmation.id,
-      date: start,
-      material: parsed.data.material,
-    });
-    return jsonCreated(res, 'Journal created', item);
+  }
+
+  try {
+    const journal = existing
+      ? updateJournal(existing.id, { material: parsed.data.material, teacher_confirmation_id: confirmation.id })!
+      : createJournal({
+        schedule_id: schedule.id,
+        teacher_confirmation_id: confirmation.id,
+        date: start,
+        material: parsed.data.material,
+      });
+
+    for (const a of attendance) {
+      upsertStudentAttendance({
+        student_id: a.student_id,
+        schedule_id: schedule.id,
+        journal_id: journal.id,
+        status: a.status,
+      });
+    }
+
+    return existing
+      ? jsonSuccess(res, 'Journal updated', journal)
+      : jsonCreated(res, 'Journal created', journal);
   } catch (error: unknown) {
     Logger.error('Failed to create journal', error as Error);
     return jsonServerError(res, 'Failed to create journal');
@@ -153,9 +186,27 @@ export const editJournal = (req: NaraRequest, res: NaraResponse) => {
   const parsed = UpdateJournalSchema.safeParse(req.body);
   if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
 
+  const attendance = parsed.data.attendance ?? [];
+  if (schedule) {
+    const roster = new Set(findStudentsByClass(schedule.class_id).map(st => st.id));
+    for (const a of attendance) {
+      if (!roster.has(a.student_id)) {
+        return jsonError(res, 'Siswa tidak berada di kelas jadwal ini', 422, 'INVALID_STUDENT_CLASS');
+      }
+    }
+  }
+
   try {
-    const item = updateJournal(id, parsed.data);
+    const item = updateJournal(id, { material: parsed.data.material });
     if (!item) return jsonError(res, 'Not found', 404);
+    for (const a of attendance) {
+      upsertStudentAttendance({
+        student_id: a.student_id,
+        schedule_id: existing.schedule_id,
+        journal_id: id,
+        status: a.status,
+      });
+    }
     return jsonSuccess(res, 'Journal updated', item);
   } catch (error: unknown) {
     Logger.error('Failed to update journal', error as Error);

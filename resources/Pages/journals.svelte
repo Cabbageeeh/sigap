@@ -18,6 +18,7 @@
     subject_name: string;
   }
   import { timestampToTimeInput } from '$lib/utils/datetime';
+  import { cn } from '$lib/utils.js';
   import { BookOpen, Pencil, Plus, Trash2 } from '@lucide/svelte';
 
   interface JournalRow extends Journal {
@@ -25,23 +26,31 @@
     subject_name?: string;
   }
 
+  type AttendanceStatus = 'present' | 'sick' | 'leave' | 'absent';
+  interface RosterStudent { id: string; name: string; nis: string }
+
   let {
     permissions,
     journals = [],
     todaySchedules = [],
     todayJournalIds = {},
     confirmedToday = true,
+    rosterByClass = {},
+    attendanceByJournal = {},
   }: {
     permissions: { canCreate?: boolean; canEdit?: boolean; canDelete?: boolean };
     journals?: JournalRow[];
     todaySchedules?: TeacherDailySchedule[];
     todayJournalIds?: Record<string, string>;
     confirmedToday?: boolean;
+    rosterByClass?: Record<string, RosterStudent[]>;
+    attendanceByJournal?: Record<string, { student_id: string; status: string }[]>;
   } = $props();
 
   let isOpen = $state(false);
   let isDeleteOpen = $state(false);
   let form = $state({ schedule_id: '', material: '' });
+  let attendance = $state<Record<string, AttendanceStatus>>({});
   let selected: JournalRow | null = $state(null);
 
   const todayLabel = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
@@ -53,15 +62,41 @@
     new Map(journals.filter(j => todayJournalIds[j.schedule_id] === j.id).map(j => [j.schedule_id, j])),
   );
 
+  const selectedSchedule = $derived(todaySchedules.find(s => s.id === form.schedule_id));
+  const roster = $derived<RosterStudent[]>(selectedSchedule ? (rosterByClass[selectedSchedule.class_id] ?? []) : []);
+
+  const STATUS_OPTIONS: { value: AttendanceStatus; label: string }[] = [
+    { value: 'present', label: 'Hadir' },
+    { value: 'sick', label: 'Sakit' },
+    { value: 'leave', label: 'Izin' },
+    { value: 'absent', label: 'Alpa' },
+  ];
+
+  const attendanceCounts = $derived.by(() => {
+    const c = { present: 0, sick: 0, leave: 0, absent: 0 };
+    for (const st of roster) c[attendance[st.id] ?? 'present']++;
+    return c;
+  });
+
+  function loadAttendance(journalId: string | null): void {
+    const map: Record<string, AttendanceStatus> = {};
+    const existing = journalId ? (attendanceByJournal[journalId] ?? []) : [];
+    const existingMap = new Map(existing.map(a => [a.student_id, a.status as AttendanceStatus]));
+    for (const st of roster) map[st.id] = existingMap.get(st.id) ?? 'present';
+    attendance = map;
+  }
+
   function openCreate(): void {
     selected = null;
     form = { schedule_id: '', material: '' };
+    attendance = {};
     isOpen = true;
   }
 
   function openEdit(item: JournalRow): void {
     selected = item;
     form = { schedule_id: item.schedule_id, material: item.material };
+    loadAttendance(item.id);
     isOpen = true;
   }
 
@@ -70,18 +105,25 @@
     if (existing) {
       selected = existing;
       form.material = existing.material;
+      loadAttendance(existing.id);
     } else {
       selected = null;
       form.material = '';
+      loadAttendance(null);
     }
   }
 
   function confirmDelete(item: JournalRow): void { selected = item; isDeleteOpen = true; }
 
   async function submit(): Promise<void> {
+    const payload = {
+      schedule_id: form.schedule_id,
+      material: form.material,
+      attendance: roster.map(st => ({ student_id: st.id, status: attendance[st.id] ?? 'present' })),
+    };
     const result = selected
-      ? await api(() => axios.put(`/journals/${selected!.id}`, { material: form.material }))
-      : await api(() => axios.post('/journals', form));
+      ? await api(() => axios.put(`/journals/${selected!.id}`, { material: form.material, attendance: payload.attendance }))
+      : await api(() => axios.post('/journals', payload));
     if (result.success) { isOpen = false; router.visit('/journals', { preserveScroll: true }); }
   }
 
@@ -168,6 +210,46 @@
         class="border-input bg-card selection:bg-primary/20 dark:bg-input/30 ring-offset-background placeholder:text-muted-foreground font-body flex w-full min-w-0 rounded-xl border px-3.5 py-2.5 text-sm transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
       ></textarea>
     </div>
+    {#if roster.length > 0}
+      <div class="flex flex-col gap-0">
+        <div class="flex items-center justify-between mb-1.5">
+          <Label class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground">Presensi Siswa</Label>
+          <span class="text-xs text-muted-foreground font-mono-accent">
+            <span class="text-primary font-semibold">{attendanceCounts.present}</span> Hadir ·
+            <span class="text-warning-600 dark:text-warning-400 font-semibold">{attendanceCounts.sick}</span> Sakit ·
+            {attendanceCounts.leave} Izin ·
+            <span class="text-destructive font-semibold">{attendanceCounts.absent}</span> Alpa
+          </span>
+        </div>
+        <div class="rounded-xl border border-border divide-y divide-border max-h-64 overflow-y-auto">
+          {#each roster as st (st.id)}
+            <div class="flex items-center gap-3 px-3.5 py-2.5">
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-foreground truncate">{st.name}</p>
+                <p class="text-xs text-muted-foreground font-mono-accent">{st.nis}</p>
+              </div>
+              <div class="flex gap-1 shrink-0">
+                {#each STATUS_OPTIONS as opt}
+                  <button
+                    type="button"
+                    onclick={() => attendance[st.id] = opt.value}
+                    class={cn(
+                      'rounded-lg px-2.5 py-1 text-xs font-medium transition-colors border',
+                      (attendance[st.id] ?? 'present') === opt.value
+                        ? opt.value === 'present' ? 'bg-primary/10 border-primary/30 text-primary'
+                          : opt.value === 'sick' ? 'bg-warning-500/10 border-warning-500/30 text-warning-600 dark:text-warning-400'
+                          : opt.value === 'absent' ? 'bg-destructive/10 border-destructive/30 text-destructive'
+                          : 'bg-secondary border-border text-foreground'
+                        : 'border-transparent text-muted-foreground hover:bg-secondary/60'
+                    )}
+                  >{opt.label}</button>
+                {/each}
+              </div>
+            </div>
+          {/each}
+        </div>
+      </div>
+    {/if}
     <div class="flex justify-end gap-2 pt-4 border-t border-border mt-2">
       <Button variant="outline" onclick={() => isOpen = false}>Batal</Button>
       <Button type="submit" disabled={!form.schedule_id || !form.material.trim()}>{selected ? 'Perbarui' : 'Simpan'}</Button>
