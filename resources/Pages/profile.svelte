@@ -7,9 +7,11 @@
   import Input from '../Components/Input.svelte';
   import Label from '../Components/Label.svelte';
   import Button from '../Components/Button.svelte';
+  import PageHeader from '../Components/PageHeader.svelte';
+  import PageShell from '../Components/PageShell.svelte';
   import * as tabs from "@zag-js/tabs";
   import { useMachine, normalizeProps } from "@zag-js/svelte";
-  import { Loader2, Camera, Shield } from '@lucide/svelte';
+  import { Loader2, Camera, Shield, UserRound, LockKeyhole } from '@lucide/svelte';
 
   interface User {
     id: string;
@@ -67,21 +69,8 @@
 
 <Sidebar group="profile" />
 
-<div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground lg:pl-64">
-
-  <section class="px-6 sm:px-10 lg:px-16 pt-20 lg:pt-8 pb-16">
-    <div class="max-w-[1400px] mx-auto">
-
-      <!-- Page header -->
-      <div class="mb-12" in:fly={{ y: 20, duration: 800 }}>
-        <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Akun</p>
-        <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">
-          Profil.
-        </h1>
-        <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[52ch]">
-          Kelola identitas akun, foto profil, dan keamanan akses Anda.
-        </p>
-      </div>
+<PageShell>
+  <PageHeader eyebrow="Akun" title="Profil." description="Kelola identitas akun, foto profil, dan keamanan akses Anda." />
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12" in:fly={{ y: 20, duration: 800, delay: 150 }}>
 
@@ -89,10 +78,12 @@
         <div class="lg:col-span-4 flex flex-col gap-6">
 
           <!-- Identity card -->
-          <div class="border border-border rounded-2xl bg-card p-6 shadow-[0_8px_28px_rgba(32,36,38,0.025)] dark:shadow-none">
+          <div class="relative overflow-hidden border border-border rounded-2xl bg-card p-6 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+            <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
+            <div class="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/[0.07] blur-2xl"></div>
             <div class="flex items-center gap-4 mb-6">
               <div class="relative shrink-0">
-                <div class="w-16 h-16 rounded-full bg-muted border border-border overflow-hidden">
+                <div class="w-16 h-16 rounded-full bg-muted border-2 border-primary/20 overflow-hidden ring-4 ring-primary/[0.06]">
                   {#if previewUrl}
                     <img src={previewUrl} alt="Profile" class="aspect-square size-full object-cover" onerror={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                   {/if}
@@ -120,7 +111,7 @@
           </div>
 
           <!-- Security note -->
-          <div class="border border-border rounded-2xl bg-card p-5 flex items-start gap-3">
+          <div class="relative overflow-hidden border border-border rounded-2xl bg-card p-5 flex items-start gap-3 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
             <div class="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 mt-0.5">
               <Shield class="w-4 h-4 text-primary" />
             </div>
@@ -136,18 +127,19 @@
           <div {...tabsApi.getRootProps()} class="flex flex-col gap-2 w-full">
 
             <!-- Tab triggers -->
-            <div {...tabsApi.getListProps()} class="border border-border rounded-xl inline-flex h-auto w-fit items-stretch bg-card p-1 gap-0.5 mb-8">
-              <button {...tabsApi.getTriggerProps({ value: "personal" })} class="data-[selected]:bg-foreground data-[selected]:text-background text-muted-foreground hover:text-foreground inline-flex items-center justify-center rounded-2xl px-5 py-2 text-sm font-heading font-medium whitespace-nowrap transition-colors">
-                Info Pribadi
+            <div {...tabsApi.getListProps()} class="border border-border rounded-xl inline-flex h-auto w-fit items-stretch bg-secondary/40 p-1 gap-1 mb-8">
+              <button {...tabsApi.getTriggerProps({ value: "personal" })} class="data-[selected]:bg-card data-[selected]:text-foreground data-[selected]:shadow-[0_1px_3px_rgba(32,36,38,0.12)] text-muted-foreground hover:text-foreground inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2 text-sm font-heading font-medium whitespace-nowrap transition-all">
+                <UserRound class="w-3.5 h-3.5" /> Info Pribadi
               </button>
-              <button {...tabsApi.getTriggerProps({ value: "security" })} class="data-[selected]:bg-foreground data-[selected]:text-background text-muted-foreground hover:text-foreground inline-flex items-center justify-center rounded-2xl px-5 py-2 text-sm font-heading font-medium whitespace-nowrap transition-colors">
-                Keamanan
+              <button {...tabsApi.getTriggerProps({ value: "security" })} class="data-[selected]:bg-card data-[selected]:text-foreground data-[selected]:shadow-[0_1px_3px_rgba(32,36,38,0.12)] text-muted-foreground hover:text-foreground inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2 text-sm font-heading font-medium whitespace-nowrap transition-all">
+                <LockKeyhole class="w-3.5 h-3.5" /> Keamanan
               </button>
             </div>
 
             <!-- Personal info -->
             <div {...tabsApi.getContentProps({ value: "personal" })} class="flex-1 outline-none">
-              <div class="border border-border rounded-2xl bg-card p-6 sm:p-8">
+              <div class="relative overflow-hidden border border-border rounded-2xl bg-card p-6 sm:p-8 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+                <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
                 <div class="mb-6">
                   <h3 class="text-xl font-heading font-semibold tracking-tight text-foreground">Informasi pribadi</h3>
                   <p class="text-sm text-muted-foreground mt-1">Perbarui detail pribadi dan profil publik Anda.</p>
@@ -176,7 +168,8 @@
 
             <!-- Security -->
             <div {...tabsApi.getContentProps({ value: "security" })} class="flex-1 outline-none">
-              <div class="border border-border rounded-2xl bg-card p-6 sm:p-8">
+              <div class="relative overflow-hidden border border-border rounded-2xl bg-card p-6 sm:p-8 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
+                <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
                 <div class="mb-6">
                   <h3 class="text-xl font-heading font-semibold tracking-tight text-foreground">Ubah kata sandi</h3>
                   <p class="text-sm text-muted-foreground mt-1">Gunakan kata sandi yang panjang dan acak untuk keamanan akun Anda.</p>
@@ -209,6 +202,4 @@
         </div>
 
       </div>
-    </div>
-  </section>
-</div>
+</PageShell>
