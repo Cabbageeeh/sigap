@@ -114,6 +114,6 @@
       <p class="text-sm text-muted-foreground">Belum ada kelas yang bisa direkap. Kehadiran siswa diisi lewat form Tambah Jurnal.</p>
     </div>
   {:else}
-    <DataTable {columns} rows={recap} cell={recapCell} emptyMessage="Belum ada data kehadiran pada rentang ini — isi lewat form Tambah Jurnal." />
+    <DataTable {columns} rows={recap} keyField="student_id" cell={recapCell} emptyMessage="Belum ada data kehadiran pada rentang ini — isi lewat form Tambah Jurnal." />
   {/if}
 </PageShell>
