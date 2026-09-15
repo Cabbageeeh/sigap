@@ -5,7 +5,7 @@
   import Button from '../Components/Button.svelte';
   import Input from '../Components/Input.svelte';
   import Label from '../Components/Label.svelte';
-  import Select from '../Components/Select.svelte';
+  import SearchableSelect from '../Components/SearchableSelect.svelte';
   import Badge from '../Components/Badge.svelte';
   import Pagination from '../Components/Pagination.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
@@ -38,7 +38,7 @@
 
   let startDate = $state('');
   let endDate = $state('');
-  let teacherId = $state('');
+  let teacherId = $state<string | null>('');
 
   $effect(() => {
     startDate = filters.start_date;
@@ -132,9 +132,7 @@
     {#if !isOwnView}
       <div class="flex flex-col gap-0">
         <Label for="log-teacher" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Guru</Label>
-        <Select id="log-teacher" bind:value={teacherId} onchange={applyFilters} placeholder="Semua guru">
-          {#each teachers as t}<option value={t.user_id}>{t.user_name || t.user_username}</option>{/each}
-        </Select>
+        <SearchableSelect id="log-teacher" bind:value={teacherId} onchange={applyFilters} placeholder="Semua guru" options={teachers.map(t => ({ value: t.user_id, label: t.user_name || t.user_username }))} />
       </div>
     {/if}
     {#if hasFilters}

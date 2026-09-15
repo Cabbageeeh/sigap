@@ -4,7 +4,7 @@
   import { api } from '$lib/api';
   import Sidebar from '../Components/Sidebar.svelte';
   import Button from '../Components/Button.svelte';
-  import Select from '../Components/Select.svelte';
+  import SearchableSelect from '../Components/SearchableSelect.svelte';
   import Input from '../Components/Input.svelte';
   import Label from '../Components/Label.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
@@ -44,14 +44,14 @@
     selectedTeacherId: initialTeacherId = '',
   }: Props = $props();
 
-  let currentYearId = $state(selectedYearId);
+  let currentYearId = $state<string | null>(selectedYearId);
   let selectedTeacherId = $state(initialTeacherId && teachers.some(teacher => teacher.id === initialTeacherId) ? initialTeacherId : teachers[0]?.id ?? '');
   let assignedClassIds = $state<string[]>([]);
   let homeroomClassId = $state('');
   let isSaving = $state(false);
-  let scheduleClassId = $state('');
-  let scheduleSubjectId = $state('');
-  let scheduleDay = $state(1);
+  let scheduleClassId = $state<string | null>('');
+  let scheduleSubjectId = $state<string | null>('');
+  let scheduleDay = $state<number | null>(1);
   let scheduleStart = $state('07:30');
   let scheduleEnd = $state('09:00');
   let isSavingSchedule = $state(false);
@@ -70,8 +70,8 @@
   $effect(() => {
     assignedClassIds = selectedAssignments.map(assignment => assignment.class_id);
     homeroomClassId = selectedAssignments.find(assignment => assignment.is_homeroom === 1)?.class_id ?? '';
-    scheduleClassId = '';
-    scheduleSubjectId = '';
+    scheduleClassId = null;
+    scheduleSubjectId = null;
   });
 
   function teacherName(teacher: Teacher): string {
@@ -91,10 +91,9 @@
     if (assignedClassIds.includes(classId)) homeroomClassId = classId;
   }
 
-  function changeYear(event: Event): void {
-    const value = (event.currentTarget as HTMLSelectElement).value;
+  function changeYear(value: string | number | null): void {
     if (!value || value === currentYearId) return;
-    router.visit(`/teacher-assignments?academic_year_id=${encodeURIComponent(value)}`, { preserveScroll: true });
+    router.visit(`/teacher-assignments?academic_year_id=${encodeURIComponent(String(value))}`, { preserveScroll: true });
   }
 
   async function submit(): Promise<void> {
@@ -114,7 +113,7 @@
   }
 
   async function submitSchedule(): Promise<void> {
-    if (!selectedTeacher || !currentYearId || !scheduleClassId || !scheduleSubjectId || isSavingSchedule) return;
+    if (!selectedTeacher || !currentYearId || !scheduleClassId || !scheduleSubjectId || scheduleDay === null || isSavingSchedule) return;
     isSavingSchedule = true;
     const result = await api(() => axios.post('/schedules', {
       class_id: scheduleClassId,
@@ -127,7 +126,7 @@
     }));
     isSavingSchedule = false;
     if (result.success) {
-      scheduleSubjectId = '';
+      scheduleSubjectId = null;
       router.visit(`/teacher-assignments?academic_year_id=${encodeURIComponent(currentYearId)}`, { preserveScroll: true });
     }
   }
@@ -154,9 +153,7 @@
     {#snippet actions()}
       <div class="flex items-center gap-3 min-w-56">
         <Label for="academic-year" class="sr-only">Tahun ajaran</Label>
-        <Select id="academic-year" bind:value={currentYearId} onchange={changeYear} placeholder="Pilih tahun ajaran">
-          {#each years as year}<option value={year.id}>{year.name}</option>{/each}
-        </Select>
+        <SearchableSelect id="academic-year" bind:value={currentYearId} onchange={changeYear} placeholder="Pilih tahun ajaran" options={years.map(y => ({ value: y.id, label: y.name }))} />
       </div>
     {/snippet}
   </PageHeader>
@@ -302,21 +299,15 @@
           <form class="grid grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_1fr_auto] gap-3 items-end p-5 border-b border-border bg-secondary/15" onsubmit={(e) => { e.preventDefault(); void submitSchedule(); }}>
             <div class="flex flex-col gap-0">
               <Label for="schedule-class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Kelas</Label>
-              <Select id="schedule-class" bind:value={scheduleClassId} placeholder="Pilih kelas">
-                {#each assignedClasses as classItem}<option value={classItem.id}>{classItem.name}</option>{/each}
-              </Select>
+              <SearchableSelect id="schedule-class" bind:value={scheduleClassId} placeholder="Pilih kelas" options={assignedClasses.map(c => ({ value: c.id, label: c.name }))} />
             </div>
             <div class="flex flex-col gap-0">
               <Label for="schedule-subject" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Mapel</Label>
-              <Select id="schedule-subject" bind:value={scheduleSubjectId} placeholder="Pilih mapel">
-                {#each subjects as subject}<option value={subject.id}>{subject.name}</option>{/each}
-              </Select>
+              <SearchableSelect id="schedule-subject" bind:value={scheduleSubjectId} placeholder="Pilih mapel" options={subjects.map(s => ({ value: s.id, label: s.name }))} />
             </div>
             <div class="flex flex-col gap-0">
               <Label for="schedule-day" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Hari</Label>
-              <Select id="schedule-day" bind:value={scheduleDay} placeholder="Pilih hari">
-                {#each days as day, i}<option value={i}>{day}</option>{/each}
-              </Select>
+              <SearchableSelect id="schedule-day" bind:value={scheduleDay} placeholder="Pilih hari" options={days.map((day, i) => ({ value: i, label: day }))} />
             </div>
             <div class="flex flex-col gap-0">
               <Label for="schedule-start" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Mulai</Label>

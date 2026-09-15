@@ -8,12 +8,12 @@
   import Input from '../Components/Input.svelte';
   import Label from '../Components/Label.svelte';
   import Select from '../Components/Select.svelte';
+  import SearchableSelect from '../Components/SearchableSelect.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
-  import type { Student, Subject, Class, AcademicYear, ClassSubjectSummary } from '../types';
-  import { FileSpreadsheet, LockKeyhole, Save, Loader2, Plus } from '@lucide/svelte';
-  import { fly } from 'svelte/transition';
+  import { FileSpreadsheet, LockKeyhole, Save, Loader2, Plus, Pencil, Trash2 } from '@lucide/svelte';
   import Modal from '../Components/Modal.svelte';
+  import ConfirmDialog from '../Components/ConfirmDialog.svelte';
 
   const GRADE_TYPES = [
     { value: 'task', label: 'Tugas' },
@@ -56,6 +56,9 @@
   let isSaving = $state(false);
   let isTypeOpen = $state(false);
   let newTypeName = $state('');
+  let isRenameOpen = $state(false);
+  let renameTypeName = $state('');
+  let isDeleteTypeOpen = $state(false);
 
   const canEdit = $derived(!!permissions.canEdit || !!permissions.canCreate);
   const typeOptions = $derived(
@@ -84,6 +87,40 @@
       isTypeOpen = false;
       newTypeName = '';
       router.visit(`/grades?class_id=${filterClassId}&subject_id=${filterSubjectId}`, { preserveScroll: true });
+    }
+  }
+
+  const selectedTypeExists = $derived(!!summary?.components?.some(c => c.type === filterType));
+
+  function openRenameType(): void {
+    renameTypeName = typeLabel;
+    isRenameOpen = true;
+  }
+
+  async function renameType(): Promise<void> {
+    const name = renameTypeName.trim();
+    if (!name || !filterClassId || !filterSubjectId) return;
+    const result = await api(() => axios.put(`/grades/components/${filterType}`, {
+      class_id: filterClassId,
+      subject_id: filterSubjectId,
+      name,
+    }));
+    if (result.success) {
+      isRenameOpen = false;
+      router.visit(`/grades?class_id=${filterClassId}&subject_id=${filterSubjectId}&type=${filterType}`, { preserveScroll: true });
+    }
+  }
+
+  async function deleteType(): Promise<void> {
+    if (!filterClassId || !filterSubjectId) return;
+    const result = await api(() => axios.delete(`/grades/components/${filterType}`, {
+      data: { class_id: filterClassId, subject_id: filterSubjectId },
+    }));
+    if (result.success) {
+      isDeleteTypeOpen = false;
+      const next = summary?.components?.find(c => c.type !== filterType)?.type ?? 'task';
+      filterType = next;
+      router.visit(`/grades?class_id=${filterClassId}&subject_id=${filterSubjectId}&type=${next}`, { preserveScroll: true });
     }
   }
 
@@ -178,17 +215,11 @@
       <div class="relative flex flex-col sm:flex-row gap-3 items-end">
         <div class="flex flex-col gap-1 flex-1 w-full">
           <Label for="filter-class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Kelas</Label>
-          <Select id="filter-class" bind:value={filterClassId} placeholder="Pilih kelas">
-            <option value="">Pilih kelas</option>
-            {#each classes as c}<option value={c.id}>{c.name}</option>{/each}
-          </Select>
+          <SearchableSelect id="filter-class" bind:value={filterClassId} placeholder="Pilih kelas" options={classes.map(c => ({ value: c.id, label: c.name }))} />
         </div>
         <div class="flex flex-col gap-1 flex-1 w-full">
           <Label for="filter-subject" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Mapel</Label>
-          <Select id="filter-subject" bind:value={filterSubjectId} placeholder="Pilih mapel">
-            <option value="">Pilih mapel</option>
-            {#each subjects as s}<option value={s.id}>{s.name}</option>{/each}
-          </Select>
+          <SearchableSelect id="filter-subject" bind:value={filterSubjectId} placeholder="Pilih mapel" options={subjects.map(s => ({ value: s.id, label: s.name }))} />
         </div>
         <div class="flex flex-col gap-1 flex-1 w-full">
           <Label for="filter-type" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1">Jenis Penilaian</Label>
@@ -196,6 +227,10 @@
             <Select id="filter-type" bind:value={filterType} class="flex-1">
               {#each typeOptions as t}<option value={t.value}>{t.label}</option>{/each}
             </Select>
+            {#if canEdit && filterClassId && filterSubjectId && selectedTypeExists}
+              <Button variant="outline" size="icon" title="Ubah nama jenis nilai" onclick={openRenameType}><Pencil class="w-4 h-4" /></Button>
+              <Button variant="outline" size="icon" title="Hapus jenis nilai" onclick={() => isDeleteTypeOpen = true}><Trash2 class="w-4 h-4 text-destructive" /></Button>
+            {/if}
             {#if canEdit && filterClassId && filterSubjectId}
               <Button variant="outline" size="icon" title="Tambah jenis nilai" onclick={() => isTypeOpen = true}><Plus class="w-4 h-4" /></Button>
             {/if}
@@ -324,4 +359,19 @@
     </div>
   </form>
 </Modal>
+
+<Modal bind:open={isRenameOpen} title="Ubah Nama Jenis Nilai" description={`Ganti nama "${typeLabel}". Nama baru berlaku untuk semua kelas pada tahun ajaran ini.`}>
+  <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); renameType(); }}>
+    <div class="flex flex-col gap-0">
+      <Label for="rename-type" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Nama Jenis</Label>
+      <Input id="rename-type" bind:value={renameTypeName} placeholder="Tugas 2" required />
+    </div>
+    <div class="flex justify-end gap-2 pt-4 border-t border-border mt-2">
+      <Button variant="outline" onclick={() => isRenameOpen = false}>Batal</Button>
+      <Button type="submit" disabled={!renameTypeName.trim() || renameTypeName.trim() === typeLabel}>Simpan</Button>
+    </div>
+  </form>
+</Modal>
+
+<ConfirmDialog bind:open={isDeleteTypeOpen} title="Hapus Jenis Nilai" description={`Jenis "${typeLabel}" beserta seluruh nilai yang sudah diisi akan dihapus permanen untuk tahun ajaran ini. Lanjutkan?`} confirmLabel="Hapus" cancelLabel="Batal" onConfirm={deleteType} destructive />
 </PageShell>

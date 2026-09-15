@@ -9,7 +9,7 @@
   import Label from '../Components/Label.svelte';
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
-  import Select from '../Components/Select.svelte';
+  import SearchableSelect from '../Components/SearchableSelect.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
   import type { Class, ClassForm, AcademicYear } from '../types';
@@ -85,9 +85,7 @@
     <div class="flex flex-col gap-0"><Label for="name" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Nama</Label><Input id="name" bind:value={form.name} required /></div>
     <div class="flex flex-col gap-0"><Label for="grade" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Tingkat</Label><Input id="grade" bind:value={form.grade} required /></div>
     <div class="flex flex-col gap-0"><Label for="year" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Tahun Ajaran</Label>
-      <Select id="year" bind:value={form.academic_year_id} placeholder="Pilih tahun ajaran">
-        {#each years as year}<option value={year.id}>{year.name}</option>{/each}
-      </Select>
+      <SearchableSelect id="year" bind:value={form.academic_year_id} placeholder="Pilih tahun ajaran" options={years.map(y => ({ value: y.id, label: y.name }))} />
     </div>
     <div class="flex justify-end gap-2 pt-4 border-t border-border mt-2">
       <Button variant="outline" onclick={() => isOpen = false}>Batal</Button>

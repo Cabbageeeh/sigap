@@ -9,7 +9,7 @@
   import Label from '../Components/Label.svelte';
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
-  import Select from '../Components/Select.svelte';
+  import SearchableSelect from '../Components/SearchableSelect.svelte';
   import Pagination from '../Components/Pagination.svelte';
   import type { Parent, ParentForm, PaginationMeta } from '../types';
   import { createEmptyParentForm, parentToForm } from '../types';
@@ -63,9 +63,7 @@
 <Modal bind:open={isOpen} title={selected ? 'Edit Orang Tua' : 'Tambah Orang Tua'} description="Tambah atau ubah data orang tua. Pilih pengguna dan isi kontak.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
     <div class="flex flex-col gap-0"><Label for="user" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Pengguna</Label>
-      <Select id="user" bind:value={form.user_id} placeholder="Pilih pengguna">
-        {#each users as u}<option value={u.id}>{u.name}</option>{/each}
-      </Select>
+      <SearchableSelect id="user" bind:value={form.user_id} placeholder="Pilih pengguna" options={users.map(u => ({ value: u.id, label: u.name ?? u.username }))} />
     </div>
     <div class="flex flex-col gap-0"><Label for="phone" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Telepon</Label><Input id="phone" bind:value={form.phone} /></div>
     <div class="flex flex-col gap-0"><Label for="address" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Alamat</Label><Input id="address" bind:value={form.address} /></div>

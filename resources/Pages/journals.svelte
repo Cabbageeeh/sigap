@@ -8,7 +8,7 @@
   import Label from '../Components/Label.svelte';
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
-  import Select from '../Components/Select.svelte';
+  import SearchableSelect from '../Components/SearchableSelect.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
   import type { Journal, Schedule } from '../types';
@@ -190,11 +190,7 @@
     </div>
     <div class="flex flex-col gap-0">
       <Label for="schedule" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Jadwal</Label>
-      <Select id="schedule" bind:value={form.schedule_id} onchange={onScheduleChange} placeholder="Pilih jadwal hari ini" disabled={!!selected}>
-        {#each todaySchedules as s}
-          <option value={s.id}>{scheduleLabel(s)}{journalBySchedule.has(s.id) ? ' · sudah ada jurnal' : ''}</option>
-        {/each}
-      </Select>
+      <SearchableSelect id="schedule" bind:value={form.schedule_id} onchange={onScheduleChange} placeholder="Pilih jadwal hari ini" disabled={!!selected} options={todaySchedules.map(s => ({ value: s.id, label: `${scheduleLabel(s)}${journalBySchedule.has(s.id) ? ' · sudah ada jurnal' : ''}` }))} />
       {#if journalBySchedule.has(form.schedule_id) && !selected}
         <p class="mt-1.5 text-xs text-primary">Jurnal untuk jadwal ini sudah ada — materi akan diperbarui.</p>
       {/if}

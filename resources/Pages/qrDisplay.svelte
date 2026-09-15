@@ -1,8 +1,10 @@
 <script lang="ts">
   import axios from 'axios';
+  import { inertia } from '@inertiajs/svelte';
   import { api } from '$lib/api';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
+  import { ArrowLeft } from '@lucide/svelte';
   import { fly } from 'svelte/transition';
 
   let { qrRefreshInterval = 5, schoolName = 'Sekolah' }: { qrRefreshInterval?: number; schoolName?: string } = $props();
@@ -48,6 +50,10 @@
   <title>Layar QR Absen — {schoolName}</title>
 </svelte:head>
 
+
+<a href="/dashboard" use:inertia class="fixed top-5 left-5 z-10 inline-flex items-center gap-2 rounded-xl border border-border bg-card/80 backdrop-blur px-4 py-2.5 text-sm font-medium text-foreground shadow-sm hover:bg-card transition-colors">
+  <ArrowLeft class="w-4 h-4" /> Kembali
+</a>
 <PageShell bare class="flex min-h-[100dvh] flex-col items-center justify-center">
   <div class="w-full max-w-3xl flex flex-col items-center" in:fly={{ y: 20, duration: 700 }}>
     <!-- Header -->

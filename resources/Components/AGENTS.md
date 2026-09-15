@@ -31,6 +31,7 @@ Reusable Svelte 5 UI components shared across pages. All use TypeScript and Tail
 | `PageHeader.svelte` | Page title block (eyebrow + title + description + actions) | `eyebrow`, `title`, `description`, `actions` (snippet) |
 | `PageShell.svelte` | Standard page wrapper (sidebar offset + max-width container) | `bare` (no sidebar offset), `class` |
 | `SigapIcon.svelte` | Reference logo image wrapper | — |
+| `SearchableSelect.svelte` | Searchable dropdown (Zag JS combobox) | `value` (bindable, `string | number | null`), `options: { value, label }[]`, `placeholder`, `disabled`, `onchange` |
 | `Select.svelte` | Styled select dropdown | `value` (bindable), `placeholder`, `children` |
 | `Sidebar.svelte` | Left sidebar nav + mobile drawer | `group` (string — active nav section) |
 | `StatCard.svelte` | Dashboard statistic | `label`, `value`, `change`, `icon`, `tone`, `class` |
@@ -172,7 +173,7 @@ Components with visual variants use `tailwind-variants` with a **module script**
 
 Interactive UI components use [Zag JS](https://zagjs.com/) — a headless, framework-agnostic state machine library. Zag provides behavior; styling is done with Tailwind.
 
-**Installed packages:** `@zag-js/dialog`, `@zag-js/menu`, `@zag-js/switch`, `@zag-js/tabs`, `@zag-js/svelte`
+**Installed packages:** `@zag-js/combobox`, `@zag-js/dialog`, `@zag-js/menu`, `@zag-js/switch`, `@zag-js/tabs`, `@zag-js/svelte`
 
 ### Pattern
 
@@ -204,7 +205,7 @@ Every Zag JS component follows the same 3-step pattern:
 | `Header.svelte` | `@zag-js/menu` + `@zag-js/dialog` | User dropdown menu + logout confirmation |
 | `UserModal.svelte` | `@zag-js/dialog` | Create/edit user modal |
 | `RoleModal.svelte` | `@zag-js/dialog` | Create/edit role modal |
-| `Switch.svelte` | `@zag-js/switch` | Toggle switch (e.g. active/inactive) |
+| `SearchableSelect.svelte` | `@zag-js/combobox` | Searchable single-select dropdown (replaces `<Select>` for lists >5 items) |
 | `profile.svelte` (page) | `@zag-js/tabs` | Profile tab navigation |
 
 ### Rules

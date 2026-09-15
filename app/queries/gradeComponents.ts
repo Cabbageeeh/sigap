@@ -26,3 +26,27 @@ export const addGradeComponent = (academicYearId: string, type: string, name: st
     [randomUUID(), academicYearId, type, name, weight, Date.now(), Date.now()]
   );
 };
+
+export const findGradeComponent = (academicYearId: string, type: string): GradeComponent | undefined =>
+  SQLite.one<GradeComponent>`SELECT * FROM grade_components WHERE academic_year_id = ${academicYearId} AND type = ${type}`;
+
+export const renameGradeComponent = (academicYearId: string, type: string, name: string): void => {
+  SQLite.run(
+    `UPDATE grade_components SET name = ?, updated_at = ? WHERE academic_year_id = ? AND type = ?`,
+    [name, Date.now(), academicYearId, type]
+  );
+};
+
+export const deleteGradeComponent = (academicYearId: string, type: string): number => {
+  return SQLite.transaction(() => {
+    const removed = SQLite.run(
+      `DELETE FROM grades WHERE type = ? AND class_id IN (SELECT id FROM classes WHERE academic_year_id = ?)`,
+      [type, academicYearId]
+    ).changes;
+    SQLite.run(
+      `DELETE FROM grade_components WHERE academic_year_id = ? AND type = ?`,
+      [academicYearId, type]
+    );
+    return removed;
+  });
+};

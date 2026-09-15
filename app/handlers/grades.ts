@@ -15,8 +15,8 @@ import {
 } from '@queries/teacherClassAssignments';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
-import { GradeSchema, BulkGradesSchema, AddGradeComponentSchema, zodToErrors } from '@validators';
-import { addGradeComponent } from '@queries/gradeComponents';
+import { GradeSchema, BulkGradesSchema, AddGradeComponentSchema, DeleteGradeComponentSchema, gradeTypeSlug, zodToErrors } from '@validators';
+import { addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent } from '@queries/gradeComponents';
 import { findClassById } from '@queries/classes';
 
 const isTeacherActor = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && isTeacherUser(userId);
@@ -225,6 +225,66 @@ export const addGradeComponentType = (req: NaraRequest, res: NaraResponse) => {
   } catch (error: unknown) {
     Logger.error('Failed to add grade component', error as Error);
     return jsonServerError(res, 'Failed to add grade component');
+  }
+};
+
+export const renameGradeComponentType = (req: NaraRequest, res: NaraResponse) => {
+  if (!req.user) return jsonError(res, 'Unauthorized', 401);
+  if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'grades.edit')) return jsonError(res, 'Forbidden', 403);
+  if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+
+  const typeParsed = gradeTypeSlug.safeParse(req.params.type);
+  if (!typeParsed.success) return jsonError(res, 'Jenis nilai tidak valid', 422, 'INVALID_TYPE');
+  const type = typeParsed.data;
+
+  const parsed = AddGradeComponentSchema.safeParse(req.body);
+  if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
+
+  const { class_id, subject_id, name } = parsed.data;
+  if (!canManageGradeInClass(req.user.id, 'grades.edit', class_id, subject_id)) {
+    return jsonError(res, 'Guru hanya dapat mengubah jenis nilai untuk mapel dan kelas yang diampu', 403, 'GRADE_SCOPE_FORBIDDEN');
+  }
+
+  const cls = findClassById(class_id);
+  if (!cls) return jsonError(res, 'Class not found', 404);
+  if (!findGradeComponent(cls.academic_year_id, type)) return jsonError(res, 'Jenis nilai tidak ditemukan', 404);
+
+  try {
+    renameGradeComponent(cls.academic_year_id, type, name);
+    return jsonSuccess(res, 'Jenis nilai diperbarui', { type, name });
+  } catch (error: unknown) {
+    Logger.error('Failed to rename grade component', error as Error);
+    return jsonServerError(res, 'Failed to rename grade component');
+  }
+};
+
+export const removeGradeComponentType = (req: NaraRequest, res: NaraResponse) => {
+  if (!req.user) return jsonError(res, 'Unauthorized', 401);
+  if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'grades.delete')) return jsonError(res, 'Forbidden', 403);
+  if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+
+  const typeParsed = gradeTypeSlug.safeParse(req.params.type);
+  if (!typeParsed.success) return jsonError(res, 'Jenis nilai tidak valid', 422, 'INVALID_TYPE');
+  const type = typeParsed.data;
+
+  const parsed = DeleteGradeComponentSchema.safeParse(req.body);
+  if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
+
+  const { class_id, subject_id } = parsed.data;
+  if (!canManageGradeInClass(req.user.id, 'grades.delete', class_id, subject_id)) {
+    return jsonError(res, 'Guru hanya dapat menghapus jenis nilai untuk mapel dan kelas yang diampu', 403, 'GRADE_SCOPE_FORBIDDEN');
+  }
+
+  const cls = findClassById(class_id);
+  if (!cls) return jsonError(res, 'Class not found', 404);
+  if (!findGradeComponent(cls.academic_year_id, type)) return jsonError(res, 'Jenis nilai tidak ditemukan', 404);
+
+  try {
+    const removed = deleteGradeComponent(cls.academic_year_id, type);
+    return jsonSuccess(res, `Jenis nilai dihapus${removed > 0 ? ` beserta ${removed} nilai terkait` : ''}`, { type });
+  } catch (error: unknown) {
+    Logger.error('Failed to delete grade component', error as Error);
+    return jsonServerError(res, 'Failed to delete grade component');
   }
 };
 

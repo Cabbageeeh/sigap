@@ -9,7 +9,7 @@
   import Label from '../Components/Label.svelte';
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
-  import Select from '../Components/Select.svelte';
+  import SearchableSelect from '../Components/SearchableSelect.svelte';
   import Pagination from '../Components/Pagination.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
@@ -49,11 +49,11 @@
   let form: StudentForm = $state(createEmptyStudentForm());
   let selected: Student | null = $state(null);
   let searchValue = $state('');
-  let selectedClassId = $state('');
+  let selectedClassId = $state<string | null>('');
 
   $effect(() => {
     searchValue = search;
-    selectedClassId = classId ?? '';
+    selectedClassId = classId;
   });
 
   function openImport(): void {
@@ -157,10 +157,7 @@
   </PageHeader>
   <div class="flex flex-col md:flex-row gap-3 mb-6">
     {#if !classScoped}
-      <Select id="student-class-filter" bind:value={selectedClassId} onchange={selectClass}>
-        <option value="">Semua kelas</option>
-        {#each classes as c}<option value={c.id}>{c.name}</option>{/each}
-      </Select>
+      <SearchableSelect id="student-class-filter" bind:value={selectedClassId} onchange={selectClass} placeholder="Semua kelas" options={classes.map(c => ({ value: c.id, label: c.name }))} />
     {/if}
     <form class="flex flex-1 gap-2" onsubmit={(event) => { event.preventDefault(); submitSearch(); }}>
       <Input type="search" placeholder="Cari NIS atau nama siswa..." bind:value={searchValue} class="flex-1" />
@@ -175,15 +172,10 @@
     <div class="flex flex-col gap-0"><Label for="nis" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">NIS</Label><Input id="nis" bind:value={form.nis} required /></div>
     <div class="flex flex-col gap-0"><Label for="name" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Nama</Label><Input id="name" bind:value={form.name} required /></div>
     <div class="flex flex-col gap-0"><Label for="class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Kelas</Label>
-      <Select id="class" bind:value={form.class_id} placeholder="Pilih kelas" disabled={classScoped}>
-        {#each classes as c}<option value={c.id}>{c.name}</option>{/each}
-      </Select>
+      <SearchableSelect id="class" bind:value={form.class_id} placeholder="Pilih kelas" disabled={classScoped} options={classes.map(c => ({ value: c.id, label: c.name }))} />
     </div>
     <div class="flex flex-col gap-0"><Label for="parent" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Orang Tua</Label>
-      <Select id="parent" bind:value={form.parent_user_id} placeholder="Pilih orang tua">
-        <option value={null}>Tidak ada</option>
-        {#each parents as p}<option value={p.id}>{p.name}</option>{/each}
-      </Select>
+      <SearchableSelect id="parent" bind:value={form.parent_user_id} placeholder="Pilih orang tua" options={parents.map(p => ({ value: p.id, label: p.name ?? p.username }))} />
     </div>
     <div class="flex flex-col gap-0"><Label for="phone" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Telepon</Label><Input id="phone" bind:value={form.phone} /></div>
     <div class="flex flex-col gap-0"><Label for="address" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Alamat</Label><Input id="address" bind:value={form.address} /></div>

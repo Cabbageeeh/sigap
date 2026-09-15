@@ -4,7 +4,7 @@
   import Label from './Label.svelte';
   import Button from './Button.svelte';
   import Switch from './Switch.svelte';
-  import Select from './Select.svelte';
+  import SearchableSelect from './SearchableSelect.svelte';
   import * as dialog from "@zag-js/dialog";
   import { useMachine, normalizeProps, portal } from "@zag-js/svelte";
   import { Loader2, X } from '@lucide/svelte';
@@ -66,9 +66,9 @@
 
   const isParent = $derived(hasRole('parent'));
 
-  function onStudentChange(studentId: string): void {
-    form.student_id = studentId || null;
-    const student = students.find(s => s.id === studentId);
+  function onStudentChange(studentId: string | number | null): void {
+    form.student_id = studentId === null ? null : String(studentId);
+    const student = students.find(s => s.id === form.student_id);
     if (student) {
       form.username = student.nis;
     }
@@ -139,12 +139,7 @@
             {#if isParent}
               <div class="flex flex-col gap-2">
                 <Label for="student_id" class="text-xs uppercase tracking-widest font-heading text-muted-foreground">Siswa yang diwakili</Label>
-                <Select id="student_id" value={form.student_id ?? ''} onchange={(e: Event) => onStudentChange((e.currentTarget as HTMLSelectElement).value)} class="h-11">
-                  <option value="">— Pilih siswa —</option>
-                  {#each students as student}
-                    <option value={student.id}>{student.nis} — {student.name} ({student.class_name ?? '—'})</option>
-                  {/each}
-                </Select>
+                <SearchableSelect id="student_id" value={form.student_id} onchange={onStudentChange} placeholder="— Pilih siswa —" class="h-11" options={students.map(s => ({ value: s.id, label: `${s.nis} — ${s.name} (${s.class_name ?? '—'})` }))} />
                 <p class="text-[11px] text-muted-foreground">Username akan otomatis terisi dengan NIS siswa yang dipilih.</p>
               </div>
             {/if}

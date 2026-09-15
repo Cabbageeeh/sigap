@@ -244,7 +244,7 @@ export const StudentAttendanceSchema = z.object({
   status: z.enum(['present', 'sick', 'leave', 'absent']),
 });
 
-const gradeTypeSlug = z.string().min(1, 'Type is required').max(50).regex(/^[a-z0-9_]+$/, 'Type must be lowercase slug');
+export const gradeTypeSlug = z.string().min(1, 'Type is required').max(50).regex(/^[a-z0-9_]+$/, 'Type must be lowercase slug');
 
 export const GradeSchema = z.object({
   student_id: z.string().uuid('Invalid student ID'),
@@ -271,6 +271,8 @@ export const AddGradeComponentSchema = z.object({
   subject_id: z.string().uuid('Invalid subject ID'),
   name: z.string().min(1, 'Name is required').max(50, 'Name must be at most 50 characters'),
 });
+
+export const DeleteGradeComponentSchema = AddGradeComponentSchema.omit({ name: true });
 
 export const GradeComponentsSchema = z.object({
   components: z.array(z.object({

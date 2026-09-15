@@ -28,6 +28,13 @@ vi.mock('@queries/subjects', () => ({ findAllSubjects: vi.fn(() => []) }));
 vi.mock('@queries/classes', () => ({
   findAllClasses: vi.fn(() => []),
   findClassesByTeacherUser: vi.fn(() => []),
+  findClassById: vi.fn(() => ({ id: '00000000-0000-4000-8000-000000000003', academic_year_id: 'year-1' })),
+}));
+vi.mock('@queries/gradeComponents', () => ({
+  addGradeComponent: vi.fn(),
+  findGradeComponent: vi.fn(() => ({ id: 'comp-1', type: 'task', name: 'Tugas' })),
+  renameGradeComponent: vi.fn(),
+  deleteGradeComponent: vi.fn(() => 2),
 }));
 vi.mock('@queries/academicYears', () => ({ findAllAcademicYears: vi.fn(() => []) }));
 
@@ -48,8 +55,9 @@ vi.mock('@services/Logger', () => ({
 }));
 
 
-import { addGrade, editGrade, removeGrade, gradeData } from '../../app/handlers/grades';
+import { addGrade, editGrade, removeGrade, gradeData, renameGradeComponentType, removeGradeComponentType } from '../../app/handlers/grades';
 import { createGrade, updateGrade, deleteGrade, findGradeById } from '@queries/grades';
+import { findGradeComponent, renameGradeComponent, deleteGradeComponent } from '@queries/gradeComponents';
 import { logGradeChange } from '@queries/gradeAuditLogs';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
@@ -234,5 +242,89 @@ describe('grades handler audit hooks', () => {
     expect(res._status).toBe(403);
     expect(res._body).toMatchObject({ code: 'CONFIRMATION_REQUIRED' });
     expect(createGrade).not.toHaveBeenCalled();
+  });
+});
+
+describe('grade component rename/delete', () => {
+  const componentBody = {
+    class_id: uuid(3),
+    subject_id: uuid(2),
+    name: 'Tugas 2',
+  };
+
+  function teacherReq(params: Record<string, string>, body: Record<string, unknown>) {
+    vi.mocked(isAdmin).mockReturnValue(false);
+    vi.mocked(hasRole).mockReturnValue(false);
+    vi.mocked(hasPermission).mockReturnValue(true);
+    vi.mocked(findGradeComponent).mockReturnValue({ id: 'comp-1', type: 'task', name: 'Tugas' } as never);
+    vi.mocked(isTeacherUser).mockReturnValue(true);
+    vi.mocked(isTeacherAssignedToClassSubject).mockReturnValue(true);
+    vi.mocked(findTodayConfirmationByTeacher).mockReturnValue({ id: 'c1' } as never);
+    return mockRequest({ params, body, user: mockUser({ id: 'teacher-1' }) });
+  }
+
+  beforeEach(() => vi.clearAllMocks());
+
+  it('renames a component for the class academic year', () => {
+    const req = teacherReq({ type: 'task' }, componentBody);
+    const res = mockResponse();
+
+    renameGradeComponentType(req, res);
+
+    expect(renameGradeComponent).toHaveBeenCalledWith('year-1', 'task', 'Tugas 2');
+    expect(res._status).toBe(200);
+  });
+
+  it('rejects rename for an unknown component type', () => {
+    const req = teacherReq({ type: 'task' }, componentBody);
+    vi.mocked(findGradeComponent).mockReturnValue(undefined);
+    const res = mockResponse();
+
+    renameGradeComponentType(req, res);
+
+    expect(res._status).toBe(404);
+    expect(renameGradeComponent).not.toHaveBeenCalled();
+  });
+
+  it('rejects rename when the teacher is not assigned to the class subject', () => {
+    const req = teacherReq({ type: 'task' }, componentBody);
+    vi.mocked(isTeacherAssignedToClassSubject).mockReturnValue(false);
+    const res = mockResponse();
+
+    renameGradeComponentType(req, res);
+
+    expect(res._status).toBe(403);
+    expect(renameGradeComponent).not.toHaveBeenCalled();
+  });
+
+  it('deletes a component and its grades', () => {
+    const req = teacherReq({ type: 'task' }, { class_id: uuid(3), subject_id: uuid(2) });
+    const res = mockResponse();
+
+    removeGradeComponentType(req, res);
+
+    expect(deleteGradeComponent).toHaveBeenCalledWith('year-1', 'task');
+    expect(res._status).toBe(200);
+  });
+
+  it('rejects delete without grades.delete permission', () => {
+    const req = teacherReq({ type: 'task' }, { class_id: uuid(3), subject_id: uuid(2) });
+    vi.mocked(hasPermission).mockReturnValue(false);
+    const res = mockResponse();
+
+    removeGradeComponentType(req, res);
+
+    expect(res._status).toBe(403);
+    expect(deleteGradeComponent).not.toHaveBeenCalled();
+  });
+
+  it('rejects delete for an invalid type slug', () => {
+    const req = teacherReq({ type: 'Tugas 1!' }, { class_id: uuid(3), subject_id: uuid(2) });
+    const res = mockResponse();
+
+    removeGradeComponentType(req, res);
+
+    expect(res._status).toBe(422);
+    expect(deleteGradeComponent).not.toHaveBeenCalled();
   });
 });

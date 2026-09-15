@@ -4,7 +4,7 @@
   import DataTable from '../Components/DataTable.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
-  import Select from '../Components/Select.svelte';
+  import SearchableSelect from '../Components/SearchableSelect.svelte';
   import Input from '../Components/Input.svelte';
   import Label from '../Components/Label.svelte';
   import Button from '../Components/Button.svelte';
@@ -32,7 +32,7 @@
     filters: { class_id: string; from: number; to: number };
   } = $props();
 
-  let classId = $state(filters.class_id);
+  let classId = $state<string | null>(filters.class_id);
   let fromInput = $state(timestampToDateInput(filters.from));
   let toInput = $state(timestampToDateInput(filters.to));
 
@@ -84,11 +84,7 @@
     <div class="flex flex-wrap items-end gap-3">
       <div class="flex flex-col gap-0 min-w-40">
         <Label for="f-class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Kelas</Label>
-        <Select id="f-class" bind:value={classId} onchange={applyFilters}>
-          {#each classes as c}
-            <option value={c.id}>{c.name}</option>
-          {/each}
-        </Select>
+        <SearchableSelect id="f-class" bind:value={classId} onchange={applyFilters} placeholder="Pilih kelas" options={classes.map(c => ({ value: c.id, label: c.name }))} />
       </div>
       <div class="flex flex-col gap-0">
         <Label for="f-from" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Dari</Label>

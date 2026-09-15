@@ -8,7 +8,7 @@
   import Label from '../Components/Label.svelte';
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
-  import Select from '../Components/Select.svelte';
+  import SearchableSelect from '../Components/SearchableSelect.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
   import type { Schedule, ScheduleForm, Class, Subject, AcademicYear } from '../types';
@@ -42,9 +42,9 @@
 
   const initial = initialParams();
   let mode: Mode = $state(initial.mode);
-  let selectedYearId = $state(initial.yearId);
-  let selectedClassId = $state(initial.classId);
-  let selectedTeacherId = $state(initial.teacherId);
+  let selectedYearId = $state<string | null>(initial.yearId);
+  let selectedClassId = $state<string | null>(initial.classId);
+  let selectedTeacherId = $state<string | null>(initial.teacherId);
 
   let isOpen = $state(false);
   let isDeleteOpen = $state(false);
@@ -102,7 +102,7 @@
     return filtered.filter(schedule => schedule.day_of_week === day && slotKeyOf(schedule) === slot.key);
   }
 
-  const hasSelection = $derived(mode === 'class' ? selectedClassId !== '' : selectedTeacherId !== '');
+  const hasSelection = $derived(mode === 'class' ? !!selectedClassId : !!selectedTeacherId);
 
   function buildQuery(): string {
     const params = new URLSearchParams();
@@ -117,10 +117,10 @@
     window.history.replaceState(null, '', `/schedules?${buildQuery()}`);
   });
 
-  function changeYear(yearId: string): void {
-    selectedYearId = yearId;
-    if (selectedClassId && yearId && !classes.some(item => item.id === selectedClassId && item.academic_year_id === yearId)) {
-      selectedClassId = '';
+  function changeYear(yearId: string | number | null): void {
+    selectedYearId = yearId === null ? null : String(yearId);
+    if (selectedClassId && selectedYearId && !classes.some(item => item.id === selectedClassId && item.academic_year_id === selectedYearId)) {
+      selectedClassId = null;
     }
   }
 
@@ -131,9 +131,9 @@
   function prefilledForm(): ScheduleForm {
     return {
       ...createEmptyScheduleForm(),
-      class_id: mode === 'class' ? selectedClassId : '',
-      teacher_user_id: mode === 'teacher' ? selectedTeacherId : '',
-      academic_year_id: selectedYearId || activeYearId,
+      class_id: mode === 'class' ? (selectedClassId ?? '') : '',
+      teacher_user_id: mode === 'teacher' ? (selectedTeacherId ?? '') : '',
+      academic_year_id: selectedYearId ?? activeYearId,
     };
   }
 
@@ -185,23 +185,17 @@
     <div class="flex flex-col sm:flex-row gap-3 flex-1">
       <div class="flex-1 min-w-44">
         <Label for="schedule-year" class="sr-only">Tahun ajaran</Label>
-        <Select id="schedule-year" bind:value={selectedYearId} onchange={() => changeYear(selectedYearId)} placeholder="Pilih tahun ajaran">
-          {#each years as year}<option value={year.id}>{year.name}</option>{/each}
-        </Select>
+        <SearchableSelect id="schedule-year" bind:value={selectedYearId} onchange={changeYear} placeholder="Pilih tahun ajaran" options={years.map(y => ({ value: y.id, label: y.name }))} />
       </div>
       {#if mode === 'class'}
         <div class="flex-1 min-w-44">
           <Label for="schedule-class" class="sr-only">Kelas</Label>
-          <Select id="schedule-class" bind:value={selectedClassId} placeholder="Pilih kelas">
-            {#each yearClasses as c}<option value={c.id}>{c.name}</option>{/each}
-          </Select>
+          <SearchableSelect id="schedule-class" bind:value={selectedClassId} placeholder="Pilih kelas" options={yearClasses.map(c => ({ value: c.id, label: c.name }))} />
         </div>
       {:else}
         <div class="flex-1 min-w-44">
           <Label for="schedule-teacher" class="sr-only">Guru</Label>
-          <Select id="schedule-teacher" bind:value={selectedTeacherId} placeholder="Pilih guru">
-            {#each teachers as t}<option value={t.id}>{t.name || t.username}</option>{/each}
-          </Select>
+          <SearchableSelect id="schedule-teacher" bind:value={selectedTeacherId} placeholder="Pilih guru" options={teachers.map(t => ({ value: t.id, label: t.name || t.username }))} />
         </div>
       {/if}
     </div>
@@ -277,31 +271,21 @@
 <Modal bind:open={isOpen} title={selected ? 'Edit Jadwal' : 'Tambah Jadwal'} description="Tambah atau ubah jadwal pelajaran. Atur tahun ajaran, hari, jam, kelas, mapel, dan guru.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
     <div class="flex flex-col gap-0"><Label for="year" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Tahun Ajaran</Label>
-      <Select id="year" bind:value={form.academic_year_id} placeholder="Pilih tahun ajaran">
-        {#each years as y}<option value={y.id}>{y.name}</option>{/each}
-      </Select>
+      <SearchableSelect id="year" bind:value={form.academic_year_id} placeholder="Pilih tahun ajaran" options={years.map(y => ({ value: y.id, label: y.name }))} />
     </div>
     <div class="flex flex-col gap-0"><Label for="day" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Hari</Label>
-      <Select id="day" bind:value={form.day_of_week} placeholder="Pilih hari">
-        {#each ALL_DAYS as i}<option value={i}>{DAY_NAMES[i]}</option>{/each}
-      </Select>
+      <SearchableSelect id="day" bind:value={() => form.day_of_week, (v) => { if (v !== null) form.day_of_week = Number(v); }} placeholder="Pilih hari" options={ALL_DAYS.map(i => ({ value: i, label: DAY_NAMES[i] }))} />
     </div>
     <div class="flex flex-col gap-0"><Label for="start" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Mulai</Label><Input id="start" type="time" bind:value={startTimeInput} required /></div>
     <div class="flex flex-col gap-0"><Label for="end" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Selesai</Label><Input id="end" type="time" bind:value={endTimeInput} required /></div>
     <div class="flex flex-col gap-0"><Label for="class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Kelas</Label>
-      <Select id="class" bind:value={form.class_id} placeholder="Pilih kelas">
-        {#each modalClasses as c}<option value={c.id}>{c.name}</option>{/each}
-      </Select>
+      <SearchableSelect id="class" bind:value={form.class_id} placeholder="Pilih kelas" options={modalClasses.map(c => ({ value: c.id, label: c.name }))} />
     </div>
     <div class="flex flex-col gap-0"><Label for="subject" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Mapel</Label>
-      <Select id="subject" bind:value={form.subject_id} placeholder="Pilih mapel">
-        {#each subjects as s}<option value={s.id}>{s.name}</option>{/each}
-      </Select>
+      <SearchableSelect id="subject" bind:value={form.subject_id} placeholder="Pilih mapel" options={subjects.map(s => ({ value: s.id, label: s.name }))} />
     </div>
     <div class="flex flex-col gap-0"><Label for="teacher" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Guru</Label>
-      <Select id="teacher" bind:value={form.teacher_user_id} placeholder="Pilih guru">
-        {#each teachers as t}<option value={t.id}>{t.name || t.username}</option>{/each}
-      </Select>
+      <SearchableSelect id="teacher" bind:value={form.teacher_user_id} placeholder="Pilih guru" options={teachers.map(t => ({ value: t.id, label: t.name || t.username }))} />
     </div>
     <div class="flex justify-between gap-2 pt-4 border-t border-border mt-2">
       <div>

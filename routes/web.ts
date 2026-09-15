@@ -170,6 +170,8 @@ Route.get('/grades/:id', [Auth], grades.gradeData);
 Route.post('/grades', [Auth], grades.addGrade);
 Route.post('/grades/bulk', [Auth], grades.saveGradesBulk);
 Route.post('/grades/components', [Auth], grades.addGradeComponentType);
+Route.put('/grades/components/:type', [Auth], grades.renameGradeComponentType);
+Route.delete('/grades/components/:type', [Auth], grades.removeGradeComponentType);
 Route.put('/grades/:id', [Auth], grades.editGrade);
 Route.delete('/grades/:id', [Auth], grades.removeGrade);
 

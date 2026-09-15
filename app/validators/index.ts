@@ -46,7 +46,9 @@ export {
   GradeSchema,
   BulkGradesSchema,
   AddGradeComponentSchema,
+  DeleteGradeComponentSchema,
   GradeComponentsSchema,
+  gradeTypeSlug,
   AnnouncementSchema,
   UpdateAnnouncementSchema,
 } from './schemas';
