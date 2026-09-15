@@ -28,7 +28,6 @@ export const CreateUserSchema = z.object({
   username: usernameSchema,
   password: z.string().min(8, 'Kata sandi minimal 8 karakter').max(100, 'Kata sandi maksimal 100 karakter'),
   roles: z.array(z.string()).optional(),
-  student_id: z.string().uuid('ID siswa tidak valid').optional().nullable(),
 });
 
 export const UpdateUserSchema = z.object({
@@ -36,10 +35,9 @@ export const UpdateUserSchema = z.object({
   username: usernameSchema.optional(),
   password: z.string().min(8, 'Kata sandi minimal 8 karakter').max(100, 'Kata sandi maksimal 100 karakter').optional().or(z.literal('')),
   roles: z.array(z.string()).optional(),
-  student_id: z.string().uuid('ID siswa tidak valid').optional().nullable(),
 }).refine(
   data => data.name !== undefined || data.username !== undefined ||
-    data.password !== undefined || data.roles !== undefined || data.student_id !== undefined,
+    data.password !== undefined || data.roles !== undefined,
   { message: 'Minimal satu kolom wajib diubah', path: ['_root'] }
 );
 
@@ -114,7 +112,6 @@ export const StudentSchema = z.object({
   nis: z.string().min(1, 'NIS is required').max(50, 'NIS must be at most 50 characters'),
   name: z.string().min(2, 'Name must be at least 2 characters').max(100, 'Name must be at most 100 characters'),
   class_id: z.string().uuid('Invalid class ID'),
-  parent_user_id: z.string().uuid('Invalid parent ID').optional().nullable(),
   phone: z.string().max(20, 'Phone must be at most 20 characters').optional().nullable(),
   address: z.string().max(500, 'Address must be at most 500 characters').optional().nullable(),
 });
@@ -122,6 +119,33 @@ export const StudentSchema = z.object({
 export const UpdateStudentSchema = StudentSchema.partial().refine(
   data => Object.values(data).some(v => v !== undefined),
   { message: 'At least one field is required to update', path: ['_root'] }
+);
+
+const parentPhoneSchema = z.string().trim().max(20, 'Telepon maksimal 20 karakter').optional().nullable();
+const parentAddressSchema = z.string().trim().max(500, 'Alamat maksimal 500 karakter').optional().nullable();
+
+export const StudentParentAccountSchema = z.discriminatedUnion('mode', [
+  z.object({
+    mode: z.literal('new'),
+    name: z.string().trim().min(2, 'Nama orang tua minimal 2 karakter').max(100, 'Nama orang tua maksimal 100 karakter'),
+    password: z.string().min(8, 'Kata sandi minimal 8 karakter').max(100, 'Kata sandi maksimal 100 karakter'),
+    phone: parentPhoneSchema,
+    address: parentAddressSchema,
+  }),
+  z.object({
+    mode: z.literal('existing'),
+    parent_user_id: z.string().uuid('ID akun orang tua tidak valid'),
+  }),
+]);
+
+export const UpdateStudentParentAccountSchema = z.object({
+  name: z.string().trim().min(2, 'Nama orang tua minimal 2 karakter').max(100, 'Nama orang tua maksimal 100 karakter').optional(),
+  password: z.string().min(8, 'Kata sandi minimal 8 karakter').max(100, 'Kata sandi maksimal 100 karakter').optional().or(z.literal('')),
+  phone: parentPhoneSchema,
+  address: parentAddressSchema,
+}).refine(
+  data => Object.values(data).some(value => value !== undefined),
+  { message: 'Minimal satu kolom wajib diubah', path: ['_root'] }
 );
 
 export const TeacherSchema = z.object({
@@ -154,18 +178,6 @@ export const TeacherClassAssignmentsSchema = z.object({
     });
   }
 });
-
-export const ParentSchema = z.object({
-  user_id: z.string().uuid('Invalid user ID'),
-  phone: z.string().max(20, 'Phone must be at most 20 characters').optional().nullable(),
-  address: z.string().max(500, 'Address must be at most 500 characters').optional().nullable(),
-  student_ids: z.array(z.string().uuid('Invalid student ID')).max(50).optional(),
-});
-
-export const UpdateParentSchema = ParentSchema.partial().refine(
-  data => data.user_id !== undefined || data.phone !== undefined || data.address !== undefined,
-  { message: 'At least one field is required to update', path: ['_root'] }
-);
 
 export const ScheduleSchema = z.object({
   class_id: z.string().uuid('Invalid class ID'),
@@ -313,11 +325,11 @@ export type SubjectInput = z.infer<typeof SubjectSchema>;
 export type UpdateSubjectInput = z.infer<typeof UpdateSubjectSchema>;
 export type StudentInput = z.infer<typeof StudentSchema>;
 export type UpdateStudentInput = z.infer<typeof UpdateStudentSchema>;
+export type StudentParentAccountInput = z.infer<typeof StudentParentAccountSchema>;
+export type UpdateStudentParentAccountInput = z.infer<typeof UpdateStudentParentAccountSchema>;
 export type TeacherInput = z.infer<typeof TeacherSchema>;
 export type UpdateTeacherInput = z.infer<typeof UpdateTeacherSchema>;
-export type ParentInput = z.infer<typeof ParentSchema>;
 export type TeacherClassAssignmentsInput = z.infer<typeof TeacherClassAssignmentsSchema>;
-export type UpdateParentInput = z.infer<typeof UpdateParentSchema>;
 export type ScheduleInput = z.infer<typeof ScheduleSchema>;
 export type UpdateScheduleInput = z.infer<typeof UpdateScheduleSchema>;
 export type SchoolProfileInput = z.infer<typeof SchoolProfileSchema>;

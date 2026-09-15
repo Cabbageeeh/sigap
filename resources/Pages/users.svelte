@@ -7,7 +7,7 @@
   import axios from 'axios';
   import { api } from '$lib/api';
   import { Toast } from '$lib/toast';
-  import type { User, UserForm, PaginationMeta, RoleInfo, StudentSelectOption } from '../types';
+  import type { User, UserForm, PaginationMeta, RoleInfo } from '../types';
   import { createEmptyUserForm, userToForm } from '../types';
   import Button from '../Components/Button.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
@@ -17,7 +17,6 @@
   interface Props {
     users?: User[];
     availableRoles?: RoleInfo[];
-    students?: StudentSelectOption[];
     permissions?: { canCreate: boolean; canEdit: boolean; canDelete: boolean };
     total?: number;
     page?: number;
@@ -31,7 +30,6 @@
   let {
     users = [],
     availableRoles = [],
-    students = [],
     permissions = { canCreate: false, canEdit: false, canDelete: false },
     total = 0,
     page = 1,
@@ -60,9 +58,6 @@
   function openEditUser(userItem: User): void {
     mode = 'edit';
     form = userToForm(userItem);
-    if (userItem.roles?.includes('parent')) {
-      form.student_id = students.find(student => student.nis.toLowerCase() === userItem.username.toLowerCase())?.id ?? null;
-    }
     showUserModal = true;
   }
 
@@ -72,6 +67,7 @@
   }
 
   function getRoleDisplayName(slug: string): string {
+    if (slug === 'parent') return 'Orang Tua';
     const role = availableRoles.find(r => r.slug === slug);
     return role ? role.name : slug;
   }
@@ -82,11 +78,6 @@
       Toast('Nama dan username wajib diisi', 'error');
       return;
     }
-    if (formData.roles?.includes('parent') && !formData.student_id) {
-      Toast('Pilih siswa yang diwakili akun orang tua', 'error');
-      return;
-    }
-
     isSubmitting = true;
 
     const payload = {
@@ -94,7 +85,6 @@
       username: formData.username,
       roles: formData.roles || [],
       password: formData.password || undefined,
-      student_id: formData.roles?.includes('parent') ? formData.student_id : undefined
     };
 
     const result = mode === 'create'
@@ -191,13 +181,13 @@
                     <td class="px-4 py-3.5 align-middle whitespace-nowrap text-right">
                       {#if permissions.canEdit || permissions.canDelete}
                         <div class="flex justify-end gap-2">
-                          {#if permissions.canEdit}
+                          {#if permissions.canEdit && !userItem.roles?.includes('parent')}
                             <Button variant="outline" size="sm" onclick={() => openEditUser(userItem)} disabled={isSubmitting}>
                               <Pencil class="w-3 h-3" />
                               Edit
                             </Button>
                           {/if}
-                          {#if permissions.canDelete}
+                          {#if permissions.canDelete && !userItem.roles?.includes('parent')}
                             <Button variant="ghost" size="sm" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => deleteUser(userItem.id)} disabled={isSubmitting}>
                               <Trash2 class="w-3 h-3" />
                             </Button>
@@ -239,7 +229,6 @@
     {form}
     {isSubmitting}
     {availableRoles}
-    {students}
     on:close={closeUserModal}
     on:submit={handleSubmit}
   />

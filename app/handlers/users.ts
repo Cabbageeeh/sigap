@@ -4,11 +4,10 @@ import { hashPassword } from '@services/Authenticate';
 import Logger from '@services/Logger';
 import {
   getUsersPaginated, createUser, updateUser, deleteUsers,
-  getUserRoles, getRolesForUsers, isAdmin, syncRoles, findUserById
+  getUserRoles, getRolesForUsers, isAdmin, syncRoles
 } from '@queries';
 import { findAllRoles, findRoleBySlug, getUsersWithRole } from '@queries/roles';
-import { createParent, findParentByUserId } from '@queries/parents';
-import { findStudentsForParentSelect, findStudentById, findStudentsByParent, linkStudentToParent } from '@queries/students';
+import { findStudentsByParent } from '@queries/students';
 import { randomUUID } from 'crypto';
 import { CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, zodToErrors } from '@validators';
 
@@ -40,7 +39,7 @@ export const usersPage = (req: NaraRequest, res: NaraResponse) => {
   const canView = admin;
   if (!canView) {
     return res.inertia('users', {
-      users: [], availableRoles: [], students: [],
+      users: [], availableRoles: [],
       permissions: { canCreate: false, canEdit: false, canDelete: false },
       total: 0, page: 1, limit: 10, search: '',
     });
@@ -63,11 +62,12 @@ export const usersPage = (req: NaraRequest, res: NaraResponse) => {
     roles: (rolesMap.get(u.id) || []).map(r => r.slug),
   }));
 
-  const roles = findAllRoles().map(r => ({ name: r.name, slug: r.slug, description: r.description }));
-  const students = findStudentsForParentSelect().map(s => ({ id: s.id, nis: s.nis, name: s.name, class_name: s.class_name }));
+  const roles = findAllRoles()
+    .filter(role => role.slug !== 'parent')
+    .map(r => ({ name: r.name, slug: r.slug, description: r.description }));
 
   return res.inertia('users', {
-    users, availableRoles: roles, students,
+    users, availableRoles: roles,
     permissions: { canCreate, canEdit, canDelete },
     total: result.total, page, limit, search,
   });
@@ -117,25 +117,14 @@ export const addUser = (req: NaraRequest, res: NaraResponse) => {
   const parsed = CreateUserSchema.safeParse(req.body);
   if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
 
-  const { name, username, password, roles, student_id } = parsed.data;
+  const { name, username, password, roles } = parsed.data;
+
+  if (roles?.includes('parent')) {
+    return jsonError(res, 'Akun orang tua dibuat dari detail siswa', 400, 'PARENT_MANAGED_FROM_STUDENT');
+  }
 
   // Only admins can assign roles
   const canAssignRoles = isAdmin(req.user.id);
-
-  if (roles?.includes('parent')) {
-    if (!student_id) {
-      return jsonError(res, 'Akun orang tua harus terhubung ke siswa', 400, 'PARENT_STUDENT_REQUIRED');
-    }
-
-    const student = findStudentById(student_id);
-    if (!student) return jsonError(res, 'Siswa tidak ditemukan', 404, 'STUDENT_NOT_FOUND');
-    if (student.nis.toLowerCase() !== username.toLowerCase()) {
-      return jsonError(res, 'Username untuk akun orang tua harus sama dengan NIS siswa', 400, 'USERNAME_NIS_MISMATCH');
-    }
-    if (student.parent_user_id) {
-      return jsonError(res, 'Siswa sudah terhubung ke akun orang tua lain', 400, 'STUDENT_ALREADY_LINKED');
-    }
-  }
 
   try {
     const user = createUser({
@@ -149,14 +138,6 @@ export const addUser = (req: NaraRequest, res: NaraResponse) => {
       const roleIds = roles.map(slug => allRoles.find(r => r.slug === slug)?.id).filter(Boolean) as string[];
       syncRoles(user.id, roleIds);
     }
-    if (roles?.includes('parent') && !findParentByUserId(user.id)) {
-      createParent({ user_id: user.id, phone: null, address: null });
-    }
-
-    if (student_id && roles?.includes('parent')) {
-      linkStudentToParent(student_id, user.id);
-    }
-
     const userRoles = getUserRoles(user.id);
     return jsonCreated(res, 'Pengguna dibuat', {
       user: { id: user.id, name: user.name, username: user.username, roles: userRoles.map(r => r.slug) }
@@ -186,46 +167,16 @@ export const editUser = (req: NaraRequest, res: NaraResponse) => {
   const parsed = UpdateUserSchema.safeParse(req.body);
   if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
 
-  const data = parsed.data;
-  const { roles, password, student_id: studentId, ...rest } = data;
-  if (studentId !== undefined && !admin) {
-    return jsonError(res, 'Pengaitan siswa hanya dapat dilakukan admin', 403, 'PARENT_STUDENT_ADMIN_ONLY');
-  }
   const currentRoles = getUserRoles(id).map(role => role.slug);
-  const effectiveRoles = admin && roles !== undefined ? roles : currentRoles;
-
-  if (effectiveRoles.includes('parent')) {
-    const existingUser = findUserById(id);
-    if (!existingUser) return jsonError(res, 'Pengguna tidak ditemukan', 404, 'USER_NOT_FOUND');
-
-    const username = data.username ?? existingUser.username;
-    const linkedChildren = findStudentsByParent(id);
-    const selectedStudent = studentId ? findStudentById(studentId) : undefined;
-    if (studentId && !selectedStudent) {
-      return jsonError(res, 'Siswa tidak ditemukan', 404, 'STUDENT_NOT_FOUND');
-    }
-
-    const loginStudent = selectedStudent ?? linkedChildren.find(
-      child => child.nis.toLowerCase() === username.toLowerCase(),
-    );
-    if (!loginStudent) {
-      return jsonError(
-        res,
-        linkedChildren.length > 0
-          ? 'Username akun orang tua harus sama dengan NIS siswa yang terhubung'
-          : 'Akun orang tua harus terhubung ke siswa',
-        400,
-        linkedChildren.length > 0 ? 'USERNAME_NIS_MISMATCH' : 'PARENT_STUDENT_REQUIRED',
-      );
-    }
-    if (loginStudent.nis.toLowerCase() !== username.toLowerCase()) {
-      return jsonError(res, 'Username untuk akun orang tua harus sama dengan NIS siswa', 400, 'USERNAME_NIS_MISMATCH');
-    }
-    if (loginStudent.parent_user_id && loginStudent.parent_user_id !== id) {
-      return jsonError(res, 'Siswa sudah terhubung ke akun orang tua lain', 400, 'STUDENT_ALREADY_LINKED');
-    }
+  if (currentRoles.includes('parent')) {
+    return jsonError(res, 'Akun orang tua dikelola dari detail siswa', 400, 'PARENT_MANAGED_FROM_STUDENT');
   }
 
+  const data = parsed.data;
+  const { roles, password, ...rest } = data;
+  if (roles?.includes('parent')) {
+    return jsonError(res, 'Akun orang tua dibuat dari detail siswa', 400, 'PARENT_MANAGED_FROM_STUDENT');
+  }
   const updateData: Record<string, unknown> = { ...rest };
 
   if (password) updateData.password = hashPassword(password);
@@ -247,12 +198,6 @@ export const editUser = (req: NaraRequest, res: NaraResponse) => {
 
       syncRoles(id, roleIds);
     }
-    if (effectiveRoles.includes('parent') && !findParentByUserId(id)) {
-      createParent({ user_id: id, phone: null, address: null });
-    }
-    if (studentId && effectiveRoles.includes('parent')) {
-      linkStudentToParent(studentId, id);
-    }
   } catch (error: unknown) {
     if (isUniqueConstraintError(error)) {
       return jsonError(res, 'Username sudah digunakan', 400, 'DUPLICATE_USERNAME');
@@ -272,6 +217,11 @@ export const removeUsers = (req: NaraRequest, res: NaraResponse) => {
   if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
 
   const { ids } = parsed.data;
+
+  const rolesByUser = getRolesForUsers(ids);
+  if (ids.some(id => (rolesByUser.get(id) || []).some(role => role.slug === 'parent'))) {
+    return jsonError(res, 'Akun orang tua dikelola dari detail siswa', 400, 'PARENT_MANAGED_FROM_STUDENT');
+  }
 
   // Prevent self-deletion
   if (ids.includes(req.user.id)) {

@@ -2,6 +2,13 @@ import SQLite from '@services/SQLite';
 import type { Student } from '@types';
 import { randomUUID } from 'crypto';
 
+export interface StudentListItem extends Student {
+  parent_name: string | null;
+  parent_username: string | null;
+  parent_phone: string | null;
+  parent_address: string | null;
+}
+
 export const findAllStudents = (): Student[] =>
   SQLite.many<Student>`SELECT * FROM students ORDER BY name`;
 
@@ -29,32 +36,6 @@ export const findStudentsByClass = (classId: string): Student[] =>
 export const findStudentsByParent = (parentUserId: string): Student[] =>
   SQLite.many<Student>`SELECT * FROM students WHERE parent_user_id = ${parentUserId} ORDER BY name`;
 
-export const findStudentsForParentSelect = (): Array<Student & { class_name: string | null }> =>
-  SQLite.many<Student & { class_name: string | null }>`
-    SELECT s.*, c.name AS class_name
-    FROM students s
-    LEFT JOIN classes c ON c.id = s.class_id
-    ORDER BY s.name
-  `;
-
-export const linkStudentToParent = (studentId: string, parentUserId: string): void => {
-  SQLite.exec`UPDATE students SET parent_user_id = ${parentUserId}, updated_at = ${Date.now()} WHERE id = ${studentId}`;
-};
-
-export const syncStudentsForParent = (parentUserId: string, studentIds: string[]): void => {
-  SQLite.transaction(() => {
-    SQLite.run(
-      `UPDATE students SET parent_user_id = NULL, updated_at = ? WHERE parent_user_id = ?`,
-      [Date.now(), parentUserId]
-    );
-    for (const studentId of studentIds) {
-      SQLite.run(
-        `UPDATE students SET parent_user_id = ?, updated_at = ? WHERE id = ?`,
-        [parentUserId, Date.now(), studentId]
-      );
-    }
-  });
-};
 export const findStudentsByTeacherUser = (teacherUserId: string): Student[] =>
   SQLite.many<Student>`
     SELECT DISTINCT st.*
@@ -77,7 +58,7 @@ export const searchStudents = (search: string, classId?: string): Student[] => {
   );
 };
 
-export const getStudentsPaginated = (page: number, limit: number, search = '', classId?: string): { data: Student[]; total: number } => {
+export const getStudentsPaginated = (page: number, limit: number, search = '', classId?: string): { data: StudentListItem[]; total: number } => {
   const pattern = `%${search.replace(/[%_]/g, '')}%`;
   const classClause = classId ? 'AND class_id = ?' : '';
   const countParams = classId ? [pattern, pattern, classId] : [pattern, pattern];
@@ -88,8 +69,14 @@ export const getStudentsPaginated = (page: number, limit: number, search = '', c
     countParams
   );
 
-  const data = SQLite.all<Student>(
-    `SELECT * FROM students WHERE (nis LIKE ? OR name LIKE ?) ${classClause} ORDER BY name LIMIT ? OFFSET ?`,
+  const data = SQLite.all<StudentListItem>(
+    `SELECT s.*, u.name AS parent_name, u.username AS parent_username,
+       p.phone AS parent_phone, p.address AS parent_address
+     FROM students s
+     LEFT JOIN users u ON u.id = s.parent_user_id
+     LEFT JOIN parents p ON p.user_id = s.parent_user_id
+     WHERE (s.nis LIKE ? OR s.name LIKE ?) ${classId ? 'AND s.class_id = ?' : ''}
+     ORDER BY s.name LIMIT ? OFFSET ?`,
     dataParams
   );
 
@@ -107,13 +94,63 @@ export const createStudent = (data: Omit<Student, 'id' | 'created_at' | 'updated
 };
 
 export const updateStudent = (id: string, data: Partial<Omit<Student, 'id' | 'created_at'>>): Student | undefined => {
-  SQLite.update('students', { id }, data);
+  const current = findStudentById(id);
+  if (!current) return undefined;
+
+  SQLite.transaction(() => {
+    if (data.nis !== undefined && data.nis !== current.nis && current.parent_user_id) {
+      SQLite.run(
+        `UPDATE users SET username = ?, updated_at = ?
+         WHERE id = ? AND LOWER(username) = LOWER(?)`,
+        [data.nis, Date.now(), current.parent_user_id, current.nis],
+      );
+    }
+    SQLite.update('students', { id }, data);
+  });
   return findStudentById(id);
 };
 
 export const deleteStudent = (id: string): boolean => {
-  const result = SQLite.run('DELETE FROM students WHERE id = ?', [id]);
-  return result.changes > 0;
+  const current = findStudentById(id);
+  if (!current) return false;
+
+  return SQLite.transaction(() => {
+    const result = SQLite.run('DELETE FROM students WHERE id = ?', [id]);
+    if (!current.parent_user_id) return result.changes > 0;
+
+    const remaining = SQLite.get<{ count: number }>(
+      'SELECT COUNT(*) AS count FROM students WHERE parent_user_id = ?',
+      [current.parent_user_id],
+    )?.count ?? 0;
+    if (remaining === 0) {
+      SQLite.run('DELETE FROM users WHERE id = ?', [current.parent_user_id]);
+      return result.changes > 0;
+    }
+
+    const parentUser = SQLite.get<{ username: string }>('SELECT username FROM users WHERE id = ?', [current.parent_user_id]);
+    if (parentUser?.username.toLowerCase() === current.nis.toLowerCase()) {
+      const nextLogin = SQLite.get<{ nis: string }>(
+        `SELECT s.nis
+         FROM students s
+         WHERE s.parent_user_id = ?
+           AND NOT EXISTS (
+             SELECT 1 FROM users u
+             WHERE LOWER(u.username) = LOWER(s.nis) AND u.id != ?
+           )
+         ORDER BY s.nis
+         LIMIT 1`,
+        [current.parent_user_id, current.parent_user_id],
+      );
+      if (nextLogin) {
+        SQLite.run(
+          'UPDATE users SET username = ?, updated_at = ? WHERE id = ?',
+          [nextLogin.nis, Date.now(), current.parent_user_id],
+        );
+      }
+    }
+
+    return result.changes > 0;
+  });
 };
 
 export const deleteStudents = (ids: string[]): number => {

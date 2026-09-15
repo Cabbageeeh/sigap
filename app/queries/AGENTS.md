@@ -19,10 +19,10 @@ Raw SQL functions in `app/queries/`. The only layer that touches `SQLite`. Handl
 | `academicYears.ts` | CRUD + active year + activation |
 | `classes.ts` | CRUD + academic-year/grade lookups + bulk delete |
 | `subjects.ts` | CRUD + code lookup |
-| `students.ts` | CRUD + search + class/parent filters + pagination + bulk delete |
+| `students.ts` | CRUD + search + class/parent filters + pagination + parent display data + bulk delete |
 | `teachers.ts` | CRUD + user/subject lookups + subject sync |
 | `teacherClassAssignments.ts` | teacher class assignments, homeroom sync, and grade authorization |
-| `parents.ts` | CRUD + user lookup + pagination |
+| `parents.ts` | parent account lifecycle for students + user lookup + pagination |
 | `schedules.ts` | CRUD + class/teacher/day filters |
 | `schoolLocations.ts` | CRUD + active location + activation |
 | `teacherConfirmations.ts` | CRUD + schedule/teacher/today filters + anti-cheat location data |

@@ -26,7 +26,6 @@ export type {
   Student,
   Teacher,
   TeacherClassAssignment,
-  Parent,
   Schedule,
   SchoolLocation,
   TeacherConfirmation,
@@ -96,7 +95,6 @@ export interface UserForm {
   username: string;
   roles: string[];
   password: string;
-  student_id: string | null;
 }
 
 export interface RoleForm {
@@ -118,7 +116,6 @@ export function createEmptyUserForm(): UserForm {
     username: '',
     roles: ['user'],
     password: '',
-    student_id: null,
   };
 }
 
@@ -129,7 +126,6 @@ export function userToForm(user: User): UserForm {
     username: user.username || '',
     roles: user.roles || ['user'],
     password: '',
-    student_id: null,
   };
 }
 
@@ -242,9 +238,17 @@ export interface StudentForm {
   nis: string;
   name: string;
   class_id: string;
-  parent_user_id: string | null;
   phone: string;
   address: string;
+}
+
+export interface StudentParentForm {
+  mode: 'new' | 'existing';
+  existing_parent_user_id: string | null;
+  name: string;
+  phone: string;
+  address: string;
+  password: string;
 }
 
 export interface TeacherForm {
@@ -252,14 +256,6 @@ export interface TeacherForm {
   nip: string;
   name: string;
   subject_ids: string[];
-}
-
-export interface ParentForm {
-  id: string | null;
-  user_id: string;
-  phone: string;
-  address: string;
-  student_ids: string[];
 }
 
 export interface ScheduleForm {
@@ -359,7 +355,7 @@ export function subjectToForm(subject: Subject): SubjectForm {
 }
 
 export function createEmptyStudentForm(): StudentForm {
-  return { id: null, nis: '', name: '', class_id: '', parent_user_id: null, phone: '', address: '' };
+  return { id: null, nis: '', name: '', class_id: '', phone: '', address: '' };
 }
 
 export function studentToForm(student: Student): StudentForm {
@@ -368,9 +364,19 @@ export function studentToForm(student: Student): StudentForm {
     nis: student.nis,
     name: student.name,
     class_id: student.class_id,
-    parent_user_id: student.parent_user_id,
     phone: student.phone || '',
     address: student.address || '',
+  };
+}
+
+export function createEmptyStudentParentForm(): StudentParentForm {
+  return {
+    mode: 'new',
+    existing_parent_user_id: null,
+    name: '',
+    phone: '',
+    address: '',
+    password: '',
   };
 }
 
@@ -384,20 +390,6 @@ export function teacherToForm(teacher: Teacher & { user_name?: string | null }):
     nip: teacher.employee_id || '',
     name: teacher.user_name || '',
     subject_ids: [],
-  };
-}
-
-export function createEmptyParentForm(): ParentForm {
-  return { id: null, user_id: '', phone: '', address: '', student_ids: [] };
-}
-
-export function parentToForm(parent: Parent): ParentForm {
-  return {
-    id: parent.id,
-    user_id: parent.user_id,
-    phone: parent.phone || '',
-    address: parent.address || '',
-    student_ids: [],
   };
 }
 

@@ -78,16 +78,6 @@ export const getUsersPaginated = (
 
   return { data, total: countRow?.count ?? 0 };
 };
-export const findUsersForParentSelect = (): Array<Pick<User, 'id' | 'name' | 'username'>> =>
-  SQLite.many<Pick<User, 'id' | 'name' | 'username'>>`
-    SELECT DISTINCT u.id, u.name, u.username
-    FROM users u
-    INNER JOIN user_roles ur ON ur.user_id = u.id
-    INNER JOIN roles r ON r.id = ur.role_id
-    WHERE r.slug = 'parent'
-    ORDER BY COALESCE(u.name, u.username)
-  `;
-
 export const updateAvatar = (id: string, avatarUrl: string): void => {
   SQLite.update('users', { id }, { avatar: avatarUrl });
 };

@@ -1,29 +1,45 @@
 import type { NaraRequest, NaraResponse, NaraMiddleware } from '@core';
-import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationError, jsonPaginated, queryInt, queryString } from '@core';
+import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationError, jsonPaginated, queryInt, queryString, isUniqueConstraintError } from '@core';
 import Logger from '@services/Logger';
+import { hashPassword } from '@services/Authenticate';
 import multer from 'multer';
 import { getStudentsPaginated, findStudentById, createStudent, updateStudent, deleteStudent, findStudentsByClass, findAllNis, importStudents } from '@queries/students';
 import { findAllClasses, findClassById, findClassByName } from '@queries/classes';
-import { getUsersWithRole } from '@queries/roles';
+import {
+  createParentAccountForStudent,
+  findParentAccountOptions,
+  findParentByUserId,
+  linkParentAccountToStudent,
+  removeParentAccountFromStudent,
+  updateParentAccountForStudent,
+} from '@queries/parents';
 import { parseStudentCsv } from '@services/StudentCsvParser';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
-import { StudentSchema, UpdateStudentSchema, zodToErrors } from '@validators';
+import { StudentParentAccountSchema, StudentSchema, UpdateStudentParentAccountSchema, UpdateStudentSchema, zodToErrors } from '@validators';
 
 const canView = (userId: string): boolean => !hasRole(userId, 'parent') && (isAdmin(userId) || hasPermission(userId, 'students.view'));
 const canManage = (userId: string): boolean => !hasRole(userId, 'parent') && (isAdmin(userId) || hasPermission(userId, 'students.create'));
+const canEditStudent = (userId: string): boolean => !hasRole(userId, 'parent') && (isAdmin(userId) || hasPermission(userId, 'students.edit'));
+const canManageParent = (userId: string, action: 'create' | 'edit' | 'delete'): boolean =>
+  canView(userId) && (isAdmin(userId) || hasPermission(userId, `parents.${action}`));
 
 const renderStudentsPage = (req: NaraRequest, res: NaraResponse, classId?: string) => {
   const userId = req.user?.id;
   const permissions = {
     canView: userId ? canView(userId) : false,
     canCreate: userId ? canManage(userId) : false,
-    canEdit: userId ? !hasRole(userId, 'parent') && (isAdmin(userId) || hasPermission(userId, 'students.edit')) : false,
+    canEdit: userId ? canEditStudent(userId) : false,
     canDelete: userId ? !hasRole(userId, 'parent') && (isAdmin(userId) || hasPermission(userId, 'students.delete')) : false,
+  };
+  const parentPermissions = {
+    canCreate: userId ? canManageParent(userId, 'create') : false,
+    canEdit: userId ? canManageParent(userId, 'edit') : false,
+    canDelete: userId ? canManageParent(userId, 'delete') : false,
   };
 
   if (!permissions.canView) {
     return res.inertia('students', {
-      permissions, students: [], classes: [], parents: [], meta: undefined,
+      permissions, parentPermissions, students: [], classes: [], parentAccounts: [], meta: undefined,
       search: '', classId: null, classContext: null, classScoped: false,
     });
   }
@@ -39,9 +55,10 @@ const renderStudentsPage = (req: NaraRequest, res: NaraResponse, classId?: strin
 
   return res.inertia('students', {
     permissions,
+    parentPermissions,
     students: data,
     classes: classContext ? [classContext] : findAllClasses(),
-    parents: getUsersWithRole('parent'),
+    parentAccounts: parentPermissions.canCreate ? findParentAccountOptions() : [],
     search,
     classId: classContext?.id ?? null,
     classContext: classContext ?? null,
@@ -101,7 +118,7 @@ export const addStudent = (req: NaraRequest, res: NaraResponse) => {
       nis: parsed.data.nis,
       name: parsed.data.name,
       class_id: parsed.data.class_id,
-      parent_user_id: parsed.data.parent_user_id ?? null,
+      parent_user_id: null,
       phone: parsed.data.phone ?? null,
       address: parsed.data.address ?? null,
     });
@@ -114,7 +131,7 @@ export const addStudent = (req: NaraRequest, res: NaraResponse) => {
 
 export const editStudent = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Unauthorized', 401);
-  if (hasRole(req.user.id, 'parent') || (!isAdmin(req.user.id) && !hasPermission(req.user.id, 'students.edit'))) return jsonError(res, 'Forbidden', 403);
+  if (!canEditStudent(req.user.id)) return jsonError(res, 'Forbidden', 403);
 
   const id = req.params.id;
   if (!id) return jsonError(res, 'ID required', 400);
@@ -127,8 +144,100 @@ export const editStudent = (req: NaraRequest, res: NaraResponse) => {
     if (!item) return jsonError(res, 'Not found', 404);
     return jsonSuccess(res, 'Student updated', item);
   } catch (error: unknown) {
+    if (isUniqueConstraintError(error)) {
+      return jsonError(res, 'NIS siswa sudah digunakan oleh siswa atau akun lain', 409, 'STUDENT_NIS_CONFLICT');
+    }
     Logger.error('Failed to update student', error as Error);
     return jsonServerError(res, 'Failed to update student');
+  }
+};
+
+export const addStudentParentAccount = (req: NaraRequest, res: NaraResponse) => {
+  if (!req.user) return jsonError(res, 'Unauthorized', 401);
+  if (!canManageParent(req.user.id, 'create')) return jsonError(res, 'Forbidden', 403);
+
+  const studentId = req.params.id;
+  if (!studentId) return jsonError(res, 'ID siswa wajib diisi', 400);
+  const student = findStudentById(studentId);
+  if (!student) return jsonError(res, 'Siswa tidak ditemukan', 404, 'STUDENT_NOT_FOUND');
+  if (student.parent_user_id) return jsonError(res, 'Siswa sudah memiliki akun orang tua', 409, 'STUDENT_PARENT_EXISTS');
+
+  const parsed = StudentParentAccountSchema.safeParse(req.body);
+  if (!parsed.success) return jsonValidationError(res, 'Data orang tua tidak valid', zodToErrors(parsed.error));
+
+  try {
+    if (parsed.data.mode === 'existing') {
+      const parent = findParentByUserId(parsed.data.parent_user_id);
+      if (!parent) return jsonError(res, 'Akun orang tua tidak ditemukan', 404, 'PARENT_NOT_FOUND');
+      const account = linkParentAccountToStudent(student.id, parent.user_id);
+      return jsonCreated(res, 'Akun orang tua berhasil dihubungkan', account);
+    }
+
+    const account = createParentAccountForStudent({
+      student_id: student.id,
+      username: student.nis,
+      name: parsed.data.name,
+      password_hash: hashPassword(parsed.data.password),
+      phone: parsed.data.phone || null,
+      address: parsed.data.address || null,
+    });
+    return jsonCreated(res, 'Akun orang tua berhasil dibuat', account);
+  } catch (error: unknown) {
+    if (isUniqueConstraintError(error)) {
+      return jsonError(res, 'NIS siswa sudah digunakan sebagai username akun lain', 409, 'PARENT_USERNAME_EXISTS');
+    }
+    Logger.error('Failed to create student parent account', error as Error);
+    return jsonServerError(res, 'Gagal membuat akun orang tua');
+  }
+};
+
+export const editStudentParentAccount = (req: NaraRequest, res: NaraResponse) => {
+  if (!req.user) return jsonError(res, 'Unauthorized', 401);
+  if (!canManageParent(req.user.id, 'edit')) return jsonError(res, 'Forbidden', 403);
+
+  const studentId = req.params.id;
+  if (!studentId) return jsonError(res, 'ID siswa wajib diisi', 400);
+  const student = findStudentById(studentId);
+  if (!student) return jsonError(res, 'Siswa tidak ditemukan', 404, 'STUDENT_NOT_FOUND');
+  if (!student.parent_user_id) return jsonError(res, 'Siswa belum memiliki akun orang tua', 404, 'PARENT_NOT_FOUND');
+
+  const parsed = UpdateStudentParentAccountSchema.safeParse(req.body);
+  if (!parsed.success) return jsonValidationError(res, 'Data orang tua tidak valid', zodToErrors(parsed.error));
+
+  try {
+    const account = updateParentAccountForStudent(student.id, {
+      name: parsed.data.name,
+      password_hash: parsed.data.password ? hashPassword(parsed.data.password) : undefined,
+      phone: parsed.data.phone === '' ? null : parsed.data.phone,
+      address: parsed.data.address === '' ? null : parsed.data.address,
+    });
+    if (!account) return jsonError(res, 'Akun orang tua tidak ditemukan', 404, 'PARENT_NOT_FOUND');
+    return jsonSuccess(res, 'Data orang tua berhasil diperbarui', account);
+  } catch (error: unknown) {
+    Logger.error('Failed to update student parent account', error as Error);
+    return jsonServerError(res, 'Gagal memperbarui data orang tua');
+  }
+};
+
+export const removeStudentParentAccount = (req: NaraRequest, res: NaraResponse) => {
+  if (!req.user) return jsonError(res, 'Unauthorized', 401);
+  if (!canManageParent(req.user.id, 'delete')) return jsonError(res, 'Forbidden', 403);
+
+  const studentId = req.params.id;
+  if (!studentId) return jsonError(res, 'ID siswa wajib diisi', 400);
+  if (!findStudentById(studentId)) return jsonError(res, 'Siswa tidak ditemukan', 404, 'STUDENT_NOT_FOUND');
+
+  try {
+    const result = removeParentAccountFromStudent(studentId);
+    if (!result) return jsonError(res, 'Siswa belum memiliki akun orang tua', 404, 'PARENT_NOT_FOUND');
+    return jsonSuccess(
+      res,
+      result.deletedAccount ? 'Akun orang tua berhasil dihapus' : 'Orang tua berhasil dilepas dari siswa',
+      result,
+    );
+  } catch (error: unknown) {
+    Logger.error('Failed to remove student parent account', error as Error);
+    return jsonServerError(res, 'Gagal melepas akun orang tua');
   }
 };
 

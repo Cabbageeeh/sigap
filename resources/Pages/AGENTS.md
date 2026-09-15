@@ -22,13 +22,13 @@ Inertia.js pages rendered by Svelte 5. Each page is a route destination — the 
 | `announcements.svelte` | Announcement management (admin) |
 | `journals.svelte` | Journal CRUD |
 | `landing.svelte` | Public landing page |
-| `parents.svelte` | Parent record CRUD |
+| `parents.svelte` | Read-only parent account summary; parent data is managed from student detail |
 | `profile.svelte` | User profile + password change (Zag JS tabs) |
 | `roles.svelte` | Role management (CRUD table + permissions) |
 | `schedules.svelte` | Schedule CRUD |
 | `schoolLocations.svelte` | School location CRUD |
 | `studentAttendance.svelte` | Student attendance list |
-| `students.svelte` | Student CRUD |
+| `students.svelte` | Student CRUD + parent account management from student detail |
 | `subjects.svelte` | Subject CRUD |
 | `teacherConfirmations.svelte` | Teacher confirmation list |
 | `teachers.svelte` | Teacher CRUD |

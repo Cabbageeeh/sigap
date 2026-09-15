@@ -97,6 +97,9 @@ Route.get('/students/by-class/:id', [Auth], students.studentsByClass);
 Route.get('/students/:id', [Auth], students.studentData);
 Route.post('/students', [Auth], students.addStudent);
 Route.post('/students/import', [Auth, students.importStudentsMiddleware], students.importStudentsFromCsv);
+Route.post('/students/:id/parent', [Auth], students.addStudentParentAccount);
+Route.put('/students/:id/parent', [Auth], students.editStudentParentAccount);
+Route.delete('/students/:id/parent', [Auth], students.removeStudentParentAccount);
 Route.put('/students/:id', [Auth], students.editStudent);
 Route.delete('/students/:id', [Auth], students.removeStudent);
 
@@ -117,9 +120,6 @@ Route.get('/parents', [Auth], parents.parentsPage);
 Route.get('/parents/data', [Auth], parents.listParents);
 Route.get('/parents/by-user/:userId', [Auth], parents.parentByUser);
 Route.get('/parents/:id', [Auth], parents.parentData);
-Route.post('/parents', [Auth], parents.addParent);
-Route.put('/parents/:id', [Auth], parents.editParent);
-Route.delete('/parents/:id', [Auth], parents.removeParent);
 
 // Schedules
 Route.get('/schedules', [Auth], schedules.schedulesPage);

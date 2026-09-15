@@ -28,14 +28,14 @@ Request handlers — functions that receive `NaraRequest` / `NaraResponse` and r
 | `index.ts` | barrel export (`export * as X from './X'`) |
 | `journals.ts` | journal CRUD |
 | `parent.ts` | parent dashboard, child attendance/grades |
-| `parents.ts` | parent record CRUD |
+| `parents.ts` | read-only parent account summary + lookups |
 | `reports.ts` | class/subject reports |
 | `qrSettings.ts` | QR absen settings page + save + QR display page + QR code data endpoint |
 | `roles.ts` | roles page + role CRUD + permissions data |
 | `schedules.ts` | schedule CRUD |
 | `schoolLocations.ts` | school location CRUD + activation |
 | `studentAttendance.ts` | student attendance list |
-| `students.ts` | student CRUD + CSV bulk import |
+| `students.ts` | student CRUD + CSV bulk import + parent account lifecycle from student detail |
 | `subjects.ts` | subject CRUD |
 | `teacherConfirmations.ts` | anti-fraud teacher confirmation + photo |
 | `teacherSchedule.ts` | teacher daily schedule |
