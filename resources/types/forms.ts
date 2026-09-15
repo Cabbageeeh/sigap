@@ -259,6 +259,7 @@ export interface ParentForm {
   user_id: string;
   phone: string;
   address: string;
+  student_ids: string[];
 }
 
 export interface ScheduleForm {
@@ -387,7 +388,7 @@ export function teacherToForm(teacher: Teacher & { user_name?: string | null }):
 }
 
 export function createEmptyParentForm(): ParentForm {
-  return { id: null, user_id: '', phone: '', address: '' };
+  return { id: null, user_id: '', phone: '', address: '', student_ids: [] };
 }
 
 export function parentToForm(parent: Parent): ParentForm {
@@ -396,6 +397,7 @@ export function parentToForm(parent: Parent): ParentForm {
     user_id: parent.user_id,
     phone: parent.phone || '',
     address: parent.address || '',
+    student_ids: [],
   };
 }
 

@@ -159,6 +159,7 @@ export const ParentSchema = z.object({
   user_id: z.string().uuid('Invalid user ID'),
   phone: z.string().max(20, 'Phone must be at most 20 characters').optional().nullable(),
   address: z.string().max(500, 'Address must be at most 500 characters').optional().nullable(),
+  student_ids: z.array(z.string().uuid('Invalid student ID')).max(50).optional(),
 });
 
 export const UpdateParentSchema = ParentSchema.partial().refine(

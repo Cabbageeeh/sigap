@@ -9,7 +9,11 @@ vi.mock('@queries/parents', () => ({
   updateParent: vi.fn(),
   deleteParent: vi.fn(),
 }));
-vi.mock('@queries/students', () => ({ findStudentsByParent: vi.fn(() => []) }));
+vi.mock('@queries/students', () => ({
+  findStudentsByParent: vi.fn(() => []),
+  findStudentsForParentSelect: vi.fn(() => []),
+  syncStudentsForParent: vi.fn(),
+}));
 vi.mock('@queries/users', () => ({
   findUsersForParentSelect: vi.fn(() => []),
   isAdmin: vi.fn(() => false),

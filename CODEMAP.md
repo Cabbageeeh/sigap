@@ -11,8 +11,8 @@
 ## Stats
 
 - Files indexed: 284
-- Total lines: 29729
-- Total exports: 845
+- Total lines: 29796
+- Total exports: 846
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -59,7 +59,7 @@
 - `journals.ts` (239L) — journalsPage, listJournals, journalData, addJournal, editJournal, removeJournal
 - `notifications.ts` (20L) — notificationsData, markNotificationsRead
 - `parent.ts` (82L) — parentDashboardPage, parentDashboardData, childAttendancePage, parentGradesPage
-- `parents.ts` (131L) — parentsPage, listParents, parentData, parentByUser, addParent, editParent, removeParent
+- `parents.ts` (136L) — parentsPage, listParents, parentData, parentByUser, addParent, editParent, removeParent
 - `qrSettings.ts` (62L) — qrSettingsPage, saveQrSettings, qrDisplayPage, qrCodeData
 - `rapor.ts` (51L) — raporPage
 - `reports.ts` (20L) — classSubjectReport
@@ -101,14 +101,14 @@
 - `index.ts` (25L)
 - `journals.ts` (60L) — findAllJournals, findJournalById, findJournalsBySchedule, findJournalByScheduleAndDate, findJournalsByTeacher, findJournalsByDateRange, createJournal, updateJournal, +2
 - `notifications.ts` (41L) — createGradePublishedNotifications, findNotificationsByUser, getUnreadNotificationCount, markAllNotificationsRead
-- `parents.ts` (57L) — findAllParents, findParentById, findParentByUserId, getParentsPaginated, createParent, updateParent, deleteParent, ParentListItem
+- `parents.ts` (59L) — findAllParents, findParentById, findParentByUserId, getParentsPaginated, createParent, updateParent, deleteParent, ParentListItem
 - `roles.ts` (123L) — findAllRoles, findRoleById, findRoleBySlug, createRole, updateRole, deleteRole, getRolePermissions, getPermissionsForRoles, +10
 - `schedules.ts` (83L) — findAllSchedules, findScheduleById, findSchedulesByClass, findSchedulesByTeacher, findTeacherSchedulesByDay, findSchedulesByDay, createSchedule, updateSchedule, +5
 - `schoolLocations.ts` (25L) — findSchoolLocationById, findActiveSchoolLocation, createSchoolLocation, updateSchoolLocation
 - `sessions.ts` (50L) — findSessionById, createSession, deleteSession, deleteSessionsByUserId, cleanupExpiredSessions, getUserBySessionId
 - `stats.ts` (184L) — getDashboardStats, getDashboardCharts, getClassSubjectStats, DashboardStats, AttendanceTrendPoint, AttendanceStatusSlice, ClassSizePoint, ConfirmationWeekPoint, +2
 - `studentAttendance.ts` (86L) — findAllStudentAttendance, findStudentAttendanceById, findAttendanceByJournal, findAttendanceByStudent, findAttendanceBySchedule, createStudentAttendance, upsertStudentAttendance, updateStudentAttendance, +4
-- `students.ts` (110L) — findAllStudents, findStudentById, findAllNis, importStudents, findStudentsByClass, findStudentsByParent, findStudentsForParentSelect, linkStudentToParent, +7
+- `students.ts` (125L) — findAllStudents, findStudentById, findAllNis, importStudents, findStudentsByClass, findStudentsByParent, findStudentsForParentSelect, linkStudentToParent, +8
 - `subjects.ts` (33L) — findAllSubjects, findSubjectById, findSubjectByCode, createSubject, updateSubject, deleteSubject
 - `teacherClassAssignments.ts` (143L) — findTeacherClassAssignments, findTeacherClassAssignmentsByAcademicYear, isTeacherUser, isTeacherAssignedToClass, isTeacherHomeroomOfClass, isTeacherAssignedToClassSubject, isTeacherAssignedToStudent, syncTeacherClassAssignments, +1
 - `teacherConfirmations.ts` (121L) — findAllTeacherConfirmations, getConfirmationLogsPaginated, countTeachersConfirmedOn, findTeacherConfirmationById, findConfirmationsByTeacher, findConfirmationsBySchedule, findTodayConfirmationBySchedule, findTodayConfirmationByTeacher, +4
@@ -140,7 +140,7 @@
 ### app/validators/
 
 - `index.ts` (92L) — zodToErrors
-- `schemas.ts` (332L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +64
+- `schemas.ts` (333L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +64
 
 ### migrations/
 
@@ -233,7 +233,7 @@
 - `grades.svelte` (378L)
 - `journals.svelte` (258L)
 - `landing.svelte` (610L)
-- `parents.svelte` (79L)
+- `parents.svelte` (117L)
 - `profile.svelte` (206L)
 - `qrDisplay.svelte` (97L)
 - `qrSettings.svelte` (90L)
@@ -303,7 +303,7 @@
 
 ### resources/types/
 
-- `forms.ts` (482L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +41
+- `forms.ts` (484L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +41
 - `index.ts` (15L)
 
 ### routes/
@@ -357,7 +357,7 @@
 - `headmaster.test.ts` (202L)
 - `notifications.test.ts` (102L)
 - `parent.test.ts` (146L)
-- `parents.test.ts` (91L)
+- `parents.test.ts` (95L)
 - `rapor.test.ts` (43L)
 - `reports.test.ts` (33L)
 - `roles.test.ts` (135L)
@@ -988,6 +988,7 @@
 - `const` **findStudentsByParent**
 - `const` **findStudentsForParentSelect**
 - `const` **linkStudentToParent**
+- `const` **syncStudentsForParent**
 - `const` **findStudentsByTeacherUser**
 - `const` **searchStudents**
 - `const` **getStudentsPaginated**

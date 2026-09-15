@@ -2,7 +2,7 @@ import type { NaraRequest, NaraResponse } from '@core';
 import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationError, jsonPaginated, queryInt, queryString } from '@core';
 import Logger from '@services/Logger';
 import { getParentsPaginated, findParentById, findParentByUserId, createParent, updateParent, deleteParent } from '@queries/parents';
-import { findStudentsByParent } from '@queries/students';
+import { findStudentsByParent, findStudentsForParentSelect, syncStudentsForParent } from '@queries/students';
 import { findUsersForParentSelect, isAdmin, hasPermission, hasRole } from '@queries/users';
 import { ParentSchema, UpdateParentSchema, zodToErrors } from '@validators';
 
@@ -35,11 +35,13 @@ export const parentsPage = (req: NaraRequest, res: NaraResponse) => {
   const { data, total } = getParentsPaginated(page, limit, search);
   const totalPages = Math.ceil(total / limit);
   const users = permissions.canCreate ? findUsersForParentSelect() : [];
+  const students = permissions.canCreate || permissions.canEdit ? findStudentsForParentSelect() : [];
 
   return res.inertia('parents', {
     permissions,
     parents: data,
     users,
+    students,
     meta: { total, page, limit, totalPages, hasNext: page < totalPages, hasPrev: page > 1 },
   });
 };
@@ -90,6 +92,7 @@ export const addParent = (req: NaraRequest, res: NaraResponse) => {
       phone: parsed.data.phone ?? null,
       address: parsed.data.address ?? null,
     });
+    if (parsed.data.student_ids?.length) syncStudentsForParent(item.user_id, parsed.data.student_ids);
     return jsonCreated(res, 'Parent created', item);
   } catch (error: unknown) {
     Logger.error('Failed to create parent', error as Error);
@@ -108,8 +111,10 @@ export const editParent = (req: NaraRequest, res: NaraResponse) => {
   if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
 
   try {
-    const item = updateParent(id, parsed.data);
+    const { student_ids, ...fields } = parsed.data;
+    const item = updateParent(id, fields);
     if (!item) return jsonError(res, 'Not found', 404);
+    if (student_ids !== undefined) syncStudentsForParent(item.user_id, student_ids);
     return jsonSuccess(res, 'Parent updated', item);
   } catch (error: unknown) {
     Logger.error('Failed to update parent', error as Error);

@@ -40,6 +40,21 @@ export const findStudentsForParentSelect = (): Array<Student & { class_name: str
 export const linkStudentToParent = (studentId: string, parentUserId: string): void => {
   SQLite.exec`UPDATE students SET parent_user_id = ${parentUserId}, updated_at = ${Date.now()} WHERE id = ${studentId}`;
 };
+
+export const syncStudentsForParent = (parentUserId: string, studentIds: string[]): void => {
+  SQLite.transaction(() => {
+    SQLite.run(
+      `UPDATE students SET parent_user_id = NULL, updated_at = ? WHERE parent_user_id = ?`,
+      [Date.now(), parentUserId]
+    );
+    for (const studentId of studentIds) {
+      SQLite.run(
+        `UPDATE students SET parent_user_id = ?, updated_at = ? WHERE id = ?`,
+        [parentUserId, Date.now(), studentId]
+      );
+    }
+  });
+};
 export const findStudentsByTeacherUser = (teacherUserId: string): Student[] =>
   SQLite.many<Student>`
     SELECT DISTINCT st.*
