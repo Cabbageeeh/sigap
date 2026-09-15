@@ -19,12 +19,12 @@ export const studentAttendancePage = (req: NaraRequest, res: NaraResponse) => {
   const classes = teacherActor ? findClassesByTeacherUser(userId) : canView(userId) || isAdmin(userId) ? findAllClasses() : [];
 
   const now = new Date();
-  const defaultTo = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).getTime();
-  const defaultFrom = defaultTo - 29 * 86400000;
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const endOfToday = startOfToday + 86399999;
 
   const classId = (req.query.class_id as string | undefined) || classes[0]?.id || '';
-  const from = queryInt(req, 'from') || defaultFrom;
-  const to = queryInt(req, 'to') || defaultTo;
+  const from = queryInt(req, 'from', startOfToday);
+  const to = queryInt(req, 'to', endOfToday);
 
   const selectedClass = classes.find(c => c.id === classId);
   const recap = selectedClass
