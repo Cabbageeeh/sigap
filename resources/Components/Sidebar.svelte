@@ -1,3 +1,8 @@
+<script lang="ts" module>
+  // Sidebar remounts on every Inertia navigation (it lives inside each page), so scroll is kept here.
+  let sidebarScrollTop = 0;
+</script>
+
 <script lang="ts">
   import { page, router, inertia } from '@inertiajs/svelte';
   import axios from 'axios';
@@ -39,6 +44,19 @@
 
   let user = $derived(page.props.user as User | undefined);
   let isMenuOpen = $state(false);
+
+  let desktopNav = $state<HTMLElement | null>(null);
+
+  $effect(() => {
+    const nav = desktopNav;
+    if (!nav) return;
+    nav.scrollTop = sidebarScrollTop;
+    const rememberScroll = () => {
+      if (nav.isConnected) sidebarScrollTop = nav.scrollTop;
+    };
+    nav.addEventListener('scroll', rememberScroll, { passive: true });
+    return () => nav.removeEventListener('scroll', rememberScroll);
+  });
 
   let notifications = $state<NotificationView[]>([]);
   let unreadCount = $state(0);
@@ -325,7 +343,7 @@
     </div>
   </div>
 
-  <nav class="flex-1 overflow-y-auto px-3 py-4">
+  <nav bind:this={desktopNav} class="flex-1 overflow-y-auto px-3 py-4">
     {@render navigation()}
   </nav>
 
