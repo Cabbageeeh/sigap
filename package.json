@@ -37,7 +37,7 @@
     "@lucide/svelte": "^1.8.0",
     "@tailwindcss/vite": "^4.3.0",
     "@types/qrcode": "^1.5.6",
-    "@zag-js/combobox": "^1.41.2",
+    "@zag-js/combobox": "^1.44.0",
     "@zag-js/dialog": "^1.41.2",
     "@zag-js/menu": "^1.41.2",
     "@zag-js/pagination": "^1.41.2",
