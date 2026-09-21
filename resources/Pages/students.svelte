@@ -15,7 +15,7 @@
   import PageShell from '../Components/PageShell.svelte';
   import type { Student, StudentForm, StudentParentForm, Class } from '../types';
   import { createEmptyStudentForm, createEmptyStudentParentForm, studentToForm } from '../types';
-  import { ArrowLeft, Pencil, Plus, Trash2, Upload } from '@lucide/svelte';
+  import { ArrowLeft, Download, Pencil, Plus, Trash2, Upload } from '@lucide/svelte';
   import { fly } from 'svelte/transition';
 
   let {
@@ -63,7 +63,8 @@
   let isParentDeleteOpen = $state(false);
   let isImportOpen = $state(false);
   let importFile = $state<File | null>(null);
-  let importResult = $state<{ inserted: number; errors: { line: number; message: string }[] } | null>(null);
+  let importResult = $state<{ inserted: number; parents_created: number; errors: { line: number; message: string }[] } | null>(null);
+  let importParentPassword = $state('');
   let isImporting = $state(false);
   let form: StudentForm = $state(createEmptyStudentForm());
   let parentForm: StudentParentForm = $state(createEmptyStudentParentForm());
@@ -77,9 +78,21 @@
     selectedClassId = classId;
   });
 
+  const importColumns = [
+    { letter: 'A', label: 'NIS' },
+    { letter: 'B', label: 'Nama Siswa' },
+    { letter: 'C', label: 'Kelas' },
+    { letter: 'D', label: 'Telepon Siswa' },
+    { letter: 'E', label: 'Alamat Siswa' },
+    { letter: 'F', label: 'Nama Orang Tua' },
+    { letter: 'G', label: 'Telepon Orang Tua' },
+    { letter: 'H', label: 'Alamat Orang Tua' },
+  ];
+
   function openImport(): void {
     importFile = null;
     importResult = null;
+    importParentPassword = '';
     isImportOpen = true;
   }
 
@@ -89,9 +102,10 @@
     const formData = new FormData();
     formData.append('file', importFile);
     if (classScoped && classContext) formData.append('class_id', classContext.id);
+    if (importParentPassword) formData.append('parent_password', importParentPassword);
     const result = await api(() => axios.post('/students/import', formData, { headers: { 'Content-Type': 'multipart/form-data' } }));
     if (result.success && result.data) {
-      importResult = result.data as { inserted: number; errors: { line: number; message: string }[] };
+      importResult = result.data as { inserted: number; parents_created: number; errors: { line: number; message: string }[] };
       importFile = null;
     }
     isImporting = false;
@@ -316,24 +330,45 @@
   </form>
 </Modal>
 
-<Modal bind:open={isImportOpen} title="Import Siswa (CSV)" description={classScoped && classContext ? `Upload CSV siswa untuk kelas ${classContext.name}. Kolom: nis,name,phone,address.` : 'Upload file CSV dengan kolom: nis,name,class,phone,address. Baris pertama opsional sebagai header. Kelas harus sesuai nama kelas yang sudah ada.'}>
+<Modal bind:open={isImportOpen} title="Import Siswa (CSV)" description="Isi template lalu upload. Kolom orang tua opsional — bila terisi, akun orang tua dibuat otomatis dengan username sama dengan NIS anak.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submitImport(); }}>
+    <div class="flex items-center justify-between gap-3 rounded-xl border border-border bg-secondary/20 px-4 py-3">
+      <p class="text-xs text-muted-foreground">Pemisah koma, isi data mulai baris ke-2. Teks yang mengandung koma diapit tanda kutip.</p>
+      <a href="/public/templates/import-siswa.csv" download class="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80">
+        <Download class="w-3.5 h-3.5" /> Unduh Template
+      </a>
+    </div>
     <input
       type="file"
       accept=".csv,text/csv"
       class="block w-full text-sm text-muted-foreground file:mr-3 file:rounded-md file:border file:border-border file:bg-secondary/60 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-foreground hover:file:bg-secondary"
       onchange={(e) => { importFile = (e.currentTarget as HTMLInputElement).files?.[0] ?? null; importResult = null; }}
     />
-    {#if classScoped}
-      <pre class="bg-secondary/40 rounded-md px-3 py-2 text-xs text-muted-foreground overflow-x-auto">10011,Andi Saputra,08123456780,Jl. Melati No. 6
-10012,Budi Hartono,,</pre>
-    {:else}
-      <pre class="bg-secondary/40 rounded-md px-3 py-2 text-xs text-muted-foreground overflow-x-auto">10011,Andi Saputra,10A,08123456780,Jl. Melati No. 6
-10012,Budi Hartono,10B,,</pre>
+    <div class="flex flex-col gap-0"><Label for="import-parent-password" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Kata Sandi Awal Orang Tua</Label>
+      <Input id="import-parent-password" type="text" bind:value={importParentPassword} placeholder="Minimal 8 karakter" />
+      <p class="mt-1.5 text-xs text-muted-foreground">Dipakai untuk semua akun orang tua dari file ini. Wajib diisi jika ada baris dengan nama orang tua.</p>
+    </div>
+    <div class="rounded-xl border border-border bg-secondary/20 px-4 py-3">
+      <p class="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Urutan Kolom CSV</p>
+      <ul class="grid grid-cols-2 gap-x-5 gap-y-1.5">
+        {#each importColumns as col}
+          <li class="flex items-baseline gap-2 text-xs">
+            <span class="font-mono-accent shrink-0 rounded border border-border bg-card px-1 text-[10px] leading-4 text-muted-foreground">{col.letter}</span>
+            <span class="text-foreground">{col.label}</span>
+          </li>
+        {/each}
+      </ul>
+      <p class="mt-2 text-[11px] leading-relaxed text-muted-foreground">A dan B wajib. C harus sama dengan nama kelas yang sudah ada. Kolom F terisi berarti akun orang tua ikut dibuat.</p>
+    </div>
+    {#if classScoped && classContext}
+      <p class="text-xs text-muted-foreground">Impor dari halaman kelas {classContext.name}: kolom Kelas pada file diabaikan, semua baris masuk ke kelas tersebut.</p>
     {/if}
     {#if importResult}
       <div class="bg-card border border-border rounded-md px-4 py-3 text-sm">
         <p class="font-medium text-foreground">{importResult.inserted} siswa berhasil diimpor.</p>
+        {#if importResult.parents_created > 0}
+          <p class="mt-1 text-xs text-muted-foreground">{importResult.parents_created} akun orang tua dibuat dengan login NIS anak.</p>
+        {/if}
         {#if importResult.errors.length > 0}
           <ul class="mt-2 flex flex-col gap-1 text-xs text-destructive max-h-40 overflow-y-auto">
             {#each importResult.errors as err}

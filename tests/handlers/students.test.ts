@@ -9,7 +9,7 @@ vi.mock('@queries/students', () => ({
   updateStudent: vi.fn(),
   deleteStudent: vi.fn(),
   findStudentsByClass: vi.fn(),
-  findAllNis: vi.fn(),
+  findAllNisOwners: vi.fn(),
   importStudents: vi.fn(),
 }));
 vi.mock('@queries/classes', () => ({
@@ -39,7 +39,7 @@ vi.mock('@services/Logger', () => ({
 }));
 
 import { addStudent, addStudentParentAccount, classStudentsPage, editStudent, importStudentsFromCsv, listStudents, removeStudent, removeStudentParentAccount, studentData } from '../../app/handlers/students';
-import { createStudent, deleteStudent, findAllNis, findStudentById, getStudentsPaginated, importStudents, updateStudent } from '@queries/students';
+import { createStudent, deleteStudent, findAllNisOwners, findStudentById, getStudentsPaginated, importStudents, updateStudent } from '@queries/students';
 import { findAllClasses, findClassById, findClassByName } from '@queries/classes';
 import { createParentAccountForStudent, findParentByUserId, linkParentAccountToStudent, removeParentAccountFromStudent } from '@queries/parents';
 import { hashPassword } from '@services/Authenticate';
@@ -48,6 +48,7 @@ import { hasRole, isAdmin } from '@queries/users';
 
 const STUDENT_ID = '00000000-0000-4000-8000-000000000010';
 const PARENT_USER_ID = '00000000-0000-4000-8000-000000000011';
+const CLASS_UUID = '00000000-0000-4000-8000-000000000012';
 const student = {
   id: STUDENT_ID,
   nis: '10001',
@@ -143,39 +144,119 @@ describe('parent student scope', () => {
     vi.mocked(isAdmin).mockReturnValue(true);
     vi.mocked(hasRole).mockReturnValue(false);
     vi.mocked(findClassById).mockReturnValue({
-      id: 'class-1',
+      id: CLASS_UUID,
       name: '10A',
       grade: '10',
       academic_year_id: 'year-1',
     } as never);
     vi.mocked(findAllClasses).mockReturnValue([{
-      id: 'class-1',
+      id: CLASS_UUID,
       name: '10A',
       grade: '10',
       academic_year_id: 'year-1',
     }] as never);
-    vi.mocked(findAllNis).mockReturnValue([]);
+    vi.mocked(findAllNisOwners).mockReturnValue([]);
+    vi.mocked(importStudents).mockReturnValue([{ id: 'student-1', nis: '10011' }]);
     vi.mocked(parseStudentCsv).mockReturnValue({
-      rows: [{ nis: '10011', name: 'Andi', class_name: '10A', phone: null, address: null }],
+      rows: [{ line: 2, nis: '10011', name: 'Andi', class_name: '10A', phone: null, address: null, parent_name: null, parent_phone: null, parent_address: null }],
       errors: [],
     });
     const req = mockRequest({
       user: mockUser({ id: 'admin-1', roles: ['admin'] }),
-      body: { class_id: 'class-1' },
+      body: { class_id: CLASS_UUID },
     }) as NaraRequest & { file: { buffer: Buffer } };
     req.file = { buffer: Buffer.from('10011,Andi,,') };
 
     importStudentsFromCsv(req, mockResponse());
 
-    expect(parseStudentCsv).toHaveBeenCalledWith(expect.any(String), expect.any(Set), expect.any(Set), '10A');
+    expect(parseStudentCsv).toHaveBeenCalledWith(expect.any(String), expect.any(Set), expect.any(Map), '10A');
     expect(importStudents).toHaveBeenCalledWith([{
       nis: '10011',
       name: 'Andi',
-      class_id: 'class-1',
+      class_id: CLASS_UUID,
       phone: null,
       address: null,
     }]);
     expect(findClassByName).not.toHaveBeenCalled();
+    expect(createParentAccountForStudent).not.toHaveBeenCalled();
+  });
+
+  it('creates parent accounts with the shared initial password from the form', () => {
+    vi.mocked(isAdmin).mockReturnValue(true);
+    vi.mocked(hasRole).mockReturnValue(false);
+    vi.mocked(findAllClasses).mockReturnValue([{ id: 'class-1', name: '10A' }] as never);
+    vi.mocked(findClassByName).mockReturnValue({ id: 'class-1', name: '10A' } as never);
+    vi.mocked(findAllNisOwners).mockReturnValue([]);
+    vi.mocked(importStudents).mockReturnValue([{ id: 'student-1', nis: '10011' }]);
+    vi.mocked(parseStudentCsv).mockReturnValue({
+      rows: [{
+        line: 2,
+        nis: '10011',
+        name: 'Andi',
+        class_name: '10A',
+        phone: null,
+        address: null,
+        parent_name: 'Siti Saputra',
+        parent_phone: '08123456781',
+        parent_address: null,
+      }],
+      errors: [],
+    });
+    const req = mockRequest({
+      user: mockUser({ id: 'admin-1', roles: ['admin'] }),
+      body: { parent_password: 'rahasia123' },
+    }) as NaraRequest & { file: { buffer: Buffer } };
+    req.file = { buffer: Buffer.from('NIS,Nama Siswa,Kelas,Nama Orang Tua,Telepon Orang Tua\n10011,Andi,10A,Siti Saputra,08123456781') };
+
+    const res = mockResponse();
+    importStudentsFromCsv(req, res);
+
+    expect(createParentAccountForStudent).toHaveBeenCalledWith({
+      student_id: 'student-1',
+      username: '10011',
+      name: 'Siti Saputra',
+      password_hash: 'hashed-rahasia123',
+      phone: '08123456781',
+      address: null,
+    });
+    expect((res._body as { data: { inserted: number; parents_created: number } }).data).toMatchObject({
+      inserted: 1,
+      parents_created: 1,
+    });
+  });
+
+  it('rejects the import when parent rows arrive without an initial password', () => {
+    vi.mocked(isAdmin).mockReturnValue(true);
+    vi.mocked(hasRole).mockReturnValue(false);
+    vi.mocked(findAllClasses).mockReturnValue([{ id: 'class-1', name: '10A' }] as never);
+    vi.mocked(findAllNisOwners).mockReturnValue([]);
+    vi.mocked(parseStudentCsv).mockReturnValue({
+      rows: [{
+        line: 2,
+        nis: '10011',
+        name: 'Andi',
+        class_name: '10A',
+        phone: null,
+        address: null,
+        parent_name: 'Siti Saputra',
+        parent_phone: null,
+        parent_address: null,
+      }],
+      errors: [],
+    });
+    const req = mockRequest({
+      user: mockUser({ id: 'admin-1', roles: ['admin'] }),
+      body: {},
+    }) as NaraRequest & { file: { buffer: Buffer } };
+    req.file = { buffer: Buffer.from('NIS,Nama Siswa,Kelas,Nama Orang Tua\n10011,Andi,10A,Siti Saputra') };
+
+    const res = mockResponse();
+    importStudentsFromCsv(req, res);
+
+    expect(res._status).toBe(422);
+    expect((res._body as { errors: Record<string, string[]> }).errors).toHaveProperty('parent_password');
+    expect(importStudents).not.toHaveBeenCalled();
+    expect(createParentAccountForStudent).not.toHaveBeenCalled();
   });
 });
 

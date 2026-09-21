@@ -149,7 +149,7 @@ export const serveDistAsset = async (req: NaraRequest, res: NaraResponse) => {
 
 export const servePublicAsset = (req: NaraRequest, res: NaraResponse) => {
   const allowed = ['.ico', '.png', '.jpeg', '.jpg', '.gif', '.svg', '.webp',
-    '.txt', '.pdf', '.css', '.js', '.woff', '.woff2', '.ttf', '.eot',
+    '.txt', '.pdf', '.csv', '.css', '.js', '.woff', '.woff2', '.ttf', '.eot',
     '.mp4', '.webm', '.mp3', '.wav'];
 
   // Decode + normalize to catch double-encoding and unicode bypasses

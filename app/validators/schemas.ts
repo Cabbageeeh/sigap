@@ -148,6 +148,11 @@ export const UpdateStudentParentAccountSchema = z.object({
   { message: 'Minimal satu kolom wajib diubah', path: ['_root'] }
 );
 
+export const StudentImportSchema = z.object({
+  class_id: z.string().uuid('Kelas tidak valid').optional().or(z.literal('')),
+  parent_password: z.string().min(8, 'Kata sandi awal orang tua minimal 8 karakter').max(100, 'Kata sandi maksimal 100 karakter').optional().or(z.literal('')),
+});
+
 export const TeacherSchema = z.object({
   nip: z.string().trim().min(4, 'NIP minimal 4 karakter').max(50, 'NIP maksimal 50 karakter'),
   name: z.string().trim().min(2, 'Nama minimal 2 karakter').max(100, 'Nama maksimal 100 karakter'),
@@ -327,6 +332,7 @@ export type StudentInput = z.infer<typeof StudentSchema>;
 export type UpdateStudentInput = z.infer<typeof UpdateStudentSchema>;
 export type StudentParentAccountInput = z.infer<typeof StudentParentAccountSchema>;
 export type UpdateStudentParentAccountInput = z.infer<typeof UpdateStudentParentAccountSchema>;
+export type StudentImportInput = z.infer<typeof StudentImportSchema>;
 export type TeacherInput = z.infer<typeof TeacherSchema>;
 export type UpdateTeacherInput = z.infer<typeof UpdateTeacherSchema>;
 export type TeacherClassAssignmentsInput = z.infer<typeof TeacherClassAssignmentsSchema>;

@@ -11,8 +11,8 @@
 ## Stats
 
 - Files indexed: 284
-- Total lines: 30011
-- Total exports: 846
+- Total lines: 30403
+- Total exports: 848
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -67,7 +67,7 @@
 - `schedules.ts` (186L) — schedulesPage, listSchedules, scheduleData, addSchedule, editSchedule, removeSchedule
 - `schoolLocations.ts` (54L) — schoolLocationsPage, saveSchoolProfile
 - `studentAttendance.ts` (119L) — studentAttendancePage, listAttendanceByJournal, listAttendanceByStudent, saveAttendance, removeAttendance
-- `students.ts` (305L) — studentsPage, classStudentsPage, listStudents, studentsByClass, studentData, addStudent, editStudent, addStudentParentAccount, +5
+- `students.ts` (351L) — studentsPage, classStudentsPage, listStudents, studentsByClass, studentData, addStudent, editStudent, addStudentParentAccount, +5
 - `subjects.ts` (86L) — subjectsPage, listSubjects, subjectData, addSubject, editSubject, removeSubject
 - `teacherAssignments.ts` (83L) — teacherAssignmentsPage, saveTeacherAssignments
 - `teacherConfirmations.ts` (208L) — teacherConfirmationsPage, confirmPage, listTeacherConfirmations, teacherConfirmationData, submitTeacherConfirmation, outsideConfirmationsData
@@ -108,7 +108,7 @@
 - `sessions.ts` (50L) — findSessionById, createSession, deleteSession, deleteSessionsByUserId, cleanupExpiredSessions, getUserBySessionId
 - `stats.ts` (184L) — getDashboardStats, getDashboardCharts, getClassSubjectStats, DashboardStats, AttendanceTrendPoint, AttendanceStatusSlice, ClassSizePoint, ConfirmationWeekPoint, +2
 - `studentAttendance.ts` (86L) — findAllStudentAttendance, findStudentAttendanceById, findAttendanceByJournal, findAttendanceByStudent, findAttendanceBySchedule, createStudentAttendance, upsertStudentAttendance, updateStudentAttendance, +4
-- `students.ts` (162L) — findAllStudents, findStudentById, findAllNis, importStudents, findStudentsByClass, findStudentsByParent, findStudentsByTeacherUser, searchStudents, +6
+- `students.ts` (169L) — findAllStudents, findStudentById, findAllNisOwners, importStudents, findStudentsByClass, findStudentsByParent, findStudentsByTeacherUser, searchStudents, +6
 - `subjects.ts` (33L) — findAllSubjects, findSubjectById, findSubjectByCode, createSubject, updateSubject, deleteSubject
 - `teacherClassAssignments.ts` (143L) — findTeacherClassAssignments, findTeacherClassAssignmentsByAcademicYear, isTeacherUser, isTeacherAssignedToClass, isTeacherHomeroomOfClass, isTeacherAssignedToClassSubject, isTeacherAssignedToStudent, syncTeacherClassAssignments, +1
 - `teacherConfirmations.ts` (121L) — findAllTeacherConfirmations, getConfirmationLogsPaginated, countTeachersConfirmedOn, findTeacherConfirmationById, findConfirmationsByTeacher, findConfirmationsBySchedule, findTodayConfirmationBySchedule, findTodayConfirmationByTeacher, +4
@@ -129,7 +129,7 @@
 - `Seeder.ts` (51L) — seed
 - `SQLite.ts` (120L)
 - `Storage.ts` (104L) — configure, put, putFile, get, exists, del, url, filePath, +3
-- `StudentCsvParser.ts` (58L) — parseStudentCsv, CsvStudentRow, CsvImportResult
+- `StudentCsvParser.ts` (179L) — parseStudentCsv, CsvStudentRow, CsvImportResult
 - `View.ts` (62L) — view
 
 ### app/types/
@@ -139,8 +139,8 @@
 
 ### app/validators/
 
-- `index.ts` (92L) — zodToErrors
-- `schemas.ts` (345L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +64
+- `index.ts` (94L) — zodToErrors
+- `schemas.ts` (351L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +66
 
 ### migrations/
 
@@ -210,7 +210,7 @@
 - `RoleModal.svelte` (152L)
 - `SearchableSelect.svelte` (115L) — SearchableSelectOption
 - `Select.svelte` (40L)
-- `Sidebar.svelte` (352L)
+- `Sidebar.svelte` (370L)
 - `SigapIcon.svelte` (46L)
 - `StatCard.svelte` (81L)
 - `Switch.svelte` (52L)
@@ -241,7 +241,7 @@
 - `schedules.svelte` (304L)
 - `schoolLocations.svelte` (233L)
 - `studentAttendance.svelte` (116L)
-- `students.svelte` (356L)
+- `students.svelte` (391L)
 - `subjects.svelte` (73L)
 - `teacherAssignments.svelte` (357L)
 - `teacherConfirmations.svelte` (148L)
@@ -364,7 +364,7 @@
 - `schedules.test.ts` (231L)
 - `schoolLocations.test.ts` (132L)
 - `studentAttendance.test.ts` (78L)
-- `students.test.ts` (283L)
+- `students.test.ts` (364L)
 - `teacherAssignments.test.ts` (84L)
 - `teacherConfirmations.test.ts` (239L)
 - `teachers.test.ts` (183L)
@@ -403,7 +403,7 @@
 - `QrCode.test.ts` (22L)
 - `SQLite.test.ts` (89L)
 - `Storage.test.ts` (57L)
-- `StudentCsvParser.test.ts` (68L)
+- `StudentCsvParser.test.ts` (144L)
 
 ### tests/validators/
 
@@ -986,7 +986,7 @@
 
 - `const` **findAllStudents**
 - `const` **findStudentById**
-- `const` **findAllNis**
+- `const` **findAllNisOwners**
 - `const` **importStudents**
 - `const` **findStudentsByClass**
 - `const` **findStudentsByParent**
@@ -1266,6 +1266,7 @@
 - `const` **UpdateStudentSchema**
 - `const` **StudentParentAccountSchema**
 - `const` **UpdateStudentParentAccountSchema**
+- `const` **StudentImportSchema**
 - `const` **TeacherSchema**
 - `const` **UpdateTeacherSchema**
 - `const` **TeacherClassAssignmentsSchema**
@@ -1304,6 +1305,7 @@
 - `type` **UpdateStudentInput**
 - `type` **StudentParentAccountInput**
 - `type` **UpdateStudentParentAccountInput**
+- `type` **StudentImportInput**
 - `type` **TeacherInput**
 - `type` **UpdateTeacherInput**
 - `type` **TeacherClassAssignmentsInput**
@@ -1811,7 +1813,6 @@
 - `resources/Components/RoleModal.svelte` → `../types`, `./Button.svelte`, `./Input.svelte`, `./Label.svelte`, `./Switch.svelte`, `@lucide/svelte`, `@zag-js/dialog`, `@zag-js/svelte`
 - `resources/Components/SearchableSelect.svelte` → `@lucide/svelte`, `@zag-js/combobox`, `@zag-js/svelte`
 - `resources/Components/Select.svelte` → `@lucide/svelte`
-- `resources/Components/Sidebar.svelte` → `../types`, `./DarkModeToggle.svelte`, `./SigapIcon.svelte`, `@inertiajs/svelte`, `@zag-js/dialog`, `@zag-js/svelte`
 - `resources/Components/SigapIcon.svelte` → `../assets/sigap-logo-dark.png`, `../assets/sigap-logo.png`, `../assets/sigap-mark-dark.png`, `../assets/sigap-mark.png`
 - `resources/Components/Switch.svelte` → `@zag-js/svelte`, `@zag-js/switch`
 - `resources/Components/UserModal.svelte` → `../types`, `./Button.svelte`, `./Input.svelte`, `./Label.svelte`, `./Switch.svelte`, `@lucide/svelte`, `@zag-js/dialog`, `@zag-js/svelte`
