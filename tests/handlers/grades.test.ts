@@ -15,6 +15,9 @@ vi.mock('@queries/grades', () => ({
 vi.mock('@queries/teacherConfirmations', () => ({
   findTodayConfirmationByTeacher: vi.fn(() => ({ id: 'confirmation-1' })),
 }));
+vi.mock('@queries/schedules', () => ({
+  findTeacherSchedulesByDay: vi.fn(() => [{ id: 'schedule-1' }]),
+}));
 vi.mock('@queries/gradeAuditLogs', () => ({
   logGradeChange: vi.fn(),
 }));
@@ -60,6 +63,7 @@ import { createGrade, updateGrade, deleteGrade, findGradeById } from '@queries/g
 import { findGradeComponent, renameGradeComponent, deleteGradeComponent } from '@queries/gradeComponents';
 import { logGradeChange } from '@queries/gradeAuditLogs';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
+import { findTeacherSchedulesByDay } from '@queries/schedules';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
 import { isTeacherUser, isTeacherAssignedToClassSubject, isTeacherHomeroomOfClass } from '@queries/teacherClassAssignments';
 
@@ -242,6 +246,24 @@ describe('grades handler audit hooks', () => {
     expect(res._status).toBe(403);
     expect(res._body).toMatchObject({ code: 'CONFIRMATION_REQUIRED' });
     expect(createGrade).not.toHaveBeenCalled();
+  });
+
+  it('leaves grade entry open on a day the teacher has no class', () => {
+    vi.mocked(isAdmin).mockReturnValue(false);
+    vi.mocked(hasRole).mockReturnValue(false);
+    vi.mocked(hasPermission).mockReturnValue(true);
+    vi.mocked(isTeacherUser).mockReturnValue(true);
+    vi.mocked(isTeacherAssignedToClassSubject).mockReturnValue(true);
+    vi.mocked(findTodayConfirmationByTeacher).mockReturnValue(undefined);
+    vi.mocked(findTeacherSchedulesByDay).mockReturnValue([]);
+    vi.mocked(createGrade).mockReturnValue({ id: 'grade-1', ...gradeBody, created_at: 1, updated_at: 1 } as never);
+    const req = mockRequest({ body: gradeBody, user: mockUser({ id: 'user-1' }) });
+    const res = mockResponse();
+
+    addGrade(req, res);
+
+    expect(createGrade).toHaveBeenCalled();
+    expect(res._status).not.toBe(403);
   });
 });
 

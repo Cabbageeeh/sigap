@@ -11,7 +11,7 @@
 ## Stats
 
 - Files indexed: 288
-- Total lines: 31587
+- Total lines: 31613
 - Total exports: 891
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
@@ -52,7 +52,7 @@
 - `classes.ts` (114L) — classesPage, listClasses, classData, addClass, editClass, removeClass
 - `dashboard.ts` (31L) — dashboardPage
 - `gradeAudit.ts` (39L) — gradeAuditPage, gradeAuditData
-- `grades.ts` (365L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, addGradeComponentType, renameGradeComponentType, +3
+- `grades.ts` (369L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, addGradeComponentType, renameGradeComponentType, +3
 - `headmaster.ts` (102L) — headmasterDashboardPage, headmasterDashboardData, headmasterReportsPage, headmasterClassGradesPage, headmasterTeacherAttendancePage, listOutsideConfirmations
 - `home.ts` (17L) — landingPage
 - `index.ts` (30L)
@@ -360,7 +360,7 @@
 - `attendance.test.ts` (32L)
 - `auth.test.ts` (81L)
 - `gradeAudit.test.ts` (116L)
-- `grades.test.ts` (331L)
+- `grades.test.ts` (353L)
 - `headmaster.test.ts` (202L)
 - `notifications.test.ts` (102L)
 - `parent.test.ts` (148L)
@@ -1793,7 +1793,7 @@
 - `app/handlers/classes.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/dashboard.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/stats`, `@queries/subjects`, `@queries/users`
 - `app/handlers/gradeAudit.ts` → `@core`, `@queries/gradeAuditLogs`, `@queries/users`
-- `app/handlers/grades.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/gradeAuditLogs`, `@queries/gradeComponents`, `@queries/grades`, `@queries/students`, `@queries/subjects`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@validators`
+- `app/handlers/grades.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/gradeAuditLogs`, `@queries/gradeComponents`, `@queries/grades`, `@queries/schedules`, `@queries/students`, `@queries/subjects`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/headmaster.ts` → `@core`, `@queries/classes`, `@queries/schoolLocations`, `@queries/stats`, `@queries/teacherConfirmations`, `@queries/teachers`, `@queries/users`
 - `app/handlers/home.ts` → `@core`, `@queries`
 - `app/handlers/journals.ts` → `@core`, `@queries/journals`, `@queries/schedules`, `@queries/studentAttendance`, `@queries/students`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@types`, `@validators`
@@ -1938,7 +1938,7 @@
 - `tests/handlers/attendance.test.ts` → `../../app/handlers/attendance`, `../helpers/mocks`, `@queries/studentAttendance`, `@queries/students`
 - `tests/handlers/auth.test.ts` → `../../app/handlers/auth`, `../helpers/mocks`, `@queries`, `@services/Authenticate`
 - `tests/handlers/gradeAudit.test.ts` → `../../app/handlers/gradeAudit`, `../helpers/mocks`, `@queries/gradeAuditLogs`, `@queries/users`
-- `tests/handlers/grades.test.ts` → `../../app/handlers/grades`, `../helpers/mocks`, `@queries/gradeAuditLogs`, `@queries/gradeComponents`, `@queries/grades`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`
+- `tests/handlers/grades.test.ts` → `../../app/handlers/grades`, `../helpers/mocks`, `@queries/gradeAuditLogs`, `@queries/gradeComponents`, `@queries/grades`, `@queries/schedules`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`
 - `tests/handlers/headmaster.test.ts` → `../helpers/mocks`, `@queries/classes`, `@queries/teachers`, `@queries/users`
 - `tests/handlers/notifications.test.ts` → `../../app/handlers/academicYears`, `../../app/handlers/notifications`, `../helpers/mocks`, `@queries/academicYears`, `@queries/notifications`, `@queries/users`
 - `tests/handlers/parent.test.ts` → `../../app/handlers/parent`, `../helpers/mocks`, `@queries/grades`, `@queries/parents`, `@queries/studentAttendance`, `@queries/students`

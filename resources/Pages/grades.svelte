@@ -206,7 +206,7 @@
         <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-primary">Akses terkunci</p>
       </div>
       <h2 class="relative font-heading text-xl font-semibold text-foreground">Konfirmasi kehadiran diperlukan.</h2>
-      <p class="relative text-sm text-muted-foreground mt-2 leading-relaxed">Scan QR sekolah sekali setiap hari sebelum membuka daftar kelas dan mengisi nilai.</p>
+      <p class="relative text-sm text-muted-foreground mt-2 leading-relaxed">Pada hari Anda terjadwal mengajar, scan QR sekolah sekali sebelum membuka daftar kelas dan mengisi nilai. Di hari tanpa jam mengajar, daftar nilai terbuka seperti biasa.</p>
       <a href="/teacher/confirm" use:inertia class="relative inline-flex mt-5"><Button>Scan QR Absen</Button></a>
     </div>
   {:else}
