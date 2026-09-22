@@ -198,6 +198,11 @@ export const editUser = (req: NaraRequest, res: NaraResponse) => {
 
       syncRoles(id, roleIds);
     }
+
+    const userRoles = getUserRoles(id);
+    return jsonSuccess(res, 'Pengguna berhasil diperbarui', {
+      user: { id: user.id, name: user.name, username: user.username, roles: userRoles.map(role => role.slug) },
+    });
   } catch (error: unknown) {
     if (isUniqueConstraintError(error)) {
       return jsonError(res, 'Username sudah digunakan', 400, 'DUPLICATE_USERNAME');

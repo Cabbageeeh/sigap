@@ -11,7 +11,7 @@
 ## Stats
 
 - Files indexed: 284
-- Total lines: 30403
+- Total lines: 30429
 - Total exports: 848
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
@@ -73,7 +73,7 @@
 - `teacherConfirmations.ts` (208L) — teacherConfirmationsPage, confirmPage, listTeacherConfirmations, teacherConfirmationData, submitTeacherConfirmation, outsideConfirmationsData
 - `teachers.ts` (229L) — teachersPage, listTeachers, teacherData, teacherByUser, addTeacher, editTeacher, removeTeacher, assignTeacherSubjects
 - `teacherSchedule.ts` (47L) — teacherSchedulePage, listTodaySchedules, todayScheduleDetail
-- `users.ts` (247L) — dashboardPage, usersPage, profilePage, changeProfile, addUser, editUser, removeUsers
+- `users.ts` (252L) — dashboardPage, usersPage, profilePage, changeProfile, addUser, editUser, removeUsers
 
 ### app/middlewares/
 
@@ -369,7 +369,7 @@
 - `teacherConfirmations.test.ts` (239L)
 - `teachers.test.ts` (183L)
 - `teacherSchedule.test.ts` (110L)
-- `users.test.ts` (311L)
+- `users.test.ts` (332L)
 
 ### tests/helpers/
 
