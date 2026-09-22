@@ -90,6 +90,26 @@ export const occurrencesOf = (dayOfWeek: number, startMs: number, endMs: number,
   return found;
 };
 
+/** Most recent teaching day (Mon-Fri) at or before `timestamp`. */
+export const lastWeekdayStart = (timestamp: number): number => {
+  const day = new Date(startOfDay(timestamp));
+  for (let back = 0; back < 10; back += 1) {
+    if (day.getDay() >= 1 && day.getDay() <= 5) return day.getTime();
+    day.setDate(day.getDate() - 1);
+  }
+  return day.getTime();
+};
+
+/**
+ * Both demo seeds must agree on which teacher-days stay unconfirmed, otherwise
+ * the seed that runs later silently refills the gap the headmaster alarm needs.
+ */
+export const confirmationAlarmDay = (now: number): number => lastWeekdayStart(now - 2 * DAY_MS);
+
+export const isConfirmationGap = (teacherUserId: string, dayStart: number, alarmDay: number): boolean =>
+  stableHash(`miss:${teacherUserId}:${dayStart}`) < 30
+  || (dayStart === alarmDay && stableHash(`alarm:${teacherUserId}`) < 250);
+
 export const employeeId = (name: string): string => {
   const parts = name.split(' ');
   return `T${(parts[0] ?? '').slice(0, 4).toUpperCase()}${(parts[parts.length - 1] ?? '').slice(0, 2).toUpperCase()}`;

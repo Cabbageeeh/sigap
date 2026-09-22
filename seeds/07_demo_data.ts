@@ -1,6 +1,7 @@
 import type SQLiteType from '../app/services/SQLite';
 import { randomUUID } from 'crypto';
 import { hashPassword } from '../app/services/Authenticate';
+import { confirmationAlarmDay, isConfirmationGap } from './data/bulkDemoShared';
 
 /**
  * Demo data filler — fills gaps left by 04/05 demo seeds so every feature
@@ -73,9 +74,7 @@ export function run(SQLite: typeof SQLiteType): void {
   const year = SQLite.one<{ id: string }>`SELECT id FROM academic_years WHERE is_active = 1`;
   if (year) {
     const from = now - 14 * 24 * 60 * 60 * 1000;
-    const threeDaysAgo = new Date(nowDate);
-    threeDaysAgo.setDate(nowDate.getDate() - 3);
-    threeDaysAgo.setHours(0, 0, 0, 0);
+    const alarmDay = confirmationAlarmDay(now);
     const fiveDaysAgo = new Date(nowDate);
     fiveDaysAgo.setDate(nowDate.getDate() - 5);
     fiveDaysAgo.setHours(0, 0, 0, 0);
@@ -88,6 +87,12 @@ export function run(SQLite: typeof SQLiteType): void {
       WHERE sch.academic_year_id = ${year.id}
     `;
 
+    const school = SQLite.one<{ latitude: number | null; longitude: number | null }>`
+      SELECT latitude, longitude FROM school_locations WHERE is_active = 1 LIMIT 1
+    `;
+    const baseLatitude = school?.latitude ?? -6.2001;
+    const baseLongitude = school?.longitude ?? 106.8001;
+
     for (const schedule of schedules) {
       for (const occurrenceStart of occurrencesBetween(schedule, from, now)) {
         const occurrenceEnd = occurrenceStart + (schedule.end_time - schedule.start_time);
@@ -95,21 +100,31 @@ export function run(SQLite: typeof SQLiteType): void {
         const occurrenceDate = new Date(occurrenceStart);
         occurrenceDate.setHours(0, 0, 0, 0);
 
-        const existing = SQLite.one<{ id: string }>`
-          SELECT id FROM teacher_confirmations WHERE schedule_id = ${schedule.id} AND confirmed_at >= ${occurrenceStart} AND confirmed_at <= ${occurrenceEnd}
+        // The QR flow records one confirmation per teacher per day; every
+        // session that day then shares it as its journal anchor.
+        const dayStart = occurrenceDate.getTime();
+        const confirmationToday = SQLite.one<{ id: string }>`
+          SELECT id FROM teacher_confirmations
+          WHERE teacher_user_id = ${schedule.teacher_user_id}
+            AND confirmed_at >= ${dayStart} AND confirmed_at <= ${dayStart + 86399999}
         `;
-        if (existing) continue;
-
-        // Sessions from 3 days ago stay unconfirmed → demo for missed-session alarm
-        if (occurrenceDate.getTime() === threeDaysAgo.getTime()) continue;
-
-        const isOutside = occurrenceDate.getTime() === fiveDaysAgo.getTime();
-        const confirmationId = randomUUID();
-        const distance = isOutside ? 380 : 15;
-        SQLite.exec`
-          INSERT INTO teacher_confirmations (id, schedule_id, teacher_user_id, photo_url, latitude, longitude, distance_meters, is_inside_school, confirmed_at, created_at)
-          VALUES (${confirmationId}, ${schedule.id}, ${schedule.teacher_user_id}, ${'/uploads/confirmations/demo-selfie.jpg'}, ${-6.2001}, ${106.8001}, ${distance}, ${isOutside ? 0 : 1}, ${occurrenceStart + 5 * 60 * 1000}, ${now})
+        const journalExists = SQLite.one<{ id: string }>`
+          SELECT id FROM journals WHERE schedule_id = ${schedule.id} AND date >= ${occurrenceStart} AND date <= ${occurrenceEnd}
         `;
+        if (journalExists) continue;
+
+        // A share of teacher-days stay unconfirmed → demo for the missed-confirmation alarm
+        if (!confirmationToday && isConfirmationGap(schedule.teacher_user_id, dayStart, alarmDay)) continue;
+
+        const isOutside = !confirmationToday && dayStart === fiveDaysAgo.getTime();
+        const confirmationId = confirmationToday?.id ?? randomUUID();
+        if (!confirmationToday) {
+          const distance = isOutside ? 380 : 15;
+          SQLite.exec`
+            INSERT INTO teacher_confirmations (id, schedule_id, teacher_user_id, photo_url, latitude, longitude, distance_meters, is_inside_school, confirmation_date, confirmed_at, created_at)
+            VALUES (${confirmationId}, ${schedule.id}, ${schedule.teacher_user_id}, ${'/uploads/confirmations/demo-selfie.jpg'}, ${isOutside ? baseLatitude + 0.006 : baseLatitude}, ${isOutside ? baseLongitude + 0.005 : baseLongitude}, ${distance}, ${isOutside ? 0 : 1}, ${dayStart}, ${occurrenceStart + 5 * 60 * 1000}, ${now})
+          `;
+        }
 
         const journalId = randomUUID();
         SQLite.exec`

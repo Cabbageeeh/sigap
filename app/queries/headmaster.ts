@@ -1,6 +1,7 @@
 import SQLite from '@services/SQLite';
 import type {
   SessionStatusView,
+  MissedConfirmationView,
   JournalCompletenessView,
   GradeProgressView,
   OutsideConfirmationView,
@@ -97,11 +98,19 @@ const occurrencesBetween = (template: ScheduleTemplate, from: number, to: number
   return occurrences;
 };
 
-const sessionStatus = (template: ScheduleTemplate, occurrenceStart: number, occurrenceEnd: number): SessionStatus => {
-  const confirmed = !!SQLite.get<{ id: string }>(
-    'SELECT id FROM teacher_confirmations WHERE schedule_id = ? AND confirmed_at >= ? AND confirmed_at <= ? LIMIT 1',
-    [template.id, occurrenceStart, occurrenceEnd]
+// The QR flow records one confirmation per teacher per day, so presence is
+// judged on the calendar day of the session — never on schedule_id, which the
+// scan screen leaves empty.
+const hasDailyConfirmation = (teacherUserId: string, timestamp: number): boolean => {
+  const dayStart = startOfDay(new Date(timestamp));
+  return !!SQLite.get<{ id: string }>(
+    'SELECT id FROM teacher_confirmations WHERE teacher_user_id = ? AND confirmed_at >= ? AND confirmed_at <= ? LIMIT 1',
+    [teacherUserId, dayStart, dayStart + DAY_MS - 1]
   );
+};
+
+const sessionStatus = (template: ScheduleTemplate, occurrenceStart: number, occurrenceEnd: number): SessionStatus => {
+  const confirmed = hasDailyConfirmation(template.teacher_user_id, occurrenceStart);
   const hasJournal = !!SQLite.get<{ id: string }>(
     'SELECT id FROM journals WHERE schedule_id = ? AND date >= ? AND date <= ? LIMIT 1',
     [template.id, occurrenceStart, occurrenceEnd]
@@ -129,20 +138,49 @@ export const getTodaySessions = (): SessionStatus[] => {
     .map(s => sessionStatus(s, todayStart, todayEnd));
 };
 
-export const getMissedSessions = (): SessionStatus[] => {
+export const getMissedConfirmations = (): MissedConfirmationView[] => {
   const now = Date.now();
   const from = startOfDay(new Date(now)) - 7 * DAY_MS;
 
-  const missed: SessionStatus[] = [];
+  const confirmedDays = new Map<string, Set<number>>();
+  for (const confirmation of findTeacherConfirmationsInRange(from, now)) {
+    const days = confirmedDays.get(confirmation.teacher_user_id) ?? new Set<number>();
+    days.add(dateKey(confirmation.confirmation_date ?? confirmation.confirmed_at));
+    confirmedDays.set(confirmation.teacher_user_id, days);
+  }
+
+  const gaps = new Map<string, MissedConfirmationView & { classNames: Set<string>; subjectNames: Set<string> }>();
   for (const template of findActiveYearSchedules()) {
     for (const occurrenceStart of occurrencesBetween(template, from, now)) {
-      const occurrenceEnd = occurrenceStart + (template.end_time - template.start_time);
-      if (occurrenceEnd > now) continue;
-      const status = sessionStatus(template, occurrenceStart, occurrenceEnd);
-      if (!status.confirmed) missed.push(status);
+      if (occurrenceStart + (template.end_time - template.start_time) > now) continue;
+      const day = dateKey(occurrenceStart);
+      if (confirmedDays.get(template.teacher_user_id)?.has(day)) continue;
+
+      const key = `${template.teacher_user_id}|${day}`;
+      const gap = gaps.get(key) ?? {
+        teacher_user_id: template.teacher_user_id,
+        teacher_name: template.teacher_name,
+        date: day,
+        scheduled_sessions: 0,
+        class_names: '',
+        subject_names: '',
+        classNames: new Set<string>(),
+        subjectNames: new Set<string>(),
+      };
+      gap.scheduled_sessions += 1;
+      gap.classNames.add(template.class_name);
+      gap.subjectNames.add(template.subject_name);
+      gaps.set(key, gap);
     }
   }
-  return missed.sort((a, b) => a.start_time - b.start_time);
+
+  return [...gaps.values()]
+    .map(({ classNames, subjectNames, ...gap }) => ({
+      ...gap,
+      class_names: [...classNames].join(', '),
+      subject_names: [...subjectNames].join(', '),
+    }))
+    .sort((a, b) => a.date - b.date || a.teacher_name.localeCompare(b.teacher_name));
 };
 
 export const getJournalCompleteness = (): JournalCompletenessRow[] => {

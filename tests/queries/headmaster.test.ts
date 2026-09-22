@@ -13,6 +13,7 @@ import SQLite from '@services/SQLite';
 import {
   findClassGradeDetails,
   getClassOverview,
+  getMissedConfirmations,
   getTeacherAttendanceHistory,
   getTeacherAttendanceOverview,
 } from '../../app/queries/headmaster';
@@ -20,6 +21,7 @@ import {
 const now = new Date('2026-09-02T12:00:00').getTime();
 const dayOfWeek = new Date(now).getDay();
 const dayStart = new Date('2026-09-02T00:00:00').getTime();
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 const schedule = (overrides: Record<string, unknown> = {}) => ({
   id: 'schedule-1',
@@ -141,6 +143,64 @@ describe('headmaster teacher attendance queries', () => {
         is_inside_school: 1,
         distance_meters: 15,
       }]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe('headmaster missed confirmation alarm', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const twoSessionsToday = [
+    schedule(),
+    schedule({
+      id: 'schedule-2',
+      start_time: new Date('2026-09-02T10:00:00').getTime(),
+      end_time: new Date('2026-09-02T11:00:00').getTime(),
+      class_name: '10B',
+      subject_name: 'Biologi',
+    }),
+  ];
+
+  const scannedDay = (day: number) => [{
+    teacher_user_id: 'teacher-user-1',
+    confirmation_date: day,
+    confirmed_at: day + 7 * 60 * 60 * 1000,
+    is_inside_school: 1,
+    distance_meters: 15,
+  }];
+  const gapRow = (day: number) => ({
+    teacher_user_id: 'teacher-user-1',
+    teacher_name: 'Budi Santoso',
+    date: day,
+    scheduled_sessions: 2,
+    class_names: '10A, 10B',
+    subject_names: 'Matematika, Biologi',
+  });
+
+  // The seven-day window holds the same weekday twice: today and a week earlier.
+  it('reports one row per teacher per day, listing every session of that day', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+    vi.mocked(SQLite.all).mockReturnValue([] as never);
+    vi.mocked(SQLite.many).mockReturnValue(twoSessionsToday as never);
+
+    try {
+      expect(getMissedConfirmations()).toEqual([gapRow(dayStart - WEEK_MS), gapRow(dayStart)]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('clears the alarm once the teacher has scanned that day', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+    vi.mocked(SQLite.all).mockReturnValue([...scannedDay(dayStart - WEEK_MS), ...scannedDay(dayStart)] as never);
+    vi.mocked(SQLite.many).mockReturnValue(twoSessionsToday as never);
+
+    try {
+      expect(getMissedConfirmations()).toEqual([]);
     } finally {
       vi.useRealTimers();
     }

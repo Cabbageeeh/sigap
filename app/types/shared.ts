@@ -322,6 +322,17 @@ export interface SessionStatusView {
   has_journal: boolean;
 }
 
+// A teacher confirms once per day, so a gap is reported per teacher per day —
+// not per session, which would flag every extra class of a present teacher.
+export interface MissedConfirmationView {
+  teacher_user_id: string;
+  teacher_name: string;
+  date: number;
+  class_names: string;
+  subject_names: string;
+  scheduled_sessions: number;
+}
+
 export interface JournalCompletenessView {
   teacher_name: string;
   expected: number;

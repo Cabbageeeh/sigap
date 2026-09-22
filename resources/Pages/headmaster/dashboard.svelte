@@ -11,6 +11,7 @@
   import type {
     DashboardStats,
     SessionStatusView,
+    MissedConfirmationView,
     JournalCompletenessView,
     GradeProgressView,
     AnnouncementView,
@@ -24,7 +25,7 @@
     teacherAttendance: HeadmasterTeacherAttendanceView[];
     today: SessionStatusView[];
     confirmedToday: number;
-    missed: SessionStatusView[];
+    missed: MissedConfirmationView[];
     journals: JournalCompletenessView[];
     progress: GradeProgressView[];
   }
@@ -43,14 +44,17 @@
     });
   });
 
-  const missedRows = $derived((data?.missed ?? []).map(s => ({
-    id: s.schedule_id + s.start_time,
-    guru: s.teacher_name,
-    kelas: s.class_name,
-    mapel: s.subject_name,
-    waktu: new Date(s.start_time).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }),
-    status: 'Tidak Konfirmasi',
+  const missedRows = $derived((data?.missed ?? []).map(gap => ({
+    id: gap.teacher_user_id + gap.date,
+    guru: gap.teacher_name,
+    tanggal: new Date(gap.date).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' }),
+    sesi: `${gap.scheduled_sessions} sesi`,
+    kelas: gap.class_names,
+    mapel: gap.subject_names,
+    status: 'Belum Konfirmasi',
   })));
+
+  const missedTeacherCount = $derived(new Set((data?.missed ?? []).map(gap => gap.teacher_user_id)).size);
 
   const progressRows = $derived((data?.progress ?? []).map(p => ({
     id: p.class_name + p.subject_name,
@@ -90,9 +94,10 @@
 
   const missedColumns = [
     { key: 'guru', label: 'Guru' },
+    { key: 'tanggal', label: 'Tanggal', align: 'right' as const },
+    { key: 'sesi', label: 'Sesi Terlewat', align: 'right' as const },
     { key: 'kelas', label: 'Kelas' },
     { key: 'mapel', label: 'Mapel' },
-    { key: 'waktu', label: 'Waktu' },
     { key: 'status', label: 'Status', align: 'center' as const },
   ];
 
@@ -178,7 +183,7 @@
       title="Monitoring Konfirmasi"
       description="Riwayat scan QR guru beserta bukti foto, jarak, dan status lokasi."
       href="/teacher/confirmations" cta="Buka log konfirmasi" icon={UserCheck} tone="warning"
-      meta={`${missedRows.length} sesi tanpa konfirmasi (7 hari)`}
+      meta={`${missedTeacherCount} guru belum scan QR (7 hari)`}
     />
     <BentoCard
       title="Laporan Luar Radius"
@@ -222,10 +227,10 @@
 
   <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 200 }}>
     <div class="flex items-baseline justify-between mb-3">
-      <h2 class="font-heading font-semibold tracking-[-0.02em]">Sesi Tanpa Konfirmasi (7 Hari Terakhir)</h2>
-      <p class="text-xs text-muted-foreground font-mono-accent">Indikasi guru tidak masuk kelas</p>
+      <h2 class="font-heading font-semibold tracking-[-0.02em]">Guru Tanpa Konfirmasi (7 Hari Terakhir)</h2>
+      <p class="text-xs text-muted-foreground font-mono-accent">Satu scan QR per hari — baris muncul bila guru tidak men-scan pada hari ia terjadwal</p>
     </div>
-    <DataTable columns={missedColumns} rows={missedRows} emptyMessage="Semua sesi terkonfirmasi. Tidak ada indikasi guru tidak masuk." />
+    <DataTable columns={missedColumns} rows={missedRows} emptyMessage="Semua guru sudah men-scan QR pada hari masing-masing." />
   </div>
 
   <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 250 }}>

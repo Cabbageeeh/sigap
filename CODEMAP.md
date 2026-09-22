@@ -11,8 +11,8 @@
 ## Stats
 
 - Files indexed: 288
-- Total lines: 31408
-- Total exports: 887
+- Total lines: 31587
+- Total exports: 891
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -97,7 +97,7 @@
 - `gradeAuditLogs.ts` (39L) — logGradeChange, getGradeAuditLogsPaginated
 - `gradeComponents.ts` (53L) — findGradeComponentsByYear, upsertGradeComponents, addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent
 - `grades.ts` (316L) — findAllGrades, findGradeById, findGradesByStudent, findGradesByStudentForTeacher, findGradesByClassSubject, findGradesByTeacher, findGradeByUniqueKey, upsertGradesBulk, +13
-- `headmaster.ts` (429L) — getTodaySessions, getMissedSessions, getJournalCompleteness, getGradeProgress, getClassOverview, getTeacherAttendanceOverview, getTeacherAttendanceHistory, findClassGradeDetails, +5
+- `headmaster.ts` (467L) — getTodaySessions, getMissedConfirmations, getJournalCompleteness, getGradeProgress, getClassOverview, getTeacherAttendanceOverview, getTeacherAttendanceHistory, findClassGradeDetails, +5
 - `index.ts` (25L)
 - `journals.ts` (60L) — findAllJournals, findJournalById, findJournalsBySchedule, findJournalByScheduleAndDate, findJournalsByTeacher, findJournalsByDateRange, createJournal, updateJournal, +2
 - `notifications.ts` (41L) — createGradePublishedNotifications, findNotificationsByUser, getUnreadNotificationCount, markAllNotificationsRead
@@ -135,7 +135,7 @@
 ### app/types/
 
 - `models.ts` (285L) — User, Session, Role, Permission, Asset, UserRole, RolePermission, AcademicYear, +20
-- `shared.ts` (406L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +35
+- `shared.ts` (417L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +36
 
 ### app/validators/
 
@@ -256,7 +256,7 @@
 ### resources/Pages/headmaster/
 
 - `class-grades.svelte` (63L)
-- `dashboard.svelte` (265L)
+- `dashboard.svelte` (270L)
 - `reports.svelte` (64L)
 - `teacher-attendance.svelte` (67L)
 
@@ -303,7 +303,7 @@
 
 ### resources/types/
 
-- `forms.ts` (476L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +40
+- `forms.ts` (477L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +40
 - `index.ts` (15L)
 
 ### routes/
@@ -334,15 +334,15 @@
 - `04_demo.ts` (90L) — run
 - `05_demo_operations.ts` (163L) — run
 - `06_grade_components.ts` (24L) — run
-- `07_demo_data.ts` (203L) — run
+- `07_demo_data.ts` (218L) — run
 - `08_qr_settings.ts` (12L) — run
 - `09_bulk_demo_master.ts` (304L) — run
-- `10_bulk_demo_activity.ts` (202L) — run
+- `10_bulk_demo_activity.ts` (231L) — run
 
 ### seeds/data/
 
 - `bulkDemoData.ts` (158L) — SUBJECTS, RENAMED_SUBJECTS, TEACHERS, CLASSES, SUBJECTS_BY_GRADE, MALE_FIRST, FEMALE_FIRST, LAST_NAMES, +9
-- `bulkDemoShared.ts` (109L) — DAY_MS, HISTORY_DAYS, CLASS_SIZE, SLOT_TIMES, SLOT_COUNT, SESSION_MINUTES, NIS_BASE, REFERENCE_MONDAY, +12
+- `bulkDemoShared.ts` (129L) — DAY_MS, HISTORY_DAYS, CLASS_SIZE, SLOT_TIMES, SLOT_COUNT, SESSION_MINUTES, NIS_BASE, REFERENCE_MONDAY, +15
 
 ### tests/
 
@@ -393,7 +393,7 @@
 
 - `classes.test.ts` (44L)
 - `grades.test.ts` (37L)
-- `headmaster.test.ts` (149L)
+- `headmaster.test.ts` (209L)
 - `roles.test.ts` (125L)
 - `schedules.test.ts` (37L)
 - `teacherClassAssignments.test.ts` (54L)
@@ -860,7 +860,7 @@
 ### `app/queries/headmaster.ts`
 
 - `const` **getTodaySessions**
-- `const` **getMissedSessions**
+- `const` **getMissedConfirmations**
 - `const` **getJournalCompleteness**
 - `const` **getGradeProgress**
 - `const` **getClassOverview**
@@ -1236,6 +1236,7 @@
 - `iface` **ClassSubjectSummary**
 - `iface` **GradeAuditLogRow**
 - `iface` **SessionStatusView**
+- `iface` **MissedConfirmationView**
 - `iface` **JournalCompletenessView**
 - `iface` **GradeProgressView**
 - `iface` **HeadmasterClassOverviewView**
@@ -1751,6 +1752,9 @@
 - `const` **startOfDay**
 - `const` **slotStart**
 - `const` **occurrencesOf**
+- `const` **lastWeekdayStart**
+- `const` **confirmationAlarmDay**
+- `const` **isConfirmationGap**
 - `const` **employeeId**
 - `const` **addressFor**
 - `const` **phoneFor**
@@ -1922,7 +1926,7 @@
 - `seeds/04_demo.ts` → `../app/services/Authenticate`, `../app/services/SQLite`
 - `seeds/05_demo_operations.ts` → `../app/services/SQLite`
 - `seeds/06_grade_components.ts` → `../app/services/SQLite`
-- `seeds/07_demo_data.ts` → `../app/services/Authenticate`, `../app/services/SQLite`
+- `seeds/07_demo_data.ts` → `../app/services/Authenticate`, `../app/services/SQLite`, `./data/bulkDemoShared`
 - `seeds/08_qr_settings.ts` → `../app/services/SQLite`
 - `seeds/09_bulk_demo_master.ts` → `../app/services/Authenticate`, `../app/services/SQLite`
 - `seeds/10_bulk_demo_activity.ts` → `../app/services/SQLite`, `./data/bulkDemoData`

@@ -7,7 +7,7 @@ vi.mock('@queries/stats', () => ({
 
 vi.mock('@queries/headmaster', () => ({
   getTodaySessions: vi.fn(() => []),
-  getMissedSessions: vi.fn(() => []),
+  getMissedConfirmations: vi.fn(() => []),
   getJournalCompleteness: vi.fn(() => []),
   getGradeProgress: vi.fn(() => []),
   getClassOverview: vi.fn(() => []),

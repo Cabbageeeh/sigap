@@ -2,9 +2,11 @@ import type SQLiteType from '../app/services/SQLite';
 import { randomUUID } from 'crypto';
 import { ANNOUNCEMENTS, MATERIALS } from './data/bulkDemoData';
 import {
+  confirmationAlarmDay,
   createCtx,
   DAY_MS,
   HISTORY_DAYS,
+  isConfirmationGap,
   occurrencesOf,
   SCHOOL,
   stableHash,
@@ -52,9 +54,7 @@ const listSchedules = (c: Ctx): ScheduleRow[] =>
 
 const ensureConfirmationsAndJournals = (c: Ctx): void => {
   const from = startOfDay(c.now - HISTORY_DAYS * DAY_MS);
-  // Seed 07 deliberately leaves the day three days ago unconfirmed; about a
-  // quarter of the teachers keep that gap so the headmaster alarm has content.
-  const alarmDay = startOfDay(c.now - 3 * DAY_MS);
+  const alarmDay = confirmationAlarmDay(c.now);
   const studentsByClass = new Map<string, string[]>();
   for (const row of c.SQLite.all<{ id: string; class_id: string }>('SELECT id, class_id FROM students ORDER BY nis')) {
     studentsByClass.set(row.class_id, [...(studentsByClass.get(row.class_id) ?? []), row.id]);
@@ -62,49 +62,74 @@ const ensureConfirmationsAndJournals = (c: Ctx): void => {
   // Present rate per class keeps the headmaster attention flags mixed.
   const presentRate = new Map<string, number>();
 
+  const sessions: { schedule: ScheduleRow; start: number }[] = [];
   for (const schedule of listSchedules(c)) {
-    const students = studentsByClass.get(schedule.class_id) ?? [];
-    if (!presentRate.has(schedule.class_id)) presentRate.set(schedule.class_id, 0.88 + c.int(8) / 100);
-    const rate = presentRate.get(schedule.class_id) ?? 0.92;
-    const materials = MATERIALS[schedule.code] ?? ['Kegiatan belajar mengajar sesuai modul ajar'];
-    const duration = schedule.end_time - schedule.start_time;
+    for (const start of occurrencesOf(schedule.day_of_week, schedule.start_time, schedule.end_time, from, c.now)) {
+      if (start + (schedule.end_time - schedule.start_time) > c.now) continue;
+      sessions.push({ schedule, start });
+    }
+  }
 
-    occurrencesOf(schedule.day_of_week, schedule.start_time, schedule.end_time, from, c.now).forEach((start, index) => {
-      if (c.SQLite.get<{ id: string }>(
-        'SELECT id FROM teacher_confirmations WHERE schedule_id = ? AND confirmed_at >= ? AND confirmed_at <= ?',
-        [schedule.id, start, start + duration],
-      )) return;
-      // A few sessions stay unconfirmed so the missed-session alarm has content.
-      if (stableHash(`miss:${schedule.id}:${start}`) < 30) return;
-      if (startOfDay(start) === alarmDay && stableHash(`alarm:${schedule.teacher_user_id}`) < 250) return;
+  // The QR flow records one confirmation per teacher per day and journals hang
+  // off it, so the history is built teacher-day first, session second.
+  const teacherDays = new Map<string, { teacherUserId: string; day: number; items: typeof sessions }>();
+  for (const session of sessions) {
+    const day = startOfDay(session.start);
+    const key = `${session.schedule.teacher_user_id}|${day}`;
+    const group = teacherDays.get(key) ?? { teacherUserId: session.schedule.teacher_user_id, day, items: [] };
+    group.items.push(session);
+    teacherDays.set(key, group);
+  }
 
-      const outside = stableHash(`far:${schedule.id}:${start}`) < 12;
-      const confirmationId = randomUUID();
-      const confirmedAt = start + (2 + c.int(9)) * 60 * 1000;
-      // confirmation_date stays empty like the other demo seeds: the QR flow
-      // allows one row per teacher per day, while this data records a session.
+  for (const group of [...teacherDays.values()].sort((a, b) => a.day - b.day)) {
+    if (isConfirmationGap(group.teacherUserId, group.day, alarmDay)) continue;
+
+    const items = group.items.sort((a, b) => a.start - b.start);
+    const firstStart = items[0].start;
+    const confirmedAt = firstStart + (2 + c.int(9)) * 60 * 1000;
+    const existing = c.SQLite.get<{ id: string }>(
+      'SELECT id FROM teacher_confirmations WHERE teacher_user_id = ? AND confirmed_at >= ? AND confirmed_at <= ? LIMIT 1',
+      [group.teacherUserId, group.day, group.day + DAY_MS - 1],
+    );
+    let confirmationId = existing?.id ?? '';
+
+    if (!confirmationId) {
+      const outside = stableHash(`far:${group.teacherUserId}:${group.day}`) < 12;
+      confirmationId = randomUUID();
       c.SQLite.run(
         `INSERT INTO teacher_confirmations
          (id, schedule_id, teacher_user_id, photo_url, latitude, longitude, distance_meters, is_inside_school,
-          confirmed_at, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          confirmation_date, confirmed_at, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-          confirmationId, schedule.id, schedule.teacher_user_id, '/uploads/confirmations/demo-selfie.jpg',
+          confirmationId, items[0].schedule.id, group.teacherUserId, '/uploads/confirmations/demo-selfie.jpg',
           outside ? Number((SCHOOL.latitude + 0.006).toFixed(7)) : Number((SCHOOL.latitude + (c.int(1801) - 900) / 1e6).toFixed(7)),
           outside ? Number((SCHOOL.longitude + 0.005).toFixed(7)) : Number((SCHOOL.longitude + (c.int(1801) - 900) / 1e6).toFixed(7)),
           outside ? 480 + c.int(220) : 12 + c.int(120),
           outside ? 0 : 1,
-          confirmedAt, confirmedAt, confirmedAt,
+          group.day, confirmedAt, confirmedAt, confirmedAt,
         ],
       );
+    }
 
+    for (const { schedule, start } of items) {
+      const duration = schedule.end_time - schedule.start_time;
+      if (c.SQLite.get<{ id: string }>(
+        'SELECT id FROM journals WHERE schedule_id = ? AND date >= ? AND date <= ? LIMIT 1',
+        [schedule.id, start, start + duration],
+      )) continue;
+
+      const students = studentsByClass.get(schedule.class_id) ?? [];
+      if (!presentRate.has(schedule.class_id)) presentRate.set(schedule.class_id, 0.88 + c.int(8) / 100);
+      const rate = presentRate.get(schedule.class_id) ?? 0.92;
+      const materials = MATERIALS[schedule.code] ?? ['Kegiatan belajar mengajar sesuai modul ajar'];
       // Journals are written right after the session, and the dashboard trend
       // chart groups attendance by created_at — so both carry the session date.
       const journalId = randomUUID();
       const savedAt = start + duration + (5 + c.int(40)) * 60 * 1000;
       c.SQLite.run(
         'INSERT INTO journals (id, schedule_id, teacher_confirmation_id, date, material, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [journalId, schedule.id, confirmationId, start, materials[(index + schedule.class_id.length) % materials.length], savedAt, savedAt],
+        [journalId, schedule.id, confirmationId, start, materials[(start + schedule.class_id.length) % materials.length], savedAt, savedAt],
       );
 
       for (const studentId of students) {
@@ -115,7 +140,7 @@ const ensureConfirmationsAndJournals = (c: Ctx): void => {
           [randomUUID(), studentId, schedule.id, journalId, status, savedAt, savedAt],
         );
       }
-    });
+    }
   }
 };
 

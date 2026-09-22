@@ -3,7 +3,7 @@ import { jsonSuccess, jsonError } from '@core';
 import { getDashboardStats } from '@queries/stats';
 import {
   getTodaySessions,
-  getMissedSessions,
+  getMissedConfirmations,
   getJournalCompleteness,
   getGradeProgress,
   getClassOverview,
@@ -38,7 +38,7 @@ export const headmasterDashboardData = (req: NaraRequest, res: NaraResponse) => 
     teacherAttendance: getTeacherAttendanceOverview(),
     today,
     confirmedToday: today.filter(s => s.confirmed).length,
-    missed: getMissedSessions(),
+    missed: getMissedConfirmations(),
     journals: getJournalCompleteness(),
     progress: getGradeProgress(),
   });
