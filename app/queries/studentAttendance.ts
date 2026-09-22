@@ -68,17 +68,16 @@ export interface AttendanceRecapRow {
 export const getAttendanceRecap = (classId: string, from: number, to: number, teacherUserId?: string): AttendanceRecapRow[] =>
   SQLite.all<AttendanceRecapRow>(
     `SELECT st.id AS student_id, st.name AS student_name, st.nis,
-       SUM(CASE WHEN sa.status = 'present' THEN 1 ELSE 0 END) AS present,
-       SUM(CASE WHEN sa.status = 'sick' THEN 1 ELSE 0 END) AS sick,
-       SUM(CASE WHEN sa.status = 'leave' THEN 1 ELSE 0 END) AS leave,
-       SUM(CASE WHEN sa.status = 'absent' THEN 1 ELSE 0 END) AS absent,
-       COUNT(sa.id) AS total
+       SUM(CASE WHEN j.id IS NOT NULL AND sch.id IS NOT NULL AND sa.status = 'present' THEN 1 ELSE 0 END) AS present,
+       SUM(CASE WHEN j.id IS NOT NULL AND sch.id IS NOT NULL AND sa.status = 'sick' THEN 1 ELSE 0 END) AS sick,
+       SUM(CASE WHEN j.id IS NOT NULL AND sch.id IS NOT NULL AND sa.status = 'leave' THEN 1 ELSE 0 END) AS leave,
+       SUM(CASE WHEN j.id IS NOT NULL AND sch.id IS NOT NULL AND sa.status = 'absent' THEN 1 ELSE 0 END) AS absent,
+       COUNT(j.id) AS total
      FROM students st
      LEFT JOIN student_attendance sa ON sa.student_id = st.id
      LEFT JOIN journals j ON j.id = sa.journal_id AND j.date >= ? AND j.date <= ?
      LEFT JOIN schedules sch ON sch.id = sa.schedule_id ${teacherUserId ? 'AND sch.teacher_user_id = ?' : ''}
      WHERE st.class_id = ?
-       AND (sa.id IS NULL OR (j.id IS NOT NULL AND sch.id IS NOT NULL))
      GROUP BY st.id
      ORDER BY st.name`,
     teacherUserId ? [from, to, teacherUserId, classId] : [from, to, classId],
