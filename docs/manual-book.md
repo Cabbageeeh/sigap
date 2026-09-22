@@ -358,13 +358,17 @@ Guru hanya dapat menilai kelas dan mapel sesuai kontrak mengajarnya. Sama sepert
 
 ![Absensi](images/manual/26-guru-absensi.png)
 
-Menu **Akademik → Absensi Siswa** adalah baca ulang presensi yang sudah tercatat lewat jurnal: per kelas, per tanggal, per siswa. Karena absensi lahir dari jurnal, halaman ini tidak punya formulir isian — cara menambah catatan absensi adalah dengan mengisi jurnal mengajar.
+Menu **Akademik → Absensi Siswa** adalah baca ulang presensi yang sudah tercatat lewat jurnal: per kelas, per tanggal, per siswa. Pilih kelas dan rentang tanggal, maka seluruh siswa kelas itu tampil beserta jumlah Hadir, Sakit, Izin, Alpa, dan Total. Karena absensi lahir dari jurnal, halaman ini tidak punya formulir isian — cara menambah catatan absensi adalah dengan mengisi jurnal mengajar.
 
 ## 4.6 Rapor siswa
 
+Rapor dibuka dari halaman yang sama: **Akademik → Absensi Siswa** → pilih kelas → klik **Rapor** di kolom Aksi pada baris siswa. Kolom Aksi ini hanya muncul untuk kelas tempat Anda tercatat sebagai **wali kelas**. Guru pengampu biasa tidak melihat tombolnya, dan administrator tidak punya akses ke halaman rapor.
+
 ![Rapor](images/manual/27-guru-rapor.png)
 
-Halaman **Rapor** menampilkan rekap nilai satu siswa dalam format siap cetak: identitas, nilai per mata pelajaran, nilai akhir, predikat, keterangan tuntas, dan rekap kehadiran. Gunakan fitur cetak peramban (Ctrl+P) untuk menyimpannya sebagai PDF.
+Lembar rapor berisi **Laporan Hasil Belajar Siswa**: identitas dan kelas, nilai per mata pelajaran (UAS, UTS, Kuis Harian, Tugas), Nilai Akhir, KKM, Predikat, status Tuntas, serta rekap kehadiran. Bagian bawah disediakan untuk tanda tangan orang tua/wali dan kepala sekolah. Klik **Cetak Rapor** di kanan atas (atau `Ctrl+P`) untuk mencetak atau menyimpannya sebagai PDF.
+
+> Satu kelas hanya punya satu wali kelas per periode akademik. Jika tombol Rapor tidak muncul pada kelas yang Anda kira, minta administrator memeriksa **Akademik → Kontrak Mengajar** dan mencentang *Wali kelas* untuk kelas tersebut.
 
 ---
 
@@ -449,7 +453,7 @@ Pilih anak, lalu buka **Nilai**. Yang terlihat: nilai tiap komponen per mata pel
 
 ![Rapor anak](images/manual/43-ortu-rapor.png)
 
-Tombol rapor menampilkan lembar rekap yang bisa dicetak atau disimpan sebagai PDF.
+Klik **Lihat Rapor** di kanan atas halaman nilai untuk membuka lembar rekap satu anak — nilai akhir, predikat, dan rekap kehadiran dalam format siap cetak (tombol **Cetak Rapor** atau `Ctrl+P`).
 
 ## 6.3 Absensi anak
 
