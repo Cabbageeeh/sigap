@@ -10,9 +10,9 @@
 
 ## Stats
 
-- Files indexed: 284
-- Total lines: 30635
-- Total exports: 848
+- Files indexed: 288
+- Total lines: 31408
+- Total exports: 887
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -336,6 +336,13 @@
 - `06_grade_components.ts` (24L) — run
 - `07_demo_data.ts` (203L) — run
 - `08_qr_settings.ts` (12L) — run
+- `09_bulk_demo_master.ts` (304L) — run
+- `10_bulk_demo_activity.ts` (202L) — run
+
+### seeds/data/
+
+- `bulkDemoData.ts` (158L) — SUBJECTS, RENAMED_SUBJECTS, TEACHERS, CLASSES, SUBJECTS_BY_GRADE, MALE_FIRST, FEMALE_FIRST, LAST_NAMES, +9
+- `bulkDemoShared.ts` (109L) — DAY_MS, HISTORY_DAYS, CLASS_SIZE, SLOT_TIMES, SLOT_COUNT, SESSION_MINUTES, NIS_BASE, REFERENCE_MONDAY, +12
 
 ### tests/
 
@@ -1700,6 +1707,57 @@
 
 - `fn` **run**
 
+### `seeds/09_bulk_demo_master.ts`
+
+- `fn` **run**
+
+### `seeds/10_bulk_demo_activity.ts`
+
+- `fn` **run**
+
+### `seeds/data/bulkDemoData.ts`
+
+- `const` **SUBJECTS**
+- `const` **RENAMED_SUBJECTS**
+- `const` **TEACHERS**
+- `const` **CLASSES**
+- `const` **SUBJECTS_BY_GRADE**
+- `const` **MALE_FIRST**
+- `const` **FEMALE_FIRST**
+- `const` **LAST_NAMES**
+- `const` **ADULT_MALE**
+- `const` **ADULT_FEMALE**
+- `const` **STREETS**
+- `const` **AREA_SUFFIX**
+- `const` **MATERIALS**
+- `const` **ANNOUNCEMENTS**
+- `iface` **SubjectSeed**
+- `iface` **TeacherSeed**
+- `iface` **ClassSeed**
+
+### `seeds/data/bulkDemoShared.ts`
+
+- `const` **DAY_MS**
+- `const` **HISTORY_DAYS**
+- `const` **CLASS_SIZE**
+- `const` **SLOT_TIMES**
+- `const` **SLOT_COUNT**
+- `const` **SESSION_MINUTES**
+- `const` **NIS_BASE**
+- `const` **REFERENCE_MONDAY**
+- `const` **SCHOOL**
+- `const` **createCtx**
+- `const` **stableHash**
+- `const` **startOfDay**
+- `const` **slotStart**
+- `const` **occurrencesOf**
+- `const` **employeeId**
+- `const` **addressFor**
+- `const` **phoneFor**
+- `const` **parentNameFor**
+- `iface` **Ctx**
+- `iface` **TeacherRef**
+
 ### `tests/conventions.test.ts`
 
 - `const` **down**
@@ -1866,6 +1924,9 @@
 - `seeds/06_grade_components.ts` → `../app/services/SQLite`
 - `seeds/07_demo_data.ts` → `../app/services/Authenticate`, `../app/services/SQLite`
 - `seeds/08_qr_settings.ts` → `../app/services/SQLite`
+- `seeds/09_bulk_demo_master.ts` → `../app/services/Authenticate`, `../app/services/SQLite`
+- `seeds/10_bulk_demo_activity.ts` → `../app/services/SQLite`, `./data/bulkDemoData`
+- `seeds/data/bulkDemoShared.ts` → `../../app/services/SQLite`
 - `server.ts` → `@core`, `@routes/web`
 - `tests/core/response.test.ts` → `../helpers/mocks`
 - `tests/core/Router.test.ts` → `../../app/core/Router`
