@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
-  import { page as inertiaPage, inertia } from '@inertiajs/svelte';
+  import type { Component } from 'svelte';
+  import { page as inertiaPage } from '@inertiajs/svelte';
   import Sidebar from '../Components/Sidebar.svelte';
   import StatCard from '../Components/StatCard.svelte';
   import BentoCard from '../Components/BentoCard.svelte';
@@ -8,7 +9,7 @@
   import AttendanceDonut from '../Components/charts/AttendanceDonut.svelte';
   import ClassSizeBars from '../Components/charts/ClassSizeBars.svelte';
   import ConfirmationWeekChart from '../Components/charts/ConfirmationWeekChart.svelte';
-  import { ArrowRight, GraduationCap, UserRound, School, BookOpen } from '@lucide/svelte';
+  import { CalendarClock, GraduationCap, MapPin, School, BookOpen, UserCog, UserRound } from '@lucide/svelte';
   import type { User, DashboardStats, DashboardCharts } from '../types';
 
   interface Props {
@@ -44,6 +45,71 @@
     if (currentUser.roles?.includes('admin')) return true;
     return currentUser.permissions?.includes(slug) ?? false;
   }
+
+  type AksesItem = {
+    title: string;
+    description: string;
+    href: string;
+    cta: string;
+    icon: Component;
+    tone: 'primary' | 'info' | 'warning' | 'success';
+    meta: string;
+    show: boolean;
+  };
+
+  const yearLabel = activeYear?.name ?? 'belum diatur';
+
+  const aksesUtama = $derived<AksesItem[]>([
+    {
+      title: 'Kelas & Siswa',
+      description: 'Kelola rombongan belajar lalu buka daftar siswa per kelas.',
+      href: '/classes', cta: 'Kelola kelas & siswa', icon: School, tone: 'primary',
+      meta: `${stats?.totalClasses ?? classes.length} kelas · ${stats?.totalStudents ?? 0} siswa`,
+      show: hasPermission('classes.view') && hasPermission('students.view'),
+    },
+    {
+      title: 'Data Guru',
+      description: 'Tautkan akun ke guru, tugaskan mapel, pantau konfirmasi harian.',
+      href: '/teachers', cta: 'Kelola guru', icon: UserRound, tone: 'info',
+      meta: `${stats?.totalTeachers ?? 0} guru terdaftar`,
+      show: hasPermission('teachers.view'),
+    },
+    {
+      title: 'Penugasan Guru',
+      description: 'Atur kelas yang diampu dan siapa wali kelasnya.',
+      href: '/teacher-assignments', cta: 'Atur penugasan', icon: UserCog, tone: 'success',
+      meta: `periode ${yearLabel}`,
+      show: !!currentUser?.roles?.includes('admin'),
+    },
+    {
+      title: 'Jadwal Hari Ini',
+      description: 'Lihat sesi yang sedang dan akan berlangsung hari ini.',
+      href: '/teacher/schedule', cta: 'Lihat jadwal', icon: CalendarClock, tone: 'warning',
+      meta: today,
+      show: hasPermission('schedules.view'),
+    },
+    {
+      title: 'Jurnal Mengajar',
+      description: 'Catatan setiap sesi mengajar sekaligus menjadi presensi siswa.',
+      href: '/journals', cta: 'Buka jurnal', icon: BookOpen, tone: 'primary',
+      meta: `tahun ajaran ${yearLabel}`,
+      show: hasPermission('journals.view'),
+    },
+    {
+      title: 'Nilai Siswa',
+      description: 'Catat nilai per komponen, tinjau rapor, lalu publikasikan.',
+      href: '/grades', cta: 'Kelola nilai', icon: GraduationCap, tone: 'info',
+      meta: `tahun ajaran ${yearLabel}`,
+      show: hasPermission('grades.view'),
+    },
+    {
+      title: 'Profil Sekolah',
+      description: 'Identitas sekolah, titik koordinat, dan radius geofencing absensi.',
+      href: '/school-locations', cta: 'Kelola profil', icon: MapPin, tone: 'success',
+      meta: activeYear ? `aktif: ${activeYear.name}` : 'tahun ajaran belum diatur',
+      show: hasPermission('school_locations.view'),
+    },
+  ]);
 </script>
 
 <Sidebar group="dashboard" />
@@ -100,66 +166,26 @@
       </div>
     {/if}
 
-    <div class="mb-4 mt-10">
-      <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">Ruang kerja</p>
-      <h2 class="mt-1.5 text-xl font-semibold tracking-[-0.025em] text-foreground">Akses utama</h2>
+    <div class="mb-5 mt-10 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">Ruang kerja</p>
+        <h2 class="mt-1.5 text-xl font-semibold tracking-[-0.025em] text-foreground">Akses utama</h2>
+      </div>
+      <p class="text-xs text-muted-foreground">Pintasan yang tampil mengikuti hak akses akun Anda.</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-[minmax(170px,auto)]">
-      {#if hasPermission('classes.view') && hasPermission('students.view')}
-        <BentoCard title="Kelas & Siswa" description="Kelola kelas lalu buka daftar siswa per kelas.">
-          <a href="/classes" use:inertia class="mt-auto inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
-            Kelola kelas & siswa <ArrowRight class="w-4 h-4" />
-          </a>
-        </BentoCard>
-      {/if}
-
-      {#if hasPermission('teachers.view')}
-        <BentoCard title="Guru" description="Tugaskan mapel dan lihat konfirmasi.">
-          <a href="/teachers" use:inertia class="mt-auto inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
-            Kelola guru <ArrowRight class="w-4 h-4" />
-          </a>
-        </BentoCard>
-      {/if}
-      {#if currentUser?.roles?.includes('admin')}
-        <BentoCard title="Penugasan Guru" description="Atur kelas yang diampu dan wali kelas.">
-          <a href="/teacher-assignments" use:inertia class="mt-auto inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
-            Atur penugasan <ArrowRight class="w-4 h-4" />
-          </a>
-        </BentoCard>
-      {/if}
-
-      {#if hasPermission('schedules.view')}
-        <BentoCard title="Jadwal Hari Ini" description="Lihat kelas yang sedang berlangsung.">
-          <a href="/teacher/schedule" use:inertia class="mt-auto inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
-            Lihat jadwal <ArrowRight class="w-4 h-4" />
-          </a>
-        </BentoCard>
-      {/if}
-
-      {#if hasPermission('journals.view')}
-        <BentoCard title="Jurnal" description="Catatan digital setiap sesi mengajar.">
-          <a href="/journals" use:inertia class="mt-auto inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
-            Buka jurnal <ArrowRight class="w-4 h-4" />
-          </a>
-        </BentoCard>
-      {/if}
-
-      {#if hasPermission('grades.view')}
-        <BentoCard title="Nilai" description="Catat dan tinjau nilai siswa.">
-          <a href="/grades" use:inertia class="mt-auto inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
-            Kelola nilai <ArrowRight class="w-4 h-4" />
-          </a>
-        </BentoCard>
-      {/if}
-
-      {#if hasPermission('school_locations.view')}
-        <BentoCard title="Profil Sekolah" description="Identitas sekolah dan geofencing absensi.">
-          <a href="/school-locations" use:inertia class="mt-auto inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
-            Kelola profil <ArrowRight class="w-4 h-4" />
-          </a>
-        </BentoCard>
-      {/if}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-[minmax(206px,auto)]">
+      {#each aksesUtama.filter(item => item.show) as item (item.title)}
+        <BentoCard
+          title={item.title}
+          description={item.description}
+          href={item.href}
+          cta={item.cta}
+          icon={item.icon}
+          tone={item.tone}
+          meta={item.meta}
+        />
+      {/each}
     </div>
     </section>
   </div>

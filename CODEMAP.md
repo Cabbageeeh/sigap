@@ -11,7 +11,7 @@
 ## Stats
 
 - Files indexed: 284
-- Total lines: 30516
+- Total lines: 30606
 - Total exports: 848
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
@@ -193,7 +193,7 @@
 ### resources/Components/
 
 - `Badge.svelte` (51L) — badgeVariants, BadgeVariant
-- `BentoCard.svelte` (39L)
+- `BentoCard.svelte` (103L)
 - `Button.svelte` (83L) — buttonVariants, ButtonVariant, ButtonSize, ButtonProps
 - `Can.svelte` (40L)
 - `ConfirmDialog.svelte` (42L)
@@ -228,7 +228,7 @@
 - `academicYears.svelte` (193L)
 - `announcements.svelte` (106L)
 - `classes.svelte` (99L)
-- `dashboard.svelte` (167L)
+- `dashboard.svelte` (193L)
 - `gradeAudit.svelte` (77L)
 - `grades.svelte` (378L)
 - `journals.svelte` (258L)
@@ -1800,6 +1800,7 @@
 - `migrations/20260902000001_scope_parent_accounts.ts` → `../app/services/SQLite`
 - `migrations/20260914000001_repair_journals_fk.ts` → `@services/SQLite`
 - `resources/app.ts` → `@inertiajs/svelte`
+- `resources/Components/BentoCard.svelte` → `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Components/Can.svelte` → `@inertiajs/svelte`
 - `resources/Components/charts/AttendanceDonut.svelte` → `../../types`
 - `resources/Components/charts/AttendanceTrendChart.svelte` → `../../types`
