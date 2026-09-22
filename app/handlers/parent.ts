@@ -73,6 +73,7 @@ export const parentGradesPage = (req: NaraRequest, res: NaraResponse) => {
   const progression = published ? findGradeProgressionByStudent(studentId) : [];
 
   return res.inertia('parent/grades', {
+    studentId,
     studentName: student?.name ?? '',
     gradesPublished: published,
     summaries: published ? summaries : [],

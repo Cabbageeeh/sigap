@@ -9,7 +9,7 @@
   import Label from '../Components/Label.svelte';
   import Button from '../Components/Button.svelte';
   import { timestampToDateInput } from '$lib/utils/datetime';
-  import { ClipboardCheck } from '@lucide/svelte';
+  import { ClipboardCheck, FileText } from '@lucide/svelte';
 
   interface RecapRow {
     student_id: string;
@@ -26,10 +26,12 @@
     classes = [],
     recap = [],
     filters,
+    canViewRapor = false,
   }: {
     classes?: { id: string; name: string }[];
     recap?: RecapRow[];
     filters: { class_id: string; from: number; to: number };
+    canViewRapor?: boolean;
   } = $props();
 
   let classId = $state<string | null>(filters.class_id);
@@ -76,6 +78,12 @@
   {/if}
 {/snippet}
 
+{#snippet raporAction(row: RecapRow)}
+  <Button variant="ghost" size="sm" onclick={() => router.visit(`/reports/rapor/${row.student_id}`)}>
+    <FileText class="w-3.5 h-3.5" /> Rapor
+  </Button>
+{/snippet}
+
 <Sidebar group="attendance" />
 <PageShell>
   <PageHeader eyebrow="Kehadiran Siswa" title="Rekap Kehadiran." description="Rekap kehadiran siswa per kelas — diisi otomatis dari jurnal mengajar." />
@@ -110,6 +118,6 @@
       <p class="text-sm text-muted-foreground">Belum ada kelas yang bisa direkap. Kehadiran siswa diisi lewat form Tambah Jurnal.</p>
     </div>
   {:else}
-    <DataTable {columns} rows={recap} keyField="student_id" cell={recapCell} emptyMessage="Belum ada data kehadiran pada rentang ini — isi lewat form Tambah Jurnal." />
+    <DataTable {columns} rows={recap} keyField="student_id" cell={recapCell} rowAction={canViewRapor ? raporAction : undefined} emptyMessage="Belum ada data kehadiran pada rentang ini — isi lewat form Tambah Jurnal." />
   {/if}
 </PageShell>

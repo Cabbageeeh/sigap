@@ -1,9 +1,9 @@
 import type { NaraRequest, NaraResponse } from '@core';
 import { findStudentById } from '@queries/students';
-import { findParentByUserId } from '@queries/parents';
 import { findStudentsByParent } from '@queries/students';
 import { getStudentGradeSummaries, getStudentContext } from '@queries/grades';
 import { findAttendanceByStudent } from '@queries/studentAttendance';
+import { isTeacherHomeroomOfClass, isTeacherUser } from '@queries/teacherClassAssignments';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
 
 export const raporPage = (req: NaraRequest, res: NaraResponse) => {
@@ -12,20 +12,19 @@ export const raporPage = (req: NaraRequest, res: NaraResponse) => {
   const studentId = req.params.studentId;
   if (!studentId) return res.redirect('/dashboard');
 
-  const parentUser = hasRole(req.user.id, 'parent');
-  const isStaff = !isAdmin(req.user.id) && !parentUser && hasPermission(req.user.id, 'grades.view');
-
-  let ownsChild = false;
-  if (!isStaff) {
-    const parent = findParentByUserId(req.user.id);
-    if (parent) {
-      ownsChild = findStudentsByParent(parent.user_id).some(c => c.id === studentId);
-    }
-  }
-  if (!isStaff && !ownsChild) return res.redirect('/dashboard');
-
   const student = findStudentById(studentId);
   if (!student) return res.redirect('/dashboard');
+
+  const userId = req.user.id;
+  const parentUser = hasRole(userId, 'parent');
+  const staff = !isAdmin(userId) && !parentUser && hasPermission(userId, 'grades.view');
+  const homeroomOfStudent = staff && isTeacherUser(userId) && isTeacherHomeroomOfClass(userId, student.class_id);
+  const overseesGrades = staff && hasRole(userId, 'headmaster');
+  const ownsChild = parentUser && findStudentsByParent(userId).some(child => child.id === studentId);
+
+  if (!homeroomOfStudent && !overseesGrades && !ownsChild) return res.redirect('/dashboard');
+
+  const isStaff = homeroomOfStudent || overseesGrades;
 
   const context = getStudentContext(studentId);
   const { published, summaries } = getStudentGradeSummaries(studentId);
