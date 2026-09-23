@@ -1,28 +1,73 @@
 import type { NaraRequest, NaraResponse } from '@core';
 import type { Journal } from '@types';
+import type { JournalSlotView } from '../types/shared';
 import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationError } from '@core';
 import Logger from '@services/Logger';
 import { findAllJournals, findJournalById, findJournalsBySchedule, findJournalsByTeacher, findJournalByScheduleAndDate, createJournal, updateJournal, deleteJournal } from '@queries/journals';
 import { findScheduleById, findTeacherSchedulesByDay } from '@queries/schedules';
 import { findAttendanceByJournal, upsertStudentAttendance } from '@queries/studentAttendance';
 import { findStudentsByClass } from '@queries/students';
-import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
+import { findConfirmationByTeacherOnDay, findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
+import { isTeachingDay } from '@queries/schoolCalendar';
 import { isAdmin, hasPermission } from '@queries/users';
 import { isTeacherUser } from '@queries/teacherClassAssignments';
 import { JournalSchema, UpdateJournalSchema, zodToErrors } from '@validators';
+import { JOURNAL_LATE_DAYS } from '@config/constants';
 
-const dayBounds = (): { start: number; end: number } => {
-  const now = new Date();
-  return {
-    start: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0).getTime(),
-    end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).getTime(),
-  };
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+const startOfDayMs = (timestamp: number): number => {
+  const date = new Date(timestamp);
+  date.setHours(0, 0, 0, 0);
+  return date.getTime();
+};
+
+const minutesOf = (timestamp: number): number => {
+  const date = new Date(timestamp);
+  return date.getHours() * 60 + date.getMinutes();
+};
+
+const clockOf = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 };
 
 const isTeacherActor = (userId: string): boolean => !isAdmin(userId) && isTeacherUser(userId);
 const canView = (userId: string): boolean => !isAdmin(userId) && hasPermission(userId, 'journals.view');
 const canManage = (userId: string, permission: string): boolean =>
   isTeacherActor(userId) && hasPermission(userId, permission);
+
+// Sessions the teacher still owes a journal for: today's finished lessons plus
+// late entries, which additionally require that presence was confirmed that day.
+const buildJournalSlots = (userId: string, journals: Journal[], now: number): JournalSlotView[] => {
+  const slots: JournalSlotView[] = [];
+
+  for (let back = 0; back <= JOURNAL_LATE_DAYS; back += 1) {
+    const day = startOfDayMs(now - back * DAY_MS);
+    if (!isTeachingDay(day)) continue;
+    const confirmed = !!findConfirmationByTeacherOnDay(userId, day);
+
+    for (const schedule of findTeacherSchedulesByDay(userId, new Date(day).getDay())) {
+      if (day + minutesOf(schedule.end_time) * 60000 > now) continue;
+      const journal = journals.find(j => j.schedule_id === schedule.id && j.date >= day && j.date < day + DAY_MS);
+      if (journal && back > 0) continue;
+      if (!journal && !confirmed) continue;
+
+      slots.push({
+        schedule_id: schedule.id,
+        class_id: schedule.class_id,
+        class_name: schedule.class_name ?? '',
+        subject_name: schedule.subject_name ?? '',
+        time: `${clockOf(schedule.start_time)}–${clockOf(schedule.end_time)}`,
+        date: day,
+        is_late: back > 0,
+        journal_id: journal?.id ?? null,
+      });
+    }
+  }
+
+  return slots;
+};
 
 export const journalsPage = (req: NaraRequest, res: NaraResponse) => {
   const userId = req.user?.id;
@@ -34,36 +79,26 @@ export const journalsPage = (req: NaraRequest, res: NaraResponse) => {
   };
 
   const teacherActor = userId ? isTeacherActor(userId) : false;
-  const today = new Date().getDay();
-  const { start, end } = dayBounds();
-
   const journals = userId
     ? teacherActor ? findJournalsByTeacher(userId) : canView(userId) ? findAllJournals() : []
     : [];
-  const todaySchedules = teacherActor && userId ? findTeacherSchedulesByDay(userId, today) : [];
-  const todayJournalBySchedule = new Map(
-    journals
-      .filter(j => j.date >= start && j.date <= end)
-      .map(j => [j.schedule_id, j] as const),
-  );
+  const slots = teacherActor && userId ? buildJournalSlots(userId, journals, Date.now()) : [];
 
   const rosterByClass: Record<string, { id: string; name: string; nis: string }[]> = {};
   const attendanceByJournal: Record<string, { student_id: string; status: string }[]> = {};
-  for (const s of todaySchedules) {
-    if (!rosterByClass[s.class_id]) {
-      rosterByClass[s.class_id] = findStudentsByClass(s.class_id).map(st => ({ id: st.id, name: st.name, nis: st.nis }));
+  for (const slot of slots) {
+    if (!rosterByClass[slot.class_id]) {
+      rosterByClass[slot.class_id] = findStudentsByClass(slot.class_id).map(st => ({ id: st.id, name: st.name, nis: st.nis }));
     }
-    const j = todayJournalBySchedule.get(s.id);
-    if (j) {
-      attendanceByJournal[j.id] = findAttendanceByJournal(j.id).map(a => ({ student_id: a.student_id, status: a.status }));
+    if (slot.journal_id) {
+      attendanceByJournal[slot.journal_id] = findAttendanceByJournal(slot.journal_id).map(a => ({ student_id: a.student_id, status: a.status }));
     }
   }
 
   return res.inertia('journals', {
     permissions,
     journals,
-    todaySchedules,
-    todayJournalIds: Object.fromEntries([...todayJournalBySchedule].map(([sid, j]) => [sid, j.id])),
+    journalSlots: slots,
     confirmedToday: teacherActor && userId ? !!findTodayConfirmationByTeacher(userId) : true,
     rosterByClass,
     attendanceByJournal,
@@ -122,17 +157,28 @@ export const addJournal = (req: NaraRequest, res: NaraResponse) => {
   const canCreate = canManage(req.user.id, 'journals.create') && schedule.teacher_user_id === req.user.id;
   if (!canCreate) return jsonError(res, 'Forbidden', 403);
 
-  if (schedule.day_of_week !== new Date().getDay()) {
-    return jsonError(res, 'Jurnal hanya bisa dibuat untuk jadwal hari ini', 422, 'JOURNAL_WRONG_DAY');
+  const now = Date.now();
+  const todayStart = startOfDayMs(now);
+  const day = parsed.data.date ? startOfDayMs(parsed.data.date) : todayStart;
+
+  if (day > todayStart || day < todayStart - JOURNAL_LATE_DAYS * DAY_MS) {
+    return jsonError(res, `Jurnal hanya bisa diisi untuk ${JOURNAL_LATE_DAYS} hari terakhir`, 422, 'JOURNAL_OUT_OF_RANGE');
+  }
+  if (!isTeachingDay(day) || new Date(day).getDay() !== schedule.day_of_week) {
+    return jsonError(res, 'Tanggal itu bukan hari efektif dengan jadwal tersebut', 422, 'JOURNAL_WRONG_DAY');
+  }
+  if (day + minutesOf(schedule.end_time) * 60000 > now) {
+    return jsonError(res, 'Sesi pada tanggal itu belum berlangsung', 422, 'JOURNAL_TOO_EARLY');
   }
 
-  const confirmation = findTodayConfirmationByTeacher(req.user.id);
+  const confirmation = findConfirmationByTeacherOnDay(req.user.id, day);
   if (!confirmation) {
-    return jsonError(res, 'Anda belum konfirmasi kehadiran hari ini', 403, 'CONFIRMATION_REQUIRED');
+    return jsonError(res, day === todayStart
+      ? 'Anda belum konfirmasi kehadiran hari ini'
+      : 'Anda tidak tercatat hadir pada tanggal itu', 403, 'CONFIRMATION_REQUIRED');
   }
 
-  const { start, end } = dayBounds();
-  const existing = findJournalByScheduleAndDate(schedule.id, start, end);
+  const existing = findJournalByScheduleAndDate(schedule.id, day, day + DAY_MS - 1);
 
   const attendance = parsed.data.attendance ?? [];
   const roster = new Set(findStudentsByClass(schedule.class_id).map(st => st.id));
@@ -148,7 +194,7 @@ export const addJournal = (req: NaraRequest, res: NaraResponse) => {
       : createJournal({
         schedule_id: schedule.id,
         teacher_confirmation_id: confirmation.id,
-        date: start,
+        date: day,
         material: parsed.data.material,
       });
 

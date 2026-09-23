@@ -40,3 +40,7 @@ export const QR = {
 } as const;
 
 export const QR_REFRESH_INTERVAL_DEFAULT = QR.REFRESH_INTERVAL_DEFAULT;
+
+// A missed journal can still be filed this many days later, but only for a day
+// the teacher actually confirmed presence — the oversight alarm covers the rest.
+export const JOURNAL_LATE_DAYS = 3;

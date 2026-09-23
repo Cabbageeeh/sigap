@@ -11,13 +11,8 @@
   import SearchableSelect from '../Components/SearchableSelect.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
-  import type { Journal, Schedule } from '../types';
+  import type { Journal, JournalSlotView } from '../types';
 
-  interface TeacherDailySchedule extends Schedule {
-    class_name: string;
-    subject_name: string;
-  }
-  import { timestampToTimeInput } from '$lib/utils/datetime';
   import { cn } from '$lib/utils.js';
   import { BookOpen, Pencil, Plus, Trash2 } from '@lucide/svelte';
 
@@ -32,16 +27,14 @@
   let {
     permissions,
     journals = [],
-    todaySchedules = [],
-    todayJournalIds = {},
+    journalSlots = [],
     confirmedToday = true,
     rosterByClass = {},
     attendanceByJournal = {},
   }: {
     permissions: { canCreate?: boolean; canEdit?: boolean; canDelete?: boolean };
     journals?: JournalRow[];
-    todaySchedules?: TeacherDailySchedule[];
-    todayJournalIds?: Record<string, string>;
+    journalSlots?: JournalSlotView[];
     confirmedToday?: boolean;
     rosterByClass?: Record<string, RosterStudent[]>;
     attendanceByJournal?: Record<string, { student_id: string; status: string }[]>;
@@ -55,15 +48,16 @@
 
   const todayLabel = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
 
-  const scheduleLabel = (s: TeacherDailySchedule) =>
-    `${s.class_name ?? ''} · ${s.subject_name ?? ''} · ${timestampToTimeInput(s.start_time)}–${timestampToTimeInput(s.end_time)}`;
+  const slotLabel = (slot: JournalSlotView) =>
+    `${formatDate(slot.date)} · ${slot.class_name} · ${slot.subject_name} · ${slot.time}${slot.is_late ? ' · susulan' : ''}`;
 
-  const journalBySchedule = $derived(
-    new Map(journals.filter(j => todayJournalIds[j.schedule_id] === j.id).map(j => [j.schedule_id, j])),
+  const journalBySlot = $derived(
+    new Map(journalSlots.filter(s => s.journal_id).map(s => [s.schedule_id, journals.find(j => j.id === s.journal_id) ?? null])),
   );
 
-  const selectedSchedule = $derived(todaySchedules.find(s => s.id === form.schedule_id));
-  const roster = $derived<RosterStudent[]>(selectedSchedule ? (rosterByClass[selectedSchedule.class_id] ?? []) : []);
+  const selectedSlot = $derived(journalSlots.find(s => s.schedule_id === form.schedule_id));
+  const roster = $derived<RosterStudent[]>(selectedSlot ? (rosterByClass[selectedSlot.class_id] ?? []) : []);
+  const selectedDateLabel = $derived(selectedSlot ? formatDate(selectedSlot.date) : todayLabel);
 
   const STATUS_OPTIONS: { value: AttendanceStatus; label: string }[] = [
     { value: 'present', label: 'Hadir' },
@@ -101,7 +95,7 @@
   }
 
   function onScheduleChange(): void {
-    const existing = journalBySchedule.get(form.schedule_id);
+    const existing = journalBySlot.get(form.schedule_id);
     if (existing) {
       selected = existing;
       form.material = existing.material;
@@ -118,6 +112,7 @@
   async function submit(): Promise<void> {
     const payload = {
       schedule_id: form.schedule_id,
+      ...(selectedSlot ? { date: selectedSlot.date } : {}),
       material: form.material,
       attendance: roster.map(st => ({ student_id: st.id, status: attendance[st.id] ?? 'present' })),
     };
@@ -164,35 +159,35 @@
   <PageHeader eyebrow="Jurnal Mengajar" title="Jurnal." description="Catatan harian kegiatan belajar mengajar per jadwal.">
     {#snippet actions()}
       {#if permissions.canCreate}
-        <Button onclick={openCreate} size="lg" disabled={todaySchedules.length === 0}>
+        <Button onclick={openCreate} size="lg" disabled={journalSlots.length === 0}>
           <Plus class="w-4 h-4" /> Tambah Jurnal
         </Button>
       {/if}
     {/snippet}
   </PageHeader>
 
-  {#if permissions.canCreate && todaySchedules.length === 0}
+  {#if permissions.canCreate && journalSlots.length === 0}
     <div class="relative overflow-hidden rounded-2xl border border-border bg-card p-5 mb-6 flex items-center gap-3 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
-      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-warning-500/10 shrink-0"><BookOpen class="h-4.5 w-4.5 text-warning-600 dark:text-warning-400" /></span>
-      <p class="text-sm text-muted-foreground">Tidak ada jadwal mengajar hari ini — jurnal hanya bisa diisi untuk jadwal hari ini.</p>
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-success-500/10 shrink-0"><BookOpen class="h-4.5 w-4.5 text-success-600 dark:text-success-400" /></span>
+      <p class="text-sm text-muted-foreground">Semua sesi tiga hari terakhir sudah terisi jurnal — tidak ada yang menunggu.</p>
     </div>
   {/if}
 
-  <DataTable {columns} rows={journals} rowAction={rowActions} cell={journalCell} emptyMessage="Belum ada jurnal yang diisi hari ini. Klik 'Tambah Jurnal' untuk mulai." />
+  <DataTable {columns} rows={journals} rowAction={rowActions} cell={journalCell} emptyMessage="Belum ada jurnal yang diisi. Klik 'Tambah Jurnal' untuk mulai." />
 
-<Modal bind:open={isOpen} title={selected ? 'Edit Jurnal' : 'Tambah Jurnal'} description="Jurnal untuk jadwal hari ini. Tanggal dan konfirmasi kehadiran terisi otomatis.">
+<Modal bind:open={isOpen} title={selected ? 'Edit Jurnal' : 'Tambah Jurnal'} description="Pilih sesi yang sudah berlangsung. Jurnal susulan hanya bisa diisi bila Anda tercatat hadir pada hari itu.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
     <div class="rounded-xl border border-border bg-secondary/20 px-4 py-3 text-sm text-muted-foreground">
-      Tanggal: <strong class="text-foreground">{todayLabel}</strong>
+      Tanggal: <strong class="text-foreground">{selectedDateLabel}</strong>
       {#if !confirmedToday}
-        <p class="mt-1 text-destructive text-xs">Anda belum konfirmasi kehadiran hari ini — scan QR absen dulu.</p>
+        <p class="mt-1 text-destructive text-xs">Anda belum konfirmasi kehadiran hari ini — scan QR absen dulu untuk sesi hari ini.</p>
       {/if}
     </div>
     <div class="flex flex-col gap-0">
       <Label for="schedule" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Jadwal</Label>
-      <SearchableSelect id="schedule" bind:value={form.schedule_id} onchange={onScheduleChange} placeholder="Pilih jadwal hari ini" disabled={!!selected} options={todaySchedules.map(s => ({ value: s.id, label: `${scheduleLabel(s)}${journalBySchedule.has(s.id) ? ' · sudah ada jurnal' : ''}` }))} />
-      {#if journalBySchedule.has(form.schedule_id) && !selected}
-        <p class="mt-1.5 text-xs text-primary">Jurnal untuk jadwal ini sudah ada — materi akan diperbarui.</p>
+      <SearchableSelect id="schedule" bind:value={form.schedule_id} onchange={onScheduleChange} placeholder="Pilih sesi yang belum dijurnal" disabled={!!selected} options={journalSlots.map(s => ({ value: s.schedule_id, label: `${slotLabel(s)}${journalBySlot.get(s.schedule_id) ? ' · sudah ada jurnal' : ''}` }))} />
+      {#if journalBySlot.get(form.schedule_id) && !selected}
+        <p class="mt-1.5 text-xs text-primary">Jurnal untuk sesi ini sudah ada — materi akan diperbarui.</p>
       {/if}
     </div>
     <div class="flex flex-col gap-0">

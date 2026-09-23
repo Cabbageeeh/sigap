@@ -43,6 +43,7 @@ export type {
   GradeAuditLogRow,
   SessionStatusView,
   MissedConfirmationView,
+  JournalSlotView,
   JournalCompletenessView,
   GradeProgressView,
   HeadmasterClassOverviewView,

@@ -81,6 +81,19 @@ export const findTodayConfirmationBySchedule = (scheduleId: string): TeacherConf
   `;
 };
 
+export const findConfirmationByTeacherOnDay = (
+  teacherUserId: string,
+  dayStart: number,
+): TeacherConfirmation | undefined =>
+  SQLite.one<TeacherConfirmation>`
+    SELECT * FROM teacher_confirmations
+    WHERE teacher_user_id = ${teacherUserId}
+      AND confirmed_at >= ${dayStart}
+      AND confirmed_at <= ${dayStart + 86399999}
+    ORDER BY confirmed_at DESC
+    LIMIT 1
+  `;
+
 export const findTodayConfirmationByTeacher = (teacherUserId: string): TeacherConfirmation | undefined => {
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);

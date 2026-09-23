@@ -333,6 +333,19 @@ export interface MissedConfirmationView {
   scheduled_sessions: number;
 }
 
+// One teachable session a teacher may still write a journal for: today's
+// sessions plus late entries within the allowed window.
+export interface JournalSlotView {
+  schedule_id: string;
+  class_id: string;
+  class_name: string;
+  subject_name: string;
+  time: string;
+  date: number;
+  is_late: boolean;
+  journal_id: string | null;
+}
+
 export interface JournalCompletenessView {
   teacher_name: string;
   expected: number;

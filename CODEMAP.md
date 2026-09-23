@@ -10,9 +10,9 @@
 
 ## Stats
 
-- Files indexed: 288
-- Total lines: 31613
-- Total exports: 891
+- Files indexed: 294
+- Total lines: 32371
+- Total exports: 913
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -24,7 +24,7 @@
 
 ### app/config/
 
-- `constants.ts` (43L) — SERVER, AUTH, RATE_LIMIT, UPLOAD, CACHE, LOGGING, QR, QR_REFRESH_INTERVAL_DEFAULT
+- `constants.ts` (47L) — SERVER, AUTH, RATE_LIMIT, UPLOAD, CACHE, LOGGING, QR, QR_REFRESH_INTERVAL_DEFAULT, +1
 - `env.ts` (65L) — env, initEnv, checkFeatureConfig, getEnvSummary, Env
 - `index.ts` (18L)
 
@@ -52,19 +52,20 @@
 - `classes.ts` (114L) — classesPage, listClasses, classData, addClass, editClass, removeClass
 - `dashboard.ts` (31L) — dashboardPage
 - `gradeAudit.ts` (39L) — gradeAuditPage, gradeAuditData
-- `grades.ts` (369L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, addGradeComponentType, renameGradeComponentType, +3
+- `grades.ts` (372L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, addGradeComponentType, renameGradeComponentType, +3
 - `headmaster.ts` (102L) — headmasterDashboardPage, headmasterDashboardData, headmasterReportsPage, headmasterClassGradesPage, headmasterTeacherAttendancePage, listOutsideConfirmations
 - `home.ts` (17L) — landingPage
-- `index.ts` (30L)
-- `journals.ts` (239L) — journalsPage, listJournals, journalData, addJournal, editJournal, removeJournal
+- `index.ts` (31L)
+- `journals.ts` (285L) — journalsPage, listJournals, journalData, addJournal, editJournal, removeJournal
 - `notifications.ts` (20L) — notificationsData, markNotificationsRead
 - `parent.ts` (83L) — parentDashboardPage, parentDashboardData, childAttendancePage, parentGradesPage
 - `parents.ts` (63L) — parentsPage, listParents, parentData, parentByUser
 - `qrSettings.ts` (62L) — qrSettingsPage, saveQrSettings, qrDisplayPage, qrCodeData
-- `rapor.ts` (50L) — raporPage
+- `rapor.ts` (71L) — raporPage
 - `reports.ts` (20L) — classSubjectReport
 - `roles.ts` (154L) — rolesPage, listRoles, permissionsData, addRole, editRole, removeRole
 - `schedules.ts` (186L) — schedulesPage, listSchedules, scheduleData, addSchedule, editSchedule, removeSchedule
+- `schoolCalendar.ts` (88L) — schoolCalendarPage, addSchoolHoliday, removeSchoolHoliday, saveSchoolCalendarSettings
 - `schoolLocations.ts` (54L) — schoolLocationsPage, saveSchoolProfile
 - `studentAttendance.ts` (120L) — studentAttendancePage, listAttendanceByJournal, listAttendanceByStudent, saveAttendance, removeAttendance
 - `students.ts` (351L) — studentsPage, classStudentsPage, listStudents, studentsByClass, studentData, addStudent, editStudent, addStudentParentAccount, +5
@@ -97,13 +98,14 @@
 - `gradeAuditLogs.ts` (39L) — logGradeChange, getGradeAuditLogsPaginated
 - `gradeComponents.ts` (53L) — findGradeComponentsByYear, upsertGradeComponents, addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent
 - `grades.ts` (316L) — findAllGrades, findGradeById, findGradesByStudent, findGradesByStudentForTeacher, findGradesByClassSubject, findGradesByTeacher, findGradeByUniqueKey, upsertGradesBulk, +13
-- `headmaster.ts` (467L) — getTodaySessions, getMissedConfirmations, getJournalCompleteness, getGradeProgress, getClassOverview, getTeacherAttendanceOverview, getTeacherAttendanceHistory, findClassGradeDetails, +5
+- `headmaster.ts` (474L) — getTodaySessions, getMissedConfirmations, getJournalCompleteness, getGradeProgress, getClassOverview, getTeacherAttendanceOverview, getTeacherAttendanceHistory, findClassGradeDetails, +5
 - `index.ts` (25L)
 - `journals.ts` (60L) — findAllJournals, findJournalById, findJournalsBySchedule, findJournalByScheduleAndDate, findJournalsByTeacher, findJournalsByDateRange, createJournal, updateJournal, +2
 - `notifications.ts` (41L) — createGradePublishedNotifications, findNotificationsByUser, getUnreadNotificationCount, markAllNotificationsRead
 - `parents.ts` (181L) — findAllParents, findParentById, findParentByUserId, getParentsPaginated, findParentAccountByStudentId, findParentAccountOptions, createParentAccountForStudent, linkParentAccountToStudent, +4
 - `roles.ts` (123L) — findAllRoles, findRoleById, findRoleBySlug, createRole, updateRole, deleteRole, getRolePermissions, getPermissionsForRoles, +10
 - `schedules.ts` (83L) — findAllSchedules, findScheduleById, findSchedulesByClass, findSchedulesByTeacher, findTeacherSchedulesByDay, findSchedulesByDay, createSchedule, updateSchedule, +5
+- `schoolCalendar.ts` (61L) — findSchoolHolidays, findSchoolHolidayByDate, createSchoolHoliday, deleteSchoolHoliday, isSaturdaySchoolDay, setSaturdaySchoolDay, isTeachingDay, findNonTeachingDays, +1
 - `schoolLocations.ts` (25L) — findSchoolLocationById, findActiveSchoolLocation, createSchoolLocation, updateSchoolLocation
 - `sessions.ts` (50L) — findSessionById, createSession, deleteSession, deleteSessionsByUserId, cleanupExpiredSessions, getUserBySessionId
 - `stats.ts` (184L) — getDashboardStats, getDashboardCharts, getClassSubjectStats, DashboardStats, AttendanceTrendPoint, AttendanceStatusSlice, ClassSizePoint, ConfirmationWeekPoint, +2
@@ -111,7 +113,7 @@
 - `students.ts` (169L) — findAllStudents, findStudentById, findAllNisOwners, importStudents, findStudentsByClass, findStudentsByParent, findStudentsByTeacherUser, searchStudents, +6
 - `subjects.ts` (33L) — findAllSubjects, findSubjectById, findSubjectByCode, createSubject, updateSubject, deleteSubject
 - `teacherClassAssignments.ts` (143L) — findTeacherClassAssignments, findTeacherClassAssignmentsByAcademicYear, isTeacherUser, isTeacherAssignedToClass, isTeacherHomeroomOfClass, isTeacherAssignedToClassSubject, isTeacherAssignedToStudent, syncTeacherClassAssignments, +1
-- `teacherConfirmations.ts` (121L) — findAllTeacherConfirmations, getConfirmationLogsPaginated, countTeachersConfirmedOn, findTeacherConfirmationById, findConfirmationsByTeacher, findConfirmationsBySchedule, findTodayConfirmationBySchedule, findTodayConfirmationByTeacher, +4
+- `teacherConfirmations.ts` (134L) — findAllTeacherConfirmations, getConfirmationLogsPaginated, countTeachersConfirmedOn, findTeacherConfirmationById, findConfirmationsByTeacher, findConfirmationsBySchedule, findTodayConfirmationBySchedule, findConfirmationByTeacherOnDay, +5
 - `teachers.ts` (117L) — findAllTeachers, findAllTeachersForAssignment, findTeacherByEmployeeId, countActiveTeachers, findTeacherUsersForSchedule, findTeacherById, findTeacherByUserId, findTeachersBySubject, +7
 - `users.ts` (163L) — findUserById, findUserByUsername, createUser, updateUser, deleteUser, deleteUsers, usernameExists, searchUsers, +12
 
@@ -135,12 +137,12 @@
 ### app/types/
 
 - `models.ts` (285L) — User, Session, Role, Permission, Asset, UserRole, RolePermission, AcademicYear, +20
-- `shared.ts` (417L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +36
+- `shared.ts` (429L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +37
 
 ### app/validators/
 
-- `index.ts` (94L) — zodToErrors
-- `schemas.ts` (351L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +66
+- `index.ts` (98L) — zodToErrors
+- `schemas.ts` (363L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +70
 
 ### migrations/
 
@@ -185,6 +187,7 @@
 - `20260913000001_add_school_start_time.ts` (8L) — up, down
 - `20260913000002_add_missing_updated_at.ts` (12L) — up, down
 - `20260914000001_repair_journals_fk.ts` (42L) — up, down
+- `20260923000001_create_school_holidays.ts` (15L) — up, down
 
 ### resources/
 
@@ -210,7 +213,7 @@
 - `RoleModal.svelte` (152L)
 - `SearchableSelect.svelte` (115L) — SearchableSelectOption
 - `Select.svelte` (40L)
-- `Sidebar.svelte` (370L)
+- `Sidebar.svelte` (371L)
 - `SigapIcon.svelte` (46L)
 - `StatCard.svelte` (81L)
 - `Switch.svelte` (52L)
@@ -231,7 +234,7 @@
 - `dashboard.svelte` (193L)
 - `gradeAudit.svelte` (77L)
 - `grades.svelte` (378L)
-- `journals.svelte` (258L)
+- `journals.svelte` (253L)
 - `landing.svelte` (610L)
 - `parents.svelte` (21L)
 - `profile.svelte` (206L)
@@ -239,6 +242,7 @@
 - `qrSettings.svelte` (90L)
 - `roles.svelte` (273L)
 - `schedules.svelte` (304L)
+- `schoolCalendar.svelte` (158L)
 - `schoolLocations.svelte` (233L)
 - `studentAttendance.svelte` (124L)
 - `students.svelte` (391L)
@@ -268,7 +272,7 @@
 
 ### resources/Pages/reports/
 
-- `rapor.svelte` (158L)
+- `rapor.svelte` (193L)
 
 ### resources/Pages/teacher/
 
@@ -303,12 +307,12 @@
 
 ### resources/types/
 
-- `forms.ts` (477L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +40
+- `forms.ts` (478L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +40
 - `index.ts` (15L)
 
 ### routes/
 
-- `web.ts` ★ (229L)
+- `web.ts` ★ (236L)
 
 ### scripts/
 
@@ -337,7 +341,7 @@
 - `07_demo_data.ts` (218L) — run
 - `08_qr_settings.ts` (12L) — run
 - `09_bulk_demo_master.ts` (304L) — run
-- `10_bulk_demo_activity.ts` (231L) — run
+- `10_bulk_demo_activity.ts` (267L) — run
 
 ### seeds/data/
 
@@ -362,10 +366,11 @@
 - `gradeAudit.test.ts` (116L)
 - `grades.test.ts` (353L)
 - `headmaster.test.ts` (202L)
+- `journals.test.ts` (126L)
 - `notifications.test.ts` (102L)
 - `parent.test.ts` (148L)
 - `parents.test.ts` (71L)
-- `rapor.test.ts` (110L)
+- `rapor.test.ts` (154L)
 - `reports.test.ts` (33L)
 - `roles.test.ts` (135L)
 - `schedules.test.ts` (231L)
@@ -393,9 +398,10 @@
 
 - `classes.test.ts` (44L)
 - `grades.test.ts` (37L)
-- `headmaster.test.ts` (209L)
+- `headmaster.test.ts` (214L)
 - `roles.test.ts` (125L)
 - `schedules.test.ts` (37L)
+- `schoolCalendar.test.ts` (63L)
 - `teacherClassAssignments.test.ts` (54L)
 - `teacherConfirmations.test.ts` (63L)
 - `teachers.test.ts` (43L)
@@ -429,6 +435,7 @@
 - `const` **LOGGING**
 - `const` **QR**
 - `const` **QR_REFRESH_INTERVAL_DEFAULT**
+- `const` **JOURNAL_LATE_DAYS**
 
 ### `app/config/env.ts`
 
@@ -652,6 +659,13 @@
 - `const` **addSchedule**
 - `const` **editSchedule**
 - `const` **removeSchedule**
+
+### `app/handlers/schoolCalendar.ts`
+
+- `const` **schoolCalendarPage**
+- `const` **addSchoolHoliday**
+- `const` **removeSchoolHoliday**
+- `const` **saveSchoolCalendarSettings**
 
 ### `app/handlers/schoolLocations.ts`
 
@@ -945,6 +959,18 @@
 - `iface` **TeacherDailySchedule**
 - `iface` **ScheduleWithDetails**
 
+### `app/queries/schoolCalendar.ts`
+
+- `const` **findSchoolHolidays**
+- `const` **findSchoolHolidayByDate**
+- `const` **createSchoolHoliday**
+- `const` **deleteSchoolHoliday**
+- `const` **isSaturdaySchoolDay**
+- `const` **setSaturdaySchoolDay**
+- `const` **isTeachingDay**
+- `const` **findNonTeachingDays**
+- `iface` **SchoolHoliday**
+
 ### `app/queries/schoolLocations.ts`
 
 - `const` **findSchoolLocationById**
@@ -1036,6 +1062,7 @@
 - `const` **findConfirmationsByTeacher**
 - `const` **findConfirmationsBySchedule**
 - `const` **findTodayConfirmationBySchedule**
+- `const` **findConfirmationByTeacherOnDay**
 - `const` **findTodayConfirmationByTeacher**
 - `const` **createTeacherConfirmation**
 - `const` **updateTeacherConfirmation**
@@ -1237,6 +1264,7 @@
 - `iface` **GradeAuditLogRow**
 - `iface` **SessionStatusView**
 - `iface` **MissedConfirmationView**
+- `iface` **JournalSlotView**
 - `iface` **JournalCompletenessView**
 - `iface` **GradeProgressView**
 - `iface` **HeadmasterClassOverviewView**
@@ -1282,6 +1310,8 @@
 - `const` **UpdateScheduleSchema**
 - `const` **SchoolProfileSchema**
 - `const` **QrSettingsSchema**
+- `const` **SchoolHolidaySchema**
+- `const` **SchoolCalendarSettingsSchema**
 - `const` **TeacherConfirmationSchema**
 - `const` **JournalSchema**
 - `const` **UpdateJournalSchema**
@@ -1321,6 +1351,8 @@
 - `type` **UpdateScheduleInput**
 - `type` **SchoolProfileInput**
 - `type` **QrSettingsInput**
+- `type` **SchoolHolidayInput**
+- `type` **SchoolCalendarSettingsInput**
 - `type` **TeacherConfirmationInput**
 - `type` **JournalInput**
 - `type` **UpdateJournalInput**
@@ -1528,6 +1560,11 @@
 - `const` **down**
 
 ### `migrations/20260914000001_repair_journals_fk.ts`
+
+- `const` **up**
+- `const` **down**
+
+### `migrations/20260923000001_create_school_holidays.ts`
 
 - `const` **up**
 - `const` **down**
@@ -1793,18 +1830,19 @@
 - `app/handlers/classes.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/dashboard.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/stats`, `@queries/subjects`, `@queries/users`
 - `app/handlers/gradeAudit.ts` → `@core`, `@queries/gradeAuditLogs`, `@queries/users`
-- `app/handlers/grades.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/gradeAuditLogs`, `@queries/gradeComponents`, `@queries/grades`, `@queries/schedules`, `@queries/students`, `@queries/subjects`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@validators`
+- `app/handlers/grades.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/gradeAuditLogs`, `@queries/gradeComponents`, `@queries/grades`, `@queries/schedules`, `@queries/schoolCalendar`, `@queries/students`, `@queries/subjects`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/headmaster.ts` → `@core`, `@queries/classes`, `@queries/schoolLocations`, `@queries/stats`, `@queries/teacherConfirmations`, `@queries/teachers`, `@queries/users`
 - `app/handlers/home.ts` → `@core`, `@queries`
-- `app/handlers/journals.ts` → `@core`, `@queries/journals`, `@queries/schedules`, `@queries/studentAttendance`, `@queries/students`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@types`, `@validators`
+- `app/handlers/journals.ts` → `../types/shared`, `@config/constants`, `@core`, `@queries/journals`, `@queries/schedules`, `@queries/schoolCalendar`, `@queries/studentAttendance`, `@queries/students`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@types`, `@validators`
 - `app/handlers/notifications.ts` → `@core`, `@queries/notifications`
 - `app/handlers/parent.ts` → `@core`, `@queries/grades`, `@queries/parents`, `@queries/studentAttendance`, `@queries/students`, `@queries/users`
 - `app/handlers/parents.ts` → `@core`, `@queries/parents`, `@queries/students`, `@queries/users`
 - `app/handlers/qrSettings.ts` → `@config/constants`, `@core`, `@queries/appSettings`, `@queries/schoolLocations`, `@queries/users`, `@services/Logger`, `@services/QrCode`, `@validators`
-- `app/handlers/rapor.ts` → `@core`, `@queries/grades`, `@queries/studentAttendance`, `@queries/students`, `@queries/teacherClassAssignments`, `@queries/users`
+- `app/handlers/rapor.ts` → `@core`, `@queries/grades`, `@queries/studentAttendance`, `@queries/students`, `@queries/teacherClassAssignments`, `@queries/users`, `@types`
 - `app/handlers/reports.ts` → `@core`, `@queries/stats`, `@queries/users`
 - `app/handlers/roles.ts` → `@core`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/schedules.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/schedules`, `@queries/subjects`, `@queries/teacherClassAssignments`, `@queries/teachers`, `@queries/users`, `@services/Logger`, `@validators`
+- `app/handlers/schoolCalendar.ts` → `@core`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/schoolLocations.ts` → `@core`, `@queries/schoolLocations`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/studentAttendance.ts` → `@core`, `@queries/classes`, `@queries/journals`, `@queries/schedules`, `@queries/studentAttendance`, `@queries/teacherClassAssignments`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/students.ts` → `@core`, `@queries/classes`, `@queries/students`, `@queries/users`, `@services/Authenticate`, `@services/Logger`, `@services/StudentCsvParser`, `@validators`
@@ -1830,12 +1868,13 @@
 - `app/queries/gradeAuditLogs.ts` → `../types/shared`, `@services/SQLite`
 - `app/queries/gradeComponents.ts` → `@services/SQLite`, `@types`
 - `app/queries/grades.ts` → `../types/shared`, `@services/GradeCalculator`, `@services/SQLite`, `@types`
-- `app/queries/headmaster.ts` → `@services/SQLite`
+- `app/queries/headmaster.ts` → `./schoolCalendar`, `@services/SQLite`
 - `app/queries/journals.ts` → `@services/SQLite`, `@types`
 - `app/queries/notifications.ts` → `../types/shared`, `@services/SQLite`
 - `app/queries/parents.ts` → `@services/SQLite`, `@types`
 - `app/queries/roles.ts` → `@services/SQLite`, `@types`
 - `app/queries/schedules.ts` → `@services/SQLite`, `@types`
+- `app/queries/schoolCalendar.ts` → `./appSettings`, `@services/SQLite`
 - `app/queries/schoolLocations.ts` → `@services/SQLite`, `@types`
 - `app/queries/sessions.ts` → `@services/SQLite`, `@types`
 - `app/queries/stats.ts` → `@services/SQLite`
@@ -1901,9 +1940,10 @@
 - `resources/Pages/profile.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `@lucide/svelte`, `@zag-js/svelte`, `@zag-js/tabs`
 - `resources/Pages/qrDisplay.svelte` → `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/qrSettings.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/reports/rapor.svelte` → `../../Components/Button.svelte`, `../../Components/Sidebar.svelte`, `../../types`, `@lucide/svelte`
+- `resources/Pages/reports/rapor.svelte` → `../../Components/Button.svelte`, `../../Components/Sidebar.svelte`, `../../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/roles.svelte` → `../Components/Button.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/RoleModal.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/schedules.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/SearchableSelect.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/schoolCalendar.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `../Components/Switch.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/schoolLocations.svelte` → `../Components/Badge.svelte`, `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/studentAttendance.svelte` → `../Components/Button.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/SearchableSelect.svelte`, `../Components/Sidebar.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/students.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/SearchableSelect.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
@@ -1915,7 +1955,7 @@
 - `resources/Pages/teachers.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/users.svelte` → `../Components/Button.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../Components/UserModal.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/types/index.ts` → `./types`
-- `routes/web.ts` → `@core`, `@handlers/academicYears`, `@handlers/announcements`, `@handlers/assets`, `@handlers/attendance`, `@handlers/auth`, `@handlers/classes`, `@handlers/dashboard`, `@handlers/gradeAudit`, `@handlers/grades`, `@handlers/headmaster`, `@handlers/home`, `@handlers/journals`, `@handlers/notifications`, `@handlers/parent`, `@handlers/parents`, `@handlers/qrSettings`, `@handlers/rapor`, `@handlers/reports`, `@handlers/roles`, `@handlers/schedules`, `@handlers/schoolLocations`, `@handlers/studentAttendance`, `@handlers/students`, `@handlers/subjects`, `@handlers/teacherAssignments`, `@handlers/teacherConfirmations`, `@handlers/teacherSchedule`, `@handlers/teachers`, `@handlers/users`, `@middlewares/auth`, `@middlewares/rateLimit`
+- `routes/web.ts` → `@core`, `@handlers/academicYears`, `@handlers/announcements`, `@handlers/assets`, `@handlers/attendance`, `@handlers/auth`, `@handlers/classes`, `@handlers/dashboard`, `@handlers/gradeAudit`, `@handlers/grades`, `@handlers/headmaster`, `@handlers/home`, `@handlers/journals`, `@handlers/notifications`, `@handlers/parent`, `@handlers/parents`, `@handlers/qrSettings`, `@handlers/rapor`, `@handlers/reports`, `@handlers/roles`, `@handlers/schedules`, `@handlers/schoolCalendar`, `@handlers/schoolLocations`, `@handlers/studentAttendance`, `@handlers/students`, `@handlers/subjects`, `@handlers/teacherAssignments`, `@handlers/teacherConfirmations`, `@handlers/teacherSchedule`, `@handlers/teachers`, `@handlers/users`, `@middlewares/auth`, `@middlewares/rateLimit`
 - `scripts/eval-agent.ts` → `@handlers/evaltests`
 - `scripts/gen-resource.ts` → `../../app/handlers/${camelPlural}`, `../Components/Button.svelte`, `../Components/Header.svelte`, `../helpers/mocks`, `../types`, `@core`, `@handlers/${camelPlural}`, `@inertiajs/svelte`, `@queries`, `@queries/${camelPlural}`, `@queries/users`, `@services/Logger`, `@services/SQLite`, `@types`, `@validators`
 - `scripts/migrate.ts` → `@services/Migrator`
@@ -1940,6 +1980,7 @@
 - `tests/handlers/gradeAudit.test.ts` → `../../app/handlers/gradeAudit`, `../helpers/mocks`, `@queries/gradeAuditLogs`, `@queries/users`
 - `tests/handlers/grades.test.ts` → `../../app/handlers/grades`, `../helpers/mocks`, `@queries/gradeAuditLogs`, `@queries/gradeComponents`, `@queries/grades`, `@queries/schedules`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`
 - `tests/handlers/headmaster.test.ts` → `../helpers/mocks`, `@queries/classes`, `@queries/teachers`, `@queries/users`
+- `tests/handlers/journals.test.ts` → `../../app/handlers/journals`, `../helpers/mocks`, `@queries/journals`, `@queries/schedules`, `@queries/schoolCalendar`, `@queries/teacherConfirmations`
 - `tests/handlers/notifications.test.ts` → `../../app/handlers/academicYears`, `../../app/handlers/notifications`, `../helpers/mocks`, `@queries/academicYears`, `@queries/notifications`, `@queries/users`
 - `tests/handlers/parent.test.ts` → `../../app/handlers/parent`, `../helpers/mocks`, `@queries/grades`, `@queries/parents`, `@queries/studentAttendance`, `@queries/students`
 - `tests/handlers/parents.test.ts` → `../../app/handlers/parents`, `../helpers/mocks`, `@queries/parents`, `@queries/users`
@@ -1965,6 +2006,7 @@
 - `tests/queries/headmaster.test.ts` → `@services/SQLite`
 - `tests/queries/roles.test.ts` → `@services/SQLite`
 - `tests/queries/schedules.test.ts` → `../../app/queries/schedules`, `@services/SQLite`
+- `tests/queries/schoolCalendar.test.ts` → `../../app/queries/appSettings`, `../../app/queries/schoolCalendar`, `@services/SQLite`
 - `tests/queries/teacherClassAssignments.test.ts` → `../../app/queries/teacherClassAssignments`, `@services/SQLite`
 - `tests/queries/teacherConfirmations.test.ts` → `../../app/queries/teacherConfirmations`, `@services/SQLite`
 - `tests/queries/teachers.test.ts` → `../../app/queries/teachers`, `@services/SQLite`
