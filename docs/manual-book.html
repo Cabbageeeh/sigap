@@ -199,11 +199,13 @@
     <li class="sub">4.6 Rapor siswa</li>
     <li class="part">Bagian 5 — Kepala Sekolah</li>
     <li class="sub">5.1 Delapan kartu ringkasan</li>
-    <li class="sub">5.2 Rata-rata Nilai per Kelas</li>
-    <li class="sub">5.3 Kehadiran Guru (30 Hari)</li>
-    <li class="sub">5.4 Monitoring Konfirmasi</li>
-    <li class="sub">5.5 Laporan Kehadiran Guru</li>
-    <li class="sub">5.6 Audit Nilai</li>
+    <li class="sub">5.2 Pintasan pengawasan</li>
+    <li class="sub">5.3 Rata-rata Nilai per Kelas</li>
+    <li class="sub">5.4 Kehadiran Guru (30 Hari)</li>
+    <li class="sub">5.5 Guru Tanpa Konfirmasi (7 Hari)</li>
+    <li class="sub">5.6 Monitoring Konfirmasi</li>
+    <li class="sub">5.7 Laporan Kehadiran Guru</li>
+    <li class="sub">5.8 Audit Nilai</li>
     <li class="part">Bagian 6 — Orang Tua/Wali</li>
     <li class="part">Bagian 7 — Alur Harian Ringkas</li>
     <li class="part">Bagian 8 — Tips dan Pemecahan Masalah</li>
@@ -223,7 +225,7 @@
     <thead><tr><th style="width:27%">Kebutuhan</th><th style="width:31%">Biasanya</th><th>Dengan SIGAP</th></tr></thead>
     <tbody>
       <tr><td>Data guru, siswa, kelas, mapel</td><td>Buku induk dan berkas terpisah</td><td>Satu basis data, terhubung sejak awal</td></tr>
-      <tr><td>Absensi guru</td><td>Catatan manual, rawan titip absen</td><td>Scan QR di sekolah dengan bukti foto dan posisi GPS</td></tr>
+      <tr><td>Absensi guru</td><td>Catatan manual, rawan titip absen</td><td>Scan QR di sekolah dengan posisi GPS dan jarak ke sekolah</td></tr>
       <tr><td>Jurnal mengajar</td><td>Buku jurnal kertas</td><td>Terisi per jadwal, sekaligus menjadi presensi siswa</td></tr>
       <tr><td>Nilai dan rapor</td><td>Rekap spreadsheet</td><td>Nilai per komponen, rapor tercetak, orang tua memantau sendiri</td></tr>
       <tr><td>Informasi ke orang tua</td><td>Surat atau grup obrolan</td><td>Notifikasi dan pengumuman di akun orang tua</td></tr>
@@ -458,9 +460,10 @@
   <figure><img src="images/manual/20-guru-jadwal.png" alt="Jadwal mengajar guru dengan akses terkunci">
     <figcaption>Jadwal Mengajar — sebelum konfirmasi, daftar sesi masih terkunci dan tersedia tombol <i>Scan QR Absen</i>.</figcaption></figure>
   <p>Guru masuk ke halaman <b>Jadwal Mengajar</b>. Isinya daftar sesi hari itu: kelas, mata pelajaran, jam mulai–selesai.</p>
-  <div class="warn"><b>Perlu diketahui</b>Sebagian menu guru (jurnal, nilai, absensi) <b>terkunci sampai guru melakukan
-    konfirmasi kehadiran hari itu</b>. Layar menampilkan pesan <i>Akses terkunci</i> dan tombol <b>Scan QR Absen</b>.
-    Ini disengaja, agar catatan kehadiran dan catatan mengajar selalu berpasangan.</div>
+  <div class="warn"><b>Perlu diketahui</b>Konfirmasi kehadiran mengikat catatan mengajar pada hari itu. Halaman Jadwal
+    Mengajar baru menampilkan daftar sesi setelah guru memindai QR, dan <b>jurnal serta nilai</b> menuntut konfirmasi yang
+    sama <b>pada hari guru itu memang terjadwal mengajar</b>. Di hari tanpa jam mengajar — libur, akhir pekan, atau hari
+    kosong — daftar nilai tetap terbuka dan bisa diisi.</div>
 
   <h2>4.2 Konfirmasi kehadiran dengan QR</h2>
   <p>Menu <b>Kehadiran → Konfirmasi Kehadiran</b>.</p>
@@ -490,9 +493,11 @@
     <b>Tambah Jurnal</b> di kanan atas.</p>
   <figure><img src="images/manual/22-guru-jurnal-form.png" alt="Form tambah jurnal">
     <figcaption>Form jurnal — tanggal dan bukti kehadiran terisi otomatis; Anda memilih jadwal dan menulis materi.</figcaption></figure>
-  <p>Isi jurnal hanya untuk <b>jadwal hari ini</b>. Tanggal dan konfirmasi kehadiran terisi otomatis — Anda tidak perlu mengetiknya.</p>
-  <figure><img src="images/manual/23-guru-jurnal-dropdown.png" alt="Dropdown pilihan jadwal hari ini">
-    <figcaption>Kolom Jadwal — hanya sesi milik Anda pada hari itu yang muncul, lengkap dengan kelas, mapel, dan jam.</figcaption></figure>
+  <p>Isi jurnal untuk sesi yang <b>sudah berlangsung</b>. Sesi yang terlewat masih bisa ditutup sampai <b>tiga hari ke
+    belakang</b> — ditandai keterangan <i>susulan</i> — dengan syarat Anda tercatat men-scan QR pada hari sesi itu
+    berlangsung. Tanggal dan konfirmasi kehadiran terisi otomatis — Anda tidak perlu mengetiknya.</p>
+  <figure><img src="images/manual/23-guru-jurnal-dropdown.png" alt="Dropdown pilihan sesi yang menunggu jurnal">
+    <figcaption>Kolom Jadwal — hanya sesi milik Anda yang sudah lewat jam selesainya dalam empat hari terakhir, lengkap dengan tanggal, kelas, mapel, dan jam.</figcaption></figure>
   <ol class="steps">
     <li>Klik kolom <b>Jadwal</b>, lalu pilih sesi yang ingin dicatat.</li>
     <li>Jika jurnal untuk sesi itu sudah ada, sistem menampilkannya kembali dan materi akan diperbarui, bukan dibuat duplikat.</li>
@@ -504,8 +509,9 @@
   <ol class="steps" start="5">
     <li>Klik <b>Simpan</b>. Materi dan presensi tersimpan sekaligus.</li>
   </ol>
-  <div class="note"><b>Bila daftar jadwal kosong</b>Berarti hari itu memang tidak ada jadwal mengajar untuk akun Anda —
-    periksa kontrak mengajar dan jadwal pelajaran bersama administrator.</div>
+  <div class="note"><b>Bila daftar jadwal kosong</b>Berarti semua sesi tiga hari terakhir sudah terisi jurnal. Sesi yang
+    tidak muncul bisa jadi sudah lewat dari tiga hari, Anda tidak tercatat hadir pada hari itu, atau tanggalnya bukan hari
+    efektif menurut <b>Kalender Sekolah</b>.</div>
 
   <h2>4.4 Nilai siswa</h2>
   <figure><img src="images/manual/25-guru-nilai.png" alt="Halaman nilai siswa">
@@ -517,8 +523,9 @@
     <li>Klik <b>Tambah</b> untuk memasukkan atau mengubah nilai satu siswa, atau isi beberapa nilai lalu klik <b>Simpan</b>.</li>
     <li><b>Predikat</b> dan status tuntas dihitung otomatis memakai KKM mata pelajaran.</li>
   </ol>
-  <p>Guru hanya dapat menilai kelas dan mapel sesuai kontrak mengajarnya. Sama seperti jurnal, akses nilai terkunci
-    sebelum konfirmasi kehadiran hari itu.</p>
+  <p>Guru hanya dapat menilai kelas dan mapel sesuai kontrak mengajarnya. Soal konfirmasi: pada hari Anda <b>terjadwal
+    mengajar</b>, nilai baru terbuka setelah memindai QR — sama seperti jurnal. Pada hari yang tidak ada jam mengajar untuk
+    Anda, daftar nilai tetap bisa dibuka dan diisi seperti biasa.</p>
 
   <h2>4.5 Rekap absensi siswa</h2>
   <figure><img src="images/manual/26-guru-absensi.png" alt="Rekap absensi siswa">
@@ -558,39 +565,56 @@
       <tr><td><b>Kelas</b></td><td>Jumlah kelas pada periode aktif.</td></tr>
       <tr><td><b>Mapel</b></td><td>Jumlah mata pelajaran.</td></tr>
       <tr><td><b>Jadwal Hari Ini</b></td><td>Sesi yang seharusnya berjalan hari ini.</td></tr>
-      <tr><td><b>Konfirmasi</b></td><td>Guru yang sudah memindai QR hari ini.</td></tr>
-      <tr><td><b>Belum Konfirmasi</b></td><td>Guru yang belum memindai QR — angka yang paling perlu diperhatikan setiap pagi.</td></tr>
+      <tr><td><b>Konfirmasi</b></td><td>Sesi hari ini yang gurunya sudah memindai QR.</td></tr>
+      <tr><td><b>Belum Konfirmasi</b></td><td>Sesi hari ini yang gurunya belum memindai QR — angka yang paling perlu diperhatikan setiap pagi.</td></tr>
       <tr><td><b>Jurnal Hari Ini</b></td><td>Jumlah jurnal yang sudah diisi hari ini.</td></tr>
     </tbody>
   </table>
 
-  <h2>5.2 Rata-rata Nilai per Kelas</h2>
+  <h2>5.2 Pintasan pengawasan</h2>
+  <p>Tepat di bawah kartu ringkasan ada empat kartu pintasan. Semuanya hanya membuka halaman; tidak ada data yang berubah dari sana.</p>
+  <table>
+    <thead><tr><th style="width:32%">Pintasan</th><th>Membuka</th></tr></thead>
+    <tbody>
+      <tr><td><b>Monitoring Konfirmasi</b></td><td>Log pemindaian QR guru beserta jarak dan status lokasi.</td></tr>
+      <tr><td><b>Laporan Luar Radius</b></td><td>Konfirmasi yang tercatat di luar radius sekolah.</td></tr>
+      <tr><td><b>Audit Nilai</b></td><td>Riwayat perubahan nilai.</td></tr>
+      <tr><td><b>Absensi Siswa</b></td><td>Rekap kehadiran per kelas dan rentang tanggal.</td></tr>
+    </tbody>
+  </table>
+  <p>Baris kecil di tiap kartu menyebut angka yang sedang berlaku, misalnya <code>4 guru belum scan QR (7 hari)</code>, supaya kepala sekolah tahu ke mana harus melihat lebih dulu.</p>
+
+  <h2>5.3 Rata-rata Nilai per Kelas</h2>
   <p>Tabel ini merangkum tiap kelas aktif: <b>Kelas, Siswa, Dinilai, Rata-rata Nilai, Kehadiran, Status, Aksi</b>.</p>
   <ul class="plain">
-    <li>Kolom <b>Dinilai</b> memakai format <code>5/5</code> — berapa siswa yang sudah punya nilai dibandingkan jumlah siswanya. Kelas <code>10C 0/34</code> berarti belum ada nilai masuk sama sekali.</li>
-    <li>Kolom <b>Status</b> menandai kelas yang perlu ditindaklanjuti (misal <i>Perlu perhatian</i>) berdasarkan nilai, kehadiran, dan kelengkapan penilaian.</li>
+    <li>Kolom <b>Dinilai</b> memakai format <code>32/32</code> — berapa siswa yang sudah punya nilai dibandingkan jumlah siswanya. Kelas dengan <code>0/32</code> berarti belum ada nilai masuk sama sekali.</li>
+    <li>Kolom <b>Status</b> menandai kelas yang perlu ditindaklanjuti (misal <i>Perlu perhatian</i>) bila rata-rata nilainya di bawah 75, kehadiran siswanya di bawah 90%, atau masih ada siswa yang belum dinilai.</li>
     <li>Tautan <b>Detail nilai</b> membuka lembar nilai per siswa untuk kelas tersebut — hanya membaca, kepala sekolah tidak mengubah angka di sini.</li>
   </ul>
   <figure><img src="images/manual/34-kepsek-nilai-kelas.png" alt="Detail nilai satu kelas">
     <figcaption>Detail nilai satu kelas: siswa, mata pelajaran, jenis penilaian, nilai, dan tanggal.</figcaption></figure>
 
-  <h2>5.3 Kehadiran Guru (30 Hari)</h2>
-  <p>Tabel kedua di dasbor membandingkan konfirmasi QR dengan hari mengajar yang dijadwalkan: <b>Guru, Hari Hadir, Tingkat Kehadiran, Status, Aksi</b>. Barisnya berbunyi misalnya <code>Siti Rahayu · 6/17 · 35,29% · Perlu perhatian</code>. Tautan <b>Riwayat</b> membuka daftar sesi guru tersebut.</p>
+  <h2>5.4 Kehadiran Guru (30 Hari)</h2>
+  <p>Tabel kedua membandingkan konfirmasi QR dengan hari mengajar yang dijadwalkan: <b>Guru, Hari Hadir, Tingkat Kehadiran, Status, Aksi</b>. Barisnya berbunyi misalnya <code>Siti Rahayu · 20/21 · 95,24% · Normal</code>, dan guru di bawah 90% ditandai <i>Perlu perhatian</i>. Tautan <b>Riwayat</b> membuka daftar hari guru tersebut.</p>
   <figure><img src="images/manual/35-kepsek-absensi-guru.png" alt="Riwayat kehadiran satu guru">
-    <figcaption>Riwayat kehadiran satu guru — kolom Sesi dan Jarak menunjukkan apakah guru hadir pada sesi yang diampu dan di mana posisinya saat memindai.</figcaption></figure>
+    <figcaption>Riwayat kehadiran satu guru — kolom Sesi dan Jarak menunjukkan berapa sesi yang diampu hari itu dan di mana posisi guru saat memindai.</figcaption></figure>
   <p>Lembar riwayat menampilkan <b>Tanggal, Kelas, Mata Pelajaran, Sesi, Status, Waktu, Lokasi, Jarak</b>.</p>
 
-  <h2>5.4 Monitoring Konfirmasi</h2>
-  <p>Menu <b>Kehadiran → Monitoring Konfirmasi</b> membuka <i>Log Kehadiran Guru</i>. Bagian atas menampilkan ringkasan hari ini, misalnya <b>2 dari 2 guru sudah konfirmasi hari ini · Batas tepat waktu 07:00</b>. Di bawahnya ada penyaring <b>Dari Tanggal</b>, <b>Sampai Tanggal</b>, dan <b>Guru</b> (tombol <i>Reset</i> muncul saat penyaring aktif). Gunakan rentang tanggal untuk melihat histori, misalnya satu bulan terakhir.</p>
+  <h2>5.5 Guru Tanpa Konfirmasi (7 Hari)</h2>
+  <p>Satu baris berarti satu guru pada satu hari: ia punya jadwal mengajar, tetapi tidak ada pemindaian QR pada hari itu. Kolomnya <b>Guru, Tanggal, Sesi Terlewat, Kelas, Mapel, Status</b>.</p>
+  <p>Aturannya mengikuti cara guru bekerja: satu pemindaian berlaku untuk satu hari penuh, bukan per jam pelajaran. Karena itu baris di tabel ini muncul meskipun guru tersebut hanya melewatkan scan pagi — jumlah sesinya ikut ditampilkan agar terlihat seberapa besar dampaknya pada hari itu.</p>
+
+  <h2>5.6 Monitoring Konfirmasi</h2>
+  <p>Menu <b>Kehadiran → Monitoring Konfirmasi</b> membuka <i>Log Kehadiran Guru</i>. Bagian atas menampilkan ringkasan hari ini, misalnya <b>15 dari 16 guru sudah konfirmasi hari ini · Batas tepat waktu 07:00</b>. Di bawahnya ada penyaring <b>Dari Tanggal</b>, <b>Sampai Tanggal</b>, dan <b>Guru</b> (tombol <i>Reset</i> muncul saat penyaring aktif). Gunakan rentang tanggal untuk melihat histori, misalnya satu bulan terakhir.</p>
   <figure><img src="images/manual/31-kepsek-monitoring-guru.png" alt="Log kehadiran guru dengan rentang tanggal">
     <figcaption>Log kehadiran guru setelah rentang tanggal diperlebar — tiap baris adalah satu konfirmasi QR beserta waktu dan jaraknya.</figcaption></figure>
 
-  <h2>5.5 Laporan Kehadiran Guru</h2>
+  <h2>5.7 Laporan Kehadiran Guru</h2>
   <p>Menu <b>Laporan → Laporan Kehadiran Guru</b> khusus menampilkan konfirmasi yang tercatat <b>di luar radius sekolah</b> — kolomnya <b>Guru, Kelas, Mapel, Jarak, Konfirmasi, Status</b>. Laporan inilah yang dipakai menindaklanjuti dugaan absensi tidak di lokasi.</p>
   <figure><img src="images/manual/32-kepsek-laporan-hadir.png" alt="Laporan konfirmasi di luar radius">
     <figcaption>Konfirmasi di luar radius sekolah, lengkap dengan jarak dari titik pusat sekolah.</figcaption></figure>
 
-  <h2>5.6 Audit Nilai</h2>
+  <h2>5.8 Audit Nilai</h2>
   <p>Menu <b>Penilaian → Audit Nilai</b> berisi riwayat perubahan nilai: <b>Waktu, Siswa, Mapel, Kelas, Jenis, Aksi, Nilai, Oleh</b>. Setiap perubahan tercatat otomatis — nilai lama dan nilai baru sama-sama ditampilkan — dan tidak dapat dihapus dari layar. Ini pegangan saat ada keberatan orang tua terhadap sebuah nilai.</p>
   <figure><img src="images/manual/33-kepsek-audit-nilai.png" alt="Riwayat audit nilai">
     <figcaption>Riwayat audit nilai: siapa mengubah, kapan, dan berapa nilai sebelumnya.</figcaption></figure>
@@ -762,11 +786,15 @@
     <tbody>
       <tr><td>Administrator</td><td><code>admin</code></td><td><code>admin123</code></td><td>Akses penuh data master</td></tr>
       <tr><td>Kepala Sekolah</td><td><code>kepala</code></td><td><code>kepala123</code></td><td>Dasbor pengawasan dan laporan</td></tr>
-      <tr><td>Guru Matematika &amp; Biologi</td><td><code>budi</code></td><td><code>teacher123</code></td><td>Mengampu 10A dan 10B</td></tr>
-      <tr><td>Guru Bahasa Inggris</td><td><code>siti</code></td><td><code>teacher123</code></td><td>Mengampu 10A dan 10B</td></tr>
-      <tr><td>Orang Tua</td><td><code>10001</code></td><td><code>parent123</code></td><td>Menaungi 10 anak (NIS 10001–10010)</td></tr>
+      <tr><td>Guru Matematika &amp; Biologi</td><td><code>budi</code></td><td><code>teacher123</code></td><td>Wali kelas 10C, mengampu beberapa rombel</td></tr>
+      <tr><td>Guru Bahasa Inggris</td><td><code>siti</code></td><td><code>teacher123</code></td><td>Wali kelas 10B</td></tr>
+      <tr><td>Guru lain (15 akun)</td><td><code>ratna</code>, <code>yusuf</code>, <code>endang</code>, <code>agus</code>, <code>nia</code>, <code>dwi</code>, <code>tri</code>, <code>laksmi</code>, <code>hafiz</code>, <code>nur</code>, <code>bambang</code>, <code>retno</code>, <code>fitri</code>, <code>hendra</code>, <code>maskur</code></td><td><code>teacher123</code></td><td>Satu akun per guru; <code>ratna</code> wali 10A</td></tr>
+      <tr><td>Orang Tua — satu anak</td><td><code>20261001</code></td><td><code>parent123</code></td><td>Username = NIS anak; tiap siswa punya akun orang tuanya sendiri</td></tr>
+      <tr><td>Orang Tua — banyak anak</td><td><code>10001</code></td><td><code>parent123</code></td><td>Keluarga contoh: satu akun menaungi 10 anak (NIS 10001–10010)</td></tr>
     </tbody>
   </table>
+  <p>Data hasil seed berisi 288 siswa pada 9 rombel (32 siswa per kelas), 17 guru, dan 15 mata pelajaran, lengkap dengan
+    30 hari jadwal, jurnal, absensi, dan nilai — jadi semua tabel dan grafik terisi saat dibuka.</p>
 </section>
 
 <footer class="colophon">
