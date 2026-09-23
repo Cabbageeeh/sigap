@@ -13,6 +13,7 @@ export * as teacherAssignments from './teacherAssignments';
 export * as parents from './parents';
 export * as schedules from './schedules';
 export * as schoolLocations from './schoolLocations';
+export * as schoolCalendar from './schoolCalendar';
 export * as teacherConfirmations from './teacherConfirmations';
 export * as qrSettings from './qrSettings';
 export * as journals from './journals';

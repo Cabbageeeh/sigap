@@ -27,6 +27,7 @@ Inertia.js pages rendered by Svelte 5. Each page is a route destination — the 
 | `roles.svelte` | Role management (CRUD table + permissions) |
 | `schedules.svelte` | Schedule CRUD |
 | `schoolLocations.svelte` | School location CRUD |
+| `schoolCalendar.svelte` | School calendar: holiday dates and whether Saturday is a school day |
 | `studentAttendance.svelte` | Student attendance list |
 | `students.svelte` | Student CRUD + parent account management from student detail |
 | `subjects.svelte` | Subject CRUD |

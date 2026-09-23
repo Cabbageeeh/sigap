@@ -9,6 +9,11 @@ vi.mock('@services/SQLite', () => ({
   },
 }));
 
+vi.mock('../../app/queries/schoolCalendar', () => ({
+  findNonTeachingDays: vi.fn(() => new Set<number>()),
+  isTeachingDay: vi.fn(() => true),
+}));
+
 import SQLite from '@services/SQLite';
 import {
   findClassGradeDetails,

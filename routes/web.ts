@@ -14,6 +14,7 @@ import * as teacherAssignments from '@handlers/teacherAssignments';
 import * as parents from '@handlers/parents';
 import * as schedules from '@handlers/schedules';
 import * as schoolLocations from '@handlers/schoolLocations';
+import * as schoolCalendar from '@handlers/schoolCalendar';
 import * as teacherConfirmations from '@handlers/teacherConfirmations';
 import * as qrSettings from '@handlers/qrSettings';
 import * as journals from '@handlers/journals';
@@ -132,6 +133,12 @@ Route.delete('/schedules/:id', [Auth], schedules.removeSchedule);
 // School Locations
 Route.get('/school-locations', [Auth], schoolLocations.schoolLocationsPage);
 Route.put('/school-locations', [Auth], schoolLocations.saveSchoolProfile);
+
+// School Calendar (holidays + effective-day settings)
+Route.get('/school-calendar', [Auth], schoolCalendar.schoolCalendarPage);
+Route.put('/school-calendar/settings', [Auth], schoolCalendar.saveSchoolCalendarSettings);
+Route.post('/school-calendar/holidays', [Auth], schoolCalendar.addSchoolHoliday);
+Route.delete('/school-calendar/holidays/:id', [Auth], schoolCalendar.removeSchoolHoliday);
 
 // Teacher Confirmations (anti-fraud)
 Route.get('/teacher/confirm', [Auth], teacherConfirmations.confirmPage);

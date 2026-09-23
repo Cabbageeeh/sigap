@@ -34,6 +34,7 @@ Request handlers — functions that receive `NaraRequest` / `NaraResponse` and r
 | `roles.ts` | roles page + role CRUD + permissions data |
 | `schedules.ts` | schedule CRUD |
 | `schoolLocations.ts` | school location CRUD + activation |
+| `schoolCalendar.ts` | school calendar page, holiday CRUD, and effective-day settings |
 | `studentAttendance.ts` | student attendance list |
 | `students.ts` | student CRUD + CSV bulk import + parent account lifecycle from student detail |
 | `subjects.ts` | subject CRUD |

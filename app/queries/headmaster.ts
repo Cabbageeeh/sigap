@@ -1,4 +1,5 @@
 import SQLite from '@services/SQLite';
+import { findNonTeachingDays, isTeachingDay } from './schoolCalendar';
 import type {
   SessionStatusView,
   MissedConfirmationView,
@@ -129,6 +130,7 @@ const sessionStatus = (template: ScheduleTemplate, occurrenceStart: number, occu
 
 export const getTodaySessions = (): SessionStatus[] => {
   const now = new Date();
+  if (!isTeachingDay(now.getTime())) return [];
   const dow = now.getDay();
   const todayStart = startOfDay(now);
   const todayEnd = todayStart + DAY_MS - 1;
@@ -141,6 +143,7 @@ export const getTodaySessions = (): SessionStatus[] => {
 export const getMissedConfirmations = (): MissedConfirmationView[] => {
   const now = Date.now();
   const from = startOfDay(new Date(now)) - 7 * DAY_MS;
+  const holidays = findNonTeachingDays(from, now);
 
   const confirmedDays = new Map<string, Set<number>>();
   for (const confirmation of findTeacherConfirmationsInRange(from, now)) {
@@ -154,6 +157,7 @@ export const getMissedConfirmations = (): MissedConfirmationView[] => {
     for (const occurrenceStart of occurrencesBetween(template, from, now)) {
       if (occurrenceStart + (template.end_time - template.start_time) > now) continue;
       const day = dateKey(occurrenceStart);
+      if (holidays.has(day)) continue;
       if (confirmedDays.get(template.teacher_user_id)?.has(day)) continue;
 
       const key = `${template.teacher_user_id}|${day}`;
@@ -198,10 +202,11 @@ export const getJournalCompleteness = (): JournalCompletenessRow[] => {
   `;
 
   const templates = findActiveYearSchedules();
+  const holidays = findNonTeachingDays(from, to);
   return rows.map(row => {
     const teacherTemplates = templates.filter(t => t.teacher_user_id === row.teacher_user_id);
     const expected = teacherTemplates.reduce(
-      (sum, t) => sum + occurrencesBetween(t, from, to).filter(occ => occ <= now.getTime()).length,
+      (sum, t) => sum + occurrencesBetween(t, from, to).filter(occ => occ <= now.getTime() && !holidays.has(dateKey(occ))).length,
       0
     );
     const filled = SQLite.get<{ count: number }>(
@@ -322,6 +327,7 @@ export const getClassOverview = (): HeadmasterClassOverviewView[] => {
 
 export const getTeacherAttendanceOverview = (days = 30): HeadmasterTeacherAttendanceView[] => {
   const { from, to } = periodRange(days);
+  const holidays = findNonTeachingDays(from, to);
   const templates = findActiveYearSchedules();
   const teachers = findTeacherNames();
   const teacherNames = new Map(teachers.map(teacher => [teacher.teacher_user_id, teacher.teacher_name]));
@@ -331,7 +337,7 @@ export const getTeacherAttendanceOverview = (days = 30): HeadmasterTeacherAttend
     teacherNames.set(template.teacher_user_id, template.teacher_name);
     const daysForTeacher = expectedDays.get(template.teacher_user_id) ?? new Set<number>();
     for (const occurrence of occurrencesBetween(template, from, to)) {
-      if (occurrence <= to) daysForTeacher.add(dateKey(occurrence));
+      if (occurrence <= to && !holidays.has(dateKey(occurrence))) daysForTeacher.add(dateKey(occurrence));
     }
     expectedDays.set(template.teacher_user_id, daysForTeacher);
   }
@@ -372,6 +378,7 @@ export const getTeacherAttendanceHistory = (
   days = 30,
 ): HeadmasterTeacherAttendanceHistoryView[] => {
   const { from, to } = periodRange(days);
+  const holidays = findNonTeachingDays(from, to);
   const templates = findActiveYearSchedules().filter(template => template.teacher_user_id === teacherUserId);
   const teacherName = templates[0]?.teacher_name
     ?? SQLite.one<{ teacher_name: string }>`
@@ -404,7 +411,7 @@ export const getTeacherAttendanceHistory = (
 
   for (const template of templates) {
     for (const occurrence of occurrencesBetween(template, from, to)) {
-      if (occurrence > to) continue;
+      if (occurrence > to || holidays.has(dateKey(occurrence))) continue;
       const day = ensureDay(dateKey(occurrence));
       day.classNames.add(template.class_name);
       day.subjectNames.add(template.subject_name);

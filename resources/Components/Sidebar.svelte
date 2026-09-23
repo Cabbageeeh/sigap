@@ -15,7 +15,7 @@
   import {
     Menu, LogOut, LayoutDashboard, CalendarCheck, BookOpen, GraduationCap,
     Users, ChartColumn, Calendar, School, BookMarked, UserCheck, UserCog,
-    CalendarClock, MapPin, Shield, User, History, Bell, Megaphone, QrCode,
+    CalendarClock, MapPin, Shield, User, History, Bell, Megaphone, QrCode, CalendarOff,
   } from '@lucide/svelte';
   import type { NotificationView } from '../types';
 
@@ -116,6 +116,7 @@
       label: 'Data Master',
       links: [
         { href: '/school-locations', label: 'Profil Sekolah', group: 'school-locations', icon: MapPin, show: isAdmin || isHeadmaster },
+        { href: '/school-calendar', label: 'Kalender Sekolah', group: 'school-calendar', icon: CalendarOff, show: isAdmin || isHeadmaster },
         { href: '/academic-years', label: 'Periode Akademik', group: 'academic-years', icon: Calendar, show: isAdmin || isHeadmaster },
         { href: '/subjects', label: 'Mata Pelajaran', group: 'subjects', icon: BookMarked, show: isAdmin || isHeadmaster },
         { href: '/classes', label: 'Kelas & Siswa', group: 'classes', icon: School, show: isAdmin || isHeadmaster },

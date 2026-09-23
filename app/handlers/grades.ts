@@ -15,6 +15,7 @@ import {
 } from '@queries/teacherClassAssignments';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
 import { findTeacherSchedulesByDay } from '@queries/schedules';
+import { isTeachingDay } from '@queries/schoolCalendar';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
 import { GradeSchema, BulkGradesSchema, AddGradeComponentSchema, DeleteGradeComponentSchema, gradeTypeSlug, zodToErrors } from '@validators';
 import { addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent } from '@queries/gradeComponents';
@@ -24,8 +25,10 @@ const isTeacherActor = (userId: string): boolean => !hasRole(userId, 'parent') &
 const canView = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && hasPermission(userId, 'grades.view');
 // Presence has to be proven only on a day the teacher actually teaches; on
 // holidays, weekends, and empty days grade entry stays open.
-const attendanceConfirmedToday = (userId: string): boolean =>
-  findTeacherSchedulesByDay(userId, new Date().getDay()).length === 0 || !!findTodayConfirmationByTeacher(userId);
+const attendanceConfirmedToday = (userId: string): boolean => {
+  if (!isTeachingDay(Date.now())) return true;
+  return findTeacherSchedulesByDay(userId, new Date().getDay()).length === 0 || !!findTodayConfirmationByTeacher(userId);
+};
 const canViewTeacherGrade = (userId: string, classId: string, subjectId: string): boolean =>
   isTeacherHomeroomOfClass(userId, classId) || isTeacherAssignedToClassSubject(userId, classId, subjectId);
 const canManageGradeInClass = (userId: string, permission: string, classId: string, subjectId: string): boolean =>
