@@ -102,7 +102,7 @@ const ensureConfirmationsAndJournals = (c: Ctx): void => {
           confirmation_date, confirmed_at, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-          confirmationId, items[0].schedule.id, group.teacherUserId, '/uploads/confirmations/demo-selfie.jpg',
+          confirmationId, items[0].schedule.id, group.teacherUserId, null,
           outside ? Number((SCHOOL.latitude + 0.006).toFixed(7)) : Number((SCHOOL.latitude + (c.int(1801) - 900) / 1e6).toFixed(7)),
           outside ? Number((SCHOOL.longitude + 0.005).toFixed(7)) : Number((SCHOOL.longitude + (c.int(1801) - 900) / 1e6).toFixed(7)),
           outside ? 480 + c.int(220) : 12 + c.int(120),
@@ -141,6 +141,41 @@ const ensureConfirmationsAndJournals = (c: Ctx): void => {
         );
       }
     }
+  }
+};
+
+// Teachers confirm once per day at the gate, so "today" needs arrival scans of
+// its own — the session loop only covers lessons that have already ended.
+const ensureTodayArrivalScans = (c: Ctx): void => {
+  const dayStart = startOfDay(c.now);
+  const morningCap = dayStart + (7 * 60 + 5) * 60 * 1000;
+  const confirmedAt = Math.min(morningCap, c.now - 60 * 1000);
+  if (confirmedAt <= dayStart) return;
+
+  const teachers = c.SQLite.all<{ teacher_user_id: string }>(
+    'SELECT DISTINCT teacher_user_id FROM schedules WHERE academic_year_id = ? AND day_of_week = ?',
+    [c.yearId, new Date(c.now).getDay()],
+  );
+
+  for (const teacher of teachers) {
+    if (stableHash(`today:${teacher.teacher_user_id}:${dayStart}`) < 120) continue;
+    if (c.SQLite.get<{ id: string }>(
+      'SELECT id FROM teacher_confirmations WHERE teacher_user_id = ? AND confirmed_at >= ? AND confirmed_at <= ? LIMIT 1',
+      [teacher.teacher_user_id, dayStart, dayStart + DAY_MS - 1],
+    )) continue;
+
+    c.SQLite.run(
+      `INSERT INTO teacher_confirmations
+       (id, schedule_id, teacher_user_id, photo_url, latitude, longitude, distance_meters, is_inside_school,
+        confirmation_date, confirmed_at, created_at, updated_at)
+       VALUES (?, NULL, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?)`,
+      [
+        randomUUID(), teacher.teacher_user_id, null,
+        Number((SCHOOL.latitude + (c.int(1801) - 900) / 1e6).toFixed(7)),
+        Number((SCHOOL.longitude + (c.int(1801) - 900) / 1e6).toFixed(7)),
+        12 + c.int(120), dayStart, confirmedAt, confirmedAt, confirmedAt,
+      ],
+    );
   }
 };
 
@@ -222,6 +257,7 @@ export function run(SQLite: typeof SQLiteType): void {
   if (!c) return;
 
   ensureConfirmationsAndJournals(c);
+  ensureTodayArrivalScans(c);
   ensureGrades(c);
   ensureExtras(c);
 

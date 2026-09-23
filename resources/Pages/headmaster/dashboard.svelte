@@ -181,7 +181,7 @@
   <div class="mb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[minmax(206px,auto)]" in:fly={{ y: 20, duration: 700, delay: 225 }}>
     <BentoCard
       title="Monitoring Konfirmasi"
-      description="Riwayat scan QR guru beserta bukti foto, jarak, dan status lokasi."
+      description="Riwayat scan QR guru beserta jarak dan status lokasi."
       href="/teacher/confirmations" cta="Buka log konfirmasi" icon={UserCheck} tone="warning"
       meta={`${missedTeacherCount} guru belum scan QR (7 hari)`}
     />

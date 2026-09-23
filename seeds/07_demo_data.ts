@@ -122,7 +122,7 @@ export function run(SQLite: typeof SQLiteType): void {
           const distance = isOutside ? 380 : 15;
           SQLite.exec`
             INSERT INTO teacher_confirmations (id, schedule_id, teacher_user_id, photo_url, latitude, longitude, distance_meters, is_inside_school, confirmation_date, confirmed_at, created_at)
-            VALUES (${confirmationId}, ${schedule.id}, ${schedule.teacher_user_id}, ${'/uploads/confirmations/demo-selfie.jpg'}, ${isOutside ? baseLatitude + 0.006 : baseLatitude}, ${isOutside ? baseLongitude + 0.005 : baseLongitude}, ${distance}, ${isOutside ? 0 : 1}, ${dayStart}, ${occurrenceStart + 5 * 60 * 1000}, ${now})
+            VALUES (${confirmationId}, ${schedule.id}, ${schedule.teacher_user_id}, ${null}, ${isOutside ? baseLatitude + 0.006 : baseLatitude}, ${isOutside ? baseLongitude + 0.005 : baseLongitude}, ${distance}, ${isOutside ? 0 : 1}, ${dayStart}, ${occurrenceStart + 5 * 60 * 1000}, ${now})
           `;
         }
 
