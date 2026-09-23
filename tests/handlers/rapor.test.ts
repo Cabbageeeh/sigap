@@ -4,6 +4,7 @@ import { mockRequest, mockResponse, mockUser } from '../helpers/mocks';
 vi.mock('@queries/students', () => ({
   findStudentById: vi.fn(),
   findStudentsByParent: vi.fn(),
+  findStudentsByClass: vi.fn(),
 }));
 vi.mock('@queries/grades', () => ({
   getStudentGradeSummaries: vi.fn(),
@@ -21,11 +22,11 @@ vi.mock('@queries/users', () => ({
 }));
 
 import { raporPage } from '../../app/handlers/rapor';
-import { findStudentById, findStudentsByParent } from '@queries/students';
+import { findStudentById, findStudentsByParent, findStudentsByClass } from '@queries/students';
 import { isTeacherHomeroomOfClass, isTeacherUser } from '@queries/teacherClassAssignments';
 import { getStudentGradeSummaries, getStudentContext } from '@queries/grades';
 import { findAttendanceByStudent } from '@queries/studentAttendance';
-import { hasRole, isAdmin } from '@queries/users';
+import { hasRole, isAdmin, hasPermission } from '@queries/users';
 
 const STUDENT_ID = 'student-1';
 const CLASS_ID = 'class-1';
@@ -46,6 +47,8 @@ describe('rapor page scope', () => {
     vi.mocked(getStudentContext).mockReturnValue({ class_name: '10A', year_name: '2025/2026' } as never);
     vi.mocked(getStudentGradeSummaries).mockReturnValue({ published: true, summaries: [] } as never);
     vi.mocked(findAttendanceByStudent).mockReturnValue([]);
+    vi.mocked(findStudentsByClass).mockReturnValue([]);
+    vi.mocked(findStudentsByParent).mockReturnValue([]);
   });
 
   it('lets a parent open their own child', () => {
@@ -104,6 +107,47 @@ describe('rapor page scope', () => {
     expect(inertia).toHaveBeenCalledWith('reports/rapor', expect.objectContaining({
       gradesPublished: false,
       summaries: [],
+    }));
+  });
+
+  it('moves a parent only between their own children', () => {
+    vi.mocked(findStudentsByParent).mockReturnValue([
+      { id: 'sibling-0', name: 'Kakak', nis: '10000' },
+      { id: STUDENT_ID, name: 'Ani', nis: '10001' },
+      { id: 'sibling-2', name: 'Adik', nis: '10002' },
+    ] as never);
+    vi.mocked(findStudentsByClass).mockReturnValue([{ id: 'stranger', name: 'Bukan anak', nis: '10009' }] as never);
+
+    const { inertia } = openRapor('parent-1', ['parent']);
+
+    expect(inertia).toHaveBeenCalledWith('reports/rapor', expect.objectContaining({
+      previousStudent: { id: 'sibling-0', name: 'Kakak', nis: '10000' },
+      nextStudent: { id: 'sibling-2', name: 'Adik', nis: '10002' },
+      studentPosition: 2,
+      studentTotal: 3,
+      backHref: `/parent/child/${STUDENT_ID}/grades`,
+    }));
+    expect(findStudentsByClass).not.toHaveBeenCalled();
+  });
+
+  it('walks the homeroom teacher through the class roster', () => {
+    vi.mocked(isAdmin).mockReturnValue(false);
+    vi.mocked(hasPermission).mockReturnValue(true);
+    vi.mocked(isTeacherUser).mockReturnValue(true);
+    vi.mocked(isTeacherHomeroomOfClass).mockReturnValue(true);
+    vi.mocked(findStudentsByClass).mockReturnValue([
+      { id: STUDENT_ID, name: 'Ani', nis: '10001' },
+      { id: 'student-2', name: 'Budi', nis: '10002' },
+    ] as never);
+
+    const { inertia } = openRapor('teacher-1', ['teacher']);
+
+    expect(inertia).toHaveBeenCalledWith('reports/rapor', expect.objectContaining({
+      previousStudent: null,
+      nextStudent: { id: 'student-2', name: 'Budi', nis: '10002' },
+      studentPosition: 1,
+      studentTotal: 2,
+      backHref: `/attendance?class_id=${CLASS_ID}`,
     }));
   });
 });

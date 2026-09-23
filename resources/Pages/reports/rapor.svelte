@@ -1,8 +1,11 @@
 <script lang="ts">
   import Sidebar from '../../Components/Sidebar.svelte';
   import Button from '../../Components/Button.svelte';
-  import { Printer, Lock } from '@lucide/svelte';
+  import { inertia } from '@inertiajs/svelte';
+  import { Printer, Lock, ArrowLeft, ChevronLeft, ChevronRight } from '@lucide/svelte';
   import type { SubjectGradeSummary } from '../../types';
+
+  type NavTarget = { id: string; name: string; nis: string } | null;
 
   let {
     student = { name: '', nis: '' },
@@ -12,6 +15,12 @@
     gradesPublished = false,
     summaries = [],
     attendanceCounts = { present: 0, sick: 0, leave: 0, absent: 0 },
+    backHref = '/dashboard',
+    backLabel = 'Kembali',
+    previousStudent = null,
+    nextStudent = null,
+    studentPosition = 0,
+    studentTotal = 0,
   }: {
     student?: { name: string; nis: string };
     className?: string;
@@ -20,6 +29,12 @@
     gradesPublished?: boolean;
     summaries?: SubjectGradeSummary[];
     attendanceCounts?: { present: number; sick: number; leave: number; absent: number };
+    backHref?: string;
+    backLabel?: string;
+    previousStudent?: NavTarget;
+    nextStudent?: NavTarget;
+    studentPosition?: number;
+    studentTotal?: number;
   } = $props();
 
   const totalAttendance = $derived(attendanceCounts.present + attendanceCounts.sick + attendanceCounts.leave + attendanceCounts.absent);
@@ -47,7 +62,27 @@
       <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Rapor Siswa</p>
       <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">Rapor</h1>
     </div>
-    <Button onclick={() => window.print()}><Printer class="w-4 h-4 mr-1" /> Cetak Rapor</Button>
+    <div class="flex flex-wrap items-center gap-2">
+      <a href={backHref} use:inertia class="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+        <ArrowLeft class="h-4 w-4" /> {backLabel}
+      </a>
+      {#if previousStudent}
+        <a href={`/reports/rapor/${previousStudent.id}`} use:inertia title={previousStudent.name}
+          class="inline-flex max-w-[190px] items-center gap-1 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <ChevronLeft class="h-4 w-4 shrink-0" /> <span class="truncate">{previousStudent.name}</span>
+        </a>
+      {/if}
+      {#if studentTotal > 1}
+        <span class="px-1 text-xs font-mono-accent text-muted-foreground">{studentPosition} / {studentTotal}</span>
+      {/if}
+      {#if nextStudent}
+        <a href={`/reports/rapor/${nextStudent.id}`} use:inertia title={nextStudent.name}
+          class="inline-flex max-w-[190px] items-center gap-1 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <span class="truncate">{nextStudent.name}</span> <ChevronRight class="h-4 w-4 shrink-0" />
+        </a>
+      {/if}
+      <Button onclick={() => window.print()}><Printer class="w-4 h-4 mr-1" /> Cetak Rapor</Button>
+    </div>
   </div>
 
   {#if isParent && !gradesPublished}
