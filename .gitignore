@@ -56,3 +56,7 @@ yarn-error.log*
 
 # Screenshots
 landing-*.png
+
+# Manual book build artifacts (source: docs/manual-book.md + .html)
+docs/manual-book.pdf
+docs/images/manual/
