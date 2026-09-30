@@ -14,9 +14,11 @@ import * as teacherAssignments from '@handlers/teacherAssignments';
 import * as parents from '@handlers/parents';
 import * as schedules from '@handlers/schedules';
 import * as schoolLocations from '@handlers/schoolLocations';
+import * as schoolCalendar from '@handlers/schoolCalendar';
 import * as teacherConfirmations from '@handlers/teacherConfirmations';
-import * as qrSettings from '@handlers/qrSettings';
+import * as teacherPresence from '@handlers/teacherPresence';
 import * as journals from '@handlers/journals';
+import * as reportExports from '@handlers/reportExports';
 import * as studentAttendance from '@handlers/studentAttendance';
 import * as grades from '@handlers/grades';
 import * as gradeAudit from '@handlers/gradeAudit';
@@ -133,6 +135,12 @@ Route.delete('/schedules/:id', [Auth], schedules.removeSchedule);
 Route.get('/school-locations', [Auth], schoolLocations.schoolLocationsPage);
 Route.put('/school-locations', [Auth], schoolLocations.saveSchoolProfile);
 
+// School Calendar (holidays + effective-day settings)
+Route.get('/school-calendar', [Auth], schoolCalendar.schoolCalendarPage);
+Route.put('/school-calendar/settings', [Auth], schoolCalendar.saveSchoolCalendarSettings);
+Route.post('/school-calendar/holidays', [Auth], schoolCalendar.addSchoolHoliday);
+Route.delete('/school-calendar/holidays/:id', [Auth], schoolCalendar.removeSchoolHoliday);
+
 // Teacher Confirmations (anti-fraud)
 Route.get('/teacher/confirm', [Auth], teacherConfirmations.confirmPage);
 Route.get('/teacher/confirmations', [Auth], teacherConfirmations.teacherConfirmationsPage);
@@ -141,11 +149,11 @@ Route.get('/teacher/confirmations/:id', [Auth], teacherConfirmations.teacherConf
 Route.get('/teacher/confirmations/outside', [Auth], teacherConfirmations.outsideConfirmationsData);
 Route.post('/teacher/confirmations', [Auth], teacherConfirmations.submitTeacherConfirmation);
 
-// QR Absen Settings & Display
-Route.get('/qr-settings', [Auth], qrSettings.qrSettingsPage);
-Route.post('/qr-settings', [Auth], qrSettings.saveQrSettings);
-Route.get('/qr-display', [Auth], qrSettings.qrDisplayPage);
-Route.get('/qr-settings/qr-data', [Auth], qrSettings.qrCodeData);
+// Teacher Presence settings & QR display
+Route.get('/teacher-presence', [Auth], teacherPresence.teacherPresencePage);
+Route.post('/teacher-presence', [Auth], teacherPresence.saveTeacherPresenceSettings);
+Route.get('/qr-display', [Auth], teacherPresence.qrDisplayPage);
+Route.get('/teacher-presence/qr-data', [Auth], teacherPresence.qrCodeData);
 
 // Journals
 Route.get('/journals', [Auth], journals.journalsPage);
@@ -154,6 +162,13 @@ Route.get('/journals/:id', [Auth], journals.journalData);
 Route.post('/journals', [Auth], journals.addJournal);
 Route.put('/journals/:id', [Auth], journals.editJournal);
 Route.delete('/journals/:id', [Auth], journals.removeJournal);
+
+// PDF Exports (documents the school office prints and files)
+Route.get('/exports/attendance/:classId', [Auth], reportExports.exportClassAttendancePdf);
+Route.get('/exports/students/:classId', [Auth], reportExports.exportClassRosterPdf);
+Route.get('/exports/grades/:classId', [Auth], reportExports.exportClassGradesPdf);
+Route.get('/exports/teacher-presence', [Auth], reportExports.exportTeacherPresencePdf);
+Route.get('/exports/journals', [Auth], reportExports.exportJournalLogPdf);
 
 // Student Attendance
 Route.get('/attendance', [Auth], studentAttendance.studentAttendancePage);

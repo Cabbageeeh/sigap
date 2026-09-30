@@ -213,7 +213,7 @@ export interface AppSetting {
 export interface Journal {
   id: string;
   schedule_id: string;
-  teacher_confirmation_id: string;
+  teacher_confirmation_id: string | null;
   date: number;
   material: string;
   created_at?: number;
@@ -322,6 +322,30 @@ export interface SessionStatusView {
   has_journal: boolean;
 }
 
+// A teacher confirms once per day, so a gap is reported per teacher per day —
+// not per session, which would flag every extra class of a present teacher.
+export interface MissedConfirmationView {
+  teacher_user_id: string;
+  teacher_name: string;
+  date: number;
+  class_names: string;
+  subject_names: string;
+  scheduled_sessions: number;
+}
+
+// One teachable session a teacher may still write a journal for: today's
+// sessions plus late entries within the allowed window.
+export interface JournalSlotView {
+  schedule_id: string;
+  class_id: string;
+  class_name: string;
+  subject_name: string;
+  time: string;
+  date: number;
+  is_late: boolean;
+  journal_id: string | null;
+}
+
 export interface JournalCompletenessView {
   teacher_name: string;
   expected: number;
@@ -403,3 +427,6 @@ export interface NotificationView {
   read_at: number | null;
   created_at: number;
 }
+
+/** `qr` = school shows a rotating QR the teacher scans; `off` = presence is not tracked here. */
+export type TeacherPresenceMode = 'qr' | 'off';

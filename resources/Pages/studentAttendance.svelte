@@ -9,7 +9,7 @@
   import Label from '../Components/Label.svelte';
   import Button from '../Components/Button.svelte';
   import { timestampToDateInput } from '$lib/utils/datetime';
-  import { ClipboardCheck } from '@lucide/svelte';
+  import { ClipboardCheck, Download, FileText } from '@lucide/svelte';
 
   interface RecapRow {
     student_id: string;
@@ -26,10 +26,12 @@
     classes = [],
     recap = [],
     filters,
+    canViewRapor = false,
   }: {
     classes?: { id: string; name: string }[];
     recap?: RecapRow[];
     filters: { class_id: string; from: number; to: number };
+    canViewRapor?: boolean;
   } = $props();
 
   let classId = $state<string | null>(filters.class_id);
@@ -43,6 +45,14 @@
     if (toInput) params.set('to', String(new Date(toInput + 'T23:59:59').getTime()));
     router.visit(`/attendance?${params.toString()}`, { preserveScroll: true });
   }
+
+  const exportHref = $derived.by(() => {
+    const params = new URLSearchParams();
+    if (fromInput) params.set('from', String(new Date(fromInput + 'T00:00:00').getTime()));
+    if (toInput) params.set('to', String(new Date(toInput + 'T23:59:59').getTime()));
+    const query = params.toString();
+    return `/exports/attendance/${classId}${query ? `?${query}` : ''}`;
+  });
 
   const columns = [
     { key: 'nis', label: 'NIS' },
@@ -76,6 +86,12 @@
   {/if}
 {/snippet}
 
+{#snippet raporAction(row: RecapRow)}
+  <Button variant="ghost" size="sm" onclick={() => router.visit(`/reports/rapor/${row.student_id}`)}>
+    <FileText class="w-3.5 h-3.5" /> Rapor
+  </Button>
+{/snippet}
+
 <Sidebar group="attendance" />
 <PageShell>
   <PageHeader eyebrow="Kehadiran Siswa" title="Rekap Kehadiran." description="Rekap kehadiran siswa per kelas — diisi otomatis dari jurnal mengajar." />
@@ -95,6 +111,14 @@
         <Input id="f-to" type="date" bind:value={toInput} onchange={applyFilters} />
       </div>
       <Button variant="outline" onclick={applyFilters}>Terapkan</Button>
+      {#if classId}
+        <a href={exportHref} download class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+          <Download class="w-3.5 h-3.5" /> Unduh PDF Rekap
+        </a>
+        <a href={`/exports/students/${classId}`} download class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+          <Download class="w-3.5 h-3.5" /> Unduh Daftar Siswa
+        </a>
+      {/if}
       <div class="ml-auto flex items-center gap-3 text-xs text-muted-foreground font-mono-accent">
         <span><span class="text-primary font-semibold">{totals.present}</span> Hadir</span>
         <span><span class="text-warning-600 dark:text-warning-400 font-semibold">{totals.sick}</span> Sakit</span>
@@ -110,6 +134,6 @@
       <p class="text-sm text-muted-foreground">Belum ada kelas yang bisa direkap. Kehadiran siswa diisi lewat form Tambah Jurnal.</p>
     </div>
   {:else}
-    <DataTable {columns} rows={recap} keyField="student_id" cell={recapCell} emptyMessage="Belum ada data kehadiran pada rentang ini — isi lewat form Tambah Jurnal." />
+    <DataTable {columns} rows={recap} keyField="student_id" cell={recapCell} rowAction={canViewRapor ? raporAction : undefined} emptyMessage="Belum ada data kehadiran pada rentang ini — isi lewat form Tambah Jurnal." />
   {/if}
 </PageShell>

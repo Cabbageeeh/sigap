@@ -5,7 +5,7 @@ import { findAttendanceByJournal, findAttendanceByStudent, findStudentAttendance
 import { findJournalById } from '@queries/journals';
 import { findScheduleById } from '@queries/schedules';
 import { findAllClasses, findClassesByTeacherUser } from '@queries/classes';
-import { isTeacherUser } from '@queries/teacherClassAssignments';
+import { isTeacherHomeroomOfClass, isTeacherUser } from '@queries/teacherClassAssignments';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
 import { StudentAttendanceSchema, zodToErrors } from '@validators';
 
@@ -35,6 +35,7 @@ export const studentAttendancePage = (req: NaraRequest, res: NaraResponse) => {
     classes: classes.map(c => ({ id: c.id, name: c.name })),
     recap,
     filters: { class_id: classId, from, to },
+    canViewRapor: teacherActor && !!selectedClass && hasPermission(userId, 'grades.view') && isTeacherHomeroomOfClass(userId, selectedClass.id),
   });
 };
 

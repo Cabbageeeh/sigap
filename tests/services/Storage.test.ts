@@ -6,6 +6,9 @@ import os from 'os';
 
 describe('Storage', () => {
   const testDir = path.join(os.tmpdir(), 'nara-storage-test');
+  // Storage builds paths with path.join, so assertions normalise separators to
+  // stay valid on Windows as well as the POSIX CI runner.
+  const posix = (value: string): string => value.replace(/\\/g, '/');
 
   beforeEach(() => {
     Storage.configure({ basePath: testDir, publicPath: '/storage' });
@@ -20,7 +23,7 @@ describe('Storage', () => {
     const buffer = Buffer.from('hello world');
     const file = await Storage.put(buffer, { directory: 'test' });
 
-    expect(file.path).toContain('test/');
+    expect(posix(file.path)).toContain('test/');
     expect(file.size).toBe(11);
 
     const retrieved = await Storage.get(file.path);
@@ -51,6 +54,6 @@ describe('Storage', () => {
 
   it('should return full file path', () => {
     const fp = Storage.filePath('images/photo.jpg');
-    expect(fp).toContain('images/photo.jpg');
+    expect(posix(fp)).toContain('images/photo.jpg');
   });
 });

@@ -3,13 +3,15 @@
   import { api } from '$lib/api';
   import Sidebar from '../../Components/Sidebar.svelte';
   import StatCard from '../../Components/StatCard.svelte';
+  import BentoCard from '../../Components/BentoCard.svelte';
   import DataTable from '../../Components/DataTable.svelte';
   import { inertia } from '@inertiajs/svelte';
   import { fly } from 'svelte/transition';
-  import { ArrowRight } from '@lucide/svelte';
+  import { ArrowRight, BookOpen, CalendarClock, ClipboardCheck, Clock, GraduationCap, MapPin, School, ShieldCheck, UserCheck, UserRound } from '@lucide/svelte';
   import type {
     DashboardStats,
     SessionStatusView,
+    MissedConfirmationView,
     JournalCompletenessView,
     GradeProgressView,
     AnnouncementView,
@@ -18,12 +20,13 @@
   } from '../../types';
 
   interface DashboardData {
+    teacherPresence: boolean;
     stats: DashboardStats;
     classOverview: HeadmasterClassOverviewView[];
     teacherAttendance: HeadmasterTeacherAttendanceView[];
     today: SessionStatusView[];
     confirmedToday: number;
-    missed: SessionStatusView[];
+    missed: MissedConfirmationView[];
     journals: JournalCompletenessView[];
     progress: GradeProgressView[];
   }
@@ -32,6 +35,7 @@
 
   let data = $state<DashboardData | null>(null);
   let announcements = $state<AnnouncementView[]>([]);
+  let presenceOn = $derived(data?.teacherPresence !== false);
 
   $effect(() => {
     api(() => axios.get('/headmaster/dashboard/data'), { showSuccessToast: false }).then(result => {
@@ -42,14 +46,17 @@
     });
   });
 
-  const missedRows = $derived((data?.missed ?? []).map(s => ({
-    id: s.schedule_id + s.start_time,
-    guru: s.teacher_name,
-    kelas: s.class_name,
-    mapel: s.subject_name,
-    waktu: new Date(s.start_time).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }),
-    status: 'Tidak Konfirmasi',
+  const missedRows = $derived((data?.missed ?? []).map(gap => ({
+    id: gap.teacher_user_id + gap.date,
+    guru: gap.teacher_name,
+    tanggal: new Date(gap.date).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' }),
+    sesi: `${gap.scheduled_sessions} sesi`,
+    kelas: gap.class_names,
+    mapel: gap.subject_names,
+    status: 'Belum Konfirmasi',
   })));
+
+  const missedTeacherCount = $derived(new Set((data?.missed ?? []).map(gap => gap.teacher_user_id)).size);
 
   const progressRows = $derived((data?.progress ?? []).map(p => ({
     id: p.class_name + p.subject_name,
@@ -89,9 +96,10 @@
 
   const missedColumns = [
     { key: 'guru', label: 'Guru' },
+    { key: 'tanggal', label: 'Tanggal', align: 'right' as const },
+    { key: 'sesi', label: 'Sesi Terlewat', align: 'right' as const },
     { key: 'kelas', label: 'Kelas' },
     { key: 'mapel', label: 'Mapel' },
-    { key: 'waktu', label: 'Waktu' },
     { key: 'status', label: 'Status', align: 'center' as const },
   ];
 
@@ -149,20 +157,61 @@
   </div>
 
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4" in:fly={{ y: 20, duration: 700, delay: 100 }}>
-    <StatCard label="Siswa" value={data?.stats.totalStudents ?? 0} />
-    <StatCard label="Guru" value={data?.stats.totalTeachers ?? 0} />
-    <StatCard label="Kelas" value={data?.stats.totalClasses ?? 0} />
-    <StatCard label="Mapel" value={data?.stats.totalSubjects ?? 0} />
+    <StatCard label="Siswa" value={data?.stats.totalStudents ?? 0} icon={GraduationCap} tone="primary" />
+    <StatCard label="Guru" value={data?.stats.totalTeachers ?? 0} icon={UserRound} tone="info" />
+    <StatCard label="Kelas" value={data?.stats.totalClasses ?? 0} icon={School} tone="warning" />
+    <StatCard label="Mapel" value={data?.stats.totalSubjects ?? 0} icon={BookOpen} tone="success" />
   </div>
 
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10" in:fly={{ y: 20, duration: 700, delay: 150 }}>
-    <StatCard label="Jadwal Hari Ini" value={data?.today.length ?? 0} />
-    <StatCard label="Konfirmasi" value={data?.confirmedToday ?? 0} />
-    <StatCard label="Belum Konfirmasi" value={(data?.today.length ?? 0) - (data?.confirmedToday ?? 0)} />
-    <StatCard label="Jurnal Hari Ini" value={data?.stats.todayJournals ?? 0} />
+    {#if presenceOn}
+      <StatCard label="Jadwal Hari Ini" value={data?.today.length ?? 0} icon={CalendarClock} tone="info" />
+      <StatCard label="Konfirmasi" value={data?.confirmedToday ?? 0} icon={UserCheck} tone="success" />
+      <StatCard label="Belum Konfirmasi" value={(data?.today.length ?? 0) - (data?.confirmedToday ?? 0)} icon={Clock} tone="warning" />
+    {/if}
+    <StatCard label="Jurnal Hari Ini" value={data?.stats.todayJournals ?? 0} icon={ClipboardCheck} tone="primary" />
   </div>
 
-  <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 200 }}>
+  <div class="mb-5" in:fly={{ y: 20, duration: 700, delay: 200 }}>
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">Ruang kerja</p>
+        <h2 class="mt-1.5 text-xl font-semibold tracking-[-0.025em] text-foreground">Pintasan pengawasan</h2>
+      </div>
+      <p class="text-xs text-muted-foreground">Semua halaman hanya membaca — tidak ada data yang berubah dari sini.</p>
+    </div>
+  </div>
+
+  <div class="mb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[minmax(206px,auto)]" in:fly={{ y: 20, duration: 700, delay: 225 }}>
+    {#if presenceOn}
+      <BentoCard
+        title="Monitoring Konfirmasi"
+        description="Riwayat scan QR guru beserta jarak dan status lokasi."
+        href="/teacher/confirmations" cta="Buka log konfirmasi" icon={UserCheck} tone="warning"
+        meta={`${missedTeacherCount} guru belum scan QR (7 hari)`}
+      />
+      <BentoCard
+        title="Laporan Luar Radius"
+        description="Hanya konfirmasi yang tercatat di luar radius sekolah."
+        href="/headmaster/reports" cta="Lihat laporan" icon={MapPin} tone="primary"
+        meta={`${data?.stats.totalTeachers ?? 0} guru dipantau posisinya`}
+      />
+    {/if}
+    <BentoCard
+      title="Audit Nilai"
+      description="Siapa mengubah nilai, kapan, dan berapa angka sebelumnya."
+      href="/grade-audit" cta="Periksa audit" icon={ShieldCheck} tone="info"
+      meta="riwayat perubahan nilai"
+    />
+    <BentoCard
+      title="Absensi Siswa"
+      description="Kehadiran per kelas dan rentang tanggal, lahir dari jurnal mengajar."
+      href="/attendance" cta="Buka rekap absensi" icon={ClipboardCheck} tone="success"
+      meta={`${data?.stats.totalStudents ?? 0} siswa aktif`}
+    />
+  </div>
+
+  <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 250 }}>
     <div class="flex items-baseline justify-between mb-3">
       <div>
         <h2 class="font-heading font-semibold tracking-[-0.02em]">Rata-rata Nilai per Kelas</h2>
@@ -172,23 +221,25 @@
     <DataTable columns={classColumns} rows={classRows} rowAction={classRowAction} emptyMessage="Belum ada data kelas aktif." />
   </div>
 
-  <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 225 }}>
-    <div class="flex items-baseline justify-between mb-3">
-      <div>
-        <h2 class="font-heading font-semibold tracking-[-0.02em]">Kehadiran Guru (30 Hari)</h2>
-        <p class="text-xs text-muted-foreground font-mono-accent mt-1">Konfirmasi QR dibandingkan hari mengajar yang dijadwalkan.</p>
+  {#if presenceOn}
+    <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 225 }}>
+      <div class="flex items-baseline justify-between mb-3">
+        <div>
+          <h2 class="font-heading font-semibold tracking-[-0.02em]">Kehadiran Guru (30 Hari)</h2>
+          <p class="text-xs text-muted-foreground font-mono-accent mt-1">Konfirmasi QR dibandingkan hari mengajar yang dijadwalkan.</p>
+        </div>
       </div>
+      <DataTable columns={teacherAttendanceColumns} rows={teacherAttendanceRows} rowAction={teacherAttendanceRowAction} emptyMessage="Belum ada data kehadiran guru." />
     </div>
-    <DataTable columns={teacherAttendanceColumns} rows={teacherAttendanceRows} rowAction={teacherAttendanceRowAction} emptyMessage="Belum ada data kehadiran guru." />
-  </div>
 
-  <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 200 }}>
-    <div class="flex items-baseline justify-between mb-3">
-      <h2 class="font-heading font-semibold tracking-[-0.02em]">Sesi Tanpa Konfirmasi (7 Hari Terakhir)</h2>
-      <p class="text-xs text-muted-foreground font-mono-accent">Indikasi guru tidak masuk kelas</p>
+    <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 200 }}>
+      <div class="flex items-baseline justify-between mb-3">
+        <h2 class="font-heading font-semibold tracking-[-0.02em]">Guru Tanpa Konfirmasi (7 Hari Terakhir)</h2>
+        <p class="text-xs text-muted-foreground font-mono-accent">Satu scan QR per hari — baris muncul bila guru tidak men-scan pada hari ia terjadwal</p>
+      </div>
+      <DataTable columns={missedColumns} rows={missedRows} emptyMessage="Semua guru sudah men-scan QR pada hari masing-masing." />
     </div>
-    <DataTable columns={missedColumns} rows={missedRows} emptyMessage="Semua sesi terkonfirmasi. Tidak ada indikasi guru tidak masuk." />
-  </div>
+  {/if}
 
   <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 250 }}>
     <div class="flex items-baseline justify-between mb-3">
@@ -204,15 +255,6 @@
       <p class="text-xs text-muted-foreground font-mono-accent">Jurnal terisi vs sesi yang seharusnya terjadi</p>
     </div>
     <DataTable columns={journalColumns} rows={journalRows} emptyMessage="Belum ada data jurnal bulan ini." />
-  </div>
-
-  <div class="flex flex-wrap gap-4" in:fly={{ y: 20, duration: 700, delay: 350 }}>
-    <a href="/headmaster/reports" use:inertia class="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors">
-      Laporan konfirmasi luar radius <ArrowRight class="w-4 h-4" />
-    </a>
-    <a href="/grade-audit" use:inertia class="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors">
-      Audit nilai <ArrowRight class="w-4 h-4" />
-    </a>
   </div>
 
   {#if announcements.length > 0}

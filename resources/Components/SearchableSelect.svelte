@@ -95,8 +95,8 @@
   </div>
 
   <div use:portal>
-    <div {...api.getPositionerProps()} class="z-[60]">
-      <ul {...api.getContentProps()} class="max-h-60 overflow-y-auto rounded-xl border border-border bg-card p-1 shadow-[0_12px_40px_rgba(0,0,0,0.14)] outline-none">
+    <div {...api.getPositionerProps()}>
+      <ul {...api.getContentProps()} class="z-[60] max-h-60 overflow-y-auto rounded-xl border border-border bg-card p-1 shadow-[0_12px_40px_rgba(0,0,0,0.14)] outline-none">
         {#each filtered as item (item.value)}
           <li
             {...api.getItemProps({ item })}

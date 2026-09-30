@@ -148,6 +148,11 @@ export const UpdateStudentParentAccountSchema = z.object({
   { message: 'Minimal satu kolom wajib diubah', path: ['_root'] }
 );
 
+export const StudentImportSchema = z.object({
+  class_id: z.string().uuid('Kelas tidak valid').optional().or(z.literal('')),
+  parent_password: z.string().min(8, 'Kata sandi awal orang tua minimal 8 karakter').max(100, 'Kata sandi maksimal 100 karakter').optional().or(z.literal('')),
+});
+
 export const TeacherSchema = z.object({
   nip: z.string().trim().min(4, 'NIP minimal 4 karakter').max(50, 'NIP maksimal 50 karakter'),
   name: z.string().trim().min(2, 'Nama minimal 2 karakter').max(100, 'Nama maksimal 100 karakter'),
@@ -217,8 +222,18 @@ export const SchoolProfileSchema = z.object({
   }
 });
 
-export const QrSettingsSchema = z.object({
+export const TeacherPresenceSettingsSchema = z.object({
+  mode: z.enum(['qr', 'off']),
   qr_refresh_interval: z.number().int().min(1, 'Interval minimal 1 menit').max(1440, 'Interval maksimal 1440 menit (24 jam)'),
+});
+
+export const SchoolHolidaySchema = z.object({
+  date: z.number().int().positive('Tanggal libur tidak valid'),
+  name: z.string().trim().min(3, 'Nama libur minimal 3 karakter').max(80, 'Nama libur maksimal 80 karakter'),
+});
+
+export const SchoolCalendarSettingsSchema = z.object({
+  saturday_is_school_day: z.boolean(),
 });
 
 export const TeacherConfirmationSchema = z.object({
@@ -235,6 +250,7 @@ export const TeacherConfirmationSchema = z.object({
 
 export const JournalSchema = z.object({
   schedule_id: z.string().uuid('Invalid schedule ID'),
+  date: z.number().int().positive().optional(),
   material: z.string().min(1, 'Material is required').max(2000, 'Material must be at most 2000 characters'),
   attendance: z.array(z.object({
     student_id: z.string().uuid('Invalid student ID'),
@@ -327,13 +343,16 @@ export type StudentInput = z.infer<typeof StudentSchema>;
 export type UpdateStudentInput = z.infer<typeof UpdateStudentSchema>;
 export type StudentParentAccountInput = z.infer<typeof StudentParentAccountSchema>;
 export type UpdateStudentParentAccountInput = z.infer<typeof UpdateStudentParentAccountSchema>;
+export type StudentImportInput = z.infer<typeof StudentImportSchema>;
 export type TeacherInput = z.infer<typeof TeacherSchema>;
 export type UpdateTeacherInput = z.infer<typeof UpdateTeacherSchema>;
 export type TeacherClassAssignmentsInput = z.infer<typeof TeacherClassAssignmentsSchema>;
 export type ScheduleInput = z.infer<typeof ScheduleSchema>;
 export type UpdateScheduleInput = z.infer<typeof UpdateScheduleSchema>;
 export type SchoolProfileInput = z.infer<typeof SchoolProfileSchema>;
-export type QrSettingsInput = z.infer<typeof QrSettingsSchema>;
+export type TeacherPresenceSettingsInput = z.infer<typeof TeacherPresenceSettingsSchema>;
+export type SchoolHolidayInput = z.infer<typeof SchoolHolidaySchema>;
+export type SchoolCalendarSettingsInput = z.infer<typeof SchoolCalendarSettingsSchema>;
 export type TeacherConfirmationInput = z.infer<typeof TeacherConfirmationSchema>;
 export type JournalInput = z.infer<typeof JournalSchema>;
 export type UpdateJournalInput = z.infer<typeof UpdateJournalSchema>;

@@ -3,7 +3,7 @@ import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationErr
 import Logger from '@services/Logger';
 import { hashPassword } from '@services/Authenticate';
 import multer from 'multer';
-import { getStudentsPaginated, findStudentById, createStudent, updateStudent, deleteStudent, findStudentsByClass, findAllNis, importStudents } from '@queries/students';
+import { getStudentsPaginated, findStudentById, createStudent, updateStudent, deleteStudent, findStudentsByClass, findAllNisOwners, importStudents } from '@queries/students';
 import { findAllClasses, findClassById, findClassByName } from '@queries/classes';
 import {
   createParentAccountForStudent,
@@ -15,7 +15,7 @@ import {
 } from '@queries/parents';
 import { parseStudentCsv } from '@services/StudentCsvParser';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
-import { StudentParentAccountSchema, StudentSchema, UpdateStudentParentAccountSchema, UpdateStudentSchema, zodToErrors } from '@validators';
+import { StudentImportSchema, StudentParentAccountSchema, StudentSchema, UpdateStudentParentAccountSchema, UpdateStudentSchema, zodToErrors } from '@validators';
 
 const canView = (userId: string): boolean => !hasRole(userId, 'parent') && (isAdmin(userId) || hasPermission(userId, 'students.view'));
 const canManage = (userId: string): boolean => !hasRole(userId, 'parent') && (isAdmin(userId) || hasPermission(userId, 'students.create'));
@@ -273,28 +273,74 @@ export const importStudentsFromCsv = (req: NaraRequest, res: NaraResponse) => {
   const file = (req as NaraRequest & { file?: { buffer: Buffer } }).file;
   if (!file) return jsonError(res, 'CSV file is required', 400, 'FILE_REQUIRED');
 
+  const form = StudentImportSchema.safeParse(req.body);
+  if (!form.success) return jsonValidationError(res, 'Data import tidak valid', zodToErrors(form.error));
+
   try {
     const csv = file.buffer.toString('utf-8');
-    const requestedClassId = typeof req.body?.class_id === 'string' ? req.body.class_id : undefined;
+    const requestedClassId = form.data.class_id || undefined;
+    const parentPassword = form.data.parent_password || '';
     const targetClass = requestedClassId ? findClassById(requestedClassId) : undefined;
     if (requestedClassId && !targetClass) return jsonError(res, 'Kelas tidak ditemukan', 404, 'CLASS_NOT_FOUND');
 
     const classNames = new Set(findAllClasses().map(c => c.name));
-    const existingNis = new Set(findAllNis());
+    const existingNis = new Map(findAllNisOwners().map(row => [row.nis, `${row.name} — kelas ${row.class_name ?? 'belum ada kelas'}`]));
     const parsed = parseStudentCsv(csv, classNames, existingNis, targetClass?.name);
+    const parentRows = parsed.rows.filter(row => row.parent_name !== null);
 
-    if (parsed.rows.length > 0) {
-      importStudents(parsed.rows.map(row => ({
+    if (parentRows.length > 0 && !parentPassword) {
+      return jsonValidationError(res, 'Data import tidak valid', {
+        parent_password: ['Isi kata sandi awal minimal 8 karakter karena file memuat data orang tua'],
+      });
+    }
+
+    const created = parsed.rows.length > 0
+      ? importStudents(parsed.rows.map(row => ({
         nis: row.nis,
         name: row.name,
         class_id: targetClass?.id ?? findClassByName(row.class_name)!.id,
         phone: row.phone,
         address: row.address,
-      })));
+      })))
+      : [];
+
+    let parentsCreated = 0;
+    if (parentRows.length > 0) {
+      const studentIdByNis = new Map(created.map(student => [student.nis, student.id]));
+      // One initial password shared by every account in this import, so bcrypt runs once instead of per row.
+      const passwordHash = hashPassword(parentPassword);
+
+      for (const row of parsed.rows) {
+        const parentName = row.parent_name;
+        const studentId = studentIdByNis.get(row.nis);
+        if (!parentName || !studentId) continue;
+
+        try {
+          createParentAccountForStudent({
+            student_id: studentId,
+            username: row.nis,
+            name: parentName,
+            password_hash: passwordHash,
+            phone: row.parent_phone,
+            address: row.parent_address,
+          });
+          parentsCreated++;
+        } catch (error: unknown) {
+          Logger.warn('Failed to create parent account during student import', { nis: row.nis });
+          parsed.errors.push({
+            line: row.line,
+            message: isUniqueConstraintError(error)
+              ? `Akun orang tua dilewati: username ${row.nis} sudah dipakai akun lain`
+              : `Akun orang tua gagal dibuat untuk NIS ${row.nis}`,
+          });
+        }
+      }
+      parsed.errors.sort((a, b) => a.line - b.line);
     }
 
     return jsonSuccess(res, 'Import finished', {
-      inserted: parsed.rows.length,
+      inserted: created.length,
+      parents_created: parentsCreated,
       errors: parsed.errors,
     });
   } catch (error: unknown) {

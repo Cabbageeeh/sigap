@@ -121,7 +121,7 @@ export function run(SQLite: typeof SQLiteType): void {
     const confirmationId = randomUUID();
     SQLite.exec`
       INSERT INTO teacher_confirmations (id, schedule_id, teacher_user_id, photo_url, latitude, longitude, distance_meters, is_inside_school, confirmed_at, created_at)
-      VALUES (${confirmationId}, ${sch.id}, ${sch.teacherUserId}, ${'/uploads/confirmations/demo-selfie.jpg'}, ${-6.2001}, ${106.8001}, ${15}, ${1}, ${confirmedAt}, ${now})
+      VALUES (${confirmationId}, ${sch.id}, ${sch.teacherUserId}, ${null}, ${-6.2001}, ${106.8001}, ${15}, ${1}, ${confirmedAt}, ${now})
     `;
 
     const journalId = randomUUID();

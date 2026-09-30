@@ -171,7 +171,28 @@ describe('users handler', () => {
       (hasPermission as any).mockReturnValue(false);
       (updateUser as any).mockReturnValue({ id: 'me', name: 'New Me', username: 'me' });
       editUser(req as any, res as any);
+      expect(res._sent).toBe(true);
       expect(res._status).toBe(200);
+      expect(res._body).toMatchObject({ success: true });
+    });
+
+    it('answers with the updated user and its roles after an admin edit', () => {
+      vi.mocked(isAdmin).mockReturnValue(true);
+      vi.mocked(updateUser).mockReturnValue({ id: 'kepala-1', name: 'Kepala Sekolah', username: 'kepala', password: 'hash' } as never);
+      vi.mocked(getUserRoles).mockReturnValue([{ slug: 'headmaster' }] as never);
+      const req = mockRequest({
+        user: mockUser({ id: 'admin-1', roles: ['admin'] }),
+        params: { id: 'kepala-1' },
+        body: { name: 'Kepala Sekolah', username: 'kepala', password: 'rahasia123', roles: ['headmaster'] },
+      });
+      const res = mockResponse();
+
+      editUser(req, res);
+
+      expect(res._sent).toBe(true);
+      expect(res._status).toBe(200);
+      expect(res._body).toMatchObject({ success: true, data: { user: { id: 'kepala-1', username: 'kepala', roles: ['headmaster'] } } });
+      expect(JSON.stringify(res._body)).not.toContain('hash');
     });
 
     it('redirects parent account editing to student detail', () => {

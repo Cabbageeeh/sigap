@@ -15,19 +15,26 @@ export const findAllStudents = (): Student[] =>
 export const findStudentById = (id: string): Student | undefined =>
   SQLite.one<Student>`SELECT * FROM students WHERE id = ${id}`;
 
-export const findAllNis = (): string[] =>
-  SQLite.many<{ nis: string }>`SELECT nis FROM students`.map(row => row.nis);
+export const findAllNisOwners = (): { nis: string; name: string; class_name: string | null }[] =>
+  SQLite.many<{ nis: string; name: string; class_name: string | null }>`
+    SELECT s.nis, s.name, c.name AS class_name
+    FROM students s LEFT JOIN classes c ON c.id = s.class_id
+  `;
 
-export const importStudents = (rows: { nis: string; name: string; class_id: string; phone: string | null; address: string | null }[]): void => {
+export const importStudents = (rows: { nis: string; name: string; class_id: string; phone: string | null; address: string | null }[]): { id: string; nis: string }[] => {
+  const created: { id: string; nis: string }[] = [];
   SQLite.transaction(() => {
     const now = Date.now();
     for (const row of rows) {
+      const id = randomUUID();
       SQLite.exec`
         INSERT INTO students (id, nis, name, class_id, parent_user_id, phone, address, created_at, updated_at)
-        VALUES (${randomUUID()}, ${row.nis}, ${row.name}, ${row.class_id}, ${null}, ${row.phone}, ${row.address}, ${now}, ${now})
+        VALUES (${id}, ${row.nis}, ${row.name}, ${row.class_id}, ${null}, ${row.phone}, ${row.address}, ${now}, ${now})
       `;
+      created.push({ id, nis: row.nis });
     }
   });
+  return created;
 };
 
 export const findStudentsByClass = (classId: string): Student[] =>
@@ -35,6 +42,19 @@ export const findStudentsByClass = (classId: string): Student[] =>
 
 export const findStudentsByParent = (parentUserId: string): Student[] =>
   SQLite.many<Student>`SELECT * FROM students WHERE parent_user_id = ${parentUserId} ORDER BY name`;
+
+// Full roster with the guardian contact a printed class list needs.
+export const findClassRoster = (classId: string): StudentListItem[] =>
+  SQLite.all<StudentListItem>(
+    `SELECT s.*, u.name AS parent_name, u.username AS parent_username,
+            p.phone AS parent_phone, p.address AS parent_address
+     FROM students s
+     LEFT JOIN users u ON u.id = s.parent_user_id
+     LEFT JOIN parents p ON p.user_id = s.parent_user_id
+     WHERE s.class_id = ?
+     ORDER BY s.name`,
+    [classId],
+  );
 
 export const findStudentsByTeacherUser = (teacherUserId: string): Student[] =>
   SQLite.many<Student>`

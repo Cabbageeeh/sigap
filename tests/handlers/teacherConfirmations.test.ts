@@ -11,6 +11,9 @@ vi.mock('@queries/teacherConfirmations', () => ({
   countTeachersConfirmedOn: vi.fn(() => 0),
 }));
 vi.mock('@queries/schedules', () => ({ findScheduleById: vi.fn() }));
+vi.mock('@queries/appSettings', () => ({
+  isTeacherPresenceEnabled: vi.fn(() => true),
+}));
 vi.mock('@queries/schoolLocations', () => ({ findActiveSchoolLocation: vi.fn(() => null) }));
 vi.mock('@services/Geolocation', () => ({
   haversineDistance: vi.fn(),

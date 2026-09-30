@@ -25,6 +25,7 @@ Raw SQL functions in `app/queries/`. The only layer that touches `SQLite`. Handl
 | `parents.ts` | parent account lifecycle for students + user lookup + pagination |
 | `schedules.ts` | CRUD + class/teacher/day filters |
 | `schoolLocations.ts` | CRUD + active location + activation |
+| `schoolCalendar.ts` | holiday dates + which days the school is in session |
 | `teacherConfirmations.ts` | CRUD + schedule/teacher/today filters + anti-cheat location data |
 | `journals.ts` | CRUD + schedule/teacher/date filters |
 | `studentAttendance.ts` | CRUD + journal/student/schedule filters + upsert + bulk delete by journal |

@@ -14,6 +14,9 @@ import {
   isTeacherHomeroomOfClass,
 } from '@queries/teacherClassAssignments';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
+import { isTeacherPresenceEnabled } from '@queries/appSettings';
+import { findTeacherSchedulesByDay } from '@queries/schedules';
+import { isTeachingDay } from '@queries/schoolCalendar';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
 import { GradeSchema, BulkGradesSchema, AddGradeComponentSchema, DeleteGradeComponentSchema, gradeTypeSlug, zodToErrors } from '@validators';
 import { addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent } from '@queries/gradeComponents';
@@ -21,7 +24,14 @@ import { findClassById } from '@queries/classes';
 
 const isTeacherActor = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && isTeacherUser(userId);
 const canView = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && hasPermission(userId, 'grades.view');
-const hasConfirmedToday = (userId: string): boolean => !!findTodayConfirmationByTeacher(userId);
+// Presence has to be proven only on a day the teacher actually teaches; on
+// holidays, weekends, and empty days grade entry stays open. Schools that
+// record teacher presence elsewhere opt out entirely.
+const attendanceConfirmedToday = (userId: string): boolean => {
+  if (!isTeacherPresenceEnabled()) return true;
+  if (!isTeachingDay(Date.now())) return true;
+  return findTeacherSchedulesByDay(userId, new Date().getDay()).length === 0 || !!findTodayConfirmationByTeacher(userId);
+};
 const canViewTeacherGrade = (userId: string, classId: string, subjectId: string): boolean =>
   isTeacherHomeroomOfClass(userId, classId) || isTeacherAssignedToClassSubject(userId, classId, subjectId);
 const canManageGradeInClass = (userId: string, permission: string, classId: string, subjectId: string): boolean =>
@@ -37,7 +47,7 @@ export const gradesPage = (req: NaraRequest, res: NaraResponse) => {
   const userId = req.user?.id;
   const canViewFlag = userId ? canView(userId) : false;
   const teacherUserId = userId && isTeacherActor(userId) ? userId : undefined;
-  const attendanceConfirmed = !teacherUserId || hasConfirmedToday(teacherUserId);
+  const attendanceConfirmed = !teacherUserId || attendanceConfirmedToday(teacherUserId);
   const permissions = {
     canView: canViewFlag,
     canCreate: !!teacherUserId && attendanceConfirmed && hasPermission(teacherUserId, 'grades.create'),
@@ -94,7 +104,7 @@ export const gradesPage = (req: NaraRequest, res: NaraResponse) => {
 export const listGrades = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Unauthorized', 401);
   if (!canView(req.user.id)) return jsonError(res, 'Forbidden', 403);
-  if (isTeacherActor(req.user.id) && !hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+  if (isTeacherActor(req.user.id) && !attendanceConfirmedToday(req.user.id)) return confirmationRequired(res);
 
   const page = queryInt(req, 'page', 1);
   const limit = queryInt(req, 'limit', 10);
@@ -115,7 +125,7 @@ export const gradesByStudent = (req: NaraRequest, res: NaraResponse) => {
   const studentId = req.params.studentId;
   if (!studentId) return jsonError(res, 'Student ID required', 400);
   if (isTeacherActor(req.user.id)) {
-    if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+    if (!attendanceConfirmedToday(req.user.id)) return confirmationRequired(res);
     if (!isTeacherAssignedToStudent(req.user.id, studentId)) return jsonError(res, 'Forbidden', 403);
     return jsonSuccess(res, 'OK', findGradesByStudentForTeacher(studentId, req.user.id));
   }
@@ -130,7 +140,7 @@ export const gradeData = (req: NaraRequest, res: NaraResponse) => {
   const item = findGradeById(req.params.id || '');
   if (!item) return jsonError(res, 'Not found', 404);
   if (isTeacherActor(req.user.id)) {
-    if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+    if (!attendanceConfirmedToday(req.user.id)) return confirmationRequired(res);
     if (!canViewTeacherGrade(req.user.id, item.class_id, item.subject_id)) return jsonError(res, 'Forbidden', 403);
   }
   return jsonSuccess(res, 'OK', item);
@@ -139,7 +149,7 @@ export const gradeData = (req: NaraRequest, res: NaraResponse) => {
 export const addGrade = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Unauthorized', 401);
   if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'grades.create')) return jsonError(res, 'Forbidden', 403);
-  if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+  if (!attendanceConfirmedToday(req.user.id)) return confirmationRequired(res);
 
   const parsed = GradeSchema.safeParse(req.body);
   if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
@@ -172,7 +182,7 @@ export const addGrade = (req: NaraRequest, res: NaraResponse) => {
 export const saveGradesBulk = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Unauthorized', 401);
   if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'grades.create')) return jsonError(res, 'Forbidden', 403);
-  if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+  if (!attendanceConfirmedToday(req.user.id)) return confirmationRequired(res);
 
   const parsed = BulkGradesSchema.safeParse(req.body);
   if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
@@ -203,7 +213,7 @@ export const saveGradesBulk = (req: NaraRequest, res: NaraResponse) => {
 export const addGradeComponentType = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Unauthorized', 401);
   if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'grades.create')) return jsonError(res, 'Forbidden', 403);
-  if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+  if (!attendanceConfirmedToday(req.user.id)) return confirmationRequired(res);
 
   const parsed = AddGradeComponentSchema.safeParse(req.body);
   if (!parsed.success) return jsonValidationError(res, 'Validation failed', zodToErrors(parsed.error));
@@ -231,7 +241,7 @@ export const addGradeComponentType = (req: NaraRequest, res: NaraResponse) => {
 export const renameGradeComponentType = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Unauthorized', 401);
   if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'grades.edit')) return jsonError(res, 'Forbidden', 403);
-  if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+  if (!attendanceConfirmedToday(req.user.id)) return confirmationRequired(res);
 
   const typeParsed = gradeTypeSlug.safeParse(req.params.type);
   if (!typeParsed.success) return jsonError(res, 'Jenis nilai tidak valid', 422, 'INVALID_TYPE');
@@ -261,7 +271,7 @@ export const renameGradeComponentType = (req: NaraRequest, res: NaraResponse) =>
 export const removeGradeComponentType = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Unauthorized', 401);
   if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'grades.delete')) return jsonError(res, 'Forbidden', 403);
-  if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+  if (!attendanceConfirmedToday(req.user.id)) return confirmationRequired(res);
 
   const typeParsed = gradeTypeSlug.safeParse(req.params.type);
   if (!typeParsed.success) return jsonError(res, 'Jenis nilai tidak valid', 422, 'INVALID_TYPE');
@@ -291,7 +301,7 @@ export const removeGradeComponentType = (req: NaraRequest, res: NaraResponse) =>
 export const editGrade = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Unauthorized', 401);
   if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'grades.edit')) return jsonError(res, 'Forbidden', 403);
-  if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+  if (!attendanceConfirmedToday(req.user.id)) return confirmationRequired(res);
 
   const id = req.params.id;
   if (!id) return jsonError(res, 'ID required', 400);
@@ -336,7 +346,7 @@ export const editGrade = (req: NaraRequest, res: NaraResponse) => {
 export const removeGrade = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Unauthorized', 401);
   if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'grades.delete')) return jsonError(res, 'Forbidden', 403);
-  if (!hasConfirmedToday(req.user.id)) return confirmationRequired(res);
+  if (!attendanceConfirmedToday(req.user.id)) return confirmationRequired(res);
 
   const id = req.params.id;
   if (!id) return jsonError(res, 'ID required', 400);

@@ -1,4 +1,5 @@
 import { view } from "@services/View";
+import { isTeacherPresenceEnabled } from "@queries/appSettings";
 import type { NaraRequest, NaraResponse, NaraMiddleware } from "@core";
 
 const VERSION = "1.0.0";
@@ -20,6 +21,7 @@ export const renderer = (): NaraMiddleware => {
               permissions: req.user.permissions || [],
             }
           : {},
+        features: { teacherPresence: isTeacherPresenceEnabled() },
         ...inertiaProps,
         ...viewProps,
         error: null,

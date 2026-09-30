@@ -1,3 +1,8 @@
+<script lang="ts" module>
+  // Sidebar remounts on every Inertia navigation (it lives inside each page), so scroll is kept here.
+  let sidebarScrollTop = 0;
+</script>
+
 <script lang="ts">
   import { page, router, inertia } from '@inertiajs/svelte';
   import axios from 'axios';
@@ -10,7 +15,7 @@
   import {
     Menu, LogOut, LayoutDashboard, CalendarCheck, BookOpen, GraduationCap,
     Users, ChartColumn, Calendar, School, BookMarked, UserCheck, UserCog,
-    CalendarClock, MapPin, Shield, User, History, Bell, Megaphone, QrCode,
+    CalendarClock, MapPin, Shield, User, History, Bell, Megaphone, QrCode, CalendarOff,
   } from '@lucide/svelte';
   import type { NotificationView } from '../types';
 
@@ -38,7 +43,21 @@
   let { group }: { group: string } = $props();
 
   let user = $derived(page.props.user as User | undefined);
+  let features = $derived((page.props.features as { teacherPresence?: boolean } | undefined) ?? {});
   let isMenuOpen = $state(false);
+
+  let desktopNav = $state<HTMLElement | null>(null);
+
+  $effect(() => {
+    const nav = desktopNav;
+    if (!nav) return;
+    nav.scrollTop = sidebarScrollTop;
+    const rememberScroll = () => {
+      if (nav.isConnected) sidebarScrollTop = nav.scrollTop;
+    };
+    nav.addEventListener('scroll', rememberScroll, { passive: true });
+    return () => nav.removeEventListener('scroll', rememberScroll);
+  });
 
   let notifications = $state<NotificationView[]>([]);
   let unreadCount = $state(0);
@@ -81,6 +100,8 @@
   let isTeacher = $derived(hasRole('teacher'));
   let isParent = $derived(hasRole('parent'));
   let isHeadmaster = $derived(hasRole('headmaster'));
+  // Absent flag means an older page payload, not a disabled module.
+  let presenceOn = $derived(features.teacherPresence !== false);
 
   let dashboardLink = $derived(
     isParent
@@ -98,6 +119,7 @@
       label: 'Data Master',
       links: [
         { href: '/school-locations', label: 'Profil Sekolah', group: 'school-locations', icon: MapPin, show: isAdmin || isHeadmaster },
+        { href: '/school-calendar', label: 'Kalender Sekolah', group: 'school-calendar', icon: CalendarOff, show: isAdmin || isHeadmaster },
         { href: '/academic-years', label: 'Periode Akademik', group: 'academic-years', icon: Calendar, show: isAdmin || isHeadmaster },
         { href: '/subjects', label: 'Mata Pelajaran', group: 'subjects', icon: BookMarked, show: isAdmin || isHeadmaster },
         { href: '/classes', label: 'Kelas & Siswa', group: 'classes', icon: School, show: isAdmin || isHeadmaster },
@@ -128,23 +150,23 @@
       ],
     },
     {
-      label: 'Kehadiran',
+      label: 'Kehadiran Guru',
       links: [
         {
           href: isTeacher ? '/teacher/confirm' : '/teacher/confirmations',
           label: isTeacher ? 'Konfirmasi Kehadiran' : 'Monitoring Konfirmasi',
           group: isTeacher ? 'teacher-confirm' : 'teacher-confirmations',
           icon: UserCheck,
-          show: isTeacher ? hasPermission('confirmations.create') : hasPermission('confirmations.view'),
+          show: presenceOn && (isTeacher ? hasPermission('confirmations.create') : hasPermission('confirmations.view')),
         },
-        { href: '/qr-settings', label: 'Pengaturan QR Absen', group: 'qr-settings', icon: QrCode, show: isAdmin },
+        { href: '/teacher-presence', label: 'Pengaturan Kehadiran', group: 'teacher-presence', icon: QrCode, show: isAdmin },
       ],
     },
     {
       label: 'Laporan & Informasi',
       links: [
         { href: '/headmaster/dashboard', label: 'Pengawasan Sekolah', group: 'headmaster', icon: ChartColumn, show: isHeadmaster },
-        { href: '/headmaster/reports', label: 'Laporan Kehadiran Guru', group: 'headmaster-reports', icon: ChartColumn, show: isHeadmaster },
+        { href: '/headmaster/reports', label: 'Laporan Kehadiran Guru', group: 'headmaster-reports', icon: ChartColumn, show: isHeadmaster && presenceOn },
         { href: '/announcements', label: 'Pengumuman', group: 'announcements', icon: Megaphone, show: isAdmin },
       ],
     },
@@ -325,7 +347,7 @@
     </div>
   </div>
 
-  <nav class="flex-1 overflow-y-auto px-3 py-4">
+  <nav bind:this={desktopNav} class="flex-1 overflow-y-auto px-3 py-4">
     {@render navigation()}
   </nav>
 

@@ -1,10 +1,13 @@
 <script lang="ts">
   import Sidebar from '../../Components/Sidebar.svelte';
+  import Button from '../../Components/Button.svelte';
+  import { router } from '@inertiajs/svelte';
   import { fly } from 'svelte/transition';
-  import { Lock } from '@lucide/svelte';
+  import { FileText, Lock } from '@lucide/svelte';
   import type { SubjectGradeSummary, StudentGradeProgression } from '../../types';
 
-  let { studentName = '', gradesPublished = false, summaries = [], progression = [] }: {
+  let { studentId = '', studentName = '', gradesPublished = false, summaries = [], progression = [] }: {
+    studentId?: string;
     studentName?: string;
     gradesPublished?: boolean;
     summaries?: SubjectGradeSummary[];
@@ -25,9 +28,16 @@
 <Sidebar group="parent" />
 
 <div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
-  <div in:fly={{ y: 20, duration: 700 }}>
-    <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Rapor Anak</p>
-    <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground mb-8">{studentName ? `Nilai ${studentName}` : 'Nilai Anak'}</h1>
+  <div in:fly={{ y: 20, duration: 700 }} class="flex flex-wrap items-end justify-between gap-4 mb-8">
+    <div>
+      <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Rapor Anak</p>
+      <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">{studentName ? `Nilai ${studentName}` : 'Nilai Anak'}</h1>
+    </div>
+    {#if studentId}
+      <Button variant="outline" onclick={() => router.visit(`/reports/rapor/${studentId}`)}>
+        <FileText class="w-4 h-4" /> Lihat Rapor
+      </Button>
+    {/if}
   </div>
 
   {#if !gradesPublished}

@@ -24,7 +24,7 @@
 
   async function fetchQr(): Promise<void> {
     isLoading = true;
-    const result = await api(() => axios.get('/qr-settings/qr-data'), { showSuccessToast: false });
+    const result = await api(() => axios.get('/teacher-presence/qr-data'), { showSuccessToast: false });
     isLoading = false;
     if (result.success && result.data) qrData = result.data as QrData;
   }

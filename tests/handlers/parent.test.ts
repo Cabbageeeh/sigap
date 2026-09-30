@@ -118,6 +118,7 @@ describe('parentGradesPage', () => {
     parentGradesPage(req, res);
 
     expect(res.inertia).toHaveBeenCalledWith('parent/grades', {
+      studentId: 'student-1',
       studentName: 'Ani',
       gradesPublished: true,
       summaries: [summary],
@@ -136,6 +137,7 @@ describe('parentGradesPage', () => {
     parentGradesPage(req, res);
 
     expect(res.inertia).toHaveBeenCalledWith('parent/grades', {
+      studentId: 'student-1',
       studentName: 'Ani',
       gradesPublished: false,
       summaries: [],

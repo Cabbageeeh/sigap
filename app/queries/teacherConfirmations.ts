@@ -57,6 +57,43 @@ export const countTeachersConfirmedOn = (dayStartMs: number): number => {
   return row?.count ?? 0;
 };
 
+export interface ConfirmationReportRow {
+  teacher_name: string;
+  confirmation_date: number;
+  confirmed_at: number;
+  distance_meters: number | null;
+  is_inside_school: number;
+}
+
+// Every scan in a window, oldest first — the printed presence list reads like a
+// ledger, so it is not paginated and not filtered by "today".
+export const findConfirmationReportRows = (
+  from: number,
+  to: number,
+  teacherUserId?: string,
+): ConfirmationReportRow[] =>
+  teacherUserId
+    ? SQLite.all<ConfirmationReportRow>(
+      `SELECT COALESCE(u.name, u.username) AS teacher_name,
+              COALESCE(tc.confirmation_date, tc.confirmed_at) AS confirmation_date,
+              tc.confirmed_at, tc.distance_meters, tc.is_inside_school
+       FROM teacher_confirmations tc
+       INNER JOIN users u ON u.id = tc.teacher_user_id
+       WHERE tc.teacher_user_id = ? AND tc.confirmed_at >= ? AND tc.confirmed_at <= ?
+       ORDER BY tc.confirmed_at`,
+      [teacherUserId, from, to],
+    )
+    : SQLite.all<ConfirmationReportRow>(
+      `SELECT COALESCE(u.name, u.username) AS teacher_name,
+              COALESCE(tc.confirmation_date, tc.confirmed_at) AS confirmation_date,
+              tc.confirmed_at, tc.distance_meters, tc.is_inside_school
+       FROM teacher_confirmations tc
+       INNER JOIN users u ON u.id = tc.teacher_user_id
+       WHERE tc.confirmed_at >= ? AND tc.confirmed_at <= ?
+       ORDER BY tc.confirmed_at`,
+      [from, to],
+    );
+
 export const findTeacherConfirmationById = (id: string): TeacherConfirmation | undefined =>
   SQLite.one<TeacherConfirmation>`SELECT * FROM teacher_confirmations WHERE id = ${id}`;
 
@@ -80,6 +117,19 @@ export const findTodayConfirmationBySchedule = (scheduleId: string): TeacherConf
     LIMIT 1
   `;
 };
+
+export const findConfirmationByTeacherOnDay = (
+  teacherUserId: string,
+  dayStart: number,
+): TeacherConfirmation | undefined =>
+  SQLite.one<TeacherConfirmation>`
+    SELECT * FROM teacher_confirmations
+    WHERE teacher_user_id = ${teacherUserId}
+      AND confirmed_at >= ${dayStart}
+      AND confirmed_at <= ${dayStart + 86399999}
+    ORDER BY confirmed_at DESC
+    LIMIT 1
+  `;
 
 export const findTodayConfirmationByTeacher = (teacherUserId: string): TeacherConfirmation | undefined => {
   const startOfDay = new Date();

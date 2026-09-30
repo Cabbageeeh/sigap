@@ -27,13 +27,14 @@ Inertia.js pages rendered by Svelte 5. Each page is a route destination — the 
 | `roles.svelte` | Role management (CRUD table + permissions) |
 | `schedules.svelte` | Schedule CRUD |
 | `schoolLocations.svelte` | School location CRUD |
+| `schoolCalendar.svelte` | School calendar: holiday dates and whether Saturday is a school day |
 | `studentAttendance.svelte` | Student attendance list |
 | `students.svelte` | Student CRUD + parent account management from student detail |
 | `subjects.svelte` | Subject CRUD |
 | `teacherConfirmations.svelte` | Teacher confirmation list |
 | `teachers.svelte` | Teacher CRUD |
 | `teacherAssignments.svelte` | Admin teacher-to-class and homeroom assignment screen |
-| `qrSettings.svelte` | QR absen settings (refresh interval + link to display) |
+| `teacherPresence.svelte` | Teacher presence settings: QR attendance on/off + refresh interval + link to display |
 | `qrDisplay.svelte` | Big QR code display page for TV/projector |
 | `users.svelte` | User management (CRUD table + role assignment) |
 | `auth/login.svelte` | Login form |
