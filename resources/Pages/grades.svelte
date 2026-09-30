@@ -11,7 +11,7 @@
   import SearchableSelect from '../Components/SearchableSelect.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
-  import { FileSpreadsheet, LockKeyhole, Save, Loader2, Plus, Pencil, Trash2 } from '@lucide/svelte';
+  import { Download, FileSpreadsheet, LockKeyhole, Save, Loader2, Plus, Pencil, Trash2 } from '@lucide/svelte';
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
 
@@ -237,6 +237,11 @@
           </div>
         </div>
         <Button onclick={showRekap} disabled={!filterClassId || !filterSubjectId}><FileSpreadsheet class="w-4 h-4 mr-1" /> Lihat Rekap</Button>
+        {#if filterClassId}
+          <a href={`/exports/grades/${filterClassId}`} download class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+            <Download class="w-4 h-4" /> Unduh PDF Rekap
+          </a>
+        {/if}
       </div>
     </div>
 

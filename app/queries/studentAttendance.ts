@@ -72,7 +72,7 @@ export const getAttendanceRecap = (classId: string, from: number, to: number, te
        SUM(CASE WHEN j.id IS NOT NULL AND sch.id IS NOT NULL AND sa.status = 'sick' THEN 1 ELSE 0 END) AS sick,
        SUM(CASE WHEN j.id IS NOT NULL AND sch.id IS NOT NULL AND sa.status = 'leave' THEN 1 ELSE 0 END) AS leave,
        SUM(CASE WHEN j.id IS NOT NULL AND sch.id IS NOT NULL AND sa.status = 'absent' THEN 1 ELSE 0 END) AS absent,
-       COUNT(j.id) AS total
+       SUM(CASE WHEN j.id IS NOT NULL AND sch.id IS NOT NULL THEN 1 ELSE 0 END) AS total
      FROM students st
      LEFT JOIN student_attendance sa ON sa.student_id = st.id
      LEFT JOIN journals j ON j.id = sa.journal_id AND j.date >= ? AND j.date <= ?

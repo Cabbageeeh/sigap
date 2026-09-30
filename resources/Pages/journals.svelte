@@ -14,7 +14,7 @@
   import type { Journal, JournalSlotView } from '../types';
 
   import { cn } from '$lib/utils.js';
-  import { BookOpen, Pencil, Plus, Trash2 } from '@lucide/svelte';
+  import { BookOpen, Download, Pencil, Plus, Trash2 } from '@lucide/svelte';
 
   interface JournalRow extends Journal {
     class_name?: string;
@@ -158,6 +158,11 @@
 <PageShell>
   <PageHeader eyebrow="Jurnal Mengajar" title="Jurnal." description="Catatan harian kegiatan belajar mengajar per jadwal.">
     {#snippet actions()}
+      {#if permissions.canView}
+        <a href="/exports/journals" download class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+          <Download class="w-4 h-4" /> Unduh Rekap PDF
+        </a>
+      {/if}
       {#if permissions.canCreate}
         <Button onclick={openCreate} size="lg" disabled={journalSlots.length === 0}>
           <Plus class="w-4 h-4" /> Tambah Jurnal

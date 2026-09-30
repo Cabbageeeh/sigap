@@ -14,7 +14,7 @@
   import PageShell from '../Components/PageShell.svelte';
   import type { Class, ClassForm, AcademicYear } from '../types';
   import { createEmptyClassForm, classToForm } from '../types';
-  import { ArrowRight, Pencil, Plus, Trash2 } from '@lucide/svelte';
+  import { ArrowRight, Download, Pencil, Plus, Trash2 } from '@lucide/svelte';
 
   let {
     permissions,
@@ -65,6 +65,9 @@
   {#if permissions.canViewStudents}
     <a href={`/classes/${item.id}/students`} use:inertia class="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors mr-2">
       Kelola siswa <ArrowRight class="w-3.5 h-3.5" />
+    </a>
+    <a href={`/exports/students/${item.id}`} download title="Unduh daftar siswa beserta kontak orang tua (PDF)" class="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors mr-2">
+      Daftar PDF <Download class="w-3.5 h-3.5" />
     </a>
   {/if}
   {#if permissions.canEdit}<Button variant="ghost" size="icon" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}

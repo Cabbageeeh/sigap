@@ -43,6 +43,19 @@ export const findStudentsByClass = (classId: string): Student[] =>
 export const findStudentsByParent = (parentUserId: string): Student[] =>
   SQLite.many<Student>`SELECT * FROM students WHERE parent_user_id = ${parentUserId} ORDER BY name`;
 
+// Full roster with the guardian contact a printed class list needs.
+export const findClassRoster = (classId: string): StudentListItem[] =>
+  SQLite.all<StudentListItem>(
+    `SELECT s.*, u.name AS parent_name, u.username AS parent_username,
+            p.phone AS parent_phone, p.address AS parent_address
+     FROM students s
+     LEFT JOIN users u ON u.id = s.parent_user_id
+     LEFT JOIN parents p ON p.user_id = s.parent_user_id
+     WHERE s.class_id = ?
+     ORDER BY s.name`,
+    [classId],
+  );
+
 export const findStudentsByTeacherUser = (teacherUserId: string): Student[] =>
   SQLite.many<Student>`
     SELECT DISTINCT st.*

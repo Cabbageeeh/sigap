@@ -11,7 +11,7 @@
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
   import type { TeacherConfirmationLogView, PaginationMeta } from '../types';
-  import { UserCheck } from '@lucide/svelte';
+  import { Download, UserCheck } from '@lucide/svelte';
   import { fly } from 'svelte/transition';
 
   type TeacherOption = { user_id: string; user_name: string | null; user_username: string };
@@ -81,6 +81,15 @@
     router.visit('/teacher/confirmations', { preserveScroll: true });
   }
 
+  const exportHref = $derived.by(() => {
+    const params = new URLSearchParams();
+    if (startDate) params.set('from', String(new Date(startDate + 'T00:00:00').getTime()));
+    if (endDate) params.set('to', String(new Date(endDate + 'T23:59:59').getTime()));
+    if (!isOwnView && teacherId) params.set('teacher_id', teacherId);
+    const query = params.toString();
+    return `/exports/teacher-presence${query ? `?${query}` : ''}`;
+  });
+
   const columns = [
     { key: 'guru', label: 'Guru' },
     { key: 'tanggal', label: 'Tanggal' },
@@ -135,6 +144,11 @@
         <SearchableSelect id="log-teacher" bind:value={teacherId} onchange={applyFilters} placeholder="Semua guru" options={teachers.map(t => ({ value: t.user_id, label: t.user_name || t.user_username }))} />
       </div>
     {/if}
+    <div class="flex items-end">
+      <a href={exportHref} download class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+        <Download class="w-3.5 h-3.5" /> Unduh PDF
+      </a>
+    </div>
     {#if hasFilters}
       <div class="flex items-end">
         <Button variant="outline" onclick={resetFilters}>Reset</Button>

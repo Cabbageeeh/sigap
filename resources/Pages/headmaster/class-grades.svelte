@@ -3,13 +3,14 @@
   import Sidebar from '../../Components/Sidebar.svelte';
   import DataTable from '../../Components/DataTable.svelte';
   import { fly } from 'svelte/transition';
-  import { ArrowLeft } from '@lucide/svelte';
+  import { ArrowLeft, Download } from '@lucide/svelte';
   import type { HeadmasterGradeDetailView } from '../../types';
 
-  let { className = '', grade = '', rows = [] }: {
+  let { className = '', grade = '', rows = [], classId = '' }: {
     className?: string;
     grade?: string | number;
     rows?: HeadmasterGradeDetailView[];
+    classId?: string;
   } = $props();
 
   function typeLabel(type: string): string {
@@ -54,6 +55,11 @@
     <p class="mt-4 text-base text-muted-foreground leading-relaxed max-w-[60ch]">
       Daftar nilai per siswa dan mata pelajaran. Halaman ini bersifat read-only untuk kebutuhan pengawasan.
     </p>
+    {#if classId}
+      <a href={`/exports/grades/${classId}`} download class="mt-6 inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+        <Download class="w-4 h-4" /> Unduh PDF Rekap Nilai
+      </a>
+    {/if}
   </div>
 
   <div in:fly={{ y: 20, duration: 700, delay: 100 }}>
