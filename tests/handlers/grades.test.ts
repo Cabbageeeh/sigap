@@ -15,6 +15,9 @@ vi.mock('@queries/grades', () => ({
 vi.mock('@queries/teacherConfirmations', () => ({
   findTodayConfirmationByTeacher: vi.fn(() => ({ id: 'confirmation-1' })),
 }));
+vi.mock('@queries/appSettings', () => ({
+  isTeacherPresenceEnabled: vi.fn(() => true),
+}));
 vi.mock('@queries/schedules', () => ({
   findTeacherSchedulesByDay: vi.fn(() => [{ id: 'schedule-1' }]),
 }));

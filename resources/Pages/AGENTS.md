@@ -34,7 +34,7 @@ Inertia.js pages rendered by Svelte 5. Each page is a route destination — the 
 | `teacherConfirmations.svelte` | Teacher confirmation list |
 | `teachers.svelte` | Teacher CRUD |
 | `teacherAssignments.svelte` | Admin teacher-to-class and homeroom assignment screen |
-| `qrSettings.svelte` | QR absen settings (refresh interval + link to display) |
+| `teacherPresence.svelte` | Teacher presence settings: QR attendance on/off + refresh interval + link to display |
 | `qrDisplay.svelte` | Big QR code display page for TV/projector |
 | `users.svelte` | User management (CRUD table + role assignment) |
 | `auth/login.svelte` | Login form |

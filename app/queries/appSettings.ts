@@ -1,5 +1,6 @@
 import SQLite from '@services/SQLite';
-import type { AppSetting } from '@types';
+import { TEACHER_PRESENCE } from '@config/constants';
+import type { AppSetting, TeacherPresenceMode } from '@types';
 
 export const findSetting = (key: string): string | undefined => {
   const row = SQLite.one<AppSetting>`SELECT * FROM app_settings WHERE key = ${key}`;
@@ -22,3 +23,9 @@ export const upsertSetting = (key: string, value: string): void => {
     SQLite.exec`INSERT INTO app_settings (key, value, updated_at) VALUES (${key}, ${value}, ${now})`;
   }
 };
+
+// An unconfigured school keeps the QR flow, so the flag only ever opts out.
+export const findTeacherPresenceMode = (): TeacherPresenceMode =>
+  findSetting(TEACHER_PRESENCE.SETTING_KEY) === TEACHER_PRESENCE.MODE_OFF ? 'off' : 'qr';
+
+export const isTeacherPresenceEnabled = (): boolean => findTeacherPresenceMode() !== TEACHER_PRESENCE.MODE_OFF;

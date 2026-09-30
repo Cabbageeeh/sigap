@@ -222,7 +222,8 @@ export const SchoolProfileSchema = z.object({
   }
 });
 
-export const QrSettingsSchema = z.object({
+export const TeacherPresenceSettingsSchema = z.object({
+  mode: z.enum(['qr', 'off']),
   qr_refresh_interval: z.number().int().min(1, 'Interval minimal 1 menit').max(1440, 'Interval maksimal 1440 menit (24 jam)'),
 });
 
@@ -349,7 +350,7 @@ export type TeacherClassAssignmentsInput = z.infer<typeof TeacherClassAssignment
 export type ScheduleInput = z.infer<typeof ScheduleSchema>;
 export type UpdateScheduleInput = z.infer<typeof UpdateScheduleSchema>;
 export type SchoolProfileInput = z.infer<typeof SchoolProfileSchema>;
-export type QrSettingsInput = z.infer<typeof QrSettingsSchema>;
+export type TeacherPresenceSettingsInput = z.infer<typeof TeacherPresenceSettingsSchema>;
 export type SchoolHolidayInput = z.infer<typeof SchoolHolidaySchema>;
 export type SchoolCalendarSettingsInput = z.infer<typeof SchoolCalendarSettingsSchema>;
 export type TeacherConfirmationInput = z.infer<typeof TeacherConfirmationSchema>;

@@ -43,6 +43,7 @@
   let { group }: { group: string } = $props();
 
   let user = $derived(page.props.user as User | undefined);
+  let features = $derived((page.props.features as { teacherPresence?: boolean } | undefined) ?? {});
   let isMenuOpen = $state(false);
 
   let desktopNav = $state<HTMLElement | null>(null);
@@ -99,6 +100,8 @@
   let isTeacher = $derived(hasRole('teacher'));
   let isParent = $derived(hasRole('parent'));
   let isHeadmaster = $derived(hasRole('headmaster'));
+  // Absent flag means an older page payload, not a disabled module.
+  let presenceOn = $derived(features.teacherPresence !== false);
 
   let dashboardLink = $derived(
     isParent
@@ -147,23 +150,23 @@
       ],
     },
     {
-      label: 'Kehadiran',
+      label: 'Kehadiran Guru',
       links: [
         {
           href: isTeacher ? '/teacher/confirm' : '/teacher/confirmations',
           label: isTeacher ? 'Konfirmasi Kehadiran' : 'Monitoring Konfirmasi',
           group: isTeacher ? 'teacher-confirm' : 'teacher-confirmations',
           icon: UserCheck,
-          show: isTeacher ? hasPermission('confirmations.create') : hasPermission('confirmations.view'),
+          show: presenceOn && (isTeacher ? hasPermission('confirmations.create') : hasPermission('confirmations.view')),
         },
-        { href: '/qr-settings', label: 'Pengaturan QR Absen', group: 'qr-settings', icon: QrCode, show: isAdmin },
+        { href: '/teacher-presence', label: 'Pengaturan Kehadiran', group: 'teacher-presence', icon: QrCode, show: isAdmin },
       ],
     },
     {
       label: 'Laporan & Informasi',
       links: [
         { href: '/headmaster/dashboard', label: 'Pengawasan Sekolah', group: 'headmaster', icon: ChartColumn, show: isHeadmaster },
-        { href: '/headmaster/reports', label: 'Laporan Kehadiran Guru', group: 'headmaster-reports', icon: ChartColumn, show: isHeadmaster },
+        { href: '/headmaster/reports', label: 'Laporan Kehadiran Guru', group: 'headmaster-reports', icon: ChartColumn, show: isHeadmaster && presenceOn },
         { href: '/announcements', label: 'Pengumuman', group: 'announcements', icon: Megaphone, show: isAdmin },
       ],
     },

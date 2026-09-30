@@ -213,7 +213,7 @@ export interface AppSetting {
 export interface Journal {
   id: string;
   schedule_id: string;
-  teacher_confirmation_id: string;
+  teacher_confirmation_id: string | null;
   date: number;
   material: string;
   created_at?: number;
@@ -427,3 +427,6 @@ export interface NotificationView {
   read_at: number | null;
   created_at: number;
 }
+
+/** `qr` = school shows a rotating QR the teacher scans; `off` = presence is not tracked here. */
+export type TeacherPresenceMode = 'qr' | 'off';

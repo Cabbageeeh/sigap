@@ -14,6 +14,7 @@ import {
   isTeacherHomeroomOfClass,
 } from '@queries/teacherClassAssignments';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
+import { isTeacherPresenceEnabled } from '@queries/appSettings';
 import { findTeacherSchedulesByDay } from '@queries/schedules';
 import { isTeachingDay } from '@queries/schoolCalendar';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
@@ -24,8 +25,10 @@ import { findClassById } from '@queries/classes';
 const isTeacherActor = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && isTeacherUser(userId);
 const canView = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && hasPermission(userId, 'grades.view');
 // Presence has to be proven only on a day the teacher actually teaches; on
-// holidays, weekends, and empty days grade entry stays open.
+// holidays, weekends, and empty days grade entry stays open. Schools that
+// record teacher presence elsewhere opt out entirely.
 const attendanceConfirmedToday = (userId: string): boolean => {
+  if (!isTeacherPresenceEnabled()) return true;
   if (!isTeachingDay(Date.now())) return true;
   return findTeacherSchedulesByDay(userId, new Date().getDay()).length === 0 || !!findTodayConfirmationByTeacher(userId);
 };

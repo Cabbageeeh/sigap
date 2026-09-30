@@ -199,6 +199,8 @@ export interface AppSetting {
   updated_at: number;
 }
 
+export type TeacherPresenceMode = 'qr' | 'off';
+
 export interface TeacherConfirmationLogView {
   id: string;
   teacher_name: string;
@@ -210,7 +212,7 @@ export interface TeacherConfirmationLogView {
 export interface Journal {
   id: string;
   schedule_id: string;
-  teacher_confirmation_id: string;
+  teacher_confirmation_id: string | null;
   date: number;
   material: string;
   created_at: number;

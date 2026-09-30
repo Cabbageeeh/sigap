@@ -31,6 +31,7 @@
   }: Props = $props();
 
   const currentUser = $derived(inertiaPage.props.user as User | undefined);
+  const presenceOn = $derived((inertiaPage.props.features as { teacherPresence?: boolean } | undefined)?.teacherPresence !== false);
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Selamat pagi' : hour < 18 ? 'Selamat sore' : 'Selamat malam';
@@ -157,9 +158,11 @@
         <BentoCard title="Status Kehadiran" description="Tahun ajaran aktif.">
           <AttendanceDonut data={charts.statusBreakdown} />
         </BentoCard>
-        <BentoCard title="Konfirmasi Guru" description="Minggu ini vs jadwal." class="lg:col-span-2">
-          <ConfirmationWeekChart data={charts.confirmationWeek} />
-        </BentoCard>
+        {#if presenceOn}
+          <BentoCard title="Konfirmasi Guru" description="Minggu ini vs jadwal." class="lg:col-span-2">
+            <ConfirmationWeekChart data={charts.confirmationWeek} />
+          </BentoCard>
+        {/if}
         <BentoCard title="Siswa per Kelas" description="Tahun ajaran aktif.">
           <ClassSizeBars data={charts.classSizes} />
         </BentoCard>

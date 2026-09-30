@@ -25,6 +25,9 @@ vi.mock('@queries/teacherConfirmations', () => ({
   findAllTeacherConfirmations: vi.fn(() => []),
 }));
 
+vi.mock('@queries/appSettings', () => ({
+  isTeacherPresenceEnabled: vi.fn(() => true),
+}));
 vi.mock('@queries/classes', () => ({
   findClassById: vi.fn(),
 }));
@@ -161,6 +164,7 @@ describe('headmaster detail pages', () => {
     headmasterClassGradesPage(req, res);
 
     expect(res.inertia).toHaveBeenCalledWith('headmaster/class-grades', {
+      classId: classItem.id,
       className: classItem.name,
       grade: classItem.grade,
       rows,

@@ -8,6 +8,7 @@ import { findAllTeachersForAssignment, countActiveTeachers } from '@queries/teac
 import { haversineDistance, validateCoordinates } from '@services/Geolocation';
 import { verifyQrToken } from '@services/QrCode';
 import { isAdmin, hasPermission } from '@queries/users';
+import { isTeacherPresenceEnabled } from '@queries/appSettings';
 import { isTeacherUser } from '@queries/teacherClassAssignments';
 import { TeacherConfirmationSchema, zodToErrors } from '@validators';
 import type { TeacherConfirmation } from '@types';
@@ -31,6 +32,7 @@ const startOfToday = (): number => {
 
 export const teacherConfirmationsPage = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return res.redirect('/login');
+  if (!isTeacherPresenceEnabled()) return res.redirect('/dashboard');
   const userId = req.user.id;
   const allowed = canView(userId);
   const ownView = allowed && isTeacherActor(userId);
@@ -65,6 +67,7 @@ export const teacherConfirmationsPage = (req: NaraRequest, res: NaraResponse) =>
 
 export const confirmPage = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return res.redirect('/login');
+  if (!isTeacherPresenceEnabled()) return res.redirect('/teacher/schedule');
   if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'confirmations.create')) {
     return res.redirect('/dashboard');
   }
@@ -114,6 +117,9 @@ export const teacherConfirmationData = (req: NaraRequest, res: NaraResponse) => 
 
 export const submitTeacherConfirmation = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Unauthorized', 401);
+  if (!isTeacherPresenceEnabled()) {
+    return jsonError(res, 'Absensi guru sedang dinonaktifkan di sekolah ini', 403, 'TEACHER_PRESENCE_DISABLED');
+  }
   if (!isTeacherActor(req.user.id) || !hasPermission(req.user.id, 'confirmations.create')) {
     return jsonError(res, 'Forbidden', 403);
   }

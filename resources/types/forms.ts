@@ -52,6 +52,7 @@ export type {
   HeadmasterGradeDetailView,
   OutsideConfirmationView,
   NotificationView,
+  TeacherPresenceMode,
 } from '../../app/types/shared';
 
 import type {
@@ -282,10 +283,6 @@ export interface SchoolLocationForm {
   longitude: string;
   radius_meters: string;
   start_time: string;
-}
-
-export interface QrSettingsForm {
-  qr_refresh_interval: number;
 }
 
 export interface StudentSelectOption {

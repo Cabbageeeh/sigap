@@ -10,6 +10,7 @@ import { isTeacherHomeroomOfClass, isTeacherUser } from '@queries/teacherClassAs
 import { getAttendanceRecap } from '@queries/studentAttendance';
 import { findClassGradeDetails } from '@queries/headmaster';
 import { findConfirmationReportRows } from '@queries/teacherConfirmations';
+import { isTeacherPresenceEnabled } from '@queries/appSettings';
 import { findJournalReportRows } from '@queries/journals';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
 
@@ -261,6 +262,9 @@ export const exportClassGradesPdf = (req: NaraRequest, res: NaraResponse) => {
 
 export const exportTeacherPresencePdf = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Sesi login diperlukan', 401);
+  if (!isTeacherPresenceEnabled()) {
+    return jsonError(res, 'Absensi guru sedang dinonaktifkan di sekolah ini', 403, 'TEACHER_PRESENCE_DISABLED');
+  }
 
   const userId = req.user.id;
   const privileged = officeMaySee(userId, 'confirmations.view');

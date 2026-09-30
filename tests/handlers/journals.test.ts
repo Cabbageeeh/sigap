@@ -24,6 +24,8 @@ vi.mock('@queries/teacherConfirmations', () => ({
   findConfirmationByTeacherOnDay: vi.fn(),
   findTodayConfirmationByTeacher: vi.fn(),
 }));
+const { isTeacherPresenceEnabled } = vi.hoisted(() => ({ isTeacherPresenceEnabled: vi.fn(() => true) }));
+vi.mock('@queries/appSettings', () => ({ isTeacherPresenceEnabled }));
 vi.mock('@queries/schoolCalendar', () => ({
   isTeachingDay: vi.fn(() => true),
   findNonTeachingDays: vi.fn(() => new Set()),
@@ -39,7 +41,7 @@ vi.mock('@services/Logger', () => ({
 
 import { addJournal } from '../../app/handlers/journals';
 import { findScheduleById } from '@queries/schedules';
-import { createJournal, findJournalByScheduleAndDate } from '@queries/journals';
+import { createJournal, findJournalByScheduleAndDate, updateJournal } from '@queries/journals';
 import { findConfirmationByTeacherOnDay } from '@queries/teacherConfirmations';
 import { isTeachingDay } from '@queries/schoolCalendar';
 
@@ -79,6 +81,7 @@ const submit = (date?: number) => {
 describe('journal late entry window', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(isTeacherPresenceEnabled).mockReturnValue(true);
     vi.mocked(isTeachingDay).mockReturnValue(true);
     vi.mocked(findScheduleById).mockReturnValue(scheduleFor(twoDaysAgo) as never);
     vi.mocked(findConfirmationByTeacherOnDay).mockReturnValue({ id: 'confirmation-1' } as never);
@@ -111,6 +114,21 @@ describe('journal late entry window', () => {
     expect(res._status).toBe(403);
     expect(res._body).toMatchObject({ code: 'CONFIRMATION_REQUIRED' });
     expect(createJournal).not.toHaveBeenCalled();
+  });
+
+  it('accepts a journal with no confirmation once teacher presence is disabled', () => {
+    vi.mocked(isTeacherPresenceEnabled).mockReturnValue(false);
+    vi.mocked(findConfirmationByTeacherOnDay).mockReturnValue(undefined);
+    submit(twoDaysAgo);
+    expect(findConfirmationByTeacherOnDay).not.toHaveBeenCalled();
+    expect(createJournal).toHaveBeenCalledWith(expect.objectContaining({ teacher_confirmation_id: null }));
+  });
+
+  it('leaves an existing evidence link untouched when editing with presence disabled', () => {
+    vi.mocked(isTeacherPresenceEnabled).mockReturnValue(false);
+    vi.mocked(findJournalByScheduleAndDate).mockReturnValue({ id: 'journal-1' } as never);
+    submit(twoDaysAgo);
+    expect(updateJournal).toHaveBeenCalledWith('journal-1', { material: 'Materi sesi ini' });
   });
 
   it('accepts a late entry for a confirmed day and stamps that day', () => {

@@ -1,4 +1,5 @@
 import SQLite from '@services/SQLite';
+import { isTeacherPresenceEnabled } from './appSettings';
 
 export interface DashboardStats {
   totalStudents: number;
@@ -24,12 +25,14 @@ export const getDashboardStats = (): DashboardStats => {
     'SELECT COUNT(*) as count FROM student_attendance WHERE created_at >= ? AND created_at <= ? AND status = ?',
     [startOfDay, endOfDay, 'present']
   )?.count ?? 0;
-  const pendingConfirmations = SQLite.get<{ count: number }>(
-    'SELECT COUNT(*) as count FROM schedules s WHERE NOT EXISTS (SELECT 1 FROM teacher_confirmations c WHERE c.schedule_id = s.id AND c.confirmed_at >= ? AND c.confirmed_at <= ?)',
-    [startOfDay, endOfDay]
-  )?.count ?? 0;
+  const pendingRow = isTeacherPresenceEnabled()
+    ? SQLite.get<{ count: number }>(
+      'SELECT COUNT(*) as count FROM schedules s WHERE NOT EXISTS (SELECT 1 FROM teacher_confirmations c WHERE c.schedule_id = s.id AND c.confirmed_at >= ? AND c.confirmed_at <= ?)',
+      [startOfDay, endOfDay]
+    )
+    : undefined;
 
-  return { totalStudents, totalTeachers, totalClasses, totalSubjects, todayAttendance, todayJournals, pendingConfirmations };
+  return { totalStudents, totalTeachers, totalClasses, totalSubjects, todayAttendance, todayJournals, pendingConfirmations: pendingRow?.count ?? 0 };
 };
 
 export interface AttendanceTrendPoint {
@@ -121,23 +124,28 @@ export const getDashboardCharts = (): DashboardCharts => {
 
   const weekStart = todayStart - ((now.getDay() + 6) % 7) * dayMs;
   const weekEnd = weekStart + 7 * dayMs - 1;
-  const scheduledRows = SQLite.all<{ day_of_week: number; count: number }>(
-    `SELECT day_of_week, COUNT(*) as count FROM schedules
-     WHERE academic_year_id IN (SELECT id FROM academic_years WHERE is_active = 1)
-     GROUP BY day_of_week`,
-  );
-  const confirmedRows = SQLite.all<{ confirmed_at: number; count: number }>(
-    `SELECT confirmed_at, COUNT(*) as count FROM teacher_confirmations
-     WHERE confirmed_at >= ? AND confirmed_at <= ? GROUP BY confirmed_at`,
-    [weekStart, weekEnd],
-  );
+  const presence = isTeacherPresenceEnabled();
+  const scheduledRows = presence
+    ? SQLite.all<{ day_of_week: number; count: number }>(
+      `SELECT day_of_week, COUNT(*) as count FROM schedules
+       WHERE academic_year_id IN (SELECT id FROM academic_years WHERE is_active = 1)
+       GROUP BY day_of_week`,
+    )
+    : [];
+  const confirmedRows = presence
+    ? SQLite.all<{ confirmed_at: number; count: number }>(
+      `SELECT confirmed_at, COUNT(*) as count FROM teacher_confirmations
+       WHERE confirmed_at >= ? AND confirmed_at <= ? GROUP BY confirmed_at`,
+      [weekStart, weekEnd],
+    )
+    : [];
   const confirmedByDay = new Map<number, number>();
   for (const row of confirmedRows) {
     const dow = new Date(row.confirmed_at).getDay();
     confirmedByDay.set(dow, (confirmedByDay.get(dow) ?? 0) + row.count);
   }
   const confirmationWeek: ConfirmationWeekPoint[] = [];
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; presence && i < 7; i++) {
     const dow = (i + 1) % 7;
     confirmationWeek.push({
       day: DAY_LABELS[dow],

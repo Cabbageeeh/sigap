@@ -20,6 +20,7 @@
   } from '../../types';
 
   interface DashboardData {
+    teacherPresence: boolean;
     stats: DashboardStats;
     classOverview: HeadmasterClassOverviewView[];
     teacherAttendance: HeadmasterTeacherAttendanceView[];
@@ -34,6 +35,7 @@
 
   let data = $state<DashboardData | null>(null);
   let announcements = $state<AnnouncementView[]>([]);
+  let presenceOn = $derived(data?.teacherPresence !== false);
 
   $effect(() => {
     api(() => axios.get('/headmaster/dashboard/data'), { showSuccessToast: false }).then(result => {
@@ -162,9 +164,11 @@
   </div>
 
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10" in:fly={{ y: 20, duration: 700, delay: 150 }}>
-    <StatCard label="Jadwal Hari Ini" value={data?.today.length ?? 0} icon={CalendarClock} tone="info" />
-    <StatCard label="Konfirmasi" value={data?.confirmedToday ?? 0} icon={UserCheck} tone="success" />
-    <StatCard label="Belum Konfirmasi" value={(data?.today.length ?? 0) - (data?.confirmedToday ?? 0)} icon={Clock} tone="warning" />
+    {#if presenceOn}
+      <StatCard label="Jadwal Hari Ini" value={data?.today.length ?? 0} icon={CalendarClock} tone="info" />
+      <StatCard label="Konfirmasi" value={data?.confirmedToday ?? 0} icon={UserCheck} tone="success" />
+      <StatCard label="Belum Konfirmasi" value={(data?.today.length ?? 0) - (data?.confirmedToday ?? 0)} icon={Clock} tone="warning" />
+    {/if}
     <StatCard label="Jurnal Hari Ini" value={data?.stats.todayJournals ?? 0} icon={ClipboardCheck} tone="primary" />
   </div>
 
@@ -179,18 +183,20 @@
   </div>
 
   <div class="mb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[minmax(206px,auto)]" in:fly={{ y: 20, duration: 700, delay: 225 }}>
-    <BentoCard
-      title="Monitoring Konfirmasi"
-      description="Riwayat scan QR guru beserta jarak dan status lokasi."
-      href="/teacher/confirmations" cta="Buka log konfirmasi" icon={UserCheck} tone="warning"
-      meta={`${missedTeacherCount} guru belum scan QR (7 hari)`}
-    />
-    <BentoCard
-      title="Laporan Luar Radius"
-      description="Hanya konfirmasi yang tercatat di luar radius sekolah."
-      href="/headmaster/reports" cta="Lihat laporan" icon={MapPin} tone="primary"
-      meta={`${data?.stats.totalTeachers ?? 0} guru dipantau posisinya`}
-    />
+    {#if presenceOn}
+      <BentoCard
+        title="Monitoring Konfirmasi"
+        description="Riwayat scan QR guru beserta jarak dan status lokasi."
+        href="/teacher/confirmations" cta="Buka log konfirmasi" icon={UserCheck} tone="warning"
+        meta={`${missedTeacherCount} guru belum scan QR (7 hari)`}
+      />
+      <BentoCard
+        title="Laporan Luar Radius"
+        description="Hanya konfirmasi yang tercatat di luar radius sekolah."
+        href="/headmaster/reports" cta="Lihat laporan" icon={MapPin} tone="primary"
+        meta={`${data?.stats.totalTeachers ?? 0} guru dipantau posisinya`}
+      />
+    {/if}
     <BentoCard
       title="Audit Nilai"
       description="Siapa mengubah nilai, kapan, dan berapa angka sebelumnya."
@@ -215,23 +221,25 @@
     <DataTable columns={classColumns} rows={classRows} rowAction={classRowAction} emptyMessage="Belum ada data kelas aktif." />
   </div>
 
-  <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 225 }}>
-    <div class="flex items-baseline justify-between mb-3">
-      <div>
-        <h2 class="font-heading font-semibold tracking-[-0.02em]">Kehadiran Guru (30 Hari)</h2>
-        <p class="text-xs text-muted-foreground font-mono-accent mt-1">Konfirmasi QR dibandingkan hari mengajar yang dijadwalkan.</p>
+  {#if presenceOn}
+    <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 225 }}>
+      <div class="flex items-baseline justify-between mb-3">
+        <div>
+          <h2 class="font-heading font-semibold tracking-[-0.02em]">Kehadiran Guru (30 Hari)</h2>
+          <p class="text-xs text-muted-foreground font-mono-accent mt-1">Konfirmasi QR dibandingkan hari mengajar yang dijadwalkan.</p>
+        </div>
       </div>
+      <DataTable columns={teacherAttendanceColumns} rows={teacherAttendanceRows} rowAction={teacherAttendanceRowAction} emptyMessage="Belum ada data kehadiran guru." />
     </div>
-    <DataTable columns={teacherAttendanceColumns} rows={teacherAttendanceRows} rowAction={teacherAttendanceRowAction} emptyMessage="Belum ada data kehadiran guru." />
-  </div>
 
-  <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 200 }}>
-    <div class="flex items-baseline justify-between mb-3">
-      <h2 class="font-heading font-semibold tracking-[-0.02em]">Guru Tanpa Konfirmasi (7 Hari Terakhir)</h2>
-      <p class="text-xs text-muted-foreground font-mono-accent">Satu scan QR per hari — baris muncul bila guru tidak men-scan pada hari ia terjadwal</p>
+    <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 200 }}>
+      <div class="flex items-baseline justify-between mb-3">
+        <h2 class="font-heading font-semibold tracking-[-0.02em]">Guru Tanpa Konfirmasi (7 Hari Terakhir)</h2>
+        <p class="text-xs text-muted-foreground font-mono-accent">Satu scan QR per hari — baris muncul bila guru tidak men-scan pada hari ia terjadwal</p>
+      </div>
+      <DataTable columns={missedColumns} rows={missedRows} emptyMessage="Semua guru sudah men-scan QR pada hari masing-masing." />
     </div>
-    <DataTable columns={missedColumns} rows={missedRows} emptyMessage="Semua guru sudah men-scan QR pada hari masing-masing." />
-  </div>
+  {/if}
 
   <div class="mb-10" in:fly={{ y: 20, duration: 700, delay: 250 }}>
     <div class="flex items-baseline justify-between mb-3">

@@ -8,6 +8,9 @@ vi.mock('@queries/schedules', () => ({
 vi.mock('@queries/teacherConfirmations', () => ({
   findTodayConfirmationByTeacher: vi.fn(),
 }));
+vi.mock('@queries/appSettings', () => ({
+  isTeacherPresenceEnabled: vi.fn(() => true),
+}));
 vi.mock('@queries/users', () => ({
   isAdmin: vi.fn(() => false),
   hasPermission: vi.fn(() => true),

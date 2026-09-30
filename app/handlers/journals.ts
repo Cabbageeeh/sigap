@@ -8,6 +8,7 @@ import { findScheduleById, findTeacherSchedulesByDay } from '@queries/schedules'
 import { findAttendanceByJournal, upsertStudentAttendance } from '@queries/studentAttendance';
 import { findStudentsByClass } from '@queries/students';
 import { findConfirmationByTeacherOnDay, findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
+import { isTeacherPresenceEnabled } from '@queries/appSettings';
 import { isTeachingDay } from '@queries/schoolCalendar';
 import { isAdmin, hasPermission } from '@queries/users';
 import { isTeacherUser } from '@queries/teacherClassAssignments';
@@ -38,14 +39,16 @@ const canManage = (userId: string, permission: string): boolean =>
   isTeacherActor(userId) && hasPermission(userId, permission);
 
 // Sessions the teacher still owes a journal for: today's finished lessons plus
-// late entries, which additionally require that presence was confirmed that day.
+// late entries, which additionally require that presence was confirmed that day
+// — unless the school records teacher presence elsewhere.
 const buildJournalSlots = (userId: string, journals: Journal[], now: number): JournalSlotView[] => {
   const slots: JournalSlotView[] = [];
+  const presenceRequired = isTeacherPresenceEnabled();
 
   for (let back = 0; back <= JOURNAL_LATE_DAYS; back += 1) {
     const day = startOfDayMs(now - back * DAY_MS);
     if (!isTeachingDay(day)) continue;
-    const confirmed = !!findConfirmationByTeacherOnDay(userId, day);
+    const confirmed = !presenceRequired || !!findConfirmationByTeacherOnDay(userId, day);
 
     for (const schedule of findTeacherSchedulesByDay(userId, new Date(day).getDay())) {
       if (day + minutesOf(schedule.end_time) * 60000 > now) continue;
@@ -99,7 +102,7 @@ export const journalsPage = (req: NaraRequest, res: NaraResponse) => {
     permissions,
     journals,
     journalSlots: slots,
-    confirmedToday: teacherActor && userId ? !!findTodayConfirmationByTeacher(userId) : true,
+    confirmedToday: !isTeacherPresenceEnabled() || !teacherActor || !userId || !!findTodayConfirmationByTeacher(userId),
     rosterByClass,
     attendanceByJournal,
   });
@@ -171,8 +174,9 @@ export const addJournal = (req: NaraRequest, res: NaraResponse) => {
     return jsonError(res, 'Sesi pada tanggal itu belum berlangsung', 422, 'JOURNAL_TOO_EARLY');
   }
 
-  const confirmation = findConfirmationByTeacherOnDay(req.user.id, day);
-  if (!confirmation) {
+  const presenceRequired = isTeacherPresenceEnabled();
+  const confirmation = presenceRequired ? findConfirmationByTeacherOnDay(req.user.id, day) : undefined;
+  if (presenceRequired && !confirmation) {
     return jsonError(res, day === todayStart
       ? 'Anda belum konfirmasi kehadiran hari ini'
       : 'Anda tidak tercatat hadir pada tanggal itu', 403, 'CONFIRMATION_REQUIRED');
@@ -189,11 +193,15 @@ export const addJournal = (req: NaraRequest, res: NaraResponse) => {
   }
 
   try {
+    // An existing link to presence evidence is never cleared by editing the text.
     const journal = existing
-      ? updateJournal(existing.id, { material: parsed.data.material, teacher_confirmation_id: confirmation.id })!
+      ? updateJournal(existing.id, {
+        material: parsed.data.material,
+        ...(confirmation ? { teacher_confirmation_id: confirmation.id } : {}),
+      })!
       : createJournal({
         schedule_id: schedule.id,
-        teacher_confirmation_id: confirmation.id,
+        teacher_confirmation_id: confirmation?.id ?? null,
         date: day,
         material: parsed.data.material,
       });
