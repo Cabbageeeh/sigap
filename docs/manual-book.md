@@ -3,6 +3,8 @@
 
 Panduan penggunaan untuk administrator, guru, kepala sekolah, dan orang tua/wali siswa.
 
+> **Versi bergambar (PDF 45 halaman):** unduh di [Release manual-v1](https://github.com/MasRama/sigap/releases/download/manual-v1/manual-book.pdf) — repo ini hanya menyimpan sumber teks.
+
 ---
 
 ## Daftar Isi
@@ -99,7 +101,7 @@ Satu akun hanya punya satu peran. Hak akses menentukan menu apa yang muncul di s
 
 ## 2.1 Masuk ke sistem
 
-![Halaman masuk](images/manual/00-login.png)
+> *[Gambar: Halaman masuk — lihat versi PDF]*
 
 1. Buka alamat SIGAP di peramban.
 2. Halaman awal adalah **Beranda**. Klik tombol masuk, atau buka langsung ke halaman **Akses SIGAP**.
@@ -111,7 +113,7 @@ Lupa kata sandi? Hubungi administrator sekolah — hanya administrator yang dapa
 
 ## 2.2 Mengenal layar kerja
 
-![Dashboard administrator](images/manual/01-dashboard-admin.png)
+> *[Gambar: Dashboard administrator — lihat versi PDF]*
 
 Setelah masuk, layar terbagi menjadi tiga area:
 
@@ -131,7 +133,7 @@ Beberapa kebiasaan antarmuka yang berlaku di seluruh aplikasi:
 
 ## 2.3 Profil dan kata sandi
 
-![Halaman profil](images/manual/14-profil.png)
+> *[Gambar: Halaman profil — lihat versi PDF]*
 
 Menu **Akun → Profil Saya** berisi dua tab:
 
@@ -152,7 +154,7 @@ Administrator adalah orang pertama yang mengoperasikan SIGAP. Urutan pengerjaan 
 
 ## 3.1 Profil sekolah dan batas lokasi (geofence)
 
-![Profil sekolah](images/manual/07-profil-sekolah.png)
+> *[Gambar: Profil sekolah — lihat versi PDF]*
 
 Menu **Data Master → Profil Sekolah**. Isi identitas sekolah: nama, NPSN, nama kepala sekolah, telepon, email, dan alamat.
 
@@ -168,7 +170,7 @@ Tiga kolom berikut menentukan cara kerja absensi guru:
 
 ## 3.2 Kalender sekolah: hari libur dan hari Sabtu
 
-![Kalender sekolah](images/manual/13-kalender-sekolah.png)
+> *[Gambar: Kalender sekolah — lihat versi PDF]*
 
 Menu **Data Master → Kalender Sekolah**. Halaman ini memberi tahu SIGAP kapan sekolah benar-benar efektif bekerja, sehingga tidak ada lagi guru yang ditagih absen pada hari libur.
 
@@ -188,7 +190,7 @@ Isi kalender di awal tahun ajaran bersama kepala sekolah. Sekolah yang berbeda p
 
 ## 3.3 Periode akademik dan publikasi nilai
 
-![Periode akademik](images/manual/15-tahun-ajaran.png)
+> *[Gambar: Periode akademik — lihat versi PDF]*
 
 Menu **Data Master → Periode Akademik**.
 
@@ -202,13 +204,13 @@ Gunakan tombol publikasi ini sebagai "keran" di akhir semester, setelah semua ni
 
 ## 3.4 Mata pelajaran dan KKM
 
-![Mata pelajaran](images/manual/17-mata-pelajaran.png)
+> *[Gambar: Mata pelajaran — lihat versi PDF]*
 
 Menu **Data Master → Mata Pelajaran**. Tambahkan mapel beserta **kode** dan **KKM** (kriteria ketuntasan minimum). KKM dipakai sistem untuk menandai nilai tuntas/tidak tuntas dan menghitung predikat pada rapor.
 
 ## 3.5 Kelas dan siswa
 
-![Kelas](images/manual/05-kelas.png)
+> *[Gambar: Kelas — lihat versi PDF]*
 
 Menu **Data Master → Kelas & Siswa**.
 
@@ -218,11 +220,11 @@ Menu **Data Master → Kelas & Siswa**.
 
 Isian siswa: **NIS**, **nama**, **kelas**, **telepon**, **alamat**.
 
-![Daftar siswa](images/manual/02-siswa.png)
+> *[Gambar: Daftar siswa — lihat versi PDF]*
 
 Di halaman **Kelas**, setiap baris kelas menyediakan dua pintasan: **Kelola siswa** untuk membuka daftar siswa, dan **Daftar PDF** untuk mengunduh lembar daftar siswa beserta nama orang tua/wali, telepon, dan alamatnya — biasa dipakai TU untuk formulir cetak.
 
-![Detail siswa dan akun orang tua](images/manual/04-siswa-detail-ortu.png)
+> *[Gambar: Detail siswa dan akun orang tua — lihat versi PDF]*
 
 Di dalam formulir siswa ada blok **Akun Orang Tua**. Tiga pilihan:
 
@@ -232,7 +234,7 @@ Di dalam formulir siswa ada blok **Akun Orang Tua**. Tiga pilihan:
 
 ## 3.6 Import siswa massal sekaligus akun orang tua
 
-![Import CSV](images/manual/03-siswa-import-csv.png)
+> *[Gambar: Import CSV — lihat versi PDF]*
 
 Untuk mengisi puluhan siswa sekaligus, gunakan **Import CSV** di halaman siswa.
 
@@ -269,22 +271,22 @@ Untuk mengisi puluhan siswa sekaligus, gunakan **Import CSV** di halaman siswa.
 
 ## 3.7 Data guru dan kontrak mengajar
 
-![Data guru](images/manual/18-data-guru.png)
+> *[Gambar: Data guru — lihat versi PDF]*
 
 - **Data Master → Data Guru**: tautkan seorang guru ke akun pengguna, isi NIP, telepon, dan mata pelajaran yang diampu.
 - **Akademik → Kontrak Mengajar**: menentukan guru mengajar kelas mana saja, dan siapa **wali kelas**-nya. Satu kelas punya satu wali kelas per periode akademik.
 
 Kontrak mengajar inilah yang membuat seorang guru hanya melihat kelas tertentu di layarnya — dan yang menentukan kelas mana yang boleh ia dokumentasikan.
 
-![Kontrak mengajar](images/manual/16-kontrak-mengajar.png)
+> *[Gambar: Kontrak mengajar — lihat versi PDF]*
 
-![Data orang tua](images/manual/19-data-ortu.png)
+> *[Gambar: Data orang tua — lihat versi PDF]*
 
 Menu **Data Master → Data Orang Tua** hanya membaca: daftar akun wali beserta jumlah anak yang terhubung. Pembuatan dan perubahan akun orang tua dilakukan dari halaman siswa (3.5) atau lewat import CSV (3.6), supaya relasi akun dan anak tidak terpisah.
 
 ## 3.8 Jadwal pelajaran
 
-![Jadwal pelajaran](images/manual/06-jadwal.png)
+> *[Gambar: Jadwal pelajaran — lihat versi PDF]*
 
 Menu **Akademik → Jadwal Pelajaran**. Pilih periode akademik, lalu saring per kelas atau guru untuk melihat jadwal yang berjalan.
 
@@ -292,28 +294,28 @@ Tombol **Tambah** membuka formulir: kelas, mata pelajaran, guru, hari, jam mulai
 
 ## 3.9 Pengaturan QR absen dan layar QR
 
-![Pengaturan QR](images/manual/08-pengaturan-qr.png)
+> *[Gambar: Pengaturan QR — lihat versi PDF]*
 
 Menu **Kehadiran → Pengaturan QR Absen** mengatur **interval pergantian QR** — berapa detik satu kode QR berlaku sebelum berganti. Nilai kecil (misal 30–60 detik) membuat QR tidak bisa difoto lalu dipakai di rumah.
 
 Setelah disimpan, buka **Layar QR Absen** untuk menampilkan QR berukuran besar di TV atau proyektor di ruang guru.
 
-![Layar QR](images/manual/09-layar-qr.png)
+> *[Gambar: Layar QR — lihat versi PDF]*
 
 Kode pada layar ini dibuat dari data sekolah dan diperbarui otomatis sesuai interval. Guru memindainya dari akun masing-masing.
 
 ## 3.10 Pengguna, peran, dan hak akses
 
-![Pengguna](images/manual/11-pengguna.png)
+> *[Gambar: Pengguna — lihat versi PDF]*
 
 - **Manajemen → Pengguna**: menambah akun, mengatur nama, telepon, peran, dan status aktif. Akun yang dinonaktifkan tidak bisa masuk tetapi datanya tetap tersimpan.
 - **Manajemen → Peran & Hak Akses**: setiap peran tersusun dari kumpulan hak akses (misalnya `journals.create`, `grades.edit`, `students.view`). Menambah hak ke sebuah peran langsung mengubah menu yang muncul di sidebar pengguna peran itu.
 
-![Peran](images/manual/12-peran.png)
+> *[Gambar: Peran — lihat versi PDF]*
 
 ## 3.11 Pengumuman
 
-![Pengumuman](images/manual/10-pengumuman.png)
+> *[Gambar: Pengumuman — lihat versi PDF]*
 
 Menu **Laporan & Informasi → Pengumuman**. Judul dan isi pengumuman tersimpan dan muncul di dasbor pengguna yang menjadi sasarannya, termasuk orang tua.
 
@@ -323,7 +325,7 @@ Menu **Laporan & Informasi → Pengumuman**. Judul dan isi pengumuman tersimpan 
 
 ## 4.1 Dashboard jadwal hari ini
 
-![Jadwal mengajar guru](images/manual/20-guru-jadwal.png)
+> *[Gambar: Jadwal mengajar guru — lihat versi PDF]*
 
 Guru masuk ke halaman **Jadwal Mengajar**. Isinya daftar mengampu hari itu: kelas, mata pelajaran, jam mulai–selesai.
 
@@ -349,22 +351,22 @@ Satu guru hanya punya satu catatan konfirmasi per hari. Setelah terverifikasi, s
 
 ## 4.3 Jurnal mengajar dan presensi siswa
 
-![Jurnal](images/manual/21-guru-jurnal.png)
+> *[Gambar: Jurnal — lihat versi PDF]*
 
 Menu **Akademik → Jurnal Mengajar**. Halaman ini berisi jurnal yang sudah Anda isi, tombol **Tambah Jurnal** di kanan atas, dan **Unduh Rekap PDF** untuk mencetak daftar jurnal (tanggal, guru, kelas, mapel, jam, materi) pada bulan berjalan.
 
-![Form jurnal](images/manual/22-guru-jurnal-form.png)
+> *[Gambar: Form jurnal — lihat versi PDF]*
 
 Isi jurnal untuk sesi yang **sudah berlangsung**. Pada hari yang sama, daftar isinya adalah sesi Anda hari ini. Sesi yang terlewat masih bisa ditutup sampai **tiga hari ke belakang** — ditandai keterangan *susulan* — dengan satu syarat: Anda tercatat men-scan QR pada hari sesi itu berlangsung. Tanggal dan bukti konfirmasi kehadiran terisi otomatis — Anda tidak perlu mengetiknya.
 
-![Dropdown jadwal](images/manual/23-guru-jurnal-dropdown.png)
+> *[Gambar: Dropdown jadwal — lihat versi PDF]*
 
 1. Klik kolom **Jadwal**, lalu pilih sesi yang ingin dicatat. Daftar yang muncul hanya sesi Anda yang sudah lewat jam selesainya dalam empat hari terakhir, lengkap dengan tanggal, nama kelas, mata pelajaran, dan jam. Sesi sebelum hari ini diberi keterangan *susulan*.
 2. Jika jurnal untuk sesi itu sudah ada, sistem menampilkannya kembali dan materi akan diperbarui, bukan dibuat duplikat.
 3. Isi **Materi** — ringkasan yang diajarkan hari itu.
 4. Bagian **Presensi Siswa** otomatis memunculkan daftar siswa kelas tersebut. Setiap siswa punya empat tombol: **Hadir**, **Sakit**, **Izin**, **Alpa**. Semua siswa awalnya dianggap Hadir; ubah yang tidak masuk saja. Ringkasan jumlah tiap status terlihat di kanan atas daftar.
 
-![Presensi siswa pada jurnal](images/manual/24-guru-jurnal-presensi.png)
+> *[Gambar: Presensi siswa pada jurnal — lihat versi PDF]*
 
 5. Klik **Simpan**. Materi dan presensi tersimpan sekaligus.
 
@@ -372,7 +374,7 @@ Isi jurnal untuk sesi yang **sudah berlangsung**. Pada hari yang sama, daftar is
 
 ## 4.4 Nilai siswa
 
-![Nilai](images/manual/25-guru-nilai.png)
+> *[Gambar: Nilai — lihat versi PDF]*
 
 Menu **Penilaian → Nilai Siswa**.
 
@@ -387,7 +389,7 @@ Setelah kelas dan mapel terpilih, tombol **Unduh PDF Rekap** di kanan atas mengu
 
 ## 4.5 Rekap absensi siswa
 
-![Absensi](images/manual/26-guru-absensi.png)
+> *[Gambar: Absensi — lihat versi PDF]*
 
 Menu **Akademik → Absensi Siswa** adalah baca ulang presensi yang sudah tercatat lewat jurnal: per kelas, per tanggal, per siswa. Pilih kelas dan rentang tanggal, maka seluruh siswa kelas itu tampil beserta jumlah Hadir, Sakit, Izin, Alpa, dan Total. Karena absensi lahir dari jurnal, halaman ini tidak punya formulir isian — cara menambah catatan absensi adalah dengan mengisi jurnal mengajar.
 
@@ -399,7 +401,7 @@ Dua tombol di sebelah **Terapkan** mengunduh hasil yang sedang tampil: **Unduh P
 
 Rapor dibuka dari halaman yang sama: **Akademik → Absensi Siswa** → pilih kelas → klik **Rapor** di kolom Aksi pada baris siswa. Kolom Aksi ini hanya muncul untuk kelas tempat Anda tercatat sebagai **wali kelas**. Guru pengampu biasa tidak melihat tombolnya, dan administrator tidak punya akses ke halaman rapor.
 
-![Rapor](images/manual/27-guru-rapor.png)
+> *[Gambar: Rapor — lihat versi PDF]*
 
 Lembar rapor berisi **Laporan Hasil Belajar Siswa**: identitas dan kelas, nilai per mata pelajaran (UAS, UTS, Kuis Harian, Tugas), Nilai Akhir, KKM, Predikat, status Tuntas, serta rekap kehadiran. Bagian bawah disediakan untuk tanda tangan orang tua/wali dan kepala sekolah. Klik **Cetak Rapor** di kanan atas (atau `Ctrl+P`) untuk mencetak atau menyimpannya sebagai PDF.
 
@@ -434,7 +436,7 @@ Tiga hal yang perlu diketahui:
 
 Kepala sekolah masuk ke halaman **Pengawasan Sekolah** (kelompok menu *Dasbor Kepala Sekolah*).
 
-![Dashboard pengawasan kepala sekolah](images/manual/30-kepsek-dashboard.png)
+> *[Gambar: Dashboard pengawasan kepala sekolah — lihat versi PDF]*
 
 ## 5.1 Delapan kartu ringkasan
 
@@ -472,13 +474,13 @@ Tabel ini merangkum tiap kelas aktif: **Kelas, Siswa, Dinilai, Rata-rata Nilai, 
 - Kolom **Status** menandai kelas yang perlu ditindaklanjuti (misal *Perlu perhatian*) bila rata-rata nilainya di bawah 75, kehadiran siswanya di bawah 90%, atau masih ada siswa yang belum dinilai.
 - Tautan **Detail nilai** membuka lembar nilai per siswa untuk kelas tersebut — hanya membaca, kepala sekolah tidak mengubah angka di sini. Di lembar itu ada **Unduh PDF Rekap Nilai** untuk memperoleh rata-rata nilai per siswa per mata pelajaran dalam satu berkas.
 
-![Detail nilai satu kelas](images/manual/34-kepsek-nilai-kelas.png)
+> *[Gambar: Detail nilai satu kelas — lihat versi PDF]*
 
 ## 5.4 Kehadiran Guru (30 Hari)
 
 Tabel kedua membandingkan konfirmasi QR dengan hari mengajar yang dijadwalkan: **Guru, Hari Hadir, Tingkat Kehadiran, Status, Aksi**. Barisnya berbunyi misalnya `Siti Rahayu · 20/21 · 95,24% · Normal`, dan guru dengan tingkat kehadiran di bawah 90% ditandai *Perlu perhatian*. Tautan **Riwayat** membuka daftar hari guru tersebut.
 
-![Riwayat kehadiran satu guru](images/manual/35-kepsek-absensi-guru.png)
+> *[Gambar: Riwayat kehadiran satu guru — lihat versi PDF]*
 
 Lembar riwayat menampilkan **Tanggal, Kelas, Mata Pelajaran, Sesi, Status, Waktu, Lokasi, Jarak** — jadi terlihat berapa sesi yang diampu pada hari itu dan apakah konfirmasinya tercatat di dalam sekolah.
 
@@ -496,19 +498,19 @@ Di bawahnya ada penyaring **Dari Tanggal**, **Sampai Tanggal**, dan **Guru** (to
 
 Tombol **Unduh PDF** di sebelah penyaring menghasilkan **Daftar Hadir Guru** untuk persis rentang yang sedang tampil — berkas yang biasa dipakai untuk rekap bulanan atau keperluan tanda tangan. Baris pertamanya menyebut jumlah pindai dan batas jam tepat waktu yang berlaku, dan tiap baris memuat jarak serta status dalam/luar radius.
 
-![Log kehadiran guru](images/manual/31-kepsek-monitoring-guru.png)
+> *[Gambar: Log kehadiran guru — lihat versi PDF]*
 
 ## 5.7 Laporan Kehadiran Guru
 
 Menu **Laporan → Laporan Kehadiran Guru** khusus menampilkan konfirmasi yang tercatat **di luar radius sekolah** — kolomnya **Guru, Kelas, Mapel, Jarak, Konfirmasi, Status**. Laporan inilah yang dipakai menindaklanjuti dugaan absensi tidak di lokasi.
 
-![Laporan konfirmasi di luar radius](images/manual/32-kepsek-laporan-hadir.png)
+> *[Gambar: Laporan konfirmasi di luar radius — lihat versi PDF]*
 
 ## 5.8 Audit Nilai
 
 Menu **Penilaian → Audit Nilai** berisi riwayat perubahan nilai: **Waktu, Siswa, Mapel, Kelas, Jenis, Aksi, Nilai, Oleh**. Setiap perubahan tercatat otomatis — nilai lama dan nilai baru sama-sama ditampilkan — dan tidak dapat dihapus dari layar. Ini pegangan saat ada keberatan orang tua terhadap sebuah nilai.
 
-![Riwayat audit nilai](images/manual/33-kepsek-audit-nilai.png)
+> *[Gambar: Riwayat audit nilai — lihat versi PDF]*
 
 > Kepala sekolah tidak mengubah data master; perannya mengawasi dan menindaklanjuti. Untuk mengubah nilai, kepala sekolah meminta guru pengampu yang memperbaikinya agar jejak audit tetap jelas.
 
@@ -518,7 +520,7 @@ Menu **Penilaian → Audit Nilai** berisi riwayat perubahan nilai: **Waktu, Sisw
 
 ## 6.1 Masuk dan melihat daftar anak
 
-![Dashboard orang tua](images/manual/40-ortu-dashboard.png)
+> *[Gambar: Dashboard orang tua — lihat versi PDF]*
 
 Orang tua masuk memakai **username = NIS anak** dan kata sandi yang diberikan sekolah (bisa dibuatkan lewat import CSV atau oleh administrator di halaman siswa).
 
@@ -526,19 +528,19 @@ Dasbor menampilkan seluruh anak yang tertaut ke akun tersebut, lengkap dengan ke
 
 ## 6.2 Nilai dan rapor anak
 
-![Nilai anak](images/manual/41-ortu-nilai.png)
+> *[Gambar: Nilai anak — lihat versi PDF]*
 
 Pilih anak, lalu buka **Nilai**. Yang terlihat: nilai tiap komponen per mata pelajaran, nilai akhir, predikat, dan keterangan tuntas terhadap KKM.
 
 > Nilai baru tampil setelah sekolah **mempublikasikan nilai** pada periode akademik (diatur administrator/kepala sekolah di menu Periode Akademik). Sebelum itu, halaman tetap terbuka tetapi daftar nilai kosong.
 
-![Rapor anak](images/manual/43-ortu-rapor.png)
+> *[Gambar: Rapor anak — lihat versi PDF]*
 
 Klik **Lihat Rapor** di kanan atas halaman nilai untuk membuka lembar rekap satu anak — nilai akhir, predikat, dan rekap kehadiran dalam format siap cetak (tombol **Cetak Rapor** atau `Ctrl+P`).
 
 ## 6.3 Absensi anak
 
-![Absensi anak](images/manual/42-ortu-absensi.png)
+> *[Gambar: Absensi anak — lihat versi PDF]*
 
 Rekap kehadiran per tanggal beserta total Hadir, Sakit, Izin, dan Alpa. Data ini berasal dari jurnal yang diisi guru pengampu pada hari tersebut.
 
