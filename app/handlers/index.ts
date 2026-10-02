@@ -20,6 +20,7 @@ export * as journals from './journals';
 export * as reportExports from './reportExports';
 export * as studentAttendance from './studentAttendance';
 export * as grades from './grades';
+export * as gradesErapor from './gradesErapor';
 export * as gradeAudit from './gradeAudit';
 export * as announcements from './announcements';
 export * as notifications from './notifications';

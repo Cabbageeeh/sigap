@@ -237,6 +237,9 @@
           </div>
         </div>
         <Button onclick={showRekap} disabled={!filterClassId || !filterSubjectId}><FileSpreadsheet class="w-4 h-4 mr-1" /> Lihat Rekap</Button>
+        <Button variant="outline" onclick={() => router.visit(`/grades/erapor?class_id=${filterClassId}&subject_id=${filterSubjectId}&semester=1`)}>
+          <FileSpreadsheet class="w-4 h-4 mr-1" /> Impor / Ekspor e-Rapor
+        </Button>
         {#if filterClassId}
           <a href={`/exports/grades/${filterClassId}`} download class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
             <Download class="w-4 h-4" /> Unduh PDF Rekap

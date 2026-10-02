@@ -12,4 +12,6 @@ export { default as Seeder } from './Seeder';
 export * from './Geolocation';
 export * from './GradeCalculator';
 export * from './StudentCsvParser';
+export * from './EraporWorkbook';
+export * from './EraporXlsx';
 export * from './QrCode';
