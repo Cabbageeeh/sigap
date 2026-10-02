@@ -94,7 +94,7 @@ Server (ultimate-express)
 │   ├── types/           # Interfaces (User, Session, Role, Permission)
 │   ├── queries/         # Raw SQL functions (findUserById, createUser, isAdmin)
 │   ├── handlers/        # Request handlers (functions, not classes)
-│   ├── services/        # SQLite, Logger, Auth, Storage, CacheStore, LoginThrottle
+│   ├── services/        # SQLite, Logger, Auth, Storage, CacheStore, LoginThrottle, EraporWorkbook, EraporXlsx
 │   ├── middlewares/      # auth, csrf, rateLimit, securityHeaders, inputSanitize, requestId
 │   ├── validators/      # Zod schemas + zodToErrors helper
 │   ├── config/          # Environment (env.ts) & constants (constants.ts)
@@ -158,6 +158,8 @@ Server (ultimate-express)
 | `journals` | id (uuid), schedule_id, teacher_confirmation_id, date, material | belongs to `schedules`, `teacher_confirmations` |
 | `student_attendance` | id (uuid), student_id, schedule_id, journal_id, status | belongs to `students`, `schedules`, `journals` |
 | `grades` | id (uuid), student_id, subject_id, class_id, type, score, date, teacher_user_id | belongs to `students`, `subjects`, `classes`, `users` |
+| `erapor_grade_templates` | id, academic_year_id, class_id, subject_id, semester, mapel_id, template_html | one saved e-Rapor import layout per class/mapel/semester |
+| `erapor_student_mappings` | id, class_id, student_id, external_member_id | maps SIGAP students to e-Rapor rombel IDs |
 
 - All IDs: `crypto.randomUUID()` (except auto-increment tables)
 - All timestamps: `biginteger` unix milliseconds via `Date.now()`

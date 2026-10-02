@@ -266,6 +266,29 @@ export interface GradeAuditLog {
   created_at: number;
 }
 
+export interface EraporGradeTemplate {
+  id: string;
+  academic_year_id: string;
+  class_id: string;
+  subject_id: string;
+  semester: 1 | 2;
+  mapel_id: string;
+  template_html: string;
+  source_file_name: string;
+  created_by: string;
+  created_at: number;
+  updated_at: number;
+}
+
+export interface EraporStudentMapping {
+  id: string;
+  class_id: string;
+  student_id: string;
+  external_member_id: string;
+  created_at: number;
+  updated_at: number;
+}
+
 export interface Announcement {
   id: string;
   title: string;

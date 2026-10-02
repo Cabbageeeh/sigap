@@ -314,6 +314,22 @@ export const GradeComponentsSchema = z.object({
   { message: 'Weights must sum to 100', path: ['components'] }
 );
 
+export const EraporTemplateSchema = z.object({
+  class_id: z.string().uuid('Kelas tidak valid'),
+  subject_id: z.string().uuid('Mata pelajaran tidak valid'),
+  semester: z.coerce.number().int().min(1).max(2),
+});
+
+export const EraporGradeSaveSchema = EraporTemplateSchema.extend({
+  entries: z.array(z.object({
+    student_id: z.string().uuid('Siswa tidak valid'),
+    scores: z.array(z.object({
+      external_id: z.string().min(1).max(100),
+      score: z.number().min(0).max(100).nullable(),
+    })).max(20),
+  })).min(1).max(200),
+});
+
 export const AnnouncementSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be at most 200 characters'),
   body: z.string().min(1, 'Body is required').max(5000, 'Body must be at most 5000 characters'),
@@ -359,5 +375,7 @@ export type UpdateJournalInput = z.infer<typeof UpdateJournalSchema>;
 export type StudentAttendanceInput = z.infer<typeof StudentAttendanceSchema>;
 export type GradeInput = z.infer<typeof GradeSchema>;
 export type GradeComponentsInput = z.infer<typeof GradeComponentsSchema>;
+export type EraporTemplateInput = z.infer<typeof EraporTemplateSchema>;
+export type EraporGradeSaveInput = z.infer<typeof EraporGradeSaveSchema>;
 export type AnnouncementInput = z.infer<typeof AnnouncementSchema>;
 export type UpdateAnnouncementInput = z.infer<typeof UpdateAnnouncementSchema>;

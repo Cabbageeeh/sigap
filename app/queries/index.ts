@@ -15,6 +15,7 @@ export * from './teacherConfirmations';
 export * from './journals';
 export * from './studentAttendance';
 export * from './grades';
+export * from './eraporGrades';
 export * from './gradeComponents';
 export * from './gradeAuditLogs';
 export * from './headmaster';

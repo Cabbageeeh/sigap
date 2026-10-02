@@ -19,6 +19,7 @@ Request handlers — functions that receive `NaraRequest` / `NaraResponse` and r
 | `classes.ts` | class CRUD |
 | `dashboard.ts` | dashboard page + stats |
 | `grades.ts` | grade CRUD + audit logging on every change |
+| `gradesErapor.ts` | e-Rapor template import, grade entry, and `.xls` export |
 | `gradeAudit.ts` | grade audit history page + data (grades.audit permission) |
 | `announcements.ts` | announcement CRUD (admin) + latest list for dashboards |
 | `notifications.ts` | in-app notifications data + mark read |
@@ -98,7 +99,7 @@ See [`.agents/skills/auth-rbac.md`](../../.agents/skills/auth-rbac.md) and [`.ag
 ## Conventions
 
 - **No SQLite import** — go through `@queries` (L1, enforced)
-- **Allowed service imports**: `Authenticate`, `Logger`, `Storage`, `LoginThrottle`, `CacheStore`, `GradeCalculator`, `StudentCsvParser` (L2, enforced)
+- **Allowed service imports**: `Authenticate`, `Logger`, `Storage`, `LoginThrottle`, `CacheStore`, `GradeCalculator`, `StudentCsvParser`, `EraporWorkbook` (L2, enforced)
 - **try/catch only in mutations** — queries bubble errors, handlers catch
 - **Bahasa Indonesia for user-facing messages** (ADR 0010) — `'Produk berhasil dibuat'`, not `'Product created'`. English for code, comments, logs, and internal error codes only.
 - **No `console.log`** — use `Logger.info/warn/error` (L9, enforced)
