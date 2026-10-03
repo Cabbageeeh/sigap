@@ -165,11 +165,11 @@ describe('parent student scope', () => {
       user: mockUser({ id: 'admin-1', roles: ['admin'] }),
       body: { class_id: CLASS_UUID },
     }) as NaraRequest & { file: { buffer: Buffer } };
-    req.file = { buffer: Buffer.from('10011,Andi,,') };
+    req.file = { buffer: Buffer.from('10011,Andi,,'), originalname: 'students.csv' };
 
     importStudentsFromCsv(req, mockResponse());
 
-    expect(parseStudentCsv).toHaveBeenCalledWith(expect.any(String), expect.any(Set), expect.any(Map), '10A');
+    expect(parseStudentCsv).toHaveBeenCalledWith(expect.any(String), expect.any(Set), expect.any(Map), '10A', false);
     expect(importStudents).toHaveBeenCalledWith([{
       nis: '10011',
       name: 'Andi',
@@ -206,7 +206,7 @@ describe('parent student scope', () => {
       user: mockUser({ id: 'admin-1', roles: ['admin'] }),
       body: { parent_password: 'rahasia123' },
     }) as NaraRequest & { file: { buffer: Buffer } };
-    req.file = { buffer: Buffer.from('NIS,Nama Siswa,Kelas,Nama Orang Tua,Telepon Orang Tua\n10011,Andi,10A,Siti Saputra,08123456781') };
+    req.file = { buffer: Buffer.from('NIS,Nama Siswa,Kelas,Nama Orang Tua,Telepon Orang Tua\n10011,Andi,10A,Siti Saputra,08123456781'), originalname: 'students.csv' };
 
     const res = mockResponse();
     importStudentsFromCsv(req, res);
@@ -248,7 +248,7 @@ describe('parent student scope', () => {
       user: mockUser({ id: 'admin-1', roles: ['admin'] }),
       body: {},
     }) as NaraRequest & { file: { buffer: Buffer } };
-    req.file = { buffer: Buffer.from('NIS,Nama Siswa,Kelas,Nama Orang Tua\n10011,Andi,10A,Siti Saputra') };
+    req.file = { buffer: Buffer.from('NIS,Nama Siswa,Kelas,Nama Orang Tua\n10011,Andi,10A,Siti Saputra'), originalname: 'students.csv' };
 
     const res = mockResponse();
     importStudentsFromCsv(req, res);
