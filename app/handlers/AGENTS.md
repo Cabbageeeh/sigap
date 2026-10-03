@@ -20,6 +20,7 @@ Request handlers — functions that receive `NaraRequest` / `NaraResponse` and r
 | `dashboard.ts` | dashboard page + stats |
 | `grades.ts` | grade CRUD + audit logging on every change |
 | `gradesErapor.ts` | e-Rapor grade entry, template/default column mapping, and `.xls`/`.xlsx` export |
+| `gradesEraporSettings.ts` | Admin control for teacher e-Rapor mapping access |
 | `gradesEraporImport.ts` | e-Rapor file preview, admin-confirmed student creation, template import, and grade import |
 | `gradeAudit.ts` | grade audit history page + data (grades.audit permission) |
 | `announcements.ts` | announcement CRUD (admin) + latest list for dashboards |

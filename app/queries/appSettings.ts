@@ -2,6 +2,8 @@ import SQLite from '@services/SQLite';
 import { TEACHER_PRESENCE } from '@config/constants';
 import type { AppSetting, TeacherPresenceMode } from '@types';
 
+export const ERAPOR_TEACHER_MAPPING_ACCESS_KEY = 'erapor_teacher_mapping_access';
+
 export const findSetting = (key: string): string | undefined => {
   const row = SQLite.one<AppSetting>`SELECT * FROM app_settings WHERE key = ${key}`;
   return row?.value;
@@ -23,6 +25,10 @@ export const upsertSetting = (key: string, value: string): void => {
     SQLite.exec`INSERT INTO app_settings (key, value, updated_at) VALUES (${key}, ${value}, ${now})`;
   }
 };
+
+// Teacher overrides are enabled by default so existing schools can use the workflow immediately.
+export const isTeacherEraporMappingEnabled = (): boolean =>
+  findSetting(ERAPOR_TEACHER_MAPPING_ACCESS_KEY) !== 'disabled';
 
 // An unconfigured school keeps the QR flow, so the flag only ever opts out.
 export const findTeacherPresenceMode = (): TeacherPresenceMode =>

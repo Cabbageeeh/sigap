@@ -7,9 +7,9 @@ Panduan ringkas untuk admin sekolah dan guru. Gunakan manual lengkap untuk fitur
 
 1. **Admin menyiapkan daftar siswa** di kelas SIGAP dan mengisi NIS asli.
 2. **Admin menyimpan template e-Rapor** untuk setiap kombinasi kelas, mapel, dan semester.
-3. **Admin memetakan kolom nilai** yang akan mengambil nilai dari SIGAP.
+3. **Admin menentukan kebijakan pemetaan** dan memilih apakah guru boleh mengubah pemetaan untuk kelas yang diampunya.
 4. **Guru mengisi nilai rutin sekali** di halaman Nilai Siswa. Kolom yang dipetakan mengikuti nilai itu.
-5. Guru mengisi kolom yang tidak dipetakan langsung di halaman e-Rapor, menyimpan, lalu mengunduh `.xls` atau `.xlsx`.
+5. Jika akses diaktifkan, guru dapat mengubah pemetaan khusus untuk kelas/mapel yang diajar. Guru mengisi kolom yang tidak dipetakan langsung di halaman e-Rapor, menyimpan, lalu mengunduh `.xls` atau `.xlsx`.
 6. Admin memublikasikan nilai agar orang tua dapat melihatnya.
 
 ## 1. Impor atau lengkapi data siswa per kelas
@@ -48,20 +48,23 @@ Lakukan untuk setiap kombinasi kelas, mata pelajaran, dan semester.
 
 ID anggota rombel berasal dari file e-Rapor. Saat siswa berhasil dicocokkan, SIGAP menyimpan pemetaannya. ID internal SIGAP dan NIS adalah identitas yang berbeda; jangan menyalin ID anggota rombel ke kolom NIS.
 
-## 3. Admin: petakan sumber nilai
+## 3. Admin dan guru: petakan sumber nilai
 
-Di bagian **Sumber setiap kolom e-Rapor**, tentukan bagaimana setiap kolom diisi.
+Admin mengatur hak akses guru dan default sekolah. Guru dapat mengubah pemetaan khusus untuk kelas dan mapel yang diampu jika admin mengizinkan.
+
+1. Admin buka **Penilaian > Pengaturan e-Rapor** dan atur **Akses pemetaan e-Rapor untuk guru**. Akses ini aktif secara default. Jika dimatikan, hanya admin yang dapat mengubah pemetaan.
+2. Buka template yang ingin dipetakan. Di bagian **Sumber setiap kolom e-Rapor**, tentukan bagaimana setiap kolom diisi.
 
 | Pilihan sumber | Perilaku |
 |---|---|
 | Jenis nilai SIGAP, misalnya Sumatif 1 | Nilai dari jenis tersebut ditampilkan di kolom e-Rapor dan ikut diekspor. Guru mengisi nilainya sekali di halaman Nilai Siswa. |
 | **Isi langsung di halaman e-Rapor** | Kolom tetap diisi oleh guru pada tabel e-Rapor. Nilai ini tersimpan sebagai nilai e-Rapor. |
 
-1. Pilih komponen yang sesuai untuk setiap kolom, misalnya memetakan **Sumatif 1** ke **Sumatif 1** dan **Sumatif 2** ke **Sumatif 2**.
-2. Gunakan komponen yang berbeda jika Semester I dan II membutuhkan nilai yang berbeda.
-3. Pemetaan selalu disimpan untuk kelas, mapel, dan semester yang sedang dibuka. Untuk menerapkannya juga sebagai default, centang **Terapkan juga sebagai default**, pilih **Semua mapel** atau **Mapel ini**, lalu klik satu tombol **Simpan pemetaan**.
+3. Pilih komponen yang sesuai untuk setiap kolom, misalnya memetakan **Sumatif 1** ke **Sumatif 1** dan **Sumatif 2** ke **Sumatif 2**.
+4. Gunakan komponen yang berbeda jika Semester I dan II membutuhkan nilai yang berbeda.
+5. Klik **Simpan pemetaan**. Guru hanya menyimpan pemetaan lokal pada kelas/mapel/semester yang dibuka. Admin dapat mencentang **Terapkan juga sebagai default**, memilih **Semua mapel** atau **Mapel ini**, lalu menyimpan sekali.
 
-Default berlaku pada template lain untuk tahun ajaran dan semester yang sama jika kolomnya belum memiliki pemetaan khusus. Default khusus mapel mengalahkan default semua mapel; pemetaan khusus pada sebuah template tetap menjadi prioritas tertinggi. Kolom tanpa sumber dipetakan tetap bisa diisi manual oleh guru di halaman e-Rapor.
+Default berlaku pada template lain untuk tahun ajaran dan semester yang sama jika kolomnya belum memiliki pemetaan khusus. Default khusus mapel mengalahkan default semua mapel; pemetaan khusus template tetap menjadi prioritas tertinggi. Perubahan oleh guru dan admin tercatat pada riwayat pemetaan bersama nama pelaku dan waktu.
 
 Jika pemetaan diganti, nilai lama tetap tersimpan pada jenis sebelumnya. Periksa sumber lama dan baru setelah mengganti. Nilai langsung yang sudah ada dapat disalin ke sumber baru bila sumber itu masih kosong. Kolom yang memakai sumber SIGAP ditampilkan dari sumber tersebut dan tidak dapat diedit langsung pada tabel e-Rapor.
 
@@ -71,7 +74,7 @@ Jika pemetaan diganti, nilai lama tetap tersimpan pada jenis sebelumnya. Periksa
 
 1. Buka **Penilaian > Nilai Siswa**, pilih kelas, mapel, dan jenis penilaian.
 2. Klik **Lihat Rekap**, isi nilai siswa, lalu klik **Simpan Semua Perubahan**.
-3. Komponen yang sudah dipetakan admin ke kolom e-Rapor akan mengisi kolom itu secara otomatis.
+3. Komponen yang sudah dipetakan ke kolom e-Rapor akan mengisi kolom itu secara otomatis.
 
 ### Lengkapi dan unduh e-Rapor
 
@@ -82,7 +85,7 @@ Jika pemetaan diganti, nilai lama tetap tersimpan pada jenis sebelumnya. Periksa
 5. Setelah pemetaan siswa lengkap, unduh **.xls (format sekolah)** atau **.xlsx**. Pilih format yang diminta e-Rapor sekolah.
 6. Periksa kelas, mapel, semester, daftar siswa, dan kolom nilai pada file unduhan sebelum mengunggahnya ke e-Rapor.
 
-> Guru perlu memiliki akses nilai untuk kelas dan mapel tersebut. Pada hari terjadwal mengajar, konfirmasi QR mungkin diperlukan.
+> Guru perlu memiliki akses nilai untuk kelas dan mapel tersebut. Pada hari terjadwal mengajar, konfirmasi QR mungkin diperlukan. Jika akses pemetaan guru aktif, guru pengampu dapat mengatur pemetaan lokal; minta admin mengubah default sekolah atau sakelar akses.
 
 ## 5. Jika terjadi masalah
 

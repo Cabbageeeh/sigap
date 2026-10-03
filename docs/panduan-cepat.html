@@ -80,7 +80,7 @@
       <div class="flow-card"><span class="num">5</span><b>Ekspor</b><span>Guru mengunduh .xls atau .xlsx sesuai kebutuhan sekolah.</span></div>
       <div class="flow-card"><span class="num">6</span><b>Publikasikan</b><span>Admin menerbitkan nilai agar orang tua dapat melihatnya.</span></div>
     </div>
-    <div class="panel good"><b class="label">Untuk siapa panduan ini?</b>Admin menyiapkan data dan pemetaan. Guru mengisi nilai, memeriksa hasil, lalu mengekspor file.</div>
+    <div class="panel good"><b class="label">Untuk siapa panduan ini?</b>Admin menyiapkan data, default, dan akses pemetaan guru. Jika diizinkan, guru dapat mengubah pemetaan khusus kelas/mapel yang diampu.</div>
     <div class="role-strip"><span class="tag">Admin sekolah</span><span class="tag">Guru</span><span class="tag">e-Rapor SMP 2025.2</span></div>
   </div>
   <div class="footer"><span>Panduan cepat SIGAP · 3 Oktober 2026</span><span>01 / 06</span></div>
@@ -136,9 +136,9 @@
 </section>
 
 <section class="page">
-  <p class="kicker">Admin · Pemetaan nilai</p>
+  <p class="kicker">Admin dan guru · Pemetaan nilai</p>
   <h2>3. Tentukan sumber setiap kolom</h2>
-  <p class="lead">Pemetaan menentukan kolom e-Rapor mana yang mengikuti komponen nilai rutin SIGAP. Atur setelah template berhasil disimpan.</p>
+  <p class="lead">Pemetaan menentukan kolom e-Rapor mana yang mengikuti komponen nilai rutin SIGAP. Admin mengatur default dan izin; guru dapat mengatur pemetaan khusus bila diizinkan.</p>
   <table>
     <thead><tr><th>Pilihan pada SIGAP</th><th>Arti bagi guru</th></tr></thead>
     <tbody>
@@ -158,11 +158,12 @@
     </table>
   </div>
   <ol class="steps">
+    <li>Admin buka <b>Pengaturan e-Rapor</b> dan atur sakelar <b>Akses pemetaan e-Rapor untuk guru</b>. Akses aktif secara default; bila dimatikan, hanya admin yang dapat mengubah pemetaan.</li>
     <li>Untuk setiap kolom pada bagian <b>Sumber setiap kolom e-Rapor</b>, pilih komponen nilai yang sesuai atau pilih isi langsung.</li>
     <li>Gunakan jenis nilai yang berbeda bila Semester I dan II mewakili nilai yang berbeda.</li>
-    <li>Pemetaan selalu disimpan untuk kelas, mapel, dan semester yang sedang dibuka. Untuk menerapkannya juga sebagai default, centang <b>Terapkan juga sebagai default</b>, pilih cakupan <b>Semua mapel</b> atau <b>Mapel ini</b>, lalu klik satu tombol <b>Simpan pemetaan</b>.</li>
+    <li>Guru menyimpan pemetaan hanya untuk kelas/mapel/semester yang sedang dibuka. Admin dapat memilih cakupan default, lalu klik satu tombol <b>Simpan pemetaan</b>.</li>
   </ol>
-  <div class="panel"><b class="label">Urutan aturan</b>Default berlaku pada template lain di tahun ajaran dan semester yang sama jika kolomnya belum memiliki pemetaan khusus. Default khusus mapel mengalahkan default semua mapel; pemetaan khusus template tetap diutamakan. Kolom tanpa sumber masih dapat diisi langsung oleh guru.</div>
+  <div class="panel"><b class="label">Urutan aturan</b>Default berlaku pada template lain di tahun ajaran dan semester yang sama jika kolomnya belum memiliki pemetaan khusus. Default khusus mapel mengalahkan default semua mapel; pemetaan khusus template tetap diutamakan. Perubahan tercatat pada riwayat bersama nama pelaku dan waktu.</div>
   <div class="panel good"><b class="label">Hasilnya</b>Guru memasukkan nilai yang dipetakan sekali di halaman Nilai Siswa. Kolom e-Rapor yang memakai sumber SIGAP akan tampil dari nilai itu dan terkunci untuk edit langsung.</div>
   <div class="panel warn"><b class="label">Saat mengubah pemetaan</b>Nilai lama tetap tersimpan pada komponen sebelumnya. Periksa sumber lama dan baru. Nilai langsung yang sudah ada dapat disalin ke sumber baru jika sumber itu masih kosong.</div>
   <p class="small muted">Nama dan pilihan komponen nilai dikelola pada menu Tahun Ajaran. Pastikan komponen yang diperlukan sudah tersedia sebelum menetapkan sumbernya.</p>
@@ -178,7 +179,7 @@
   </div>
   <h3>Lengkapi nilai e-Rapor</h3>
   <ol class="steps">
-    <li>Jika template belum disimpan, unggah file sumber dari e-Rapor. Guru dapat menyimpan template sesuai aksesnya, tetapi hanya admin yang dapat membuat siswa dari pratinjau roster.</li>
+    <li>Jika template belum disimpan, unggah file sumber dari e-Rapor sesuai akses. Hanya admin yang dapat membuat siswa dari pratinjau roster.</li>
     <li>Kolom yang dipetakan akan menampilkan nilai SIGAP. Kolom dengan pilihan <b>Isi langsung di halaman e-Rapor</b> dapat diedit pada tabel.</li>
     <li>Isi atau koreksi nilai langsung, lalu klik <b>Simpan nilai</b>. Nilai harus berupa angka 0 sampai 100. Mengosongkan nilai langsung lalu menyimpan akan menghapus nilai tersebut.</li>
     <li>Setelah semua siswa cocok, unduh <b>.xls (format sekolah)</b> atau <b>.xlsx</b>. Tombol ekspor tampil jika template tersedia dan pemetaan roster lengkap.</li>
@@ -191,7 +192,7 @@
       <tr><td>Isi langsung di halaman e-Rapor</td><td>Tabel e-Rapor</td><td>Setelah klik Simpan nilai</td></tr>
     </tbody>
   </table>
-  <div class="panel"><b class="label">Akses guru</b>Guru harus memiliki akses nilai untuk kelas dan mapel yang dipilih. Pada hari terjadwal mengajar, SIGAP dapat meminta guru mengonfirmasi kehadiran dengan QR sebelum membuka nilai.</div>
+  <div class="panel"><b class="label">Akses guru</b>Guru harus memiliki akses nilai untuk kelas dan mapel yang dipilih. Pada hari terjadwal mengajar, SIGAP dapat meminta guru mengonfirmasi kehadiran dengan QR sebelum membuka nilai. Jika admin mengizinkan pemetaan, guru hanya dapat mengubah aturan lokal dan tidak dapat mengubah default sekolah.</div>
   <div class="footer"><span>Panduan cepat SIGAP · Guru</span><span>05 / 06</span></div>
 </section>
 

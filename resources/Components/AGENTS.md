@@ -21,6 +21,8 @@ Reusable Svelte 5 UI components shared across pages. All use TypeScript and Tail
 | `ConfirmDialog.svelte` | Reusable confirm dialog | `open`, `title`, `description`, `onConfirm`, `destructive` |
 | `DarkModeToggle.svelte` | Dark mode toggle | `onchange?: (isDark: boolean) => void` |
 | `DataTable.svelte` | Master data table | `columns`, `rows`, `keyField`, `rowAction`, `emptyMessage` |
+| `EraporMappingPanel.svelte` | e-Rapor column mappings, default mappings, and mapping audit history |
+| `EraporTeacherMappingAccess.svelte` | Admin control for teacher e-Rapor mapping access and its audit record |
 | `Header.svelte` | Top nav bar + user menu | `group` (string — active nav section) |
 | `Input.svelte` | Styled text input | `value` (bindable), `type`, `class` |
 | `Label.svelte` | Form label | `for`, `children` |

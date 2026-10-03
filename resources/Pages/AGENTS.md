@@ -18,7 +18,7 @@ Inertia.js pages rendered by Svelte 5. Each page is a route destination — the 
 | `classes.svelte` | Class CRUD |
 | `dashboard.svelte` | Role-aware dashboard with stats |
 | `grades.svelte` | Grade CRUD + per class/subject recap with final scores |
-| `gradesErapor.svelte` | Import e-Rapor templates, enter semester assessment scores, and download `.xls` files |
+| `gradesErapor.svelte` | Import e-Rapor templates, enter semester scores, configure teacher mapping access, and download exports |
 | `gradeAudit.svelte` | Grade change audit history |
 | `announcements.svelte` | Announcement management (admin) |
 | `journals.svelte` | Journal CRUD |

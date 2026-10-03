@@ -1,7 +1,7 @@
 import type { NaraRequest, NaraResponse } from '@core';
 import { jsonError, jsonSuccess, jsonValidationError, queryString } from '@core';
 import Logger from '@services/Logger';
-import { findEraporColumnMappings, findEraporColumnMappingsByClassSubject, findEraporDefaultColumnMappingsByYear, findEraporGradeTemplate, findEraporStudentMappings, saveEraporColumnMappings as persistEraporColumnMappings, saveEraporDefaultColumnMappings as persistEraporDefaultColumnMappings, saveEraporGradeChanges } from '@queries/eraporGrades';
+import { findEraporMappingAuditLogs, findEraporColumnMappings, findEraporColumnMappingsByClassSubject, findEraporDefaultColumnMappingsByYear, findEraporGradeTemplate, findEraporStudentMappings, findEraporTeacherMappingAccessAuditLogs, saveEraporColumnMappings as persistEraporColumnMappings, saveEraporDefaultColumnMappings as persistEraporDefaultColumnMappings, saveEraporGradeChanges } from '@queries/eraporGrades';
 import { findAllClasses, findClassById, findClassesByTeacherUser } from '@queries/classes';
 import { findAllSubjects, findSubjectById } from '@queries/subjects';
 import { findStudentsByClass } from '@queries/students';
@@ -12,7 +12,7 @@ import { isAdmin, hasPermission, hasRole } from '@queries/users';
 import { isTeacherUser, isTeacherAssignedToClassSubject, isTeacherHomeroomOfClass } from '@queries/teacherClassAssignments';
 import { findTeacherSchedulesByDay } from '@queries/schedules';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
-import { isTeacherPresenceEnabled } from '@queries/appSettings';
+import { isTeacherEraporMappingEnabled, isTeacherPresenceEnabled } from '@queries/appSettings';
 import { isTeachingDay } from '@queries/schoolCalendar';
 import { EraporColumnMappingsSchema, EraporDefaultColumnMappingsSchema, EraporGradeSaveSchema, EraporTemplateSchema, zodToErrors } from '@validators';
 import { normalizeEraporText, parseEraporWorkbook, renderEraporWorkbook, type EraporAssessmentColumn } from '@services/EraporWorkbook';
@@ -167,7 +167,15 @@ export const gradesEraporPage = (req: NaraRequest, res: NaraResponse) => {
       };
     }),
     gradeComponents: gradeComponents.map(component => ({ type: component.type, name: component.name })),
-    canConfigureMappings: administrator && canView && !!template && columns.length > 0,
+    canConfigureMappings: canView && !!template && columns.length > 0
+      && (administrator || (isTeacherEraporMappingEnabled() && canEdit)),
+    canSaveAsDefault: administrator,
+    canManageMappingAccess: administrator,
+    teacherMappingAccessEnabled: isTeacherEraporMappingEnabled(),
+    teacherMappingAccessAudit: administrator ? findEraporTeacherMappingAccessAuditLogs() : [],
+    mappingAudit: canView && template
+      ? findEraporMappingAuditLogs(template.id, selectedClass?.academic_year_id ?? '', subjectId, semester)
+      : [],
     canManageStudents: administrator,
     matrix,
     rosterReady,
@@ -178,10 +186,22 @@ export const gradesEraporPage = (req: NaraRequest, res: NaraResponse) => {
 
 export const saveEraporColumnMappings = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Sesi login diperlukan', 401);
-  if (!isAdmin(req.user.id)) return jsonError(res, 'Hanya admin yang dapat mengatur pemetaan nilai e-Rapor', 403, 'ADMIN_REQUIRED');
+  const administrator = isAdmin(req.user.id);
+  if (!administrator && !isTeacherActor(req.user.id)) {
+    return jsonError(res, 'Hanya guru pengampu dan admin yang dapat mengubah pemetaan e-Rapor', 403, 'ERAPOR_MAPPING_FORBIDDEN');
+  }
+  if (!administrator && !isTeacherEraporMappingEnabled()) {
+    return jsonError(res, 'Admin SIGAP sedang menonaktifkan perubahan pemetaan oleh guru', 403, 'ERAPOR_TEACHER_MAPPING_DISABLED');
+  }
   const parsed = EraporColumnMappingsSchema.safeParse(req.body);
   if (!parsed.success) return jsonValidationError(res, 'Pemetaan kolom e-Rapor tidak valid', zodToErrors(parsed.error));
   const { class_id: classId, subject_id: subjectId, semester } = parsed.data;
+  if (!administrator && !canEditScope(req.user.id, classId, subjectId)) {
+    return jsonError(res, 'Pemetaan hanya dapat diubah untuk kelas dan mapel yang Anda ampu', 403, 'ERAPOR_MAPPING_SCOPE_FORBIDDEN');
+  }
+  if (!administrator && !attendanceConfirmedToday(req.user.id)) {
+    return jsonError(res, 'Konfirmasi kehadiran hari ini diperlukan sebelum mengubah pemetaan nilai', 403, 'TEACHER_CONFIRMATION_REQUIRED');
+  }
   const targetClass = findClassById(classId);
   const template = findEraporGradeTemplate(classId, subjectId, semester);
   if (!targetClass || !template) return jsonError(res, 'Template e-Rapor belum tersedia untuk pilihan ini', 404, 'ERAPOR_TEMPLATE_NOT_FOUND');
@@ -216,9 +236,10 @@ export const saveEraporColumnMappings = (req: NaraRequest, res: NaraResponse) =>
   try {
     const changes = persistEraporColumnMappings(template.id, entries.map(item => ({
       external_id: item.external_id,
+      column_label: columnsById.get(item.external_id)!.label,
       source_component_type: item.source_component_type,
       direct_grade_type: columnsById.get(item.external_id)!.gradeType,
-    })));
+    })), { user_id: req.user.id, user_name: req.user.name ?? req.user.username });
     auditGradeChanges(changes, req.user.id);
     return jsonSuccess(res, 'Pemetaan nilai e-Rapor tersimpan', { mapped: entries.filter(item => item.source_component_type).length, direct: entries.filter(item => !item.source_component_type).length });
   } catch (error: unknown) {
@@ -308,6 +329,8 @@ export const saveEraporDefaultColumnMappings = (req: NaraRequest, res: NaraRespo
         source_component_type: item.source_component_type,
       })),
       req.user.id,
+      req.user.name ?? req.user.username,
+      scope === 'subject' ? `${findSubjectById(subjectId)?.name ?? 'Mapel ini'} · semua kelas` : 'Semua mapel · tahun ajaran ini',
     );
     const scopeMessage = scope === 'subject' ? 'mapel ini di semua kelas' : 'semua mapel pada tahun ajaran ini';
     return jsonSuccess(res, `Pemetaan default untuk ${scopeMessage} dan ${semester === 1 ? 'Semester I' : 'Semester II'} tersimpan`, { saved: mappings.length, scope });

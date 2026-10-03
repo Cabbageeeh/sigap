@@ -9,6 +9,8 @@
   import Label from '../Components/Label.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
+  import EraporMappingPanel from '../Components/EraporMappingPanel.svelte';
+  import EraporTeacherMappingAccess from '../Components/EraporTeacherMappingAccess.svelte';
 
   interface ClassOption {
     id: string;
@@ -75,6 +77,11 @@
     columns = [],
     gradeComponents = [],
     canConfigureMappings = false,
+    canSaveAsDefault = false,
+    canManageMappingAccess = false,
+    teacherMappingAccessEnabled = true,
+    teacherMappingAccessAudit = [],
+    mappingAudit = [],
     canManageStudents = false,
     matrix = [],
     rosterReady = false,
@@ -90,6 +97,11 @@
     columns?: GradeColumn[];
     gradeComponents?: GradeComponentOption[];
     canConfigureMappings?: boolean;
+    canSaveAsDefault?: boolean;
+    canManageMappingAccess?: boolean;
+    teacherMappingAccessEnabled?: boolean;
+    teacherMappingAccessAudit?: Array<{ id: string; new_value: string | null; changed_by_name: string; changed_at: number }>;
+    mappingAudit?: Array<{ id: string; action: 'column_mapping' | 'default_mapping' | 'teacher_mapping_access'; external_id: string | null; column_label: string | null; old_source_component_type: string | null; new_source_component_type: string | null; old_mapping_present: number | null; new_mapping_present: number | null; changed_by_name: string; changed_at: number; scope_label: string | null }>;
     canManageStudents?: boolean;
     matrix?: StudentRow[];
     rosterReady?: boolean;
@@ -105,20 +117,14 @@
   let newStudentNis = $state<Record<string, string>>({});
   let fileInput = $state<HTMLInputElement | null>(null);
   let scoreDrafts = $state<Record<string, string>>({});
-  let mappingDrafts = $state<Record<string, string>>({});
   let isImporting = $state(false);
   let isSaving = $state(false);
-  let isSavingMappings = $state(false);
-  let saveAsDefault = $state(false);
-  let defaultMappingScope = $state<'year' | 'subject'>('year');
 
   $effect(() => {
     selectedClassId = classId;
     selectedSubjectId = subjectId;
     selectedSemester = String(semester);
     scoreDrafts = {};
-    mappingDrafts = Object.fromEntries(columns.map(column => [column.external_id, column.source_component_type ?? '']));
-    saveAsDefault = false;
   });
 
   const selectedClass = $derived(classes.find(item => item.id === selectedClassId));
@@ -229,46 +235,6 @@
     router.visit(selectionUrl(), { preserveScroll: true });
   }
 
-  async function saveMappings(): Promise<void> {
-    if (!canConfigureMappings || !hasTemplate || isSavingMappings) return;
-    const mappings = columns.map(column => ({
-      external_id: column.external_id,
-      source_component_type: mappingDrafts[column.external_id] || null,
-    }));
-    isSavingMappings = true;
-    const result = await api<{ mapped?: number; direct?: number }>(() => axios.post('/grades/erapor/mappings', {
-      class_id: selectedClassId,
-      subject_id: selectedSubjectId,
-      semester: Number(selectedSemester),
-      mappings,
-    }), { showSuccessToast: false });
-    if (!result.success) {
-      isSavingMappings = false;
-      return;
-    }
-
-    if (saveAsDefault) {
-      const defaultResult = await api<{ saved?: number }>(() => axios.post('/grades/erapor/default-mappings', {
-        class_id: selectedClassId,
-        subject_id: selectedSubjectId,
-        semester: Number(selectedSemester),
-        mappings,
-        scope: defaultMappingScope,
-      }), { showSuccessToast: false, showErrorToast: false });
-      if (!defaultResult.success) {
-        isSavingMappings = false;
-        Toast(`Pemetaan template tersimpan, tetapi default gagal disimpan: ${defaultResult.message}`, 'error');
-        router.visit(selectionUrl(), { preserveScroll: true });
-        return;
-      }
-    }
-
-    isSavingMappings = false;
-    Toast(saveAsDefault
-      ? 'Pemetaan tersimpan untuk template ini dan sebagai default'
-      : 'Pemetaan nilai e-Rapor tersimpan untuk template ini', 'success');
-    router.visit(selectionUrl(), { preserveScroll: true });
-  }
 </script>
 
 <Sidebar group="grades" />
@@ -296,6 +262,8 @@
       Konfirmasi kehadiran hari ini diperlukan sebelum mengakses nilai. <a href="/teacher/confirm" use:inertia class="font-semibold text-primary underline">Buka halaman konfirmasi</a>.
     </div>
   {/if}
+
+  <EraporTeacherMappingAccess canManage={canManageMappingAccess} enabled={teacherMappingAccessEnabled} auditLogs={teacherMappingAccessAudit} />
 
   <section class="mb-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
     <div class="mb-4">
@@ -389,56 +357,18 @@
     {#if !rosterReady}
       <div class="mb-5 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-foreground">Pemetaan siswa belum cocok dengan roster SIGAP. Unggah ulang template terbaru untuk kelas ini.</div>
     {/if}
-    {#if canConfigureMappings}
-      <section class="mb-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
-        <div class="mb-4">
-          <h2 class="font-heading font-semibold">Sumber setiap kolom e-Rapor</h2>
-          <p class="mt-1 max-w-3xl text-sm text-muted-foreground">Admin dapat menghubungkan kolom template ke jenis nilai SIGAP. Nilai yang dipetakan cukup diisi satu kali; kolom tanpa sumber akan diisi langsung di tabel e-Rapor. Pemetaan disimpan untuk kelas dan mapel ini. Jika dijadikan default, aturan juga digunakan pada template lain yang belum memiliki pemetaan khusus. Pilihan jenis nilai dikelola pada menu <a href="/academic-years" use:inertia class="font-medium text-primary underline">Tahun Ajaran</a>.</p>
-          <p class="mt-2 max-w-3xl text-xs text-muted-foreground">Nilai langsung yang sudah ada akan disalin ke sumber baru jika sumber itu masih kosong. Jika mengganti dari satu jenis nilai ke jenis lain, nilai lama tetap tersimpan pada jenis sebelumnya dan perlu diperiksa.</p>
-        </div>
-        <div class="space-y-3">
-          {#each columns as column (column.external_id)}
-            <label class="grid gap-2 text-sm sm:grid-cols-[minmax(140px,1fr)_minmax(220px,2fr)] sm:items-center">
-              <span class="font-medium text-foreground">{column.label}</span>
-              <select
-                value={mappingDrafts[column.external_id] ?? ''}
-                onchange={(event) => { mappingDrafts = { ...mappingDrafts, [column.external_id]: event.currentTarget.value }; }}
-                class="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground"
-              >
-                <option value="">Isi langsung di halaman e-Rapor</option>
-                {#each gradeComponents as component (component.type)}
-                  <option value={component.type}>{component.name}</option>
-                {/each}
-              </select>
-            </label>
-          {/each}
-        </div>
-        <div class="mt-4 flex flex-col gap-3 border-t border-border pt-4 md:flex-row md:items-end md:justify-between">
-          <div class="flex-1">
-            <label for="erapor-default-enabled" class="flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
-              <input id="erapor-default-enabled" type="checkbox" bind:checked={saveAsDefault} class="h-4 w-4 rounded border-border accent-primary" />
-              Terapkan juga sebagai default
-            </label>
-            {#if saveAsDefault}
-              <div class="mt-3 max-w-2xl">
-                <Label for="erapor-default-scope">Cakupan default</Label>
-                <select id="erapor-default-scope" bind:value={defaultMappingScope} class="mt-2 h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground">
-                  <option value="year">Semua mapel · {semesterLabel} · tahun ajaran ini</option>
-                  <option value="subject">{selectedSubject?.name ?? 'Mapel ini'} · semua kelas · {semesterLabel}</option>
-                </select>
-                <p class="mt-2 text-xs text-muted-foreground">Default dipakai untuk template lain jika kolomnya belum memiliki pemetaan khusus.</p>
-              </div>
-            {:else}
-              <p class="mt-2 text-xs text-muted-foreground">Pemetaan hanya disimpan untuk kelas, mapel, dan semester ini.</p>
-            {/if}
-          </div>
-          <Button onclick={saveMappings} disabled={isSavingMappings}>
-            {#if isSavingMappings}<Loader2 class="mr-2 h-4 w-4 animate-spin" />{:else}<Save class="mr-2 h-4 w-4" />{/if}
-            Simpan pemetaan
-          </Button>
-        </div>
-      </section>
-    {/if}
+    <EraporMappingPanel
+      classId={selectedClassId}
+      subjectId={selectedSubjectId}
+      semester={Number(selectedSemester)}
+      semesterLabel={semesterLabel}
+      subjectName={selectedSubject?.name ?? 'Mapel ini'}
+      {columns}
+      {gradeComponents}
+      {canConfigureMappings}
+      {canSaveAsDefault}
+      {mappingAudit}
+    />
     <section class="rounded-2xl border border-border bg-card shadow-sm">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-border p-5">
         <div>

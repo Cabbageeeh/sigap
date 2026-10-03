@@ -10,9 +10,9 @@
 
 ## Stats
 
-- Files indexed: 322
-- Total lines: 36917
-- Total exports: 988
+- Files indexed: 326
+- Total lines: 37319
+- Total exports: 998
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -53,11 +53,12 @@
 - `dashboard.ts` (31L) — dashboardPage
 - `gradeAudit.ts` (39L) — gradeAuditPage, gradeAuditData
 - `grades.ts` (375L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, addGradeComponentType, renameGradeComponentType, +3
-- `gradesErapor.ts` (463L) — gradesEraporPage, saveEraporColumnMappings, saveEraporDefaultColumnMappings, saveEraporGrades, exportEraporGrades
+- `gradesErapor.ts` (486L) — gradesEraporPage, saveEraporColumnMappings, saveEraporDefaultColumnMappings, saveEraporGrades, exportEraporGrades
 - `gradesEraporImport.ts` (268L) — eraporImportMiddleware, importEraporGrades
+- `gradesEraporSettings.ts` (22L) — saveEraporTeacherMappingAccess
 - `headmaster.ts` (111L) — headmasterDashboardPage, headmasterDashboardData, headmasterReportsPage, headmasterClassGradesPage, headmasterTeacherAttendancePage, listOutsideConfirmations
 - `home.ts` (17L) — landingPage
-- `index.ts` (35L)
+- `index.ts` (36L)
 - `journals.ts` (293L) — journalsPage, listJournals, journalData, addJournal, editJournal, removeJournal
 - `notifications.ts` (20L) — notificationsData, markNotificationsRead
 - `parent.ts` (124L) — parentDashboardPage, parentDashboardData, childAttendancePage, parentGradesPage
@@ -96,10 +97,10 @@
 
 - `academicYears.ts` (40L) — findAllAcademicYears, findAcademicYearById, findActiveAcademicYear, createAcademicYear, updateAcademicYear, deleteAcademicYear, setActiveAcademicYear
 - `announcements.ts` (45L) — findAllAnnouncements, findLatestAnnouncements, findAnnouncementById, createAnnouncement, updateAnnouncement, deleteAnnouncement
-- `appSettings.ts` (32L) — findSetting, findSettingNumber, upsertSetting, findTeacherPresenceMode, isTeacherPresenceEnabled
+- `appSettings.ts` (38L) — ERAPOR_TEACHER_MAPPING_ACCESS_KEY, findSetting, findSettingNumber, upsertSetting, isTeacherEraporMappingEnabled, findTeacherPresenceMode, isTeacherPresenceEnabled
 - `assets.ts` (23L) — createAsset, findAssetsByUserId
 - `classes.ts` (95L) — findAllClasses, findAllClassesWithHomeroom, findClassesByAcademicYearWithHomeroom, findClassById, findClassByName, findClassesByAcademicYear, findClassesByGrade, findClassesByTeacherUser, +5
-- `eraporGrades.ts` (273L) — findEraporGradeTemplate, findEraporStudentMappings, findEraporGradeTemplatesByClass, findEraporColumnMappings, findEraporDefaultColumnMappingsByYear, saveEraporDefaultColumnMappings, findEraporColumnMappingsByClassSubject, saveEraporTemplateSetup, +10
+- `eraporGrades.ts` (375L) — findEraporGradeTemplate, findEraporStudentMappings, findEraporGradeTemplatesByClass, findEraporColumnMappings, findEraporDefaultColumnMappingsByYear, saveEraporDefaultColumnMappings, findEraporColumnMappingsByClassSubject, saveEraporTemplateSetup, +14
 - `gradeAuditLogs.ts` (39L) — logGradeChange, getGradeAuditLogsPaginated
 - `gradeComponents.ts` (64L) — findGradeComponentsByYear, upsertGradeComponents, addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent
 - `grades.ts` (330L) — findAllGrades, findGradeById, findGradesByStudent, findGradesByStudentForParent, findGradesByStudentForTeacher, findGradesByClassSubject, findGradesByTeacher, findGradeByUniqueKey, +14
@@ -150,8 +151,8 @@
 
 ### app/validators/
 
-- `index.ts` (106L) — zodToErrors
-- `schemas.ts` (399L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +78
+- `index.ts` (107L) — zodToErrors
+- `schemas.ts` (403L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +79
 
 ### migrations/
 
@@ -201,6 +202,7 @@
 - `20261002000001_create_erapor_grade_templates.ts` (43L) — up, down
 - `20261002000002_create_erapor_column_mappings.ts` (20L) — up, down
 - `20261003000001_create_erapor_default_column_mappings.ts` (27L) — up, down
+- `20261003000002_create_erapor_configuration_audit_logs.ts` (43L) — up, down
 
 ### resources/
 
@@ -215,6 +217,8 @@
 - `ConfirmDialog.svelte` (42L)
 - `DarkModeToggle.svelte` (27L)
 - `DataTable.svelte` (97L) — DataTableCell
+- `EraporMappingPanel.svelte` (203L)
+- `EraporTeacherMappingAccess.svelte` (65L)
 - `Header.svelte` (213L)
 - `Input.svelte` (51L)
 - `Label.svelte` (23L)
@@ -259,7 +263,7 @@
 - `dashboard.svelte` (196L)
 - `gradeAudit.svelte` (77L)
 - `grades.svelte` (386L)
-- `gradesErapor.svelte` (493L)
+- `gradesErapor.svelte` (423L)
 - `journals.svelte` (258L)
 - `landing.svelte` (57L)
 - `parents.svelte` (21L)
@@ -338,7 +342,7 @@
 
 ### routes/
 
-- `web.ts` ★ (254L)
+- `web.ts` ★ (256L)
 
 ### scripts/
 
@@ -631,6 +635,10 @@
 - `const` **eraporImportMiddleware**
 - `const` **importEraporGrades**
 
+### `app/handlers/gradesEraporSettings.ts`
+
+- `const` **saveEraporTeacherMappingAccess**
+
 ### `app/handlers/headmaster.ts`
 
 - `const` **headmasterDashboardPage**
@@ -865,9 +873,11 @@
 
 ### `app/queries/appSettings.ts`
 
+- `const` **ERAPOR_TEACHER_MAPPING_ACCESS_KEY**
 - `const` **findSetting**
 - `const` **findSettingNumber**
 - `const` **upsertSetting**
+- `const` **isTeacherEraporMappingEnabled**
 - `const` **findTeacherPresenceMode**
 - `const` **isTeacherPresenceEnabled**
 
@@ -902,6 +912,9 @@
 - `const` **saveEraporDefaultColumnMappings**
 - `const` **findEraporColumnMappingsByClassSubject**
 - `const` **saveEraporTemplateSetup**
+- `const` **findEraporMappingAuditLogs**
+- `const` **findEraporTeacherMappingAccessAuditLogs**
+- `const` **saveEraporTeacherMappingAccess**
 - `const` **saveEraporColumnMappings**
 - `const` **saveEraporGradeChanges**
 - `const` **saveEraporImportSetup**
@@ -912,6 +925,7 @@
 - `iface` **EraporGradeChangeInput**
 - `iface` **EraporGradeChange**
 - `iface` **EraporColumnMappingInput**
+- `iface` **EraporColumnMappingAuditLog**
 
 ### `app/queries/gradeAuditLogs.ts`
 
@@ -1444,6 +1458,7 @@
 - `const` **EraporGradeSaveSchema**
 - `const` **EraporColumnMappingsSchema**
 - `const` **EraporDefaultColumnMappingsSchema**
+- `const` **EraporTeacherMappingAccessSchema**
 - `const` **AnnouncementSchema**
 - `const` **UpdateAnnouncementSchema**
 - `type` **LoginInput**
@@ -1710,6 +1725,11 @@
 - `const` **down**
 
 ### `migrations/20261003000001_create_erapor_default_column_mappings.ts`
+
+- `const` **up**
+- `const` **down**
+
+### `migrations/20261003000002_create_erapor_configuration_audit_logs.ts`
 
 - `const` **up**
 - `const` **down**
@@ -1981,6 +2001,7 @@
 - `app/handlers/grades.ts` → `@core`, `@queries/academicYears`, `@queries/appSettings`, `@queries/classes`, `@queries/gradeAuditLogs`, `@queries/gradeComponents`, `@queries/grades`, `@queries/schedules`, `@queries/schoolCalendar`, `@queries/students`, `@queries/subjects`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/gradesErapor.ts` → `@core`, `@queries/appSettings`, `@queries/classes`, `@queries/eraporGrades`, `@queries/gradeAuditLogs`, `@queries/gradeComponents`, `@queries/grades`, `@queries/schedules`, `@queries/schoolCalendar`, `@queries/students`, `@queries/subjects`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`, `@services/EraporWorkbook`, `@services/EraporXlsx`, `@services/Logger`, `@validators`
 - `app/handlers/gradesEraporImport.ts` → `@core`, `@queries/appSettings`, `@queries/classes`, `@queries/eraporGrades`, `@queries/gradeAuditLogs`, `@queries/schedules`, `@queries/schoolCalendar`, `@queries/schoolLocations`, `@queries/students`, `@queries/subjects`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`, `@services/EraporWorkbook`, `@services/Logger`, `@validators`
+- `app/handlers/gradesEraporSettings.ts` → `@core`, `@queries/eraporGrades`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/headmaster.ts` → `@core`, `@queries/appSettings`, `@queries/classes`, `@queries/schoolLocations`, `@queries/stats`, `@queries/teacherConfirmations`, `@queries/teachers`, `@queries/users`
 - `app/handlers/home.ts` → `@core`, `@queries`
 - `app/handlers/journals.ts` → `../types/shared`, `@config/constants`, `@core`, `@queries/appSettings`, `@queries/journals`, `@queries/schedules`, `@queries/schoolCalendar`, `@queries/studentAttendance`, `@queries/students`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@types`, `@validators`
@@ -2063,6 +2084,8 @@
 - `resources/Components/charts/ConfirmationWeekChart.svelte` → `../../types`
 - `resources/Components/ConfirmDialog.svelte` → `./Button.svelte`, `./Modal.svelte`
 - `resources/Components/DarkModeToggle.svelte` → `./Button.svelte`, `@lucide/svelte`
+- `resources/Components/EraporMappingPanel.svelte` → `./Button.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Components/EraporTeacherMappingAccess.svelte` → `@inertiajs/svelte`
 - `resources/Components/Header.svelte` → `./DarkModeToggle.svelte`, `./SigapIcon.svelte`, `@inertiajs/svelte`, `@lucide/svelte`, `@zag-js/dialog`, `@zag-js/menu`, `@zag-js/svelte`
 - `resources/Components/landing/LandingCta.svelte` → `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Components/landing/LandingFooter.svelte` → `../SigapIcon.svelte`
@@ -2085,7 +2108,7 @@
 - `resources/Pages/dashboard.svelte` → `../Components/BentoCard.svelte`, `../Components/Sidebar.svelte`, `../Components/StatCard.svelte`, `../Components/charts/AttendanceDonut.svelte`, `../Components/charts/AttendanceTrendChart.svelte`, `../Components/charts/ClassSizeBars.svelte`, `../Components/charts/ConfirmationWeekChart.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/gradeAudit.svelte` → `../Components/DataTable.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../types`
 - `resources/Pages/grades.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/SearchableSelect.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/gradesErapor.svelte` → `../Components/Button.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/gradesErapor.svelte` → `../Components/Button.svelte`, `../Components/EraporMappingPanel.svelte`, `../Components/EraporTeacherMappingAccess.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/class-grades.svelte` → `../../Components/Button.svelte`, `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/dashboard.svelte` → `../../Components/BentoCard.svelte`, `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../Components/StatCard.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/headmaster/reports.svelte` → `../../Components/DataTable.svelte`, `../../Components/Sidebar.svelte`, `../../Components/StatCard.svelte`, `../../types`
@@ -2114,7 +2137,7 @@
 - `resources/Pages/teachers.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/users.svelte` → `../Components/Button.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../Components/UserModal.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/types/index.ts` → `./types`
-- `routes/web.ts` → `@core`, `@handlers/academicYears`, `@handlers/announcements`, `@handlers/assets`, `@handlers/attendance`, `@handlers/auth`, `@handlers/classes`, `@handlers/dashboard`, `@handlers/gradeAudit`, `@handlers/grades`, `@handlers/gradesErapor`, `@handlers/gradesEraporImport`, `@handlers/headmaster`, `@handlers/home`, `@handlers/journals`, `@handlers/notifications`, `@handlers/parent`, `@handlers/parents`, `@handlers/rapor`, `@handlers/reportExports`, `@handlers/reports`, `@handlers/roles`, `@handlers/schedules`, `@handlers/schoolCalendar`, `@handlers/schoolLocations`, `@handlers/studentAttendance`, `@handlers/studentRosterExports`, `@handlers/students`, `@handlers/subjects`, `@handlers/teacherAssignments`, `@handlers/teacherConfirmations`, `@handlers/teacherPresence`, `@handlers/teacherSchedule`, `@handlers/teachers`, `@handlers/users`, `@middlewares/auth`, `@middlewares/rateLimit`
+- `routes/web.ts` → `@core`, `@handlers/academicYears`, `@handlers/announcements`, `@handlers/assets`, `@handlers/attendance`, `@handlers/auth`, `@handlers/classes`, `@handlers/dashboard`, `@handlers/gradeAudit`, `@handlers/grades`, `@handlers/gradesErapor`, `@handlers/gradesEraporImport`, `@handlers/gradesEraporSettings`, `@handlers/headmaster`, `@handlers/home`, `@handlers/journals`, `@handlers/notifications`, `@handlers/parent`, `@handlers/parents`, `@handlers/rapor`, `@handlers/reportExports`, `@handlers/reports`, `@handlers/roles`, `@handlers/schedules`, `@handlers/schoolCalendar`, `@handlers/schoolLocations`, `@handlers/studentAttendance`, `@handlers/studentRosterExports`, `@handlers/students`, `@handlers/subjects`, `@handlers/teacherAssignments`, `@handlers/teacherConfirmations`, `@handlers/teacherPresence`, `@handlers/teacherSchedule`, `@handlers/teachers`, `@handlers/users`, `@middlewares/auth`, `@middlewares/rateLimit`
 - `scripts/eval-agent.ts` → `@handlers/evaltests`
 - `scripts/gen-resource.ts` → `../../app/handlers/${camelPlural}`, `../Components/Button.svelte`, `../Components/Header.svelte`, `../helpers/mocks`, `../types`, `@core`, `@handlers/${camelPlural}`, `@inertiajs/svelte`, `@queries`, `@queries/${camelPlural}`, `@queries/users`, `@services/Logger`, `@services/SQLite`, `@types`, `@validators`
 - `scripts/migrate.ts` → `@services/Migrator`

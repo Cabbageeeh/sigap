@@ -240,8 +240,8 @@
 
   <h2>1.2 Empat peran pengguna</h2>
   <div class="roles">
-    <div class="role"><h4>Administrator</h4><p>Mengisi data master, mengelola roster siswa dan akun orang tua, mengatur pengguna, hak akses, QR absen, serta mengimpor template dan memetakan kolom e-Rapor.</p></div>
-    <div class="role"><h4>Guru</h4><p>Konfirmasi kehadiran lewat QR, mengisi jurnal dan presensi siswa, memasukkan nilai kelas yang diampunya, serta menyiapkan/mengekspor nilai e-Rapor sesuai aksesnya.</p></div>
+    <div class="role"><h4>Administrator</h4><p>Mengisi data master, mengelola roster siswa dan akun orang tua, mengatur pengguna, hak akses, QR absen, template dan default e-Rapor, serta hak pemetaan guru.</p></div>
+    <div class="role"><h4>Guru</h4><p>Konfirmasi kehadiran lewat QR, mengisi jurnal dan presensi siswa, memasukkan nilai kelas yang diampunya, serta menyiapkan/mengekspor nilai e-Rapor sesuai aksesnya. Jika diizinkan, guru dapat mengubah pemetaan khusus kelas/mapel yang diampu.</p></div>
     <div class="role"><h4>Kepala Sekolah</h4><p>Mengawasi kehadiran guru, melihat rekap nilai per kelas, memeriksa riwayat perubahan nilai (audit), membaca laporan konfirmasi di luar radius sekolah, mengunduh dokumen lingkup sekolah.</p></div>
     <div class="role"><h4>Orang Tua/Wali</h4><p>Melihat daftar anaknya, nilai dan rapor tiap anak, rekap absensi anak, serta pengumuman dan notifikasi dari sekolah.</p></div>
   </div>
@@ -482,7 +482,7 @@
     yang menjadi sasarannya, termasuk orang tua.</p>
 
   <h2>3.12 Pengaturan e-Rapor</h2>
-  <p>Menu <b>Penilaian → Pengaturan e-Rapor</b> hanya tersedia untuk administrator. Pengaturan ini menyimpan struktur file e-Rapor sekolah dan menentukan kolom mana yang mengambil nilai dari komponen SIGAP.</p>
+  <p>Menu <b>Penilaian → Pengaturan e-Rapor</b> menyimpan struktur file e-Rapor sekolah dan menentukan kolom mana yang mengambil nilai dari komponen SIGAP. Admin mengelola template, default sekolah, dan sakelar akses pemetaan guru. Guru pengampu dapat mengubah pemetaan lokal bila sakelar tersebut aktif.</p>
   <h3>Simpan template untuk kelas, mapel, dan semester</h3>
   <ol class="steps">
     <li>Pilih <b>Kelas</b>, <b>Mata pelajaran</b>, dan <b>Semester I/II</b> yang sama dengan file dari e-Rapor.</li>
@@ -491,13 +491,15 @@
     <li>SIGAP mencocokkan siswa memakai ID anggota rombel yang sudah dipetakan, atau nama unik di kelas. Jika file memuat siswa baru yang belum terdaftar, pratinjau meminta <b>NIS asli</b> setiap siswa. Isi NIS lalu klik <b>Buat siswa dan simpan</b>. Siswa baru tidak otomatis memiliki akun orang tua.</li>
     <li>Roster SIGAP juga harus lengkap: jika ada siswa SIGAP yang tidak ada pada file, impor ditolak. Periksa roster lebih dahulu pada <b>Kelas &amp; Siswa</b>. Setelah berhasil, template tersimpan untuk kombinasi kelas, mapel, dan semester tersebut. Unggah kembali jika format/file sumber perlu diperbarui.</li>
   </ol>
-  <h3>Atur sumber tiap kolom penilaian</h3>
+  <h3>Atur akses dan sumber tiap kolom penilaian</h3>
   <ul class="plain">
-    <li>Pada bagian <b>Sumber setiap kolom e-Rapor</b>, admin dapat memilih jenis nilai SIGAP untuk sebuah kolom, misalnya memetakan <b>Sumatif 1</b> dan <b>Sumatif 2</b>. Nilai yang dipetakan cukup dimasukkan sekali di halaman <b>Nilai Siswa</b>; nilai yang sama akan ditampilkan pada kolom e-Rapor dan ikut diekspor.</li>
+    <li>Pada bagian <b>Akses pemetaan e-Rapor untuk guru</b>, admin menentukan apakah guru boleh mengubah pemetaan lokal. Akses aktif secara default. Jika dimatikan, guru tetap dapat mengisi dan mengekspor nilai tetapi tidak dapat mengubah sumber kolom.</li>
+    <li>Pada bagian <b>Sumber setiap kolom e-Rapor</b>, admin atau guru pengampu (jika diizinkan) dapat memilih jenis nilai SIGAP untuk sebuah kolom, misalnya memetakan <b>Sumatif 1</b> dan <b>Sumatif 2</b>. Nilai yang dipetakan cukup dimasukkan sekali di halaman <b>Nilai Siswa</b>; nilai yang sama akan ditampilkan pada kolom e-Rapor dan ikut diekspor.</li>
     <li>Pilihan <b>Isi langsung di halaman e-Rapor</b> berarti kolom itu tidak terhubung ke nilai rutin SIGAP. Guru yang berhak mengedit dapat mengisi nilainya pada tabel e-Rapor.</li>
     <li>Nilai komponen biasa seperti tugas/ulangan harian tetap dapat dipantau di halaman nilai SIGAP. Hanya kolom yang admin petakan yang mengambil nilai dari komponen tersebut.</li>
-    <li>Pemetaan selalu disimpan untuk kelas, mapel, dan semester yang dipilih. Centang <b>Terapkan juga sebagai default</b> sebelum menekan <b>Simpan pemetaan</b> untuk menyimpan aturan yang sama bagi semua mapel atau mapel terpilih pada tahun ajaran dan semester itu. Default dipakai template lain jika kolomnya belum punya pemetaan khusus.</li>
+    <li>Guru hanya menyimpan pemetaan untuk kelas, mapel, dan semester yang sedang dibuka. Admin dapat mencentang <b>Terapkan juga sebagai default</b> sebelum menekan <b>Simpan pemetaan</b> untuk menerapkan aturan pada semua mapel atau mapel terpilih di tahun ajaran dan semester itu. Default dipakai template lain jika kolomnya belum punya pemetaan khusus.</li>
     <li>Default khusus mapel mengalahkan default semua mapel; pemetaan khusus template mengalahkan keduanya. Pilih jenis nilai berbeda untuk membedakan semester. Jika sumber diganti, nilai lama tetap tersimpan pada jenis sebelumnya dan perlu diperiksa.</li>
+    <li>Riwayat menyimpan perubahan pemetaan lokal maupun default, nama pelaku, dan waktunya. Riwayat perubahan sakelar akses guru tampil pada pengaturan akses.</li>
   </ul>
   <p>Setelah template dan roster cocok, tombol <b>Unduh .xls (format sekolah)</b> dan <b>Unduh .xlsx</b> tersedia. Keduanya mempertahankan struktur template sekolah yang diimpor dan mengisi nilai SIGAP sesuai pemetaan; pilih hasil unduhan yang diperlukan untuk proses unggah e-Rapor. Ekspor membutuhkan pemetaan seluruh siswa pada template yang masih cocok dengan roster SIGAP.</p>
 </section>
@@ -639,8 +641,8 @@
   <h2>4.8 Mengisi dan mengekspor nilai e-Rapor</h2>
   <p>Dari halaman <b>Penilaian → Nilai Siswa</b>, pilih kelas dan mapel lalu klik <b>Impor / Ekspor e-Rapor</b>. Pilih semester yang sama dengan template. Guru perlu memiliki akses nilai untuk kelas dan mapel tersebut; pada hari terjadwal mengajar, konfirmasi QR mungkin diperlukan.</p>
   <p>Jika template belum tersimpan, unggah file e-Rapor sekolah <code>.xls</code> atau <code>.xlsx</code> sesuai petunjuk administrator. Jika roster file belum sama dengan SIGAP, hubungi admin untuk meninjau dan menyesuaikan daftar siswa. Guru tidak dapat membuat siswa baru dari pratinjau impor.</p>
-  <p>Pada tabel e-Rapor, kolom yang telah dipetakan admin akan menampilkan nilai dari komponen SIGAP dan tidak perlu diisi lagi. Kolom <b>Isi langsung di halaman e-Rapor</b> dapat diisi pada tabel tersebut. Klik <b>Simpan nilai</b> setelah perubahan langsung. Setelah template dan roster siap, pilih <b>Unduh .xls (format sekolah)</b> atau <b>Unduh .xlsx</b>. Berkas memuat kolom dan tata letak template yang terdaftar untuk kelas, mapel, dan semester yang dipilih.</p>
-  <p>Jika Anda perlu mengganti sumber nilai atau nama komponen, minta administrator memperbarui <b>Sumber setiap kolom e-Rapor</b>. Pastikan nilai sudah diperiksa sebelum mengekspor.</p>
+  <p>Pada tabel e-Rapor, kolom yang telah dipetakan akan menampilkan nilai dari komponen SIGAP dan tidak perlu diisi lagi. Jika akses guru aktif, pemetaan lokal dapat diubah pada bagian <b>Sumber setiap kolom e-Rapor</b> untuk kelas dan mapel yang sedang diajar; perubahan tercatat di riwayat. Guru tidak dapat mengubah default sekolah atau sakelar akses. Kolom <b>Isi langsung di halaman e-Rapor</b> dapat diisi pada tabel tersebut. Klik <b>Simpan nilai</b> setelah perubahan langsung. Setelah template dan roster siap, pilih <b>Unduh .xls (format sekolah)</b> atau <b>Unduh .xlsx</b>. Berkas memuat kolom dan tata letak template yang terdaftar untuk kelas, mapel, dan semester yang dipilih.</p>
+  <p>Jika akses guru dinonaktifkan, minta administrator untuk memperbarui <b>Sumber setiap kolom e-Rapor</b>. Untuk mengubah default sekolah, selalu hubungi administrator. Pastikan nilai sudah diperiksa sebelum mengekspor.</p>
 </section>
 
 <!-- ══════════════════════ BAGIAN 5 ══════════════════════ -->

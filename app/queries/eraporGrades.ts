@@ -66,14 +66,28 @@ export const saveEraporDefaultColumnMappings = (
   semester: 1 | 2,
   mappings: EraporDefaultColumnMappingInput[],
   userId: string,
+  userName: string,
+  scopeLabel: string,
 ): void => SQLite.transaction(() => {
   const now = Date.now();
   for (const mapping of mappings) {
-    const existing = SQLite.one<{ id: string }>`
-      SELECT id FROM erapor_default_column_mappings
+    const existing = SQLite.one<{ id: string; source_component_type: string | null }>`
+      SELECT id, source_component_type FROM erapor_default_column_mappings
       WHERE academic_year_id = ${academicYearId} AND subject_id IS ${subjectId}
         AND semester = ${semester} AND column_key = ${mapping.column_key}
     `;
+    if (existing?.source_component_type !== mapping.source_component_type) {
+      SQLite.exec`
+        INSERT INTO erapor_configuration_audit_logs
+          (id, action, academic_year_id, subject_id, semester, scope_label, external_id, column_label,
+           old_source_component_type, new_source_component_type, old_mapping_present, new_mapping_present,
+           changed_by_user_id, changed_by_name, changed_at)
+        VALUES
+          (${randomUUID()}, 'default_mapping', ${academicYearId}, ${subjectId}, ${semester}, ${scopeLabel},
+           ${mapping.column_key}, ${mapping.column_key}, ${existing?.source_component_type ?? null},
+           ${mapping.source_component_type}, ${existing ? 1 : 0}, 1, ${userId}, ${userName}, ${now})
+      `;
+    }
     if (existing) {
       SQLite.exec`
         UPDATE erapor_default_column_mappings
@@ -153,22 +167,110 @@ export interface EraporGradeChange {
 
 export interface EraporColumnMappingInput {
   external_id: string;
+  column_label: string;
   source_component_type: string | null;
   direct_grade_type: string;
 }
 
+export interface EraporColumnMappingAuditLog {
+  id: string;
+  action: 'column_mapping' | 'default_mapping' | 'teacher_mapping_access';
+  template_id: string | null;
+  external_id: string | null;
+  column_label: string | null;
+  old_source_component_type: string | null;
+  new_source_component_type: string | null;
+  old_mapping_present: number | null;
+  new_mapping_present: number | null;
+  old_value: string | null;
+  new_value: string | null;
+  scope_label: string | null;
+  changed_by_name: string;
+  changed_at: number;
+}
+
+export const findEraporMappingAuditLogs = (
+  templateId: string,
+  academicYearId: string,
+  subjectId: string,
+  semester: 1 | 2,
+): EraporColumnMappingAuditLog[] =>
+  SQLite.many<EraporColumnMappingAuditLog>`
+    SELECT * FROM erapor_configuration_audit_logs
+    WHERE (template_id = ${templateId} AND action = 'column_mapping')
+      OR (action = 'default_mapping' AND academic_year_id = ${academicYearId} AND semester = ${semester}
+        AND (subject_id IS NULL OR subject_id = ${subjectId}))
+    ORDER BY changed_at DESC LIMIT 30
+  `;
+
+export const findEraporTeacherMappingAccessAuditLogs = (): EraporColumnMappingAuditLog[] =>
+  SQLite.many<EraporColumnMappingAuditLog>`
+    SELECT * FROM erapor_configuration_audit_logs
+    WHERE setting_key = 'erapor_teacher_mapping_access' AND action = 'teacher_mapping_access'
+    ORDER BY changed_at DESC LIMIT 5
+  `;
+
+export const saveEraporTeacherMappingAccess = (
+  enabled: boolean,
+  userId: string,
+  userName: string,
+): void => SQLite.transaction(() => {
+  const now = Date.now();
+  const previous = SQLite.one<{ value: string }>`
+    SELECT value FROM app_settings WHERE key = 'erapor_teacher_mapping_access'
+  `;
+  const wasEnabled = previous?.value !== 'disabled';
+  const value = enabled ? 'enabled' : 'disabled';
+  if (previous) {
+    SQLite.exec`UPDATE app_settings SET value = ${value}, updated_at = ${now} WHERE key = 'erapor_teacher_mapping_access'`;
+  } else {
+    SQLite.exec`INSERT INTO app_settings (key, value, updated_at) VALUES ('erapor_teacher_mapping_access', ${value}, ${now})`;
+  }
+  if (wasEnabled === enabled) return;
+  SQLite.exec`
+    INSERT INTO erapor_configuration_audit_logs
+      (id, action, setting_key, old_value, new_value, changed_by_user_id, changed_by_name, changed_at)
+    VALUES
+      (${randomUUID()}, 'teacher_mapping_access', 'erapor_teacher_mapping_access', ${wasEnabled ? 'enabled' : 'disabled'}, ${value}, ${userId}, ${userName}, ${now})
+  `;
+});
+
 export const saveEraporColumnMappings = (
   templateId: string,
   mappings: EraporColumnMappingInput[],
+  changedBy: { user_id: string; user_name: string },
 ): EraporGradeChange[] => SQLite.transaction(() => {
-  const template = SQLite.one<{ class_id: string; subject_id: string }>`
-    SELECT class_id, subject_id FROM erapor_grade_templates WHERE id = ${templateId}
+  const template = SQLite.one<{ class_id: string; subject_id: string; academic_year_id: string; semester: number; class_name: string; subject_name: string }>`
+    SELECT t.class_id, t.subject_id, t.academic_year_id, t.semester, c.name AS class_name, s.name AS subject_name
+    FROM erapor_grade_templates t
+    JOIN classes c ON c.id = t.class_id
+    JOIN subjects s ON s.id = t.subject_id
+    WHERE t.id = ${templateId}
   `;
   if (!template) throw new Error('Template e-Rapor tidak ditemukan.');
 
   const now = Date.now();
+  const existingMappings = new Map(SQLite.many<{ external_id: string; source_component_type: string | null }>`
+    SELECT external_id, source_component_type FROM erapor_column_mappings WHERE template_id = ${templateId}
+  `.map(mapping => [mapping.external_id, mapping]));
   const transferred: EraporGradeChange[] = [];
   for (const mapping of mappings) {
+    const existingMapping = existingMappings.get(mapping.external_id);
+    if (!existingMapping || existingMapping.source_component_type !== mapping.source_component_type) {
+      SQLite.exec`
+        INSERT INTO erapor_configuration_audit_logs
+          (id, action, template_id, academic_year_id, class_id, subject_id, semester, scope_label,
+           external_id, column_label, old_source_component_type,
+           new_source_component_type, old_mapping_present, new_mapping_present,
+           changed_by_user_id, changed_by_name, changed_at)
+        VALUES
+          (${randomUUID()}, 'column_mapping', ${templateId}, ${template.academic_year_id}, ${template.class_id},
+           ${template.subject_id}, ${template.semester}, ${`Kelas ${template.class_name} · ${template.subject_name} · Semester ${template.semester}`},
+           ${mapping.external_id}, ${mapping.column_label},
+           ${existingMapping?.source_component_type ?? null}, ${mapping.source_component_type},
+           ${existingMapping ? 1 : 0}, 1, ${changedBy.user_id}, ${changedBy.user_name}, ${now})
+      `;
+    }
     if (!mapping.source_component_type) continue;
     const directGrades = SQLite.many<Grade>`
       SELECT * FROM grades

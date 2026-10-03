@@ -22,6 +22,7 @@ export * as reportExports from './reportExports';
 export * as studentAttendance from './studentAttendance';
 export * as grades from './grades';
 export * as gradesErapor from './gradesErapor';
+export * as gradesEraporSettings from './gradesEraporSettings';
 export * as gradesEraporImport from './gradesEraporImport';
 export * as gradeAudit from './gradeAudit';
 export * as announcements from './announcements';

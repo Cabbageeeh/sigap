@@ -346,6 +346,10 @@ export const EraporDefaultColumnMappingsSchema = EraporColumnMappingsSchema.exte
   scope: z.enum(['year', 'subject']),
 });
 
+export const EraporTeacherMappingAccessSchema = z.object({
+  enabled: z.boolean(),
+});
+
 export const AnnouncementSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be at most 200 characters'),
   body: z.string().min(1, 'Body is required').max(5000, 'Body must be at most 5000 characters'),
