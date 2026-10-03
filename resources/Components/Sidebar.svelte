@@ -8,6 +8,7 @@
   import axios from 'axios';
   import { api } from '$lib/api';
   import { cn } from '$lib/utils';
+  import Button from './Button.svelte';
   import DarkModeToggle from './DarkModeToggle.svelte';
   import SigapIcon from './SigapIcon.svelte';
   import * as dialog from "@zag-js/dialog";
@@ -15,7 +16,7 @@
   import {
     Menu, LogOut, LayoutDashboard, CalendarCheck, BookOpen, GraduationCap,
     Users, ChartColumn, Calendar, School, BookMarked, UserCheck, UserCog,
-    CalendarClock, MapPin, Shield, User, History, Bell, Megaphone, QrCode, CalendarOff,
+    CalendarClock, MapPin, Shield, User, History, Bell, Megaphone, QrCode, CalendarOff, FileSpreadsheet,
   } from '@lucide/svelte';
   import type { NotificationView } from '../types';
 
@@ -146,6 +147,7 @@
       label: 'Penilaian',
       links: [
         { href: '/grades', label: 'Nilai Siswa', group: 'grades', icon: GraduationCap, show: !isParent && !isAdmin && hasPermission('grades.view') },
+        { href: '/grades/erapor', label: 'Pengaturan e-Rapor', group: 'grades', icon: FileSpreadsheet, show: isAdmin },
         { href: '/grade-audit', label: 'Audit Nilai', group: 'grade-audit', icon: History, show: !isParent && !isAdmin && hasPermission('grades.audit') },
       ],
     },
@@ -230,7 +232,7 @@
         <div class="flex items-center justify-between px-4 py-2.5 border-b border-border sticky top-0 bg-card">
           <p class="font-heading text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Notifikasi</p>
           {#if unreadCount > 0}
-            <button onclick={markAllRead} class="text-xs text-primary hover:text-primary/80 cursor-pointer">Tandai dibaca</button>
+            <Button onclick={markAllRead} variant="outline" size="sm">Tandai dibaca</Button>
           {/if}
         </div>
         {#if notifications.length === 0}

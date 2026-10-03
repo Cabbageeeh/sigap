@@ -13,6 +13,15 @@ export const findGradeById = (id: string): Grade | undefined =>
 export const findGradesByStudent = (studentId: string): Grade[] =>
   SQLite.many<Grade>`SELECT * FROM grades WHERE student_id = ${studentId} ORDER BY date DESC`;
 
+export const findGradesByStudentForParent = (studentId: string): Grade[] =>
+  SQLite.many<Grade>`
+    SELECT g.* FROM grades g
+    JOIN classes c ON c.id = g.class_id
+    JOIN grade_components gc ON gc.academic_year_id = c.academic_year_id AND gc.type = g.type
+    WHERE g.student_id = ${studentId}
+    ORDER BY g.date DESC
+  `;
+
 const teacherGradeScopeSql = (alias: string): string => `(
   EXISTS (
     SELECT 1
@@ -261,6 +270,8 @@ export const getStudentGradeSummaries = (studentId: string): { published: boolea
     `SELECT g.subject_id, s.name AS subject_name, s.kkm AS kkm, g.type, g.score
      FROM grades g
      JOIN subjects s ON s.id = g.subject_id
+     JOIN classes c ON c.id = g.class_id
+     JOIN grade_components gc ON gc.academic_year_id = c.academic_year_id AND gc.type = g.type
      WHERE g.student_id = ?
   ORDER BY s.name`,
     [studentId]
@@ -276,6 +287,7 @@ export const getStudentGradeSummaries = (studentId: string): { published: boolea
         subject_name: row.subject_name,
         kkm: row.kkm,
         scores: {},
+        component_labels: Object.fromEntries(components.map(component => [component.type, component.name])),
         final_score: null,
         predikat: null,
         is_passed: null,
@@ -295,9 +307,11 @@ export const getStudentGradeSummaries = (studentId: string): { published: boolea
 
 export const findGradeProgressionByStudent = (studentId: string): StudentGradeProgression[] =>
   SQLite.many<StudentGradeProgression>`
-    SELECT g.id, g.subject_id, s.name AS subject_name, g.type, g.score, g.date
+    SELECT g.id, g.subject_id, s.name AS subject_name, g.type, gc.name AS type_label, g.score, g.date
     FROM grades g
     INNER JOIN subjects s ON s.id = g.subject_id
+    INNER JOIN classes c ON c.id = g.class_id
+    INNER JOIN grade_components gc ON gc.academic_year_id = c.academic_year_id AND gc.type = g.type
     WHERE g.student_id = ${studentId}
     ORDER BY g.date ASC, s.name ASC, g.type ASC, g.id ASC
   `;

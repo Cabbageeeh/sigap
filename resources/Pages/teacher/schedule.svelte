@@ -100,11 +100,11 @@
               </div>
             </div>
             <div class="flex items-center gap-3">
-              <a href="/grades?class_id={schedule.class_id}&subject_id={schedule.subject_id}&page=1" use:inertia>
-                <Button size="sm">Nilai</Button>
+              <a href="/grades?class_id={schedule.class_id}&subject_id={schedule.subject_id}&page=1" use:inertia class="inline-flex h-8 items-center justify-center rounded-xl bg-foreground px-3 font-heading text-xs font-semibold text-background transition-colors hover:bg-foreground/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90">
+                Nilai
               </a>
-              <a href="/journals?schedule_id={schedule.id}" use:inertia>
-                <Button variant="outline" size="sm">Jurnal</Button>
+              <a href="/journals?schedule_id={schedule.id}" use:inertia class="inline-flex h-8 items-center justify-center rounded-xl border border-border bg-card px-3 font-heading text-xs font-semibold text-foreground transition-colors hover:bg-secondary">
+                Jurnal
               </a>
             </div>
           </div>

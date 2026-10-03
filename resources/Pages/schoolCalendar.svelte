@@ -144,7 +144,7 @@
                 <p class="text-[11px] text-muted-foreground font-mono-accent mt-0.5">{formatTanggal(holiday.date)}</p>
               </div>
               {#if permissions.canEdit}
-                <Button variant="ghost" size="sm" disabled={deletingId === holiday.id} onclick={() => removeHoliday(holiday)} aria-label="Hapus hari libur">
+                <Button variant="outline" size="sm" class="text-destructive hover:bg-destructive/10 hover:text-destructive" disabled={deletingId === holiday.id} onclick={() => removeHoliday(holiday)} aria-label="Hapus hari libur">
                   {#if deletingId === holiday.id}<Loader2 class="w-4 h-4 animate-spin" />{:else}<Trash2 class="w-4 h-4" />{/if}
                 </Button>
               {/if}

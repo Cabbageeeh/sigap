@@ -1,6 +1,7 @@
 <script lang="ts">
   import { inertia } from '@inertiajs/svelte';
   import Sidebar from '../../Components/Sidebar.svelte';
+  import Button from '../../Components/Button.svelte';
   import DataTable from '../../Components/DataTable.svelte';
   import { fly } from 'svelte/transition';
   import { ArrowLeft, Download } from '@lucide/svelte';
@@ -45,7 +46,7 @@
 
 <div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div class="mb-8" in:fly={{ y: 20, duration: 700 }}>
-    <a href="/headmaster/dashboard" use:inertia class="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors mb-6">
+    <a href="/headmaster/dashboard" use:inertia class="mb-6 inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-border bg-card px-3 font-heading text-sm font-semibold text-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer">
       <ArrowLeft class="w-4 h-4" /> Kembali ke pengawasan
     </a>
     <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Detail Penilaian</p>
@@ -56,9 +57,9 @@
       Daftar nilai per siswa dan mata pelajaran. Halaman ini bersifat read-only untuk kebutuhan pengawasan.
     </p>
     {#if classId}
-      <a href={`/exports/grades/${classId}`} download class="mt-6 inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+      <Button href={`/exports/grades/${classId}`} download variant="outline" class="mt-6">
         <Download class="w-4 h-4" /> Unduh PDF Rekap Nilai
-      </a>
+      </Button>
     {/if}
   </div>
 

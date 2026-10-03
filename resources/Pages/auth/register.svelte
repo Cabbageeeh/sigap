@@ -104,7 +104,7 @@
             </div>
           </div>
 
-          <button type="button" onclick={generatePassword} class="self-start text-xs font-semibold text-primary transition-colors hover:text-primary/80">Buat kata sandi acak</button>
+          <Button type="button" variant="outline" size="sm" class="self-start" onclick={generatePassword}>Buat kata sandi acak</Button>
 
           <div class="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
             <a href="/login" use:inertia class="text-sm text-muted-foreground transition-colors hover:text-foreground">Sudah punya akun? <span class="font-semibold text-foreground">Masuk</span></a>

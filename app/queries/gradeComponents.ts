@@ -39,6 +39,13 @@ export const renameGradeComponent = (academicYearId: string, type: string, name:
 
 export const deleteGradeComponent = (academicYearId: string, type: string): number => {
   return SQLite.transaction(() => {
+    SQLite.run(
+      `UPDATE erapor_column_mappings SET source_component_type = NULL, updated_at = ?
+       WHERE source_component_type = ? AND template_id IN (
+         SELECT id FROM erapor_grade_templates WHERE academic_year_id = ?
+       )`,
+      [Date.now(), type, academicYearId]
+    );
     const removed = SQLite.run(
       `DELETE FROM grades WHERE type = ? AND class_id IN (SELECT id FROM classes WHERE academic_year_id = ?)`,
       [type, academicYearId]

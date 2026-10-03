@@ -14,6 +14,7 @@ import {
   updateParentAccountForStudent,
 } from '@queries/parents';
 import { parseStudentCsv } from '@services/StudentCsvParser';
+import { parseStudentXlsxToCsv } from '@services/StudentXlsxParser';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
 import { StudentImportSchema, StudentParentAccountSchema, StudentSchema, UpdateStudentParentAccountSchema, UpdateStudentSchema, zodToErrors } from '@validators';
 
@@ -257,7 +258,8 @@ const studentCsvUpload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 2 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    if (!['text/csv', 'application/vnd.ms-excel', 'text/plain'].includes(file.mimetype) && !file.originalname.endsWith('.csv')) {
+    const extension = file.originalname.toLowerCase().split('.').pop();
+    if (extension !== 'csv' && extension !== 'xlsx') {
       return cb(new Error('INVALID_FILE_TYPE'));
     }
     cb(null, true);
@@ -270,14 +272,28 @@ export const importStudentsFromCsv = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Unauthorized', 401);
   if (!canManage(req.user.id)) return jsonError(res, 'Forbidden', 403);
 
-  const file = (req as NaraRequest & { file?: { buffer: Buffer } }).file;
-  if (!file) return jsonError(res, 'CSV file is required', 400, 'FILE_REQUIRED');
+  const file = (req as NaraRequest & { file?: { buffer: Buffer; originalname?: string } }).file;
+  if (!file) return jsonError(res, 'Pilih file Excel atau CSV untuk diimpor', 400, 'FILE_REQUIRED');
 
   const form = StudentImportSchema.safeParse(req.body);
   if (!form.success) return jsonValidationError(res, 'Data import tidak valid', zodToErrors(form.error));
 
   try {
-    const csv = file.buffer.toString('utf-8');
+    const extension = file.originalname?.toLowerCase().split('.').pop();
+    if (extension !== 'csv' && extension !== 'xlsx') {
+      return jsonError(res, 'Format file harus .xlsx atau .csv', 422, 'INVALID_FILE_TYPE');
+    }
+    let csv: string;
+    if (extension === 'xlsx') {
+      try {
+        csv = parseStudentXlsxToCsv(file.buffer);
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Isi file Excel tidak dapat dibaca.';
+        return jsonError(res, message, 422, 'INVALID_XLSX');
+      }
+    } else {
+      csv = file.buffer.toString('utf-8');
+    }
     const requestedClassId = form.data.class_id || undefined;
     const parentPassword = form.data.parent_password || '';
     const targetClass = requestedClassId ? findClassById(requestedClassId) : undefined;
@@ -285,7 +301,7 @@ export const importStudentsFromCsv = (req: NaraRequest, res: NaraResponse) => {
 
     const classNames = new Set(findAllClasses().map(c => c.name));
     const existingNis = new Map(findAllNisOwners().map(row => [row.nis, `${row.name} — kelas ${row.class_name ?? 'belum ada kelas'}`]));
-    const parsed = parseStudentCsv(csv, classNames, existingNis, targetClass?.name);
+    const parsed = parseStudentCsv(csv, classNames, existingNis, targetClass?.name, extension === 'xlsx');
     const parentRows = parsed.rows.filter(row => row.parent_name !== null);
 
     if (parentRows.length > 0 && !parentPassword) {
@@ -338,7 +354,13 @@ export const importStudentsFromCsv = (req: NaraRequest, res: NaraResponse) => {
       parsed.errors.sort((a, b) => a.line - b.line);
     }
 
-    return jsonSuccess(res, 'Import finished', {
+    const importMessage = created.length === 0
+      ? (parsed.errors.length > 0 ? 'Tidak ada siswa yang diimpor' : 'Tidak ada siswa baru untuk diimpor')
+      : parsed.errors.length > 0
+        ? `${created.length} siswa berhasil diimpor, sebagian baris dilewati`
+        : `${created.length} siswa berhasil diimpor`;
+
+    return jsonSuccess(res, importMessage, {
       inserted: created.length,
       parents_created: parentsCreated,
       errors: parsed.errors,

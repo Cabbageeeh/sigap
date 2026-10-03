@@ -288,7 +288,7 @@
               <p class="mt-1 text-sm text-muted-foreground">Kelas yang bisa dijadwalkan mengikuti kelas yang diampu di atas.</p>
             </div>
           </div>
-          <a href="/schedules" use:inertia class="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
+          <a href="/schedules" use:inertia class="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-border bg-card px-5 text-sm font-heading font-semibold text-foreground transition-colors hover:bg-secondary">
             Semua jadwal <ArrowRight class="w-4 h-4" />
           </a>
         </div>
@@ -335,7 +335,7 @@
                     <p class="font-mono-accent text-xs text-muted-foreground">{days[schedule.day_of_week] ?? '-'} · {timestampToTimeInput(schedule.start_time)}–{timestampToTimeInput(schedule.end_time)}</p>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onclick={() => confirmDeleteSchedule(schedule)}>
+                <Button variant="outline" size="icon-sm" title="Hapus jadwal" aria-label="Hapus jadwal" onclick={() => confirmDeleteSchedule(schedule)}>
                   <Trash2 class="w-4 h-4 text-destructive" />
                 </Button>
               </div>

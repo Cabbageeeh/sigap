@@ -149,7 +149,7 @@
             <p class="text-xs text-muted-foreground font-mono-accent">Sekolah: {schoolName}</p>
           {/if}
           <div class="pt-2 border-t border-border">
-            <a href="/qr-display" use:inertia class="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors">
+            <a href="/qr-display" use:inertia class="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-border bg-card px-5 text-sm font-heading font-semibold text-foreground transition-colors hover:bg-secondary">
               Buka Layar QR Absen <ArrowRight class="w-4 h-4" />
             </a>
           </div>

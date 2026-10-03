@@ -230,7 +230,7 @@
                             </Button>
                           {/if}
                           {#if permissions.canDelete && role.slug !== 'admin'}
-                            <Button variant="ghost" size="sm" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => deleteRole(role)} disabled={isSubmitting}>
+                            <Button variant="outline" size="sm" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => deleteRole(role)} disabled={isSubmitting}>
                               <Trash2 class="w-3 h-3" />
                             </Button>
                           {/if}

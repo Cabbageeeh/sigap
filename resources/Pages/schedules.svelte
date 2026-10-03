@@ -289,7 +289,7 @@
     </div>
     <div class="flex justify-between gap-2 pt-4 border-t border-border mt-2">
       <div>
-        {#if selected && permissions.canDelete}<Button variant="ghost" class="text-destructive hover:text-destructive" onclick={removeFromEdit}><Trash2 class="w-4 h-4" /> Hapus</Button>{/if}
+        {#if selected && permissions.canDelete}<Button variant="outline" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={removeFromEdit}><Trash2 class="w-4 h-4" /> Hapus</Button>{/if}
       </div>
       <div class="flex gap-2">
         <Button variant="outline" onclick={() => isOpen = false}>Batal</Button>

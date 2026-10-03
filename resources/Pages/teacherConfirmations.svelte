@@ -145,9 +145,9 @@
       </div>
     {/if}
     <div class="flex items-end">
-      <a href={exportHref} download class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+      <Button href={exportHref} download variant="outline">
         <Download class="w-3.5 h-3.5" /> Unduh PDF
-      </a>
+      </Button>
     </div>
     {#if hasFilters}
       <div class="flex items-end">

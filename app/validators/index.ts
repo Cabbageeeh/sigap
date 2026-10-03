@@ -52,6 +52,7 @@ export {
   DeleteGradeComponentSchema,
   GradeComponentsSchema,
   EraporTemplateSchema,
+  EraporColumnMappingsSchema,
   EraporGradeSaveSchema,
   gradeTypeSlug,
   AnnouncementSchema,
