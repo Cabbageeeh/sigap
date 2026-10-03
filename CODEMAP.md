@@ -11,7 +11,7 @@
 ## Stats
 
 - Files indexed: 319
-- Total lines: 36000
+- Total lines: 36003
 - Total exports: 974
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
@@ -388,7 +388,7 @@
 - `attendance.test.ts` (32L)
 - `auth.test.ts` (81L)
 - `gradeAudit.test.ts` (116L)
-- `grades.test.ts` (356L)
+- `grades.test.ts` (359L)
 - `headmaster.test.ts` (206L)
 - `journals.test.ts` (144L)
 - `notifications.test.ts` (102L)
