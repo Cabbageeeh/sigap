@@ -72,9 +72,9 @@
 </script>
 
 {#snippet rowActions(item: TeacherRow)}
-  <Button variant="ghost" size="icon" title="Kontrak Mengajar" onclick={() => openAssignments(item)}><CalendarClock class="w-4 h-4" /></Button>
-  {#if permissions.canEdit}<Button variant="ghost" size="icon" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}
-  {#if permissions.canDelete}<Button variant="ghost" size="icon" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4 text-destructive" /></Button>{/if}
+  <Button variant="outline" size="icon-sm" title="Kontrak mengajar" aria-label="Kontrak mengajar" class="mr-1" onclick={() => openAssignments(item)}><CalendarClock class="w-4 h-4" /></Button>
+  {#if permissions.canEdit}<Button variant="outline" size="icon-sm" title="Ubah data guru" aria-label="Ubah data guru" class="mr-1" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}
+  {#if permissions.canDelete}<Button variant="outline" size="icon-sm" title="Hapus guru" aria-label="Hapus guru" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4" /></Button>{/if}
 {/snippet}
 
 <Sidebar group="teachers" />

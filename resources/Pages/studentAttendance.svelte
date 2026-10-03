@@ -87,7 +87,7 @@
 {/snippet}
 
 {#snippet raporAction(row: RecapRow)}
-  <Button variant="ghost" size="sm" onclick={() => router.visit(`/reports/rapor/${row.student_id}`)}>
+  <Button variant="outline" size="sm" onclick={() => router.visit(`/reports/rapor/${row.student_id}`)}>
     <FileText class="w-3.5 h-3.5" /> Rapor
   </Button>
 {/snippet}
@@ -112,12 +112,12 @@
       </div>
       <Button variant="outline" onclick={applyFilters}>Terapkan</Button>
       {#if classId}
-        <a href={exportHref} download class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+        <Button href={exportHref} download variant="outline">
           <Download class="w-3.5 h-3.5" /> Unduh PDF Rekap
-        </a>
-        <a href={`/exports/students/${classId}`} download class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+        </Button>
+        <Button href={`/exports/students/${classId}`} download variant="outline">
           <Download class="w-3.5 h-3.5" /> Unduh Daftar Siswa
-        </a>
+        </Button>
       {/if}
       <div class="ml-auto flex items-center gap-3 text-xs text-muted-foreground font-mono-accent">
         <span><span class="text-primary font-semibold">{totals.present}</span> Hadir</span>

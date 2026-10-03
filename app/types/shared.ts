@@ -270,6 +270,7 @@ export interface SubjectGradeSummary {
   subject_name: string;
   kkm: number;
   scores: Record<string, number | null>;
+  component_labels: Record<string, string>;
   final_score: number | null;
   predikat: string | null;
   is_passed: boolean | null;
@@ -280,6 +281,7 @@ export interface StudentGradeProgression {
   subject_id: string;
   subject_name: string;
   type: string;
+  type_label: string;
   score: number;
   date: number;
 }

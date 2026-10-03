@@ -97,10 +97,11 @@ const positionalColumns = (forcedClassName?: string): Record<CsvColumn, number> 
   parent_address: forcedClassName ? 6 : 7,
 });
 
-export const parseStudentCsv = (csv: string, classNames: Set<string>, existingNis: Map<string, string>, forcedClassName?: string): CsvImportResult => {
+export const parseStudentCsv = (csv: string, classNames: Set<string>, existingNis: Map<string, string>, forcedClassName?: string, preserveBlankLines = false): CsvImportResult => {
   const result: CsvImportResult = { rows: [], errors: [] };
-  const lines = csv.replace(/^\uFEFF/, '').split(/\r?\n/).filter(line => line.trim() !== '');
-  if (lines.length === 0) return result;
+  const sourceLines = csv.replace(/^\uFEFF/, '').split(/\r?\n/);
+  const lines = preserveBlankLines ? sourceLines : sourceLines.filter(line => line.trim() !== '');
+  if (lines.every(line => line.trim() === '')) return result;
 
   const delimiter = lines[0].includes(';') && !lines[0].includes(',') ? ';' : ',';
   const columns = positionalColumns(forcedClassName);
@@ -126,7 +127,9 @@ export const parseStudentCsv = (csv: string, classNames: Set<string>, existingNi
 
   for (let index = hasHeader ? 1 : 0; index < lines.length; index++) {
     const lineNumber = index + 1;
-    const cells = splitCells(lines[index], delimiter);
+    if (preserveBlankLines && lines[index]?.trim() === '') continue;
+    const cells = splitCells(lines[index] ?? '', delimiter);
+    if (preserveBlankLines && cells.every(cell => cell === '')) continue;
     const cellOf = (column: CsvColumn): string => cells[columns[column]] ?? '';
 
     const nis = cellOf('nis');

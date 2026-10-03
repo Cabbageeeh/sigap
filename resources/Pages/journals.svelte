@@ -140,8 +140,8 @@
 </script>
 
 {#snippet rowActions(item: JournalRow)}
-  {#if permissions.canEdit}<Button variant="ghost" size="icon" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}
-  {#if permissions.canDelete}<Button variant="ghost" size="icon" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4 text-destructive" /></Button>{/if}
+  {#if permissions.canEdit}<Button variant="outline" size="icon-sm" title="Ubah jurnal" aria-label="Ubah jurnal" class="mr-1" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}
+  {#if permissions.canDelete}<Button variant="outline" size="icon-sm" title="Hapus jurnal" aria-label="Hapus jurnal" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4" /></Button>{/if}
 {/snippet}
 
 {#snippet journalCell({ row, columnKey, value }: { row: Record<string, unknown>; columnKey: string; value: unknown })}
@@ -159,9 +159,9 @@
   <PageHeader eyebrow="Jurnal Mengajar" title="Jurnal." description="Catatan harian kegiatan belajar mengajar per jadwal.">
     {#snippet actions()}
       {#if permissions.canView}
-        <a href="/exports/journals" download class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+        <Button href="/exports/journals" download variant="outline">
           <Download class="w-4 h-4" /> Unduh Rekap PDF
-        </a>
+        </Button>
       {/if}
       {#if permissions.canCreate}
         <Button onclick={openCreate} size="lg" disabled={journalSlots.length === 0}>

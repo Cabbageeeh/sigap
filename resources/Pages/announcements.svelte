@@ -72,8 +72,8 @@
 
 {#snippet rowActions(item: AnnouncementView)}
   {#if canManage}
-    <Button variant="ghost" size="icon" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>
-    <Button variant="ghost" size="icon" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4 text-destructive" /></Button>
+    <Button variant="outline" size="icon-sm" title="Ubah pengumuman" aria-label="Ubah pengumuman" class="mr-1" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>
+    <Button variant="outline" size="icon-sm" title="Hapus pengumuman" aria-label="Hapus pengumuman" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4" /></Button>
   {/if}
 {/snippet}
 

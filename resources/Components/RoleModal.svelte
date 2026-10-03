@@ -113,12 +113,12 @@
               {#each Object.entries(groupedPermissions) as [resource, perms]}
                 <div class="border border-border rounded-xl overflow-hidden">
                   <div class="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/30">
-                    <button type="button" class="flex items-center gap-2 text-xs font-heading uppercase tracking-widest text-foreground cursor-pointer hover:text-primary transition-colors" onclick={() => toggleResourceAll(resource, !isResourceAllChecked(resource))}>
+                    <Button type="button" variant="outline" size="sm" class="uppercase tracking-widest" onclick={() => toggleResourceAll(resource, !isResourceAllChecked(resource))}>
                       {#if isResourceAllChecked(resource)}<CheckSquare class="w-3.5 h-3.5 text-primary" />
                       {:else if isResourcePartial(resource)}<CheckSquare class="w-3.5 h-3.5 text-muted-foreground/50" />
                       {:else}<Square class="w-3.5 h-3.5 text-muted-foreground" />{/if}
                       {formatResourceName(resource)}
-                    </button>
+                    </Button>
                     <span class="text-[11px] text-muted-foreground font-heading">{perms.filter(p => form.permissions.includes(p.slug)).length}/{perms.length}</span>
                   </div>
                   <div class="grid grid-cols-2 gap-0">

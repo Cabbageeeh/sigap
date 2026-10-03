@@ -2,10 +2,11 @@ import type { NaraMiddleware, NaraRequest, NaraResponse } from '@core';
 import { jsonError, jsonSuccess, jsonValidationError, queryString } from '@core';
 import Logger from '@services/Logger';
 import multer from 'multer';
-import { findEraporGradeTemplate, findEraporStudentMappings, saveEraporGradeChanges, saveEraporTemplateSetup } from '@queries/eraporGrades';
+import { findEraporColumnMappings, findEraporColumnMappingsByClassSubject, findEraporGradeTemplate, findEraporStudentMappings, saveEraporColumnMappings as persistEraporColumnMappings, saveEraporGradeChanges, saveEraporTemplateSetup } from '@queries/eraporGrades';
 import { findAllClasses, findClassById, findClassesByTeacherUser } from '@queries/classes';
 import { findAllSubjects, findSubjectById } from '@queries/subjects';
 import { findStudentsByClass } from '@queries/students';
+import { findGradeComponentsByYear } from '@queries/gradeComponents';
 import { findActiveSchoolLocation } from '@queries/schoolLocations';
 import { findGradesByClassSubject } from '@queries/grades';
 import { logGradeChange } from '@queries/gradeAuditLogs';
@@ -15,7 +16,7 @@ import { findTeacherSchedulesByDay } from '@queries/schedules';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
 import { isTeacherPresenceEnabled } from '@queries/appSettings';
 import { isTeachingDay } from '@queries/schoolCalendar';
-import { EraporGradeSaveSchema, EraporTemplateSchema, zodToErrors } from '@validators';
+import { EraporColumnMappingsSchema, EraporGradeSaveSchema, EraporTemplateSchema, zodToErrors } from '@validators';
 import { normalizeEraporText, parseEraporWorkbook, renderEraporWorkbook, type EraporAssessmentColumn } from '@services/EraporWorkbook';
 import { createEraporXlsx, eraporExcelColumnName } from '@services/EraporXlsx';
 
@@ -126,9 +127,12 @@ export const gradesEraporPage = (req: NaraRequest, res: NaraResponse) => {
     && (administrator || attendanceConfirmed);
   const canEdit = !!selectedClass && !!selectedSubject && canEditScope(userId, classId, subjectId)
     && (administrator || attendanceConfirmedToday(userId));
+  const gradeComponents = selectedClass ? findGradeComponentsByYear(selectedClass.academic_year_id) : [];
 
   let template: ReturnType<typeof findEraporGradeTemplate> = undefined;
   let columns: EraporAssessmentColumn[] = [];
+  let sourceTypeByExternalId = new Map<string, string>();
+  let sourceMappingByExternalId = new Map<string, string>();
   let matrix: Array<{ student_id: string; name: string; nis: string; external_member_id: string; scores: Array<{ external_id: string; label: string; score: number | null }> }> = [];
   let rosterReady = false;
   if (canView) {
@@ -136,6 +140,13 @@ export const gradesEraporPage = (req: NaraRequest, res: NaraResponse) => {
     if (template) {
       try {
         columns = parseEraporWorkbook(template.template_html, semester).columns;
+        sourceMappingByExternalId = new Map(findEraporColumnMappings(template.id)
+          .filter(item => !!item.source_component_type)
+          .map(item => [item.external_id, item.source_component_type!]));
+        sourceTypeByExternalId = new Map(columns.map(column => [
+          column.externalId,
+          sourceMappingByExternalId.get(column.externalId) ?? column.gradeType,
+        ]));
         const students = findStudentsByClass(classId);
         const mappings = findEraporStudentMappings(classId);
         const mappingByStudent = new Map(mappings.map(item => [item.student_id, item.external_member_id]));
@@ -150,7 +161,7 @@ export const gradesEraporPage = (req: NaraRequest, res: NaraResponse) => {
           scores: columns.map(column => ({
             external_id: column.externalId,
             label: column.label,
-            score: grades.find(grade => grade.student_id === student.id && grade.type === column.gradeType)?.score ?? null,
+            score: grades.find(grade => grade.student_id === student.id && grade.type === sourceTypeByExternalId.get(column.externalId))?.score ?? null,
           })),
         }));
       } catch (error: unknown) {
@@ -166,7 +177,20 @@ export const gradesEraporPage = (req: NaraRequest, res: NaraResponse) => {
     subjectId: selectedSubject?.id ?? '',
     semester,
     template: template ? { source_file_name: template.source_file_name, mapel_id: template.mapel_id } : null,
-    columns: columns.map(column => ({ external_id: column.externalId, label: column.label })),
+    columns: columns.map(column => {
+      const sourceType = sourceMappingByExternalId.get(column.externalId) ?? null;
+      return {
+        external_id: column.externalId,
+        label: column.label,
+        source_component_type: sourceType,
+        source_component_name: sourceType
+          ? gradeComponents.find(component => component.type === sourceType)?.name ?? sourceType
+          : null,
+      };
+    }),
+    gradeComponents: gradeComponents.map(component => ({ type: component.type, name: component.name })),
+    canConfigureMappings: administrator && canView && !!template && columns.length > 0,
+    canManageStudents: administrator,
     matrix,
     rosterReady,
     permissions: { canView, canEdit, canExport: canView && rosterReady && !!template },
@@ -204,6 +228,10 @@ export const importEraporGrades = (req: NaraRequest, res: NaraResponse) => {
 
   try {
     const mappings = mapWorkbookStudents(classId, workbook.rows);
+    const existingTemplate = findEraporGradeTemplate(classId, subjectId, semester);
+    const configuredByExternalId = new Map(existingTemplate
+      ? findEraporColumnMappings(existingTemplate.id).map(item => [item.external_id, item.source_component_type])
+      : []);
     const profile = saveEraporTemplateSetup({
       academic_year_id: targetClass.academic_year_id,
       class_id: classId,
@@ -219,7 +247,8 @@ export const importEraporGrades = (req: NaraRequest, res: NaraResponse) => {
     const gradeInputs = workbook.rows.flatMap(row => workbook.columns.flatMap((column, index) => {
       const score = row.scores[index];
       const studentId = studentIdByExternalId.get(row.externalMemberId);
-      return score === null || !studentId ? [] : [{ student_id: studentId, subject_id: subjectId, class_id: classId, type: column.gradeType, score }];
+      const type = configuredByExternalId.get(column.externalId) || column.gradeType;
+      return score === null || !studentId ? [] : [{ student_id: studentId, subject_id: subjectId, class_id: classId, type, score }];
     }));
     const changes = saveEraporGradeChanges(gradeInputs, req.user.id);
     auditGradeChanges(changes, req.user.id);
@@ -236,6 +265,57 @@ export const importEraporGrades = (req: NaraRequest, res: NaraResponse) => {
     }
     Logger.error('Failed to import e-Rapor grades', error as Error);
     return jsonError(res, error instanceof Error ? error.message : 'Gagal mengimpor nilai e-Rapor', 422, 'ERAPOR_IMPORT_FAILED');
+  }
+};
+
+export const saveEraporColumnMappings = (req: NaraRequest, res: NaraResponse) => {
+  if (!req.user) return jsonError(res, 'Sesi login diperlukan', 401);
+  if (!isAdmin(req.user.id)) return jsonError(res, 'Hanya admin yang dapat mengatur pemetaan nilai e-Rapor', 403, 'ADMIN_REQUIRED');
+  const parsed = EraporColumnMappingsSchema.safeParse(req.body);
+  if (!parsed.success) return jsonValidationError(res, 'Pemetaan kolom e-Rapor tidak valid', zodToErrors(parsed.error));
+  const { class_id: classId, subject_id: subjectId, semester } = parsed.data;
+  const targetClass = findClassById(classId);
+  const template = findEraporGradeTemplate(classId, subjectId, semester);
+  if (!targetClass || !template) return jsonError(res, 'Template e-Rapor belum tersedia untuk pilihan ini', 404, 'ERAPOR_TEMPLATE_NOT_FOUND');
+
+  let columns: EraporAssessmentColumn[];
+  try {
+    columns = parseEraporWorkbook(template.template_html, semester).columns;
+  } catch (error: unknown) {
+    Logger.error('Stored e-Rapor template could not be parsed during mapping save', error as Error);
+    return jsonError(res, 'Template e-Rapor tersimpan tidak valid. Unggah ulang file dari e-Rapor.', 409, 'INVALID_ERAPOR_TEMPLATE');
+  }
+  const entries = parsed.data.mappings;
+  if (entries.length !== columns.length || new Set(entries.map(item => item.external_id)).size !== columns.length) {
+    return jsonError(res, 'Pemetaan harus mencakup setiap kolom template tepat satu kali', 422, 'ERAPOR_COLUMN_MISMATCH');
+  }
+  const columnsById = new Map(columns.map(column => [column.externalId, column]));
+  const components = new Set(findGradeComponentsByYear(targetClass.academic_year_id).map(component => component.type));
+  const selectedSources = entries.flatMap(item => item.source_component_type ? [item.source_component_type] : []);
+  if (new Set(selectedSources).size !== selectedSources.length) {
+    return jsonError(res, 'Setiap jenis nilai SIGAP hanya dapat dipetakan ke satu kolom e-Rapor dalam template ini', 422, 'DUPLICATE_ERAPOR_SOURCE');
+  }
+  const sourcesUsedInOtherSemester = new Set(findEraporColumnMappingsByClassSubject(classId, subjectId)
+    .filter(item => item.semester !== semester && item.source_component_type)
+    .map(item => item.source_component_type!));
+  if (selectedSources.some(sourceType => sourcesUsedInOtherSemester.has(sourceType))) {
+    return jsonError(res, 'Gunakan jenis nilai SIGAP yang berbeda untuk semester berbeda agar nilainya tidak saling menimpa', 422, 'ERAPOR_SOURCE_USED_IN_OTHER_SEMESTER');
+  }
+  if (entries.some(item => !columnsById.has(item.external_id) || (item.source_component_type !== null && !components.has(item.source_component_type)))) {
+    return jsonError(res, 'Pilih kolom template dan jenis nilai SIGAP yang tersedia', 422, 'INVALID_ERAPOR_MAPPING');
+  }
+
+  try {
+    const changes = persistEraporColumnMappings(template.id, entries.map(item => ({
+      external_id: item.external_id,
+      source_component_type: item.source_component_type,
+      direct_grade_type: columnsById.get(item.external_id)!.gradeType,
+    })));
+    auditGradeChanges(changes, req.user.id);
+    return jsonSuccess(res, 'Pemetaan nilai e-Rapor tersimpan', { mapped: entries.filter(item => item.source_component_type).length, direct: entries.filter(item => !item.source_component_type).length });
+  } catch (error: unknown) {
+    Logger.error('Failed to save e-Rapor column mappings', error as Error);
+    return jsonError(res, 'Pemetaan nilai e-Rapor gagal disimpan', 500, 'ERAPOR_MAPPING_SAVE_FAILED');
   }
 };
 
@@ -265,6 +345,9 @@ export const saveEraporGrades = (req: NaraRequest, res: NaraResponse) => {
     return jsonError(res, 'Template e-Rapor tersimpan tidak valid. Unggah ulang file dari e-Rapor.', 409, 'INVALID_ERAPOR_TEMPLATE');
   }
   const columnsByExternalId = new Map(columns.map(column => [column.externalId, column]));
+  const sourceMappingByExternalId = new Map(findEraporColumnMappings(template.id)
+    .filter(item => !!item.source_component_type)
+    .map(item => [item.external_id, item.source_component_type!]));
   const changes = [] as Array<{ student_id: string; subject_id: string; class_id: string; type: string; score: number | null }>;
   for (const entry of entries) {
     if (entry.scores.length !== columns.length || new Set(entry.scores.map(score => score.external_id)).size !== columns.length) {
@@ -273,7 +356,13 @@ export const saveEraporGrades = (req: NaraRequest, res: NaraResponse) => {
     for (const item of entry.scores) {
       const column = columnsByExternalId.get(item.external_id);
       if (!column) return jsonError(res, 'Kolom nilai tidak cocok dengan template tersimpan', 422, 'ERAPOR_COLUMN_MISMATCH');
-      changes.push({ student_id: entry.student_id, subject_id: subjectId, class_id: classId, type: column.gradeType, score: item.score });
+      changes.push({
+        student_id: entry.student_id,
+        subject_id: subjectId,
+        class_id: classId,
+        type: sourceMappingByExternalId.get(column.externalId) ?? column.gradeType,
+        score: item.score,
+      });
     }
   }
 
@@ -315,7 +404,14 @@ export const exportEraporGrades = (req: NaraRequest, res: NaraResponse) => {
     return jsonError(res, 'Daftar siswa berubah sejak template diunggah. Unggah ulang template e-Rapor terbaru.', 409, 'ERAPOR_ROSTER_MISMATCH');
   }
   const grades = findGradesByClassSubject(classId, subjectId);
-  const typeSet = new Set(workbook.columns.map(column => column.gradeType));
+  const sourceMappingByExternalId = new Map(findEraporColumnMappings(template.id)
+    .filter(item => !!item.source_component_type)
+    .map(item => [item.external_id, item.source_component_type!]));
+  const typeByExternalId = new Map(workbook.columns.map(column => [
+    column.externalId,
+    sourceMappingByExternalId.get(column.externalId) ?? column.gradeType,
+  ]));
+  const typeSet = new Set(typeByExternalId.values());
   const scoresByStudent = new Map<string, Map<string, number>>();
   for (const grade of grades) {
     if (!typeSet.has(grade.type)) continue;
@@ -328,7 +424,14 @@ export const exportEraporGrades = (req: NaraRequest, res: NaraResponse) => {
   for (const mapping of mappings) {
     const student = currentStudentById.get(mapping.student_id);
     if (!student) continue;
-    rowsByMemberId.set(mapping.external_member_id, { name: student.name, scores: scoresByStudent.get(student.id) ?? new Map<string, number>() });
+    const gradeScores = scoresByStudent.get(student.id) ?? new Map<string, number>();
+    const templateScores = new Map<string, number>();
+    for (const column of workbook.columns) {
+      const sourceType = typeByExternalId.get(column.externalId);
+      const score = sourceType ? gradeScores.get(sourceType) : undefined;
+      if (score !== undefined) templateScores.set(column.gradeType, score);
+    }
+    rowsByMemberId.set(mapping.external_member_id, { name: student.name, scores: templateScores });
   }
 
   const renderedHtml = renderEraporWorkbook(template.template_html, rowsByMemberId, workbook.columns);

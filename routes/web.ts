@@ -185,6 +185,7 @@ Route.get('/grades/student/:studentId', [Auth], grades.gradesByStudent);
 Route.get('/grades/erapor', [Auth], gradesErapor.gradesEraporPage);
 Route.get('/grades/erapor/export', [Auth], gradesErapor.exportEraporGrades);
 Route.post('/grades/erapor/import', [Auth, gradesErapor.eraporImportMiddleware], gradesErapor.importEraporGrades);
+Route.post('/grades/erapor/mappings', [Auth], gradesErapor.saveEraporColumnMappings);
 Route.post('/grades/erapor/scores', [Auth], gradesErapor.saveEraporGrades);
 Route.get('/grades/:id', [Auth], grades.gradeData);
 Route.post('/grades', [Auth], grades.addGrade);

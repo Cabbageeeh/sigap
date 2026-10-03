@@ -63,7 +63,7 @@
       <h1 class="font-heading font-semibold tracking-[-0.045em] leading-[1] text-[clamp(2rem,5vw,3.25rem)] text-foreground">Rapor</h1>
     </div>
     <div class="flex flex-wrap items-center gap-2">
-      <a href={backHref} use:inertia class="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+      <a href={backHref} use:inertia class="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-border bg-card px-3 font-heading text-sm font-semibold text-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer">
         <ArrowLeft class="h-4 w-4" /> {backLabel}
       </a>
       {#if previousStudent}
@@ -112,7 +112,7 @@
               <th class="px-3 py-2 text-left font-mono-accent text-[10px] uppercase tracking-[0.15em] text-muted-foreground">Mapel</th>
               {#if summaries.length > 0}
                 {#each Object.keys(summaries[0].scores) as type}
-                  <th class="px-3 py-2 text-right font-mono-accent text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{typeLabel(type)}</th>
+                  <th class="px-3 py-2 text-right font-mono-accent text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{summaries[0].component_labels[type] ?? typeLabel(type)}</th>
                 {/each}
               {/if}
               <th class="px-3 py-2 text-right font-mono-accent text-[10px] uppercase tracking-[0.15em] text-muted-foreground">Nilai Akhir</th>

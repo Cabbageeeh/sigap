@@ -6,11 +6,19 @@
   import { FileText, Lock } from '@lucide/svelte';
   import type { SubjectGradeSummary, StudentGradeProgression } from '../../types';
 
-  let { studentId = '', studentName = '', gradesPublished = false, summaries = [], progression = [] }: {
+  interface EraporScoreGroup {
+    subject_id: string;
+    subject_name: string;
+    semester: number;
+    columns: Array<{ external_id: string; label: string; score: number | null }>;
+  }
+
+  let { studentId = '', studentName = '', gradesPublished = false, summaries = [], eraporScores = [], progression = [] }: {
     studentId?: string;
     studentName?: string;
     gradesPublished?: boolean;
     summaries?: SubjectGradeSummary[];
+    eraporScores?: EraporScoreGroup[];
     progression?: StudentGradeProgression[];
   } = $props();
 
@@ -61,7 +69,7 @@
             <div class="flex flex-col gap-2 text-sm">
               {#each Object.entries(summary.scores) as [type, score]}
                 <div class="flex justify-between">
-                  <span class="text-muted-foreground">{typeLabel(type)}</span>
+                  <span class="text-muted-foreground">{summary.component_labels[type] ?? typeLabel(type)}</span>
                   <span class="text-foreground font-medium">{score ?? '—'}</span>
                 </div>
               {/each}
@@ -86,6 +94,34 @@
     </div>
   {/if}
 
+  {#if gradesPublished && eraporScores.length > 0}
+    <section class="mt-10" in:fly={{ y: 20, duration: 700, delay: 140 }}>
+      <div class="mb-4">
+        <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-2">Nilai Resmi e-Rapor</p>
+        <h2 class="font-heading font-semibold tracking-tight text-xl">Nilai per kolom rapor</h2>
+        <p class="text-sm text-muted-foreground mt-1">Nilai ini mengikuti kolom pada template e-Rapor sekolah.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {#each eraporScores as group (`${group.subject_id}:${group.semester}`)}
+          <article class="bg-card border border-border rounded-2xl overflow-hidden">
+            <header class="px-5 py-3 border-b border-border bg-secondary/40 flex items-center justify-between">
+              <span class="font-heading text-sm font-semibold text-foreground truncate">{group.subject_name}</span>
+              <span class="font-mono-accent text-[10px] text-muted-foreground shrink-0">Semester {group.semester === 1 ? 'I' : 'II'}</span>
+            </header>
+            <div class="px-5 py-4 flex flex-col gap-2 text-sm">
+              {#each group.columns as column (column.external_id)}
+                <div class="flex justify-between gap-4">
+                  <span class="text-muted-foreground">{column.label}</span>
+                  <span class="text-foreground font-medium">{column.score ?? '—'}</span>
+                </div>
+              {/each}
+            </div>
+          </article>
+        {/each}
+      </div>
+    </section>
+  {/if}
+
   {#if gradesPublished && progression.length > 0}
     <section class="mt-10" in:fly={{ y: 20, duration: 700, delay: 150 }}>
       <div class="mb-4">
@@ -99,7 +135,7 @@
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0">
                 <p class="font-heading text-sm font-semibold text-foreground truncate">{point.subject_name}</p>
-                <p class="text-xs text-muted-foreground mt-1">{typeLabel(point.type)} · {new Date(point.date).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</p>
+                <p class="text-xs text-muted-foreground mt-1">{point.type_label || typeLabel(point.type)} · {new Date(point.date).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</p>
               </div>
               <span class="font-heading font-semibold text-foreground shrink-0">{point.score}</span>
             </div>

@@ -43,8 +43,8 @@
 </script>
 
 {#snippet rowActions(item: Subject)}
-  {#if permissions.canEdit}<Button variant="ghost" size="icon" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}
-  {#if permissions.canDelete}<Button variant="ghost" size="icon" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4 text-destructive" /></Button>{/if}
+  {#if permissions.canEdit}<Button variant="outline" size="icon-sm" title="Ubah mata pelajaran" aria-label="Ubah mata pelajaran" class="mr-1" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}
+  {#if permissions.canDelete}<Button variant="outline" size="icon-sm" title="Hapus mata pelajaran" aria-label="Hapus mata pelajaran" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4" /></Button>{/if}
 {/snippet}
 
 <Sidebar group="subjects" />

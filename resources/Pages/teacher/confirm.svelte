@@ -97,8 +97,8 @@
       <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.13em] text-primary mb-3">Sudah terverifikasi</p>
       <h2 class="font-heading text-xl font-semibold text-foreground">Kehadiran hari ini sudah tercatat.</h2>
       <p class="text-sm text-muted-foreground mt-2">Buka jadwal untuk melihat kelas dan mapel yang Anda ajar hari ini.</p>
-      <a href="/teacher/schedule" use:inertia class="inline-flex mt-5">
-        <Button>Lihat Jadwal Hari Ini</Button>
+      <a href="/teacher/schedule" use:inertia class="mt-5 inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-foreground px-5 font-heading text-sm font-semibold text-background transition-colors hover:bg-foreground/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90">
+        Lihat Jadwal Hari Ini
       </a>
     </div>
   {:else if !qrTokenValid}

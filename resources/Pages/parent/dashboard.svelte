@@ -58,11 +58,11 @@
               </div>
             </div>
           </div>
-          <footer class="px-5 py-3 border-t border-border bg-secondary/30 flex gap-4">
-            <a href="/parent/child/{child.id}/attendance" use:inertia class="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors">
+          <footer class="px-5 py-3 border-t border-border bg-secondary/30 flex flex-wrap gap-2">
+            <a href="/parent/child/{child.id}/attendance" use:inertia class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-secondary/60">
               Kehadiran <ArrowRight class="w-3.5 h-3.5" />
             </a>
-            <a href="/parent/child/{child.id}/grades" use:inertia class="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors">
+            <a href="/parent/child/{child.id}/grades" use:inertia class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-secondary/60">
               Nilai <ArrowRight class="w-3.5 h-3.5" />
             </a>
           </footer>

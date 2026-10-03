@@ -131,13 +131,13 @@
 
 {#snippet rowActions(year: AcademicYear)}
   {#if permissions.canEdit}
-    <Button variant="ghost" onclick={() => openComponents(year)}>Bobot</Button>
-    <Button variant="ghost" onclick={() => confirmPublish(year)}>{year.is_grades_published === 1 ? 'Tarik Publikasi' : 'Publikasikan'}</Button>
-    <Button variant="ghost" size="icon" onclick={() => openEdit(year)}><Pencil class="w-4 h-4" /></Button>
-    <Button variant="ghost" onclick={() => confirmActivate(year)}>Aktifkan</Button>
+    <Button variant="outline" size="sm" class="mr-1" onclick={() => openComponents(year)}>Bobot</Button>
+    <Button variant="outline" size="sm" class="mr-1" onclick={() => confirmPublish(year)}>{year.is_grades_published === 1 ? 'Tarik Publikasi' : 'Publikasikan'}</Button>
+    <Button variant="outline" size="icon-sm" title="Ubah tahun ajaran" aria-label="Ubah tahun ajaran" class="mr-1" onclick={() => openEdit(year)}><Pencil class="w-4 h-4" /></Button>
+    <Button variant="outline" size="sm" class="mr-1" onclick={() => confirmActivate(year)}>Aktifkan</Button>
   {/if}
   {#if permissions.canDelete}
-    <Button variant="ghost" size="icon" onclick={() => confirmDelete(year)}><Trash2 class="w-4 h-4 text-destructive" /></Button>
+    <Button variant="outline" size="icon-sm" title="Hapus tahun ajaran" aria-label="Hapus tahun ajaran" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => confirmDelete(year)}><Trash2 class="w-4 h-4" /></Button>
   {/if}
 {/snippet}
 

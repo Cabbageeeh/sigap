@@ -136,13 +136,13 @@
 </script>
 
 {#snippet classRowAction(item: { id: string })}
-  <a href={`/headmaster/classes/${item.id}/grades`} use:inertia class="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80">
+  <a href={`/headmaster/classes/${item.id}/grades`} use:inertia class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-secondary/60">
     Detail nilai <ArrowRight class="w-3.5 h-3.5" />
   </a>
 {/snippet}
 
 {#snippet teacherAttendanceRowAction(item: { id: string })}
-  <a href={`/headmaster/teachers/${item.id}/attendance`} use:inertia class="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80">
+  <a href={`/headmaster/teachers/${item.id}/attendance`} use:inertia class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-secondary/60">
     Riwayat <ArrowRight class="w-3.5 h-3.5" />
   </a>
 {/snippet}

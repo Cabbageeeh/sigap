@@ -289,6 +289,15 @@ export interface EraporStudentMapping {
   updated_at: number;
 }
 
+export interface EraporColumnMapping {
+  id: string;
+  template_id: string;
+  external_id: string;
+  source_component_type: string | null;
+  created_at: number;
+  updated_at: number;
+}
+
 export interface Announcement {
   id: string;
   title: string;

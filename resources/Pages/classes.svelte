@@ -63,15 +63,15 @@
 
 {#snippet rowActions(item: Class & { student_count?: number })}
   {#if permissions.canViewStudents}
-    <a href={`/classes/${item.id}/students`} use:inertia class="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors mr-2">
+    <a href={`/classes/${item.id}/students`} use:inertia class="mr-1 inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-secondary/60">
       Kelola siswa <ArrowRight class="w-3.5 h-3.5" />
     </a>
-    <a href={`/exports/students/${item.id}`} download title="Unduh daftar siswa beserta kontak orang tua (PDF)" class="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors mr-2">
-      Daftar PDF <Download class="w-3.5 h-3.5" />
-    </a>
+    <Button href={`/exports/students/${item.id}`} download title="Unduh daftar siswa beserta kontak orang tua (PDF)" variant="outline" size="sm" class="mr-1">
+      <Download class="w-3.5 h-3.5" /> Daftar PDF
+    </Button>
   {/if}
-  {#if permissions.canEdit}<Button variant="ghost" size="icon" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}
-  {#if permissions.canDelete}<Button variant="ghost" size="icon" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4 text-destructive" /></Button>{/if}
+  {#if permissions.canEdit}<Button variant="outline" size="icon-sm" title="Ubah kelas" aria-label="Ubah kelas" class="mr-1" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}
+  {#if permissions.canDelete}<Button variant="outline" size="icon-sm" title="Hapus kelas" aria-label="Hapus kelas" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4" /></Button>{/if}
 {/snippet}
 
 <Sidebar group="classes" />

@@ -42,7 +42,7 @@
 
 <div class="min-h-[100dvh] bg-background text-foreground font-body antialiased pt-20 lg:pt-8 lg:pl-72 px-6 sm:px-10 lg:pr-8 pb-16">
   <div class="mb-8" in:fly={{ y: 20, duration: 700 }}>
-    <a href="/headmaster/dashboard" use:inertia class="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors mb-6">
+    <a href="/headmaster/dashboard" use:inertia class="mb-6 inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-border bg-card px-3 font-heading text-sm font-semibold text-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer">
       <ArrowLeft class="w-4 h-4" /> Kembali ke pengawasan
     </a>
     <p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">Detail Kehadiran Guru</p>

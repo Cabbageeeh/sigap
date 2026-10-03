@@ -51,7 +51,7 @@
 </svelte:head>
 
 
-<a href="/dashboard" use:inertia class="fixed top-5 left-5 z-10 inline-flex items-center gap-2 rounded-xl border border-border bg-card/80 backdrop-blur px-4 py-2.5 text-sm font-medium text-foreground shadow-sm hover:bg-card transition-colors">
+<a href="/dashboard" use:inertia class="fixed left-5 top-5 z-10 inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-border bg-card/90 px-3 font-heading text-sm font-semibold text-foreground shadow-sm backdrop-blur transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer">
   <ArrowLeft class="w-4 h-4" /> Kembali
 </a>
 <PageShell bare class="flex min-h-[100dvh] flex-col items-center justify-center">

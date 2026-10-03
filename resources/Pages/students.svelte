@@ -15,6 +15,7 @@
   import PageShell from '../Components/PageShell.svelte';
   import type { Student, StudentForm, StudentParentForm, Class } from '../types';
   import { createEmptyStudentForm, createEmptyStudentParentForm, studentToForm } from '../types';
+  import { Toast } from '$lib/toast';
   import { ArrowLeft, Download, Pencil, Plus, Trash2, Upload } from '@lucide/svelte';
   import { fly } from 'svelte/transition';
 
@@ -78,17 +79,6 @@
     selectedClassId = classId;
   });
 
-  const importColumns = [
-    { letter: 'A', label: 'NIS' },
-    { letter: 'B', label: 'Nama Siswa' },
-    { letter: 'C', label: 'Kelas' },
-    { letter: 'D', label: 'Telepon Siswa' },
-    { letter: 'E', label: 'Alamat Siswa' },
-    { letter: 'F', label: 'Nama Orang Tua' },
-    { letter: 'G', label: 'Telepon Orang Tua' },
-    { letter: 'H', label: 'Alamat Orang Tua' },
-  ];
-
   function openImport(): void {
     importFile = null;
     importResult = null;
@@ -103,10 +93,38 @@
     formData.append('file', importFile);
     if (classScoped && classContext) formData.append('class_id', classContext.id);
     if (importParentPassword) formData.append('parent_password', importParentPassword);
-    const result = await api(() => axios.post('/students/import', formData, { headers: { 'Content-Type': 'multipart/form-data' } }));
+    const result = await api(
+      () => axios.post('/students/import', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+      { showSuccessToast: false },
+    );
     if (result.success && result.data) {
-      importResult = result.data as { inserted: number; parents_created: number; errors: { line: number; message: string }[] };
+      const imported = result.data as { inserted: number; parents_created: number; errors: { line: number; message: string }[] };
+      importResult = imported;
       importFile = null;
+      if (imported.inserted === 0) {
+        Toast(imported.errors.length > 0
+          ? 'Tidak ada siswa yang diimpor. Periksa baris yang dilewati.'
+          : 'Tidak ada siswa baru untuk diimpor.', 'warning');
+      } else if (imported.errors.length > 0) {
+        Toast(`${imported.inserted} siswa berhasil diimpor; ${imported.errors.length} baris dilewati. Periksa rincian pada jendela impor.`, 'warning');
+      } else {
+        Toast(`${imported.inserted} siswa berhasil diimpor.`, 'success');
+      }
+      if (imported.inserted > 0) {
+        searchValue = '';
+        const url = new URL(window.location.href);
+        url.searchParams.delete('page');
+        url.searchParams.delete('search');
+        router.visit(`${url.pathname}${url.search}`, {
+          only: ['students', 'meta', 'search'],
+          preserveScroll: true,
+          preserveState: true,
+          replace: true,
+          onSuccess: () => {
+            if (imported.errors.length === 0) isImportOpen = false;
+          },
+        });
+      }
     }
     isImporting = false;
   }
@@ -224,14 +242,14 @@
 </script>
 
 {#snippet rowActions(item: StudentRow)}
-  {#if permissions.canEdit || parentPermissions.canCreate || parentPermissions.canEdit || parentPermissions.canDelete}<Button variant="ghost" size="icon" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}
-  {#if permissions.canDelete}<Button variant="ghost" size="icon" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4 text-destructive" /></Button>{/if}
+  {#if permissions.canEdit || parentPermissions.canCreate || parentPermissions.canEdit || parentPermissions.canDelete}<Button variant="outline" size="icon-sm" title="Ubah data siswa" aria-label="Ubah data siswa" class="mr-1" onclick={() => openEdit(item)}><Pencil class="w-4 h-4" /></Button>{/if}
+  {#if permissions.canDelete}<Button variant="outline" size="icon-sm" title="Hapus siswa" aria-label="Hapus siswa" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => confirmDelete(item)}><Trash2 class="w-4 h-4" /></Button>{/if}
 {/snippet}
 
 <Sidebar group={classScoped ? 'classes' : 'students'} />
 <PageShell>
   {#if classScoped && classContext}
-    <a href="/classes" use:inertia class="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors mb-6" in:fly={{ y: 20, duration: 800 }}>
+    <a href="/classes" use:inertia class="mb-6 inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-border bg-card px-3 font-heading text-sm font-semibold text-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer" in:fly={{ y: 20, duration: 800 }}>
       <ArrowLeft class="w-4 h-4" /> Kembali ke daftar kelas
     </a>
   {/if}
@@ -244,7 +262,7 @@
   >
     {#snippet actions()}
       {#if permissions.canCreate}
-        <Button variant="outline" onclick={openImport}><Upload class="w-4 h-4 mr-1" /> Import CSV</Button>
+        <Button variant="outline" onclick={openImport}><Upload class="w-4 h-4 mr-1" /> Impor daftar siswa</Button>
         <Button onclick={openCreate} size="lg"><Plus class="w-4 h-4" /> Tambah Siswa</Button>
       {/if}
     {/snippet}
@@ -291,7 +309,7 @@
           </div>
           <p class="mt-2 text-[11px] text-muted-foreground">Perubahan akun berlaku untuk semua anak yang terhubung ke orang tua ini.</p>
           <div class="mt-4 flex flex-wrap justify-between gap-2">
-            {#if parentPermissions.canDelete}<Button type="button" variant="ghost" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => isParentDeleteOpen = true}>Lepas akun orang tua</Button>{/if}
+            {#if parentPermissions.canDelete}<Button type="button" variant="outline" class="text-destructive hover:bg-destructive/10 hover:text-destructive" onclick={() => isParentDeleteOpen = true}>Lepas akun orang tua</Button>{/if}
             {#if parentPermissions.canEdit}<Button type="button" onclick={updateParent} disabled={isParentSubmitting || !parentForm.name}>{isParentSubmitting ? 'Menyimpan...' : 'Simpan orang tua'}</Button>{/if}
           </div>
         {:else if parentPermissions.canCreate}
@@ -330,39 +348,51 @@
   </form>
 </Modal>
 
-<Modal bind:open={isImportOpen} title="Import Siswa (CSV)" description="Isi template lalu upload. Kolom orang tua opsional — bila terisi, akun orang tua dibuat otomatis dengan username sama dengan NIS anak.">
+<Modal bind:open={isImportOpen} title="Impor daftar siswa" description="Isi template Excel yang sudah tersusun per kolom, lalu unggah kembali ke SIGAP. File CSV lama tetap didukung.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submitImport(); }}>
-    <div class="flex items-center justify-between gap-3 rounded-xl border border-border bg-secondary/20 px-4 py-3">
-      <p class="text-xs text-muted-foreground">Pemisah koma, isi data mulai baris ke-2. Teks yang mengandung koma diapit tanda kutip.</p>
-      <a href="/public/templates/import-siswa.csv" download class="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80">
-        <Download class="w-3.5 h-3.5" /> Unduh Template
-      </a>
+    <div class="rounded-xl border border-border bg-secondary/20 p-4">
+      <ol class="space-y-2 text-sm text-foreground">
+        <li><span class="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">1</span>Unduh template Excel lalu buka file tersebut.</li>
+        <li><span class="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">2</span>Isi data siswa mulai dari baris kedua; satu siswa untuk setiap baris.</li>
+        <li><span class="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">3</span>Simpan file Excel, lalu pilih file itu di bawah.</li>
+      </ol>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <Button href="/public/templates/import-siswa.xlsx" download variant="outline">
+          <Download class="h-4 w-4" /> Unduh Excel (.xlsx)
+        </Button>
+        <Button href="/public/templates/import-siswa.csv" download variant="outline">
+          <Download class="h-4 w-4" /> Unduh CSV (.csv)
+        </Button>
+      </div>
     </div>
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div class="rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm">
+        <p class="font-semibold text-foreground">Wajib diisi</p>
+        <p class="mt-1 text-muted-foreground">NIS dan nama siswa{classScoped ? '' : ', serta kelas'}.</p>
+      </div>
+      <div class="rounded-xl border border-border bg-card p-3 text-sm">
+        <p class="font-semibold text-foreground">Opsional</p>
+        <p class="mt-1 text-muted-foreground">Telepon dan alamat. Isi nama orang tua untuk membuat akun orang tua otomatis.</p>
+      </div>
+    </div>
+    {#if classScoped && classContext}
+      <p class="rounded-lg bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">Semua siswa dari file ini masuk ke kelas <span class="font-medium text-foreground">{classContext.name}</span>. Kolom kelas pada file diabaikan.</p>
+    {:else}
+      <p class="text-xs text-muted-foreground">Nama kelas di file harus sama dengan nama kelas yang sudah terdaftar di SIGAP.</p>
+    {/if}
+    <Label for="student-csv">Pilih file Excel (.xlsx) atau CSV</Label>
     <input
+      id="student-csv"
       type="file"
-      accept=".csv,text/csv"
+      accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"
       class="block w-full text-sm text-muted-foreground file:mr-3 file:rounded-md file:border file:border-border file:bg-secondary/60 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-foreground hover:file:bg-secondary"
       onchange={(e) => { importFile = (e.currentTarget as HTMLInputElement).files?.[0] ?? null; importResult = null; }}
     />
-    <div class="flex flex-col gap-0"><Label for="import-parent-password" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Kata Sandi Awal Orang Tua</Label>
-      <Input id="import-parent-password" type="text" bind:value={importParentPassword} placeholder="Minimal 8 karakter" />
-      <p class="mt-1.5 text-xs text-muted-foreground">Dipakai untuk semua akun orang tua dari file ini. Wajib diisi jika ada baris dengan nama orang tua.</p>
+    <div class="rounded-xl border border-border p-3">
+      <Label for="import-parent-password">Kata sandi awal akun orang tua</Label>
+      <Input id="import-parent-password" type="password" bind:value={importParentPassword} placeholder="Minimal 8 karakter" />
+      <p class="mt-1 text-xs text-muted-foreground">Wajib diisi jika kolom Nama Orang Tua pada file dipakai. Nama login orang tua akan memakai NIS siswa.</p>
     </div>
-    <div class="rounded-xl border border-border bg-secondary/20 px-4 py-3">
-      <p class="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Urutan Kolom CSV</p>
-      <ul class="grid grid-cols-2 gap-x-5 gap-y-1.5">
-        {#each importColumns as col}
-          <li class="flex items-baseline gap-2 text-xs">
-            <span class="font-mono-accent shrink-0 rounded border border-border bg-card px-1 text-[10px] leading-4 text-muted-foreground">{col.letter}</span>
-            <span class="text-foreground">{col.label}</span>
-          </li>
-        {/each}
-      </ul>
-      <p class="mt-2 text-[11px] leading-relaxed text-muted-foreground">A dan B wajib. C harus sama dengan nama kelas yang sudah ada. Kolom F terisi berarti akun orang tua ikut dibuat.</p>
-    </div>
-    {#if classScoped && classContext}
-      <p class="text-xs text-muted-foreground">Impor dari halaman kelas {classContext.name}: kolom Kelas pada file diabaikan, semua baris masuk ke kelas tersebut.</p>
-    {/if}
     {#if importResult}
       <div class="bg-card border border-border rounded-md px-4 py-3 text-sm">
         <p class="font-medium text-foreground">{importResult.inserted} siswa berhasil diimpor.</p>
@@ -380,7 +410,7 @@
     {/if}
     <div class="flex justify-end gap-2 pt-4 border-t border-border mt-2">
       <Button variant="outline" onclick={() => isImportOpen = false} type="button">Tutup</Button>
-      <Button type="submit" disabled={!importFile || isImporting}>{isImporting ? 'Mengimpor...' : 'Import'}</Button>
+      <Button type="submit" disabled={!importFile || isImporting}>{isImporting ? 'Mengimpor...' : 'Impor siswa'}</Button>
     </div>
   </form>
 </Modal>

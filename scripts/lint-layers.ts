@@ -93,7 +93,7 @@ function checkFile(absPath: string): void {
     // L2: Handlers must NOT import @services/* except Authenticate, Logger, Storage
     if (isHandler) {
       const match = line.match(/from\s+['"]@services\/(\w+)['"]/);
-      if (match && !['Authenticate', 'Logger', 'Storage', 'LoginThrottle', 'CacheStore', 'Geolocation', 'CameraUpload', 'GradeCalculator', 'StudentCsvParser', 'EraporWorkbook', 'EraporXlsx', 'QrCode', 'Pdf'].includes(match[1])) {
+      if (match && !['Authenticate', 'Logger', 'Storage', 'LoginThrottle', 'CacheStore', 'Geolocation', 'CameraUpload', 'GradeCalculator', 'StudentCsvParser', 'StudentXlsxParser', 'EraporWorkbook', 'EraporXlsx', 'QrCode', 'Pdf'].includes(match[1])) {
         violations.push({
           rule: 'L2', file: rel, line: lineNum, text: trimmed,
           message: `Handlers must not import @services/${match[1]}. Fix: use an approved service from the handler layer. See .agents/skills/crud-pattern.md`,

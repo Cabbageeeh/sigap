@@ -207,7 +207,7 @@
       </div>
       <h2 class="relative font-heading text-xl font-semibold text-foreground">Konfirmasi kehadiran diperlukan.</h2>
       <p class="relative text-sm text-muted-foreground mt-2 leading-relaxed">Pada hari Anda terjadwal mengajar, scan QR sekolah sekali sebelum membuka daftar kelas dan mengisi nilai. Di hari tanpa jam mengajar, daftar nilai terbuka seperti biasa.</p>
-      <a href="/teacher/confirm" use:inertia class="relative inline-flex mt-5"><Button>Scan QR Absen</Button></a>
+      <a href="/teacher/confirm" use:inertia class="relative mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-foreground px-7 py-2 font-heading text-sm font-semibold text-background transition-colors hover:bg-foreground/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90">Scan QR Absen</a>
     </div>
   {:else}
     <div class="relative overflow-hidden bg-card border border-border rounded-2xl p-4 mb-8 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none" in:fly={{ y: 20, duration: 700, delay: 100 }}>
@@ -241,9 +241,9 @@
           <FileSpreadsheet class="w-4 h-4 mr-1" /> Impor / Ekspor e-Rapor
         </Button>
         {#if filterClassId}
-          <a href={`/exports/grades/${filterClassId}`} download class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 h-9 text-xs font-medium text-foreground/80 hover:bg-secondary/40 transition-colors">
+          <Button href={`/exports/grades/${filterClassId}`} download variant="outline">
             <Download class="w-4 h-4" /> Unduh PDF Rekap
-          </a>
+          </Button>
         {/if}
       </div>
     </div>
