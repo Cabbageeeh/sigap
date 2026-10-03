@@ -14,6 +14,13 @@ export interface EraporTemplateSetup {
   mappings: Array<{ student_id: string; external_member_id: string }>;
 }
 
+export interface EraporImportSetup {
+  template: Omit<EraporTemplateSetup, 'mappings'>;
+  mappings: Array<{ student_id: string; external_member_id: string }>;
+  newStudents: Array<{ nis: string; name: string; external_member_id: string }>;
+  grades: Array<{ external_member_id: string; subject_id: string; class_id: string; type: string; score: number }>;
+}
+
 export const findEraporGradeTemplate = (classId: string, subjectId: string, semester: number): EraporGradeTemplate | undefined =>
   SQLite.one<EraporGradeTemplate>`
     SELECT * FROM erapor_grade_templates
@@ -182,4 +189,29 @@ export const saveEraporGradeChanges = (
     results.push({ ...change, grade_id: id, action: 'create', old_score: null, new_score: change.score });
   }
   return results;
+});
+
+
+export const saveEraporImportSetup = (data: EraporImportSetup) => SQLite.transaction(() => {
+  const now = Date.now();
+  const createdStudents = data.newStudents.map(student => {
+    const id = randomUUID();
+    SQLite.exec`
+      INSERT INTO students (id, nis, name, class_id, parent_user_id, phone, address, created_at, updated_at)
+      VALUES (${id}, ${student.nis}, ${student.name}, ${data.template.class_id}, ${null}, ${null}, ${null}, ${now}, ${now})
+    `;
+    return { id, nis: student.nis, name: student.name, external_member_id: student.external_member_id };
+  });
+  const mappings = [
+    ...data.mappings,
+    ...createdStudents.map(student => ({ student_id: student.id, external_member_id: student.external_member_id })),
+  ];
+  const template = saveEraporTemplateSetup({ ...data.template, mappings });
+  const studentIdByExternalId = new Map(mappings.map(mapping => [mapping.external_member_id, mapping.student_id]));
+  const grades = data.grades.flatMap(grade => {
+    const studentId = studentIdByExternalId.get(grade.external_member_id);
+    return studentId ? [{ ...grade, student_id: studentId }] : [];
+  });
+  const changes = saveEraporGradeChanges(grades, data.template.created_by);
+  return { template, mappings, createdStudents, changes };
 });

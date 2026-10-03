@@ -19,7 +19,7 @@ Raw SQL functions in `app/queries/`. The only layer that touches `SQLite`. Handl
 | `academicYears.ts` | CRUD + active year + activation |
 | `classes.ts` | CRUD + academic-year/grade lookups + bulk delete |
 | `subjects.ts` | CRUD + code lookup |
-| `students.ts` | CRUD + search + class/parent filters + pagination + parent display data + bulk delete |
+| `students.ts` | CRUD + search + class/parent filters + pagination + full class roster with parent data for imports/exports |
 | `teachers.ts` | CRUD + user/subject lookups + subject sync |
 | `teacherClassAssignments.ts` | teacher class assignments, homeroom sync, and grade authorization |
 | `parents.ts` | parent account lifecycle for students + user lookup + pagination |
@@ -30,7 +30,7 @@ Raw SQL functions in `app/queries/`. The only layer that touches `SQLite`. Handl
 | `journals.ts` | CRUD + schedule/teacher/date filters |
 | `studentAttendance.ts` | CRUD + journal/student/schedule filters + upsert + bulk delete by journal |
 | `grades.ts` | CRUD + student/class/subject/teacher filters + pagination + bulk delete + weighted final-score summaries (KKM, predikat, pass status) + publication check |
-| `eraporGrades.ts` | e-Rapor template and student-ID mappings + transactional e-Rapor grade changes |
+| `eraporGrades.ts` | e-Rapor template and student-ID mappings + transactional student, template, and grade imports |
 | `gradeComponents.ts` | Component weights per academic year (find by year + bulk upsert) |
 | `gradeAuditLogs.ts` | Append-only grade change history (log + paginated list with names) |
 | `headmaster.ts` | Headmaster oversight: today sessions, missed sessions, journal completeness, grade progress, outside confirmations |

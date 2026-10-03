@@ -1,13 +1,11 @@
-import type { NaraMiddleware, NaraRequest, NaraResponse } from '@core';
+import type { NaraRequest, NaraResponse } from '@core';
 import { jsonError, jsonSuccess, jsonValidationError, queryString } from '@core';
 import Logger from '@services/Logger';
-import multer from 'multer';
-import { findEraporColumnMappings, findEraporColumnMappingsByClassSubject, findEraporGradeTemplate, findEraporStudentMappings, saveEraporColumnMappings as persistEraporColumnMappings, saveEraporGradeChanges, saveEraporTemplateSetup } from '@queries/eraporGrades';
+import { findEraporColumnMappings, findEraporColumnMappingsByClassSubject, findEraporGradeTemplate, findEraporStudentMappings, saveEraporColumnMappings as persistEraporColumnMappings, saveEraporGradeChanges } from '@queries/eraporGrades';
 import { findAllClasses, findClassById, findClassesByTeacherUser } from '@queries/classes';
 import { findAllSubjects, findSubjectById } from '@queries/subjects';
 import { findStudentsByClass } from '@queries/students';
 import { findGradeComponentsByYear } from '@queries/gradeComponents';
-import { findActiveSchoolLocation } from '@queries/schoolLocations';
 import { findGradesByClassSubject } from '@queries/grades';
 import { logGradeChange } from '@queries/gradeAuditLogs';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
@@ -19,18 +17,6 @@ import { isTeachingDay } from '@queries/schoolCalendar';
 import { EraporColumnMappingsSchema, EraporGradeSaveSchema, EraporTemplateSchema, zodToErrors } from '@validators';
 import { normalizeEraporText, parseEraporWorkbook, renderEraporWorkbook, type EraporAssessmentColumn } from '@services/EraporWorkbook';
 import { createEraporXlsx, eraporExcelColumnName } from '@services/EraporXlsx';
-
-interface UploadedFile {
-  buffer: Buffer;
-  originalname: string;
-}
-
-const workbookUpload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 2 * 1024 * 1024 },
-});
-
-export const eraporImportMiddleware = workbookUpload.single('file') as unknown as NaraMiddleware;
 
 const isTeacherActor = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && isTeacherUser(userId);
 
@@ -54,12 +40,6 @@ const readSelection = (req: NaraRequest) => EraporTemplateSchema.safeParse({
   semester: queryString(req, 'semester', '1'),
 });
 
-const matchesSelectedClass = (fileGrade: string, fileRombel: string, grade: string, className: string): boolean => {
-  const clean = (value: string): string => value.toLocaleLowerCase('id-ID').replace(/[^a-z0-9]/g, '');
-  const classLabel = clean(className.replace(/kelas/gi, ''));
-  return normalizeEraporText(fileGrade) === normalizeEraporText(grade) && classLabel.endsWith(clean(fileRombel));
-};
-
 const auditGradeChanges = (changes: ReturnType<typeof saveEraporGradeChanges>, userId: string): void => {
   for (const change of changes) {
     logGradeChange({
@@ -74,38 +54,6 @@ const auditGradeChanges = (changes: ReturnType<typeof saveEraporGradeChanges>, u
       user_id: userId,
     });
   }
-};
-
-const mapWorkbookStudents = (
-  classId: string,
-  rows: ReturnType<typeof parseEraporWorkbook>['rows'],
-): Array<{ student_id: string; external_member_id: string }> => {
-  const roster = findStudentsByClass(classId);
-  if (roster.length !== rows.length) throw new Error(`Jumlah siswa pada file (${rows.length}) berbeda dengan SIGAP (${roster.length}). Unduh ulang template e-Rapor untuk kelas ini.`);
-
-  const studentsByName = new Map<string, typeof roster>();
-  for (const student of roster) {
-    const key = normalizeEraporText(student.name);
-    studentsByName.set(key, [...(studentsByName.get(key) ?? []), student]);
-  }
-  const existingByExternalId = new Map(findEraporStudentMappings(classId).map(mapping => [mapping.external_member_id, mapping.student_id]));
-  const seenStudents = new Set<string>();
-  const mappings = rows.map(row => {
-    const knownStudentId = existingByExternalId.get(row.externalMemberId);
-    const matches = studentsByName.get(normalizeEraporText(row.name)) ?? [];
-    const student = knownStudentId
-      ? roster.find(item => item.id === knownStudentId)
-      : matches.length === 1 ? matches[0] : undefined;
-    if (!student) {
-      const reason = matches.length > 1 ? 'namanya ganda di SIGAP' : 'tidak ditemukan di kelas SIGAP';
-      throw new Error(`Siswa "${row.name}" pada baris ${row.rowNumber} ${reason}. Periksa data siswa sebelum mengimpor.`);
-    }
-    if (seenStudents.has(student.id)) throw new Error(`Siswa "${student.name}" muncul lebih dari sekali pada file.`);
-    seenStudents.add(student.id);
-    return { student_id: student.id, external_member_id: row.externalMemberId };
-  });
-  if (seenStudents.size !== roster.length) throw new Error('File tidak memuat seluruh siswa di kelas SIGAP.');
-  return mappings;
 };
 
 export const gradesEraporPage = (req: NaraRequest, res: NaraResponse) => {
@@ -196,76 +144,6 @@ export const gradesEraporPage = (req: NaraRequest, res: NaraResponse) => {
     permissions: { canView, canEdit, canExport: canView && rosterReady && !!template },
     attendanceConfirmed,
   });
-};
-
-export const importEraporGrades = (req: NaraRequest, res: NaraResponse) => {
-  if (!req.user) return jsonError(res, 'Sesi login diperlukan', 401);
-  const form = EraporTemplateSchema.safeParse(req.body);
-  if (!form.success) return jsonValidationError(res, 'Pilihan kelas, mata pelajaran, atau semester tidak valid', zodToErrors(form.error));
-  const { class_id: classId, subject_id: subjectId, semester } = form.data;
-  if (!canEditScope(req.user.id, classId, subjectId)) return jsonError(res, 'Anda tidak memiliki akses untuk mengimpor nilai mapel dan kelas ini', 403);
-  if (isTeacherActor(req.user.id) && !attendanceConfirmedToday(req.user.id)) return jsonError(res, 'Konfirmasi kehadiran hari ini diperlukan sebelum mengakses nilai', 403, 'CONFIRMATION_REQUIRED');
-
-  const targetClass = findClassById(classId);
-  if (!targetClass) return jsonError(res, 'Kelas tidak ditemukan', 404);
-  if (!findSubjectById(subjectId)) return jsonError(res, 'Mata pelajaran tidak ditemukan', 404);
-  const file = (req as NaraRequest & { file?: UploadedFile }).file;
-  if (!file) return jsonError(res, 'Pilih file format nilai e-Rapor (.xls)', 400, 'FILE_REQUIRED');
-  if (!file.originalname.toLocaleLowerCase('id-ID').endsWith('.xls')) return jsonError(res, 'Format yang didukung adalah file .xls dari e-Rapor SMP 2025.2', 422, 'INVALID_FILE_TYPE');
-
-  let workbook: ReturnType<typeof parseEraporWorkbook>;
-  try {
-    workbook = parseEraporWorkbook(file.buffer.toString('utf-8'), semester);
-    if (!matchesSelectedClass(workbook.grade, workbook.rombel, targetClass.grade, targetClass.name)) {
-      return jsonError(res, 'Isi file tidak cocok dengan kelas yang dipilih di SIGAP', 422, 'CLASS_MISMATCH');
-    }
-    const school = findActiveSchoolLocation();
-    if (school?.npsn && school.npsn !== workbook.npsn) return jsonError(res, 'NPSN pada file berbeda dengan profil sekolah SIGAP', 422, 'NPSN_MISMATCH');
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'File e-Rapor tidak dapat dibaca';
-    return jsonError(res, message, 422, 'INVALID_ERAPOR_FILE');
-  }
-
-  try {
-    const mappings = mapWorkbookStudents(classId, workbook.rows);
-    const existingTemplate = findEraporGradeTemplate(classId, subjectId, semester);
-    const configuredByExternalId = new Map(existingTemplate
-      ? findEraporColumnMappings(existingTemplate.id).map(item => [item.external_id, item.source_component_type])
-      : []);
-    const profile = saveEraporTemplateSetup({
-      academic_year_id: targetClass.academic_year_id,
-      class_id: classId,
-      subject_id: subjectId,
-      semester: semester as 1 | 2,
-      mapel_id: workbook.mapelId,
-      template_html: workbook.html,
-      source_file_name: file.originalname.replace(/[^\w .()-]/g, '_').slice(0, 120),
-      created_by: req.user.id,
-      mappings,
-    });
-    const studentIdByExternalId = new Map(mappings.map(mapping => [mapping.external_member_id, mapping.student_id]));
-    const gradeInputs = workbook.rows.flatMap(row => workbook.columns.flatMap((column, index) => {
-      const score = row.scores[index];
-      const studentId = studentIdByExternalId.get(row.externalMemberId);
-      const type = configuredByExternalId.get(column.externalId) || column.gradeType;
-      return score === null || !studentId ? [] : [{ student_id: studentId, subject_id: subjectId, class_id: classId, type, score }];
-    }));
-    const changes = saveEraporGradeChanges(gradeInputs, req.user.id);
-    auditGradeChanges(changes, req.user.id);
-    return jsonSuccess(res, `Template tersimpan dan ${changes.length} perubahan nilai berhasil diimpor`, {
-      template_id: profile.id,
-      students: mappings.length,
-      columns: workbook.columns.length,
-      scores_saved: changes.length,
-      mapel_id: workbook.mapelId,
-    });
-  } catch (error: unknown) {
-    if (String(error).includes('SQLITE_CONSTRAINT_UNIQUE')) {
-      return jsonError(res, 'ID anggota rombel pada file sudah terhubung ke siswa lain di kelas ini', 409, 'ERAPOR_ID_CONFLICT');
-    }
-    Logger.error('Failed to import e-Rapor grades', error as Error);
-    return jsonError(res, error instanceof Error ? error.message : 'Gagal mengimpor nilai e-Rapor', 422, 'ERAPOR_IMPORT_FAILED');
-  }
 };
 
 export const saveEraporColumnMappings = (req: NaraRequest, res: NaraResponse) => {

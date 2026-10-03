@@ -320,6 +320,11 @@ export const EraporTemplateSchema = z.object({
   semester: z.coerce.number().int().min(1).max(2),
 });
 
+export const EraporNewStudentsSchema = z.array(z.object({
+  external_member_id: z.string().trim().min(1, 'ID anggota rombel wajib diisi').max(100),
+  nis: z.string().trim().min(1, 'NIS wajib diisi').max(50, 'NIS maksimal 50 karakter'),
+})).max(200);
+
 export const EraporGradeSaveSchema = EraporTemplateSchema.extend({
   entries: z.array(z.object({
     student_id: z.string().uuid('Siswa tidak valid'),
@@ -383,6 +388,7 @@ export type StudentAttendanceInput = z.infer<typeof StudentAttendanceSchema>;
 export type GradeInput = z.infer<typeof GradeSchema>;
 export type GradeComponentsInput = z.infer<typeof GradeComponentsSchema>;
 export type EraporTemplateInput = z.infer<typeof EraporTemplateSchema>;
+export type EraporNewStudentsInput = z.infer<typeof EraporNewStudentsSchema>;
 export type EraporGradeSaveInput = z.infer<typeof EraporGradeSaveSchema>;
 export type AnnouncementInput = z.infer<typeof AnnouncementSchema>;
 export type UpdateAnnouncementInput = z.infer<typeof UpdateAnnouncementSchema>;

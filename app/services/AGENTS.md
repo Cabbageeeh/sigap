@@ -21,8 +21,8 @@ Infrastructure code wrapped in functions. No classes, no singletons. Each servic
 | `GradeCalculator.ts` | Pure weighted final-score, predikat, and pass-status computation | grades queries |
 | `StudentCsvParser.ts` | Pure CSV parsing + validation for student bulk imports | students handler |
 | `StudentXlsxParser.ts` | Read the first worksheet from student-import `.xlsx` files and normalize rows for CSV validation | students handler |
-| `EraporWorkbook.ts` | Parse e-Rapor 2025.2 HTML `.xls` templates and fill saved scores | e-Rapor grade handler |
-| `EraporXlsx.ts` | Write template rows and values as an OOXML `.xlsx` workbook | e-Rapor grade handler |
+| `EraporWorkbook.ts` | Parse e-Rapor 2025.2 HTML `.xls` and OOXML `.xlsx` templates, then fill saved scores | e-Rapor grade handler |
+| `EraporXlsx.ts` | Write HTML table rows and values as an OOXML `.xlsx` workbook | e-Rapor grade and student roster handlers |
 | `QrCode.ts` | QR code generation + HMAC token signing/verification for teacher attendance | qrSettings handler |
 | `Pdf.ts` | A4 table-to-PDF writer (base-14 Helvetica, wrapping, pagination) for printed reports | report exports handler |
 | `LoginThrottle.ts` | Per-IP + per-username login attempt limiter | auth handler |

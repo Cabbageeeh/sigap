@@ -53,6 +53,18 @@
     canExport: boolean;
   }
 
+  interface ImportPreview {
+    matched_students: number;
+    missing_students: Array<{ row_number: number; external_member_id: string; name: string }>;
+  }
+
+  interface ImportRequestResult {
+    preview_required?: boolean;
+    preview?: ImportPreview;
+    created_students?: number;
+    scores_saved?: number;
+  }
+
   let {
     classes = [],
     subjects = [],
@@ -89,6 +101,8 @@
   let selectedSubjectId = $state('');
   let selectedSemester = $state('1');
   let selectedFile = $state<File | null>(null);
+  let importPreview = $state<ImportPreview | null>(null);
+  let newStudentNis = $state<Record<string, string>>({});
   let fileInput = $state<HTMLInputElement | null>(null);
   let scoreDrafts = $state<Record<string, string>>({});
   let mappingDrafts = $state<Record<string, string>>({});
@@ -108,6 +122,7 @@
   const selectedSubject = $derived(subjects.find(item => item.id === selectedSubjectId));
   const semesterLabel = $derived(selectedSemester === '1' ? 'Semester I' : 'Semester II');
   const hasTemplate = $derived(!!template && columns.length > 0);
+  const newStudentNisComplete = $derived(!importPreview || importPreview.missing_students.every(student => !!newStudentNis[student.external_member_id]?.trim()));
 
   function selectionUrl(): string {
     const query = new URLSearchParams({ class_id: selectedClassId, subject_id: selectedSubjectId, semester: selectedSemester });
@@ -123,6 +138,15 @@
     if (!selectedClassId || !selectedSubjectId) return;
     scoreDrafts = {};
     router.visit(selectionUrl(), { preserveScroll: true });
+  }
+
+  function clearImportPreview(): void {
+    importPreview = null;
+    newStudentNis = {};
+  }
+
+  function setNewStudentNis(externalMemberId: string, nis: string): void {
+    newStudentNis = { ...newStudentNis, [externalMemberId]: nis };
   }
 
   function draftKey(studentId: string, externalId: string): string {
@@ -147,13 +171,30 @@
     form.append('class_id', selectedClassId);
     form.append('subject_id', selectedSubjectId);
     form.append('semester', selectedSemester);
+    form.append('confirm_import', importPreview ? '1' : '0');
+    if (importPreview) {
+      form.append('new_students', JSON.stringify(importPreview.missing_students.map(student => ({
+        external_member_id: student.external_member_id,
+        nis: newStudentNis[student.external_member_id]?.trim() ?? '',
+      }))));
+    }
     isImporting = true;
-    const result = await api<{ scores_saved: number }>(() => axios.post('/grades/erapor/import', form), { showSuccessToast: false });
+    const result = await api<ImportRequestResult>(() => axios.post('/grades/erapor/import', form), { showSuccessToast: false });
     isImporting = false;
     if (!result.success) return;
+    if (result.data?.preview_required && result.data.preview) {
+      importPreview = result.data.preview;
+      newStudentNis = Object.fromEntries(result.data.preview.missing_students.map(student => [student.external_member_id, '']));
+      return;
+    }
     selectedFile = null;
+    clearImportPreview();
     if (fileInput) fileInput.value = '';
-    Toast(`Template tersimpan; ${result.data?.scores_saved ?? 0} perubahan nilai diimpor`, 'success');
+    const createdCount = result.data?.created_students ?? 0;
+    const importSummary = `Template tersimpan; ${result.data?.scores_saved ?? 0} perubahan nilai diimpor.`;
+    Toast(createdCount > 0
+      ? `${createdCount} siswa dibuat tanpa akun orang tua. ${importSummary}`
+      : importSummary, 'success');
     router.visit(selectionUrl(), { preserveScroll: true });
   }
 
@@ -239,21 +280,21 @@
     <div class="grid gap-4 md:grid-cols-[1fr_1fr_180px_auto] md:items-end">
       <div class="flex flex-col gap-2">
         <Label for="erapor-class">Kelas</Label>
-        <select id="erapor-class" bind:value={selectedClassId} class="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground">
+        <select id="erapor-class" bind:value={selectedClassId} onchange={clearImportPreview} class="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground">
           <option value="">Pilih kelas</option>
           {#each classes as item (item.id)}<option value={item.id}>{item.grade} · {item.name}</option>{/each}
         </select>
       </div>
       <div class="flex flex-col gap-2">
         <Label for="erapor-subject">Mata pelajaran</Label>
-        <select id="erapor-subject" bind:value={selectedSubjectId} class="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground">
+        <select id="erapor-subject" bind:value={selectedSubjectId} onchange={clearImportPreview} class="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground">
           <option value="">Pilih mata pelajaran</option>
           {#each subjects as item (item.id)}<option value={item.id}>{item.name}</option>{/each}
         </select>
       </div>
       <div class="flex flex-col gap-2">
         <Label for="erapor-semester">Semester</Label>
-        <select id="erapor-semester" bind:value={selectedSemester} class="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground">
+        <select id="erapor-semester" bind:value={selectedSemester} onchange={clearImportPreview} class="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground">
           <option value="1">Semester I</option>
           <option value="2">Semester II</option>
         </select>
@@ -271,13 +312,13 @@
         <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10"><Upload class="h-4 w-4 text-primary" /></span>
         <div>
           <h2 class="font-heading font-semibold">Langkah 2 · Unggah file dari e-Rapor</h2>
-          <p class="mt-1 max-w-3xl text-sm text-muted-foreground">Pilih file .xls yang diunduh dari e-Rapor SMP 2025.2. File kosong bisa dipakai untuk menyimpan format; nilai yang sudah terisi di file juga akan masuk ke SIGAP.</p>
+          <p class="mt-1 max-w-3xl text-sm text-muted-foreground">Pilih file .xls dari e-Rapor SMP 2025.2 atau .xlsx yang disimpan dari Excel. File kosong bisa dipakai untuk menyimpan format; nilai yang sudah terisi di file juga akan masuk ke SIGAP.</p>
         </div>
       </div>
       <div class="mb-4 rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm">
         <p class="font-medium text-foreground">Sebelum mengunggah</p>
         {#if canManageStudents}
-          <p class="mt-1 text-muted-foreground">Pastikan daftar siswa di kelas SIGAP sama dengan daftar siswa pada file e-Rapor. Jika berbeda, perbarui roster SIGAP terlebih dahulu.</p>
+          <p class="mt-1 text-muted-foreground">Jika ada siswa di file yang belum terdaftar, SIGAP akan meminta NIS asli sebelum membuat datanya. Siswa yang ada di SIGAP tetapi tidak ada di file harus diperiksa terlebih dahulu.</p>
           <a href={`/classes/${selectedClassId}/students`} use:inertia class="mt-2 inline-flex font-medium text-primary underline">Periksa atau impor siswa kelas ini</a>
         {:else}
           <p class="mt-1 text-muted-foreground">Pastikan daftar siswa sama dengan kelas pada file. Jika berbeda, minta admin SIGAP memperbarui daftar siswa sebelum mengunggah.</p>
@@ -285,14 +326,34 @@
       </div>
       <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
         <div class="flex-1">
-          <Label for="erapor-file">File e-Rapor (.xls, maksimal 2 MB)</Label>
-          <input bind:this={fileInput} id="erapor-file" type="file" accept=".xls,application/vnd.ms-excel" onchange={(event) => { selectedFile = (event.currentTarget as HTMLInputElement).files?.[0] ?? null; }} class="mt-2 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground file:mr-3 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-xs file:font-semibold" />
+          <Label for="erapor-file">File e-Rapor (.xls atau .xlsx, maksimal 2 MB)</Label>
+          <input bind:this={fileInput} id="erapor-file" type="file" accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange={(event) => { selectedFile = (event.currentTarget as HTMLInputElement).files?.[0] ?? null; clearImportPreview(); }} class="mt-2 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground file:mr-3 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-xs file:font-semibold" />
         </div>
-        <Button onclick={importWorkbook} disabled={!permissions.canEdit || !selectedFile || isImporting}>
+        <Button onclick={importWorkbook} disabled={(!canManageStudents && !permissions.canEdit) || !selectedFile || isImporting || !newStudentNisComplete}>
           {#if isImporting}<Loader2 class="mr-2 h-4 w-4 animate-spin" />{:else}<Upload class="mr-2 h-4 w-4" />{/if}
-          Unggah ke SIGAP
+          {#if importPreview}Buat siswa dan simpan{:else}Periksa dan unggah{/if}
         </Button>
       </div>
+      {#if importPreview}
+        <div class="mt-4 rounded-xl border border-primary/25 bg-primary/5 p-4">
+          <h3 class="font-heading text-sm font-semibold">Pratinjau roster e-Rapor</h3>
+          <p class="mt-1 text-sm text-muted-foreground">{importPreview.matched_students} siswa cocok; {importPreview.missing_students.length} siswa belum ada di kelas SIGAP. Isi NIS asli sebelum melanjutkan. Siswa baru tidak otomatis mendapat akun orang tua.</p>
+          <div class="mt-3 max-h-80 space-y-2 overflow-y-auto">
+            {#each importPreview.missing_students as student (student.external_member_id)}
+              <div class="grid gap-2 rounded-lg border border-border bg-card p-3 sm:grid-cols-[minmax(0,1fr)_220px] sm:items-center">
+                <div>
+                  <p class="text-sm font-medium text-foreground">{student.name}</p>
+                  <p class="text-xs text-muted-foreground">Baris {student.row_number} · ID anggota rombel {student.external_member_id}</p>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <Label for={`student-nis-${student.row_number}`}>NIS asli</Label>
+                  <input id={`student-nis-${student.row_number}`} type="text" maxlength="50" autocomplete="off" value={newStudentNis[student.external_member_id] ?? ''} oninput={(event) => setNewStudentNis(student.external_member_id, event.currentTarget.value)} placeholder="Masukkan NIS" class="h-10 rounded-lg border border-border bg-background px-3 text-sm text-foreground" />
+                </div>
+              </div>
+            {/each}
+          </div>
+        </div>
+      {/if}
       {#if template}
         <p class="mt-3 text-xs text-muted-foreground">Template tersimpan: {template.source_file_name}. Unggah file lain untuk memperbarui template atau memasukkan nilai.</p>
       {/if}
@@ -382,7 +443,7 @@
     <section class="rounded-2xl border border-dashed border-border bg-card p-8 text-center">
       <FileSpreadsheet class="mx-auto h-8 w-8 text-muted-foreground" />
       <h2 class="mt-3 font-heading font-semibold">Unggah file e-Rapor untuk mulai</h2>
-      <p class="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">Pilih file .xls dari e-Rapor pada bagian di atas. SIGAP akan membaca daftar siswa dan kolom nilai dari file tersebut agar ekspor mengikuti format sekolah.</p>
+      <p class="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">Pilih file .xls atau .xlsx dari e-Rapor pada bagian di atas. SIGAP akan membaca daftar siswa dan kolom nilai dari file tersebut agar ekspor mengikuti format sekolah.</p>
     </section>
   {/if}
 </PageShell>

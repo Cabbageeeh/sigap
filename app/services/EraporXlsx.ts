@@ -192,7 +192,7 @@ const createZip = (entries: ZipEntry[]): Buffer => {
   return Buffer.concat([...localParts, centralDirectory, endRecord]);
 };
 
-export const createEraporXlsx = (html: string, numericCells: ReadonlySet<string>): Buffer => {
+export const createEraporXlsx = (html: string, numericCells: ReadonlySet<string>, sheetName = 'Nilai'): Buffer => {
   const rows = parseHtmlRows(html);
   if (rows.length === 0) throw new Error('Template e-Rapor tidak memiliki tabel untuk diekspor.');
   const worksheet = buildWorksheet(rows, numericCells);
@@ -218,7 +218,7 @@ export const createEraporXlsx = (html: string, numericCells: ReadonlySet<string>
       name: 'xl/workbook.xml',
       data: Buffer.from('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
         '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
-        '<sheets><sheet name="Nilai" sheetId="1" r:id="rId1"/></sheets></workbook>', 'utf8'),
+        `<sheets><sheet name="${escapeXml(sheetName.slice(0, 31))}" sheetId="1" r:id="rId1"/></sheets></workbook>`, 'utf8'),
     },
     {
       name: 'xl/_rels/workbook.xml.rels',

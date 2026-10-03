@@ -5,6 +5,7 @@
 
 export interface CsvStudentRow {
   line: number;
+  student_id: string | null;
   nis: string;
   name: string;
   class_name: string;
@@ -21,6 +22,7 @@ export interface CsvImportResult {
 }
 
 type CsvColumn =
+  | 'student_id'
   | 'nis'
   | 'name'
   | 'class_name'
@@ -31,6 +33,9 @@ type CsvColumn =
   | 'parent_address';
 
 const HEADER_ALIASES: Record<string, CsvColumn> = {
+  'id siswa sigap': 'student_id',
+  'id siswa sigap (jangan diubah)': 'student_id',
+  student_id: 'student_id',
   nis: 'nis',
   name: 'name',
   nama: 'name',
@@ -87,6 +92,7 @@ const splitCells = (line: string, delimiter: string): string[] => {
 };
 
 const positionalColumns = (forcedClassName?: string): Record<CsvColumn, number> => ({
+  student_id: -1,
   nis: 0,
   name: 1,
   class_name: forcedClassName ? -1 : 2,
@@ -97,7 +103,14 @@ const positionalColumns = (forcedClassName?: string): Record<CsvColumn, number> 
   parent_address: forcedClassName ? 6 : 7,
 });
 
-export const parseStudentCsv = (csv: string, classNames: Set<string>, existingNis: Map<string, string>, forcedClassName?: string, preserveBlankLines = false): CsvImportResult => {
+export const parseStudentCsv = (
+  csv: string,
+  classNames: Set<string>,
+  existingNis: Map<string, string>,
+  forcedClassName?: string,
+  preserveBlankLines = false,
+  existingStudentsById: Map<string, { nis: string; name: string; class_name: string }> = new Map(),
+): CsvImportResult => {
   const result: CsvImportResult = { rows: [], errors: [] };
   const sourceLines = csv.replace(/^\uFEFF/, '').split(/\r?\n/);
   const lines = preserveBlankLines ? sourceLines : sourceLines.filter(line => line.trim() !== '');
@@ -115,6 +128,7 @@ export const parseStudentCsv = (csv: string, classNames: Set<string>, existingNi
   });
 
   const hasHeader = mapped.size > 0;
+  const seenStudentIds = new Set<string>();
   if (hasHeader) {
     // With a header, columns it does not mention are absent — positional guesses would read the wrong cell.
     (Object.keys(columns) as CsvColumn[]).forEach(column => {
@@ -132,6 +146,7 @@ export const parseStudentCsv = (csv: string, classNames: Set<string>, existingNi
     if (preserveBlankLines && cells.every(cell => cell === '')) continue;
     const cellOf = (column: CsvColumn): string => cells[columns[column]] ?? '';
 
+    const studentId = cellOf('student_id');
     const nis = cellOf('nis');
     const name = cellOf('name');
     const className = forcedClassName ?? cellOf('class_name');
@@ -141,16 +156,25 @@ export const parseStudentCsv = (csv: string, classNames: Set<string>, existingNi
     const parentPhone = cellOf('parent_phone') || null;
     const parentAddress = cellOf('parent_address') || null;
 
-    if (!nis) {
+    const existingStudent = studentId ? existingStudentsById.get(studentId) : undefined;
+    if (studentId && !existingStudent) {
+      result.errors.push({ line: lineNumber, message: 'ID siswa SIGAP tidak ditemukan pada kelas tujuan; unduh ulang file kelas ini' });
+      continue;
+    }
+    if (studentId && seenStudentIds.has(studentId)) {
+      result.errors.push({ line: lineNumber, message: 'ID siswa SIGAP muncul lebih dari satu kali' });
+      continue;
+    }
+    if (!nis && !existingStudent) {
       result.errors.push({ line: lineNumber, message: 'NIS kosong' });
       continue;
     }
-    const owner = existingNis.get(nis);
-    if (owner) {
+    const owner = nis ? existingNis.get(nis) : undefined;
+    if (owner && (!existingStudent || existingStudent.nis !== nis)) {
       result.errors.push({ line: lineNumber, message: `NIS ${nis} sudah dipakai ${owner}` });
       continue;
     }
-    if (!name) {
+    if (!name && !existingStudent) {
       result.errors.push({ line: lineNumber, message: 'Nama kosong' });
       continue;
     }
@@ -162,9 +186,14 @@ export const parseStudentCsv = (csv: string, classNames: Set<string>, existingNi
       result.errors.push({ line: lineNumber, message: 'Nama orang tua minimal 2 karakter' });
       continue;
     }
+    if (parentName && !nis && !existingStudent?.nis) {
+      result.errors.push({ line: lineNumber, message: 'Isi NIS terlebih dahulu sebelum membuat akun orang tua' });
+      continue;
+    }
 
     result.rows.push({
       line: lineNumber,
+      student_id: studentId || null,
       nis,
       name,
       class_name: className,
@@ -174,7 +203,8 @@ export const parseStudentCsv = (csv: string, classNames: Set<string>, existingNi
       parent_phone: parentPhone,
       parent_address: parentAddress,
     });
-    existingNis.set(nis, `${name} — kelas ${className}`);
+    if (studentId) seenStudentIds.add(studentId);
+    if (nis) existingNis.set(nis, `${name || existingStudent?.name || 'siswa'} — kelas ${className}`);
   }
 
   return result;

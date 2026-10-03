@@ -19,7 +19,8 @@ Request handlers — functions that receive `NaraRequest` / `NaraResponse` and r
 | `classes.ts` | class CRUD |
 | `dashboard.ts` | dashboard page + stats |
 | `grades.ts` | grade CRUD + audit logging on every change |
-| `gradesErapor.ts` | e-Rapor template import, grade entry, and `.xls` export |
+| `gradesErapor.ts` | e-Rapor grade entry, column mapping, and `.xls`/`.xlsx` export |
+| `gradesEraporImport.ts` | e-Rapor file preview, admin-confirmed student creation, template import, and grade import |
 | `gradeAudit.ts` | grade audit history page + data (grades.audit permission) |
 | `announcements.ts` | announcement CRUD (admin) + latest list for dashboards |
 | `notifications.ts` | in-app notifications data + mark read |
@@ -38,7 +39,8 @@ Request handlers — functions that receive `NaraRequest` / `NaraResponse` and r
 | `schoolLocations.ts` | school location CRUD + activation |
 | `schoolCalendar.ts` | school calendar page, holiday CRUD, and effective-day settings |
 | `studentAttendance.ts` | student attendance list |
-| `students.ts` | student CRUD + CSV/Excel bulk import + parent account lifecycle from student detail |
+| `students.ts` | student CRUD + class-specific roster XLSX export and CSV/Excel upsert import + parent account lifecycle |
+| `studentRosterExports.ts` | admin download of class-specific student import workbooks |
 | `subjects.ts` | subject CRUD |
 | `teacherConfirmations.ts` | anti-fraud teacher confirmation + photo |
 | `teacherSchedule.ts` | teacher daily schedule |
@@ -99,7 +101,7 @@ See [`.agents/skills/auth-rbac.md`](../../.agents/skills/auth-rbac.md) and [`.ag
 ## Conventions
 
 - **No SQLite import** — go through `@queries` (L1, enforced)
-- **Allowed service imports**: `Authenticate`, `Logger`, `Storage`, `LoginThrottle`, `CacheStore`, `GradeCalculator`, `StudentCsvParser`, `StudentXlsxParser`, `EraporWorkbook` (L2, enforced)
+- **Allowed service imports**: `Authenticate`, `Logger`, `Storage`, `LoginThrottle`, `CacheStore`, `GradeCalculator`, `StudentCsvParser`, `StudentXlsxParser`, `EraporWorkbook`, `EraporXlsx` (L2, enforced)
 - **try/catch only in mutations** — queries bubble errors, handlers catch
 - **Bahasa Indonesia for user-facing messages** (ADR 0010) — `'Produk berhasil dibuat'`, not `'Product created'`. English for code, comments, logs, and internal error codes only.
 - **No `console.log`** — use `Logger.info/warn/error` (L9, enforced)

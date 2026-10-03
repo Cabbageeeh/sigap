@@ -31,7 +31,7 @@
     classContext = null,
     classScoped = false,
   }: {
-    permissions: { canCreate?: boolean; canEdit?: boolean; canDelete?: boolean };
+    permissions: { canCreate?: boolean; canEdit?: boolean; canDelete?: boolean; canExportClassRoster?: boolean };
     parentPermissions?: { canCreate: boolean; canEdit: boolean; canDelete: boolean };
     students?: StudentRow[];
     classes?: Class[];
@@ -64,7 +64,7 @@
   let isParentDeleteOpen = $state(false);
   let isImportOpen = $state(false);
   let importFile = $state<File | null>(null);
-  let importResult = $state<{ inserted: number; parents_created: number; errors: { line: number; message: string }[] } | null>(null);
+  let importResult = $state<{ inserted: number; updated: number; parents_created: number; parents_updated: number; errors: { line: number; message: string }[] } | null>(null);
   let importParentPassword = $state('');
   let isImporting = $state(false);
   let form: StudentForm = $state(createEmptyStudentForm());
@@ -98,19 +98,20 @@
       { showSuccessToast: false },
     );
     if (result.success && result.data) {
-      const imported = result.data as { inserted: number; parents_created: number; errors: { line: number; message: string }[] };
+      const imported = result.data as { inserted: number; updated: number; parents_created: number; parents_updated: number; errors: { line: number; message: string }[] };
       importResult = imported;
       importFile = null;
-      if (imported.inserted === 0) {
+      const processed = imported.inserted + imported.updated;
+      if (processed === 0) {
         Toast(imported.errors.length > 0
           ? 'Tidak ada siswa yang diimpor. Periksa baris yang dilewati.'
           : 'Tidak ada siswa baru untuk diimpor.', 'warning');
       } else if (imported.errors.length > 0) {
-        Toast(`${imported.inserted} siswa berhasil diimpor; ${imported.errors.length} baris dilewati. Periksa rincian pada jendela impor.`, 'warning');
+        Toast(`${imported.inserted} siswa ditambahkan dan ${imported.updated} siswa diperbarui; ${imported.errors.length} baris dilewati. Periksa rincian pada jendela impor.`, 'warning');
       } else {
-        Toast(`${imported.inserted} siswa berhasil diimpor.`, 'success');
+        Toast(`${imported.inserted} siswa ditambahkan dan ${imported.updated} siswa diperbarui.`, 'success');
       }
-      if (imported.inserted > 0) {
+      if (processed > 0) {
         searchValue = '';
         const url = new URL(window.location.href);
         url.searchParams.delete('page');
@@ -262,6 +263,9 @@
   >
     {#snippet actions()}
       {#if permissions.canCreate}
+        {#if classScoped && classContext && permissions.canExportClassRoster}
+          <Button href={`/classes/${classContext.id}/students/import-template`} download variant="outline"><Download class="w-4 h-4" /> Unduh data kelas (.xlsx)</Button>
+        {/if}
         <Button variant="outline" onclick={openImport}><Upload class="w-4 h-4 mr-1" /> Impor daftar siswa</Button>
         <Button onclick={openCreate} size="lg"><Plus class="w-4 h-4" /> Tambah Siswa</Button>
       {/if}
@@ -352,23 +356,24 @@
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submitImport(); }}>
     <div class="rounded-xl border border-border bg-secondary/20 p-4">
       <ol class="space-y-2 text-sm text-foreground">
-        <li><span class="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">1</span>Unduh template Excel lalu buka file tersebut.</li>
-        <li><span class="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">2</span>Isi data siswa mulai dari baris kedua; satu siswa untuk setiap baris.</li>
+        <li><span class="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">1</span>{classScoped ? 'Unduh data kelas dari halaman ini; file sudah memuat data siswa yang tersedia.' : 'Unduh template Excel lalu buka file tersebut.'}</li>
+        <li><span class="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">2</span>{classScoped ? 'Lengkapi kolom yang kosong atau tambahkan siswa baru pada baris berikutnya.' : 'Isi data siswa mulai dari baris kedua; satu siswa untuk setiap baris.'}</li>
         <li><span class="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">3</span>Simpan file Excel, lalu pilih file itu di bawah.</li>
       </ol>
       <div class="mt-3 flex flex-wrap gap-2">
-        <Button href="/public/templates/import-siswa.xlsx" download variant="outline">
-          <Download class="h-4 w-4" /> Unduh Excel (.xlsx)
-        </Button>
-        <Button href="/public/templates/import-siswa.csv" download variant="outline">
-          <Download class="h-4 w-4" /> Unduh CSV (.csv)
-        </Button>
+        {#if classScoped && classContext && permissions.canExportClassRoster}
+          <Button href={`/classes/${classContext.id}/students/import-template`} download variant="outline"><Download class="h-4 w-4" /> Unduh data kelas (.xlsx)</Button>
+        {:else}
+          <Button href="/public/templates/import-siswa.xlsx" download variant="outline"><Download class="h-4 w-4" /> Unduh Excel (.xlsx)</Button>
+          <Button href="/public/templates/import-siswa.csv" download variant="outline"><Download class="h-4 w-4" /> Unduh CSV (.csv)</Button>
+        {/if}
       </div>
+      {#if classScoped}<p class="mt-3 text-xs text-muted-foreground">Jangan ubah kolom ID Siswa SIGAP. Untuk siswa lama, NIS/nama atau kolom lain yang dibiarkan kosong tidak menghapus data tersimpan. Baris siswa baru wajib memiliki NIS dan nama.</p>{/if}
     </div>
     <div class="grid gap-3 sm:grid-cols-2">
       <div class="rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm">
         <p class="font-semibold text-foreground">Wajib diisi</p>
-        <p class="mt-1 text-muted-foreground">NIS dan nama siswa{classScoped ? '' : ', serta kelas'}.</p>
+        <p class="mt-1 text-muted-foreground">{classScoped ? 'NIS dan nama untuk setiap siswa baru.' : 'NIS, nama siswa, serta kelas.'}</p>
       </div>
       <div class="rounded-xl border border-border bg-card p-3 text-sm">
         <p class="font-semibold text-foreground">Opsional</p>
@@ -391,14 +396,15 @@
     <div class="rounded-xl border border-border p-3">
       <Label for="import-parent-password">Kata sandi awal akun orang tua</Label>
       <Input id="import-parent-password" type="password" bind:value={importParentPassword} placeholder="Minimal 8 karakter" />
-      <p class="mt-1 text-xs text-muted-foreground">Wajib diisi jika kolom Nama Orang Tua pada file dipakai. Nama login orang tua akan memakai NIS siswa.</p>
+      <p class="mt-1 text-xs text-muted-foreground">Wajib untuk akun orang tua baru. Perubahan data orang tua yang sudah memiliki akun tidak memerlukan kata sandi baru. Nama login memakai NIS siswa.</p>
     </div>
     {#if importResult}
       <div class="bg-card border border-border rounded-md px-4 py-3 text-sm">
-        <p class="font-medium text-foreground">{importResult.inserted} siswa berhasil diimpor.</p>
+        <p class="font-medium text-foreground">{importResult.inserted} siswa ditambahkan · {importResult.updated} siswa diperbarui.</p>
         {#if importResult.parents_created > 0}
           <p class="mt-1 text-xs text-muted-foreground">{importResult.parents_created} akun orang tua dibuat dengan login NIS anak.</p>
         {/if}
+        {#if importResult.parents_updated > 0}<p class="mt-1 text-xs text-muted-foreground">{importResult.parents_updated} data akun orang tua diperbarui.</p>{/if}
         {#if importResult.errors.length > 0}
           <ul class="mt-2 flex flex-col gap-1 text-xs text-destructive max-h-40 overflow-y-auto">
             {#each importResult.errors as err}

@@ -3,7 +3,7 @@ import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationErr
 import Logger from '@services/Logger';
 import { hashPassword } from '@services/Authenticate';
 import multer from 'multer';
-import { getStudentsPaginated, findStudentById, createStudent, updateStudent, deleteStudent, findStudentsByClass, findAllNisOwners, importStudents } from '@queries/students';
+import { getStudentsPaginated, findStudentById, createStudent, updateStudent, deleteStudent, findStudentsByClass, findClassRoster, findAllNisOwners, importStudents } from '@queries/students';
 import { findAllClasses, findClassById, findClassByName } from '@queries/classes';
 import {
   createParentAccountForStudent,
@@ -30,6 +30,7 @@ const renderStudentsPage = (req: NaraRequest, res: NaraResponse, classId?: strin
     canView: userId ? canView(userId) : false,
     canCreate: userId ? canManage(userId) : false,
     canEdit: userId ? canEditStudent(userId) : false,
+    canExportClassRoster: userId ? isAdmin(userId) : false,
     canDelete: userId ? !hasRole(userId, 'parent') && (isAdmin(userId) || hasPermission(userId, 'students.delete')) : false,
   };
   const parentPermissions = {
@@ -301,17 +302,45 @@ export const importStudentsFromCsv = (req: NaraRequest, res: NaraResponse) => {
 
     const classNames = new Set(findAllClasses().map(c => c.name));
     const existingNis = new Map(findAllNisOwners().map(row => [row.nis, `${row.name} — kelas ${row.class_name ?? 'belum ada kelas'}`]));
-    const parsed = parseStudentCsv(csv, classNames, existingNis, targetClass?.name, extension === 'xlsx');
+    const existingRoster = targetClass ? findClassRoster(targetClass.id) : [];
+    const existingStudentsById = new Map(existingRoster.map(student => [student.id, {
+      nis: student.nis,
+      name: student.name,
+      class_name: targetClass!.name,
+    }]));
+    const parentAccountsByStudentId = new Map(existingRoster.map(student => [student.id, student.parent_user_id]));
+    const parsed = parseStudentCsv(
+      csv,
+      classNames,
+      existingNis,
+      targetClass?.name,
+      extension === 'xlsx',
+      existingStudentsById,
+    );
+    const rowsToUpdate = parsed.rows.filter(row => row.student_id !== null);
     const parentRows = parsed.rows.filter(row => row.parent_name !== null);
+    const rowsNeedingParentPassword = parentRows.filter(row => !row.student_id || !parentAccountsByStudentId.get(row.student_id));
+    const parentRowsUpdatingAccount = parentRows.filter(row => !!row.student_id && !!parentAccountsByStudentId.get(row.student_id));
 
-    if (parentRows.length > 0 && !parentPassword) {
+    if (rowsToUpdate.length > 0 && !canEditStudent(req.user.id)) {
+      return jsonError(res, 'Anda tidak memiliki akses untuk memperbarui data siswa yang sudah terdaftar', 403, 'STUDENT_EDIT_REQUIRED');
+    }
+    if (rowsNeedingParentPassword.length > 0 && !canManageParent(req.user.id, 'create')) {
+      return jsonError(res, 'Anda tidak memiliki akses untuk membuat akun orang tua', 403, 'PARENT_CREATE_REQUIRED');
+    }
+    if (parentRowsUpdatingAccount.length > 0 && !canManageParent(req.user.id, 'edit')) {
+      return jsonError(res, 'Anda tidak memiliki akses untuk memperbarui akun orang tua', 403, 'PARENT_EDIT_REQUIRED');
+    }
+
+    if (rowsNeedingParentPassword.length > 0 && !parentPassword) {
       return jsonValidationError(res, 'Data import tidak valid', {
-        parent_password: ['Isi kata sandi awal minimal 8 karakter karena file memuat data orang tua'],
+        parent_password: ['Isi kata sandi awal minimal 8 karakter untuk akun orang tua baru'],
       });
     }
 
-    const created = parsed.rows.length > 0
-      ? importStudents(parsed.rows.map(row => ({
+    const newRows = parsed.rows.filter(row => !row.student_id);
+    const created = newRows.length > 0
+      ? importStudents(newRows.map(row => ({
         nis: row.nis,
         name: row.name,
         class_id: targetClass?.id ?? findClassByName(row.class_name)!.id,
@@ -320,49 +349,105 @@ export const importStudentsFromCsv = (req: NaraRequest, res: NaraResponse) => {
       })))
       : [];
 
-    let parentsCreated = 0;
-    if (parentRows.length > 0) {
-      const studentIdByNis = new Map(created.map(student => [student.nis, student.id]));
-      // One initial password shared by every account in this import, so bcrypt runs once instead of per row.
-      const passwordHash = hashPassword(parentPassword);
-
-      for (const row of parsed.rows) {
-        const parentName = row.parent_name;
-        const studentId = studentIdByNis.get(row.nis);
-        if (!parentName || !studentId) continue;
-
+    const studentIdByRow = new Map<number, string>();
+    const studentById = new Map<string, { id: string; nis: string; parent_user_id: string | null }>();
+    for (const student of existingRoster) {
+      studentById.set(student.id, { id: student.id, nis: student.nis, parent_user_id: student.parent_user_id });
+    }
+    for (const student of created) studentById.set(student.id, { ...student, parent_user_id: null });
+    let updated = 0;
+    for (const row of parsed.rows) {
+      if (row.student_id) {
+        const current = existingRoster.find(student => student.id === row.student_id);
+        if (!current) continue;
         try {
-          createParentAccountForStudent({
-            student_id: studentId,
-            username: row.nis,
-            name: parentName,
-            password_hash: passwordHash,
-            phone: row.parent_phone,
-            address: row.parent_address,
+          const updatedStudent = updateStudent(current.id, {
+            nis: row.nis || current.nis,
+            name: row.name || current.name,
+            phone: row.phone ?? current.phone,
+            address: row.address ?? current.address,
           });
-          parentsCreated++;
+          if (!updatedStudent) {
+            parsed.errors.push({ line: row.line, message: 'Siswa tidak ditemukan saat memperbarui data' });
+            continue;
+          }
+          studentById.set(updatedStudent.id, {
+            id: updatedStudent.id,
+            nis: updatedStudent.nis,
+            parent_user_id: updatedStudent.parent_user_id,
+          });
+          studentIdByRow.set(row.line, updatedStudent.id);
+          updated += 1;
         } catch (error: unknown) {
-          Logger.warn('Failed to create parent account during student import', { nis: row.nis });
           parsed.errors.push({
             line: row.line,
             message: isUniqueConstraintError(error)
-              ? `Akun orang tua dilewati: username ${row.nis} sudah dipakai akun lain`
-              : `Akun orang tua gagal dibuat untuk NIS ${row.nis}`,
+              ? 'NIS baru sudah digunakan siswa atau akun lain'
+              : 'Data siswa gagal diperbarui',
+          });
+        }
+      } else {
+        const student = created.find(item => item.nis === row.nis);
+        if (student) studentIdByRow.set(row.line, student.id);
+      }
+    }
+
+    let parentsCreated = 0;
+    let parentsUpdated = 0;
+    if (parentRows.length > 0) {
+      const passwordHash = rowsNeedingParentPassword.length > 0 ? hashPassword(parentPassword) : null;
+
+      for (const row of parsed.rows) {
+        const parentName = row.parent_name;
+        const studentId = studentIdByRow.get(row.line);
+        if (!parentName || !studentId) continue;
+        const student = studentById.get(studentId);
+        if (!student) continue;
+
+        try {
+          if (student.parent_user_id) {
+            const parent = updateParentAccountForStudent(studentId, {
+              name: parentName,
+              ...(row.parent_phone ? { phone: row.parent_phone } : {}),
+              ...(row.parent_address ? { address: row.parent_address } : {}),
+            });
+            if (parent) parentsUpdated++;
+          } else if (passwordHash) {
+            createParentAccountForStudent({
+              student_id: studentId,
+              username: student.nis,
+              name: parentName,
+              password_hash: passwordHash,
+              phone: row.parent_phone,
+              address: row.parent_address,
+            });
+            parentsCreated++;
+          }
+        } catch (error: unknown) {
+          Logger.warn('Failed to save parent account during student import', { nis: student.nis });
+          parsed.errors.push({
+            line: row.line,
+            message: isUniqueConstraintError(error)
+              ? `Akun orang tua dilewati: username ${student.nis} sudah dipakai akun lain`
+              : `Data akun orang tua gagal disimpan untuk NIS ${student.nis}`,
           });
         }
       }
       parsed.errors.sort((a, b) => a.line - b.line);
     }
 
-    const importMessage = created.length === 0
+    const processed = created.length + updated;
+    const importMessage = processed === 0
       ? (parsed.errors.length > 0 ? 'Tidak ada siswa yang diimpor' : 'Tidak ada siswa baru untuk diimpor')
       : parsed.errors.length > 0
-        ? `${created.length} siswa berhasil diimpor, sebagian baris dilewati`
-        : `${created.length} siswa berhasil diimpor`;
+        ? `${created.length} siswa ditambahkan dan ${updated} siswa diperbarui; sebagian baris dilewati`
+        : `${created.length} siswa ditambahkan dan ${updated} siswa diperbarui`;
 
     return jsonSuccess(res, importMessage, {
       inserted: created.length,
+      updated,
       parents_created: parentsCreated,
+      parents_updated: parentsUpdated,
       errors: parsed.errors,
     });
   } catch (error: unknown) {
