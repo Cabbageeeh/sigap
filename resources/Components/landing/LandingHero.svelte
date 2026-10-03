@@ -39,7 +39,7 @@
       </h1>
 
       <p class="mx-auto mt-7 max-w-2xl text-balance text-base leading-7 text-[#716b61] sm:text-lg sm:leading-8 dark:text-[#a5a8a6]">
-        SIGAP menyatukan absensi guru, jurnal mengajar, jadwal, nilai, rapor, dan akses orang tua—tanpa memaksa sekolah bekerja dari banyak sistem yang terpisah.
+        SIGAP menyatukan absensi guru, jurnal mengajar, jadwal, nilai, rapor, dan akses orang tua. Sekolah juga dapat mengimpor template e-Rapor dan menyiapkan ekspor nilai dari data SIGAP.
       </p>
 
       <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">

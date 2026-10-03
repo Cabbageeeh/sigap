@@ -48,8 +48,13 @@
 
       <article class="feature-card lg:col-span-4">
         <p class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#b9472f] dark:text-[#ef8b73]">Akademik</p>
-        <h3 class="mt-3 text-xl font-bold tracking-[-0.025em] text-[#2b2f31] dark:text-[#eee7da]">Nilai, audit, dan rapor.</h3>
-        <p class="mt-3 text-sm leading-6 text-[#777b7a] dark:text-[#9da09e]">Kelola komponen nilai, lihat perubahan, lalu susun informasi akademik dari sumber data yang sama.</p>
+        <h3 class="mt-3 text-xl font-bold tracking-[-0.025em] text-[#2b2f31] dark:text-[#eee7da]">Nilai dan e-Rapor, dari satu alur.</h3>
+        <p class="mt-3 text-sm leading-6 text-[#777b7a] dark:text-[#9da09e]">Impor template e-Rapor sekolah, petakan kolom ke jenis nilai SIGAP, lalu ekspor kembali dalam format .xls atau .xlsx. Nilai terpetakan digunakan otomatis; kolom lain dapat dilengkapi di tabel e-Rapor.</p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          {#each ['Template sekolah', 'Pemetaan nilai', '.xls · .xlsx'] as item}
+            <span class="rounded-full border border-[#e3e2dd] bg-white px-3 py-1.5 text-[10px] font-bold text-[#716a60] dark:border-white/[0.08] dark:bg-white/[0.035] dark:text-[#b5ad9e]">{item}</span>
+          {/each}
+        </div>
       </article>
 
       <article class="feature-card lg:col-span-4">

@@ -53,16 +53,16 @@ ID anggota rombel berasal dari file e-Rapor. Saat siswa berhasil dicocokkan, SIG
 Admin mengatur hak akses guru dan default sekolah. Guru dapat mengubah pemetaan khusus untuk kelas dan mapel yang diampu jika admin mengizinkan.
 
 1. Admin buka **Penilaian > Pengaturan e-Rapor** dan atur **Akses pemetaan e-Rapor untuk guru**. Akses ini aktif secara default. Jika dimatikan, hanya admin yang dapat mengubah pemetaan.
-2. Buka template yang ingin dipetakan. Di bagian **Sumber setiap kolom e-Rapor**, tentukan bagaimana setiap kolom diisi.
+2. Pilih kelas, mapel, dan semester dengan template tersimpan. Panel ringkas **Pemetaan sumber nilai** menunjukkan jumlah kolom otomatis dan kolom yang diisi langsung. Klik **Atur pemetaan** untuk membuka pengaturan **Sumber setiap kolom e-Rapor**.
 
 | Pilihan sumber | Perilaku |
 |---|---|
 | Jenis nilai SIGAP, misalnya Sumatif 1 | Nilai dari jenis tersebut ditampilkan di kolom e-Rapor dan ikut diekspor. Guru mengisi nilainya sekali di halaman Nilai Siswa. |
 | **Isi langsung di halaman e-Rapor** | Kolom tetap diisi oleh guru pada tabel e-Rapor. Nilai ini tersimpan sebagai nilai e-Rapor. |
 
-3. Pilih komponen yang sesuai untuk setiap kolom, misalnya memetakan **Sumatif 1** ke **Sumatif 1** dan **Sumatif 2** ke **Sumatif 2**.
+3. Pilih komponen yang sesuai untuk setiap kolom, misalnya memetakan **Sumatif 1** ke **Sumatif 1** dan **Sumatif 2** ke **Sumatif 2**. Pilih **Isi langsung di halaman e-Rapor** untuk kolom yang ingin diisi pada tabel e-Rapor.
 4. Gunakan komponen yang berbeda jika Semester I dan II membutuhkan nilai yang berbeda.
-5. Klik **Simpan pemetaan**. Guru hanya menyimpan pemetaan lokal pada kelas/mapel/semester yang dibuka. Admin dapat mencentang **Terapkan juga sebagai default**, memilih **Semua mapel** atau **Mapel ini**, lalu menyimpan sekali.
+5. Klik **Simpan pemetaan**. Guru hanya menyimpan pemetaan lokal pada kelas/mapel/semester yang dibuka. Admin dapat mencentang **Terapkan juga sebagai default**, memilih **Semua mapel** atau **Mapel ini**, lalu menyimpan sekali. Panel pengaturan kembali tertutup setelah pilihan kelas, mapel, atau semester berubah.
 
 Default berlaku pada template lain untuk tahun ajaran dan semester yang sama jika kolomnya belum memiliki pemetaan khusus. Default khusus mapel mengalahkan default semua mapel; pemetaan khusus template tetap menjadi prioritas tertinggi. Perubahan oleh guru dan admin tercatat pada riwayat pemetaan bersama nama pelaku dan waktu.
 
@@ -97,7 +97,7 @@ Jika pemetaan diganti, nilai lama tetap tersimpan pada jenis sebelumnya. Periksa
 | Impor meminta NIS siswa baru | Admin isi NIS asli dan unik pada pratinjau. Jangan memakai ID internal SIGAP atau ID anggota rombel sebagai NIS. |
 | Ada siswa SIGAP yang tidak ada pada file | Perbarui atau periksa roster kelas sebelum mengunggah template. |
 | Tombol ekspor belum tampil | Pastikan template tersimpan dan semua siswa pada roster sudah cocok dengan ID anggota rombel di template. |
-| Kolom e-Rapor kosong | Admin periksa **Sumber setiap kolom e-Rapor**. Kolom dengan sumber langsung perlu diisi guru pada halaman e-Rapor. |
+| Kolom e-Rapor kosong | Klik **Atur pemetaan** di panel **Pemetaan sumber nilai**, lalu periksa **Sumber setiap kolom e-Rapor**. Kolom dengan sumber langsung perlu diisi guru pada halaman e-Rapor. |
 
 ## 6. Publikasi untuk orang tua
 

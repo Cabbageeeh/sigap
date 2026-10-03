@@ -11,7 +11,7 @@
 ## Stats
 
 - Files indexed: 326
-- Total lines: 37319
+- Total lines: 37329
 - Total exports: 998
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
@@ -246,14 +246,14 @@
 ### resources/Components/landing/
 
 - `LandingCta.svelte` (33L)
-- `LandingFeatures.svelte` (109L)
+- `LandingFeatures.svelte` (114L)
 - `LandingFooter.svelte` (21L)
 - `LandingHero.svelte` (195L)
 - `LandingModules.svelte` (20L)
 - `LandingNav.svelte` (110L)
 - `LandingRoles.svelte` (50L)
 - `LandingTrust.svelte` (37L)
-- `LandingWorkflow.svelte` (49L)
+- `LandingWorkflow.svelte` (54L)
 
 ### resources/Pages/
 

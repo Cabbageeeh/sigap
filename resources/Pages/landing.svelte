@@ -14,7 +14,7 @@
   <title>SIGAP — Sistem Informasi Guru, Absensi, dan Prestasi</title>
   <meta
     name="description"
-    content="SIGAP membantu sekolah mengelola absensi guru, jurnal, nilai, jadwal, rapor, dan portal orang tua dalam satu sistem yang terhubung."
+    content="SIGAP membantu sekolah mengelola absensi guru, jurnal, nilai, jadwal, rapor, dan portal orang tua. Impor template e-Rapor dan siapkan ekspor nilai sesuai format sekolah."
   />
 </svelte:head>
 

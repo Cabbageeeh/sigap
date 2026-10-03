@@ -7,18 +7,23 @@
     },
     {
       number: '02',
-      title: 'Guru bekerja dari alur yang sama',
-      description: 'Kehadiran, konfirmasi lokasi, jurnal mengajar, dan input nilai mengikuti jadwal yang sudah tersusun.',
+      title: 'Siapkan template e-Rapor sekolah',
+      description: 'Impor template, cocokkan roster kelas, lalu petakan kolom e-Rapor ke jenis nilai SIGAP yang sesuai.',
     },
     {
       number: '03',
-      title: 'Data langsung terkonsolidasi',
-      description: 'Admin dan kepala sekolah melihat progres, anomali, dan rekap tanpa menggabungkan banyak file terpisah.',
+      title: 'Guru mengisi nilai di SIGAP',
+      description: 'Isi nilai rutin sekali. Nilai yang dipetakan akan mengisi kolom e-Rapor terkait; kolom lain dapat dilengkapi langsung pada tabel e-Rapor SIGAP.',
     },
     {
       number: '04',
+      title: 'Unduh file untuk e-Rapor',
+      description: 'Ekspor .xls atau .xlsx mengikuti template kelas, mata pelajaran, dan semester yang dipilih untuk diperiksa sebelum diunggah ke e-Rapor.',
+    },
+    {
+      number: '05',
       title: 'Orang tua mendapat informasi relevan',
-      description: 'Data akademik dan kehadiran anak tersedia dari sumber yang sama, dengan akses sesuai peran.',
+      description: 'Data akademik dan kehadiran anak tersedia dari sumber yang sama setelah dipublikasikan sekolah, dengan akses sesuai peran.',
     },
   ];
 </script>

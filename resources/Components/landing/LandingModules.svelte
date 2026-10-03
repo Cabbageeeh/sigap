@@ -2,7 +2,7 @@
   const modules = [
     'Absensi guru',
     'Jurnal mengajar',
-    'Nilai & rapor',
+    'Nilai & e-Rapor',
     'Jadwal pelajaran',
     'Portal orang tua',
     'QR & geolokasi',

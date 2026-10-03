@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Pemetaan sumber nilai e-Rapor</title><desc id="desc">Tampilan ilustrasi panel ringkas dan formulir untuk memetakan kolom template e-Rapor ke komponen SIGAP, termasuk pilihan default oleh admin.</desc>
+  <defs><style>.h{font:700 19px Arial,sans-serif;fill:#25292a}.t{font:16px Arial,sans-serif;fill:#625f59}.small{font:14px Arial,sans-serif;fill:#625f59}.white{font:700 15px Arial,sans-serif;fill:#fff}.pill{font:15px Arial,sans-serif;fill:#25292a}</style></defs>
+  <rect width="1200" height="630" rx="26" fill="#f4f0e9"/>
+  <rect x="34" y="34" width="1132" height="114" rx="18" fill="#fff" stroke="#d6d0c7"/>
+  <text class="h" x="64" y="76">Pemetaan sumber nilai</text><text class="t" x="64" y="108">2 kolom otomatis · 3 diisi langsung di e-Rapor</text>
+  <rect x="889" y="67" width="238" height="50" rx="12" fill="#fff" stroke="#aaa39a"/><text class="h" x="1008" y="98" text-anchor="middle">⚙  Atur pemetaan  ﹀</text>
+  <path d="M600 156v38" stroke="#b94e34" stroke-width="4"/><path d="m590 183 10 12 10-12" fill="none" stroke="#b94e34" stroke-width="4"/>
+  <rect x="34" y="208" width="1132" height="388" rx="18" fill="#fff" stroke="#d6d0c7"/>
+  <text class="h" x="64" y="250">Sumber setiap kolom e-Rapor</text><text class="small" x="64" y="277">Nilai yang dipetakan cukup diisi sekali pada nilai rutin SIGAP.</text>
+  <g stroke="#e1ddd6"><path d="M64 302H1136M64 358H1136M64 414H1136M64 470H1136"/></g>
+  <g class="t"><text x="68" y="337">Sumatif 1</text><text x="68" y="393">Sumatif 2</text><text x="68" y="449">Sumatif 3</text><text x="68" y="505">Non Tes</text><text x="68" y="561">Tes</text></g>
+  <g><rect x="610" y="311" width="490" height="38" rx="10" fill="#f7f5f1" stroke="#d6d0c7"/><text class="pill" x="630" y="336">UAS</text><rect x="610" y="367" width="490" height="38" rx="10" fill="#f7f5f1" stroke="#d6d0c7"/><text class="pill" x="630" y="392">UTS</text><rect x="610" y="423" width="490" height="38" rx="10" fill="#f7f5f1" stroke="#d6d0c7"/><text class="pill" x="630" y="448">Isi langsung di halaman e-Rapor</text><rect x="610" y="479" width="490" height="38" rx="10" fill="#f7f5f1" stroke="#d6d0c7"/><text class="pill" x="630" y="504">Isi langsung di halaman e-Rapor</text><rect x="610" y="535" width="490" height="38" rx="10" fill="#f7f5f1" stroke="#d6d0c7"/><text class="pill" x="630" y="560">Isi langsung di halaman e-Rapor</text></g>
+  <rect x="64" y="527" width="460" height="40" rx="10" fill="#f8f2ed"/><text class="small" x="82" y="552">Admin dapat mencentang “Terapkan juga sebagai default”.</text>
+</svg>
