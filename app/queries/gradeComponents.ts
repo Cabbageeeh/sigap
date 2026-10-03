@@ -46,6 +46,10 @@ export const deleteGradeComponent = (academicYearId: string, type: string): numb
        )`,
       [Date.now(), type, academicYearId]
     );
+    SQLite.run(
+      'UPDATE erapor_default_column_mappings SET source_component_type = NULL, updated_at = ? WHERE source_component_type = ? AND academic_year_id = ?',
+      [Date.now(), type, academicYearId]
+    );
     const removed = SQLite.run(
       `DELETE FROM grades WHERE type = ? AND class_id IN (SELECT id FROM classes WHERE academic_year_id = ?)`,
       [type, academicYearId]

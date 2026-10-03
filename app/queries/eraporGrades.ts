@@ -21,6 +21,23 @@ export interface EraporImportSetup {
   grades: Array<{ external_member_id: string; subject_id: string; class_id: string; type: string; score: number }>;
 }
 
+export interface EraporDefaultColumnMapping {
+  id: string;
+  academic_year_id: string;
+  subject_id: string | null;
+  semester: 1 | 2;
+  column_key: string;
+  source_component_type: string | null;
+  created_by: string;
+  created_at: number;
+  updated_at: number;
+}
+
+export interface EraporDefaultColumnMappingInput {
+  column_key: string;
+  source_component_type: string | null;
+}
+
 export const findEraporGradeTemplate = (classId: string, subjectId: string, semester: number): EraporGradeTemplate | undefined =>
   SQLite.one<EraporGradeTemplate>`
     SELECT * FROM erapor_grade_templates
@@ -35,6 +52,44 @@ export const findEraporGradeTemplatesByClass = (classId: string): EraporGradeTem
 
 export const findEraporColumnMappings = (templateId: string): EraporColumnMapping[] =>
   SQLite.many<EraporColumnMapping>`SELECT * FROM erapor_column_mappings WHERE template_id = ${templateId}`;
+
+export const findEraporDefaultColumnMappingsByYear = (academicYearId: string): EraporDefaultColumnMapping[] =>
+  SQLite.many<EraporDefaultColumnMapping>`
+    SELECT * FROM erapor_default_column_mappings
+    WHERE academic_year_id = ${academicYearId}
+    ORDER BY semester, subject_id, column_key
+  `;
+
+export const saveEraporDefaultColumnMappings = (
+  academicYearId: string,
+  subjectId: string | null,
+  semester: 1 | 2,
+  mappings: EraporDefaultColumnMappingInput[],
+  userId: string,
+): void => SQLite.transaction(() => {
+  const now = Date.now();
+  for (const mapping of mappings) {
+    const existing = SQLite.one<{ id: string }>`
+      SELECT id FROM erapor_default_column_mappings
+      WHERE academic_year_id = ${academicYearId} AND subject_id IS ${subjectId}
+        AND semester = ${semester} AND column_key = ${mapping.column_key}
+    `;
+    if (existing) {
+      SQLite.exec`
+        UPDATE erapor_default_column_mappings
+        SET source_component_type = ${mapping.source_component_type}, created_by = ${userId}, updated_at = ${now}
+        WHERE id = ${existing.id}
+      `;
+      continue;
+    }
+    SQLite.exec`
+      INSERT INTO erapor_default_column_mappings
+        (id, academic_year_id, subject_id, semester, column_key, source_component_type, created_by, created_at, updated_at)
+      VALUES
+        (${randomUUID()}, ${academicYearId}, ${subjectId}, ${semester}, ${mapping.column_key}, ${mapping.source_component_type}, ${userId}, ${now}, ${now})
+    `;
+  }
+});
 
 export const findEraporColumnMappingsByClassSubject = (classId: string, subjectId: string): Array<{ semester: number; source_component_type: string | null }> =>
   SQLite.many<{ semester: number; source_component_type: string | null }>`

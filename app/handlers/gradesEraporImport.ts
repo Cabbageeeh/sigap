@@ -2,7 +2,7 @@ import type { NaraMiddleware, NaraRequest, NaraResponse } from '@core';
 import { jsonError, jsonSuccess, jsonValidationError } from '@core';
 import Logger from '@services/Logger';
 import multer from 'multer';
-import { findEraporColumnMappings, findEraporGradeTemplate, findEraporStudentMappings, saveEraporImportSetup } from '@queries/eraporGrades';
+import { findEraporColumnMappings, findEraporDefaultColumnMappingsByYear, findEraporGradeTemplate, findEraporStudentMappings, saveEraporImportSetup } from '@queries/eraporGrades';
 import { findClassById } from '@queries/classes';
 import { findSubjectById } from '@queries/subjects';
 import { findAllNisOwners, findStudentsByClass } from '@queries/students';
@@ -206,12 +206,28 @@ export const importEraporGrades = (req: NaraRequest, res: NaraResponse) => {
 
   try {
     const existingTemplate = findEraporGradeTemplate(classId, subjectId, semester);
-    const configuredByExternalId = new Map(existingTemplate
-      ? findEraporColumnMappings(existingTemplate.id).map(item => [item.external_id, item.source_component_type])
-      : []);
+    const existingColumnMappings = existingTemplate ? findEraporColumnMappings(existingTemplate.id) : [];
+    const configuredByExternalId = new Map(existingColumnMappings.map(item => [item.external_id, item.source_component_type]));
+    const defaultByColumnKey = new Map<string, string | null>();
+    const defaultMappings = findEraporDefaultColumnMappingsByYear(targetClass.academic_year_id)
+      .filter(item => item.semester === semester && (item.subject_id === null || item.subject_id === subjectId));
+    for (const item of defaultMappings.filter(mapping => mapping.subject_id === null)) defaultByColumnKey.set(item.column_key, item.source_component_type);
+    for (const item of defaultMappings.filter(mapping => mapping.subject_id === subjectId)) defaultByColumnKey.set(item.column_key, item.source_component_type);
+    const effectiveMappings = workbook.columns.map(column => {
+      const columnKey = normalizeEraporText(column.label);
+      const hasTemplateMapping = configuredByExternalId.has(column.externalId);
+      const hasDefaultMapping = defaultByColumnKey.has(columnKey);
+      return {
+        external_id: column.externalId,
+        source_component_type: hasTemplateMapping
+          ? configuredByExternalId.get(column.externalId) ?? null
+          : hasDefaultMapping ? defaultByColumnKey.get(columnKey) ?? null : null,
+      };
+    });
+    const effectiveByExternalId = new Map(effectiveMappings.map(item => [item.external_id, item]));
     const grades = workbook.rows.flatMap(row => workbook.columns.flatMap((column, index) => {
       const score = row.scores[index];
-      const type = configuredByExternalId.get(column.externalId) || column.gradeType;
+      const type = effectiveByExternalId.get(column.externalId)?.source_component_type || column.gradeType;
       return score === null ? [] : [{ external_member_id: row.externalMemberId, subject_id: subjectId, class_id: classId, type, score }];
     }));
     const result = saveEraporImportSetup({

@@ -1,7 +1,7 @@
 import type { NaraRequest, NaraResponse } from '@core';
 import { jsonError, jsonSuccess, jsonValidationError, queryString } from '@core';
 import Logger from '@services/Logger';
-import { findEraporColumnMappings, findEraporColumnMappingsByClassSubject, findEraporGradeTemplate, findEraporStudentMappings, saveEraporColumnMappings as persistEraporColumnMappings, saveEraporGradeChanges } from '@queries/eraporGrades';
+import { findEraporColumnMappings, findEraporColumnMappingsByClassSubject, findEraporDefaultColumnMappingsByYear, findEraporGradeTemplate, findEraporStudentMappings, saveEraporColumnMappings as persistEraporColumnMappings, saveEraporDefaultColumnMappings as persistEraporDefaultColumnMappings, saveEraporGradeChanges } from '@queries/eraporGrades';
 import { findAllClasses, findClassById, findClassesByTeacherUser } from '@queries/classes';
 import { findAllSubjects, findSubjectById } from '@queries/subjects';
 import { findStudentsByClass } from '@queries/students';
@@ -14,7 +14,7 @@ import { findTeacherSchedulesByDay } from '@queries/schedules';
 import { findTodayConfirmationByTeacher } from '@queries/teacherConfirmations';
 import { isTeacherPresenceEnabled } from '@queries/appSettings';
 import { isTeachingDay } from '@queries/schoolCalendar';
-import { EraporColumnMappingsSchema, EraporGradeSaveSchema, EraporTemplateSchema, zodToErrors } from '@validators';
+import { EraporColumnMappingsSchema, EraporDefaultColumnMappingsSchema, EraporGradeSaveSchema, EraporTemplateSchema, zodToErrors } from '@validators';
 import { normalizeEraporText, parseEraporWorkbook, renderEraporWorkbook, type EraporAssessmentColumn } from '@services/EraporWorkbook';
 import { createEraporXlsx, eraporExcelColumnName } from '@services/EraporXlsx';
 
@@ -56,6 +56,28 @@ const auditGradeChanges = (changes: ReturnType<typeof saveEraporGradeChanges>, u
   }
 };
 
+const resolveEraporColumnSources = (
+  templateId: string,
+  academicYearId: string,
+  subjectId: string,
+  semester: 1 | 2,
+  columns: EraporAssessmentColumn[],
+): Map<string, string | null> => {
+  const templateSources = new Map(findEraporColumnMappings(templateId)
+    .map(item => [item.external_id, item.source_component_type]));
+  const defaultSources = new Map<string, string | null>();
+  const defaults = findEraporDefaultColumnMappingsByYear(academicYearId)
+    .filter(item => item.semester === semester && (item.subject_id === null || item.subject_id === subjectId));
+  for (const item of defaults.filter(mapping => mapping.subject_id === null)) defaultSources.set(item.column_key, item.source_component_type);
+  for (const item of defaults.filter(mapping => mapping.subject_id === subjectId)) defaultSources.set(item.column_key, item.source_component_type);
+  return new Map(columns.map(column => [
+    column.externalId,
+    templateSources.has(column.externalId)
+      ? templateSources.get(column.externalId) ?? null
+      : defaultSources.get(normalizeEraporText(column.label)) ?? null,
+  ]));
+};
+
 export const gradesEraporPage = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return res.redirect('/login');
   const userId = req.user.id;
@@ -88,9 +110,13 @@ export const gradesEraporPage = (req: NaraRequest, res: NaraResponse) => {
     if (template) {
       try {
         columns = parseEraporWorkbook(template.template_html, semester).columns;
-        sourceMappingByExternalId = new Map(findEraporColumnMappings(template.id)
-          .filter(item => !!item.source_component_type)
-          .map(item => [item.external_id, item.source_component_type!]));
+        sourceMappingByExternalId = new Map([...resolveEraporColumnSources(
+          template.id,
+          selectedClass.academic_year_id,
+          subjectId,
+          semester,
+          columns,
+        )].filter((entry): entry is [string, string] => !!entry[1]));
         sourceTypeByExternalId = new Map(columns.map(column => [
           column.externalId,
           sourceMappingByExternalId.get(column.externalId) ?? column.gradeType,
@@ -109,7 +135,11 @@ export const gradesEraporPage = (req: NaraRequest, res: NaraResponse) => {
           scores: columns.map(column => ({
             external_id: column.externalId,
             label: column.label,
-            score: grades.find(grade => grade.student_id === student.id && grade.type === sourceTypeByExternalId.get(column.externalId))?.score ?? null,
+            score: grades.find(grade => grade.student_id === student.id && grade.type === sourceTypeByExternalId.get(column.externalId))?.score
+              ?? (sourceTypeByExternalId.get(column.externalId) !== column.gradeType
+                ? grades.find(grade => grade.student_id === student.id && grade.type === column.gradeType)?.score
+                : null)
+              ?? null,
           })),
         }));
       } catch (error: unknown) {
@@ -197,6 +227,96 @@ export const saveEraporColumnMappings = (req: NaraRequest, res: NaraResponse) =>
   }
 };
 
+export const saveEraporDefaultColumnMappings = (req: NaraRequest, res: NaraResponse) => {
+  if (!req.user) return jsonError(res, 'Sesi login diperlukan', 401);
+  if (!isAdmin(req.user.id)) return jsonError(res, 'Hanya admin yang dapat mengatur pemetaan default e-Rapor', 403, 'ADMIN_REQUIRED');
+  const parsed = EraporDefaultColumnMappingsSchema.safeParse(req.body);
+  if (!parsed.success) return jsonValidationError(res, 'Pemetaan default e-Rapor tidak valid', zodToErrors(parsed.error));
+  const { class_id: classId, subject_id: subjectId, semester, scope, mappings } = parsed.data;
+  const targetClass = findClassById(classId);
+  const template = findEraporGradeTemplate(classId, subjectId, semester);
+  if (!targetClass || !template) return jsonError(res, 'Unggah template e-Rapor untuk pilihan ini terlebih dahulu', 404, 'ERAPOR_TEMPLATE_NOT_FOUND');
+
+  let columns: EraporAssessmentColumn[];
+  try {
+    columns = parseEraporWorkbook(template.template_html, semester).columns;
+  } catch (error: unknown) {
+    Logger.error('Stored e-Rapor template could not be parsed during default mapping save', error as Error);
+    return jsonError(res, 'Template e-Rapor tersimpan tidak valid. Unggah ulang file dari e-Rapor.', 409, 'INVALID_ERAPOR_TEMPLATE');
+  }
+  if (mappings.length !== columns.length || new Set(mappings.map(item => item.external_id)).size !== columns.length) {
+    return jsonError(res, 'Pemetaan default harus mencakup setiap kolom template tepat satu kali', 422, 'ERAPOR_COLUMN_MISMATCH');
+  }
+  const columnsById = new Map(columns.map(column => [column.externalId, column]));
+  const components = new Set(findGradeComponentsByYear(targetClass.academic_year_id).map(component => component.type));
+  if (mappings.some(item => !columnsById.has(item.external_id)
+    || (item.source_component_type !== null && !components.has(item.source_component_type)))) {
+    return jsonError(res, 'Pilih kolom template dan jenis nilai SIGAP yang tersedia', 422, 'INVALID_ERAPOR_MAPPING');
+  }
+
+  const subjectScopeId = scope === 'subject' ? subjectId : null;
+  const columnKeys = new Set(columns.map(column => normalizeEraporText(column.label)));
+  if (columnKeys.size !== columns.length) {
+    return jsonError(res, 'Default tidak dapat disimpan karena ada nama kolom template yang berulang', 422, 'DUPLICATE_ERAPOR_COLUMN_LABEL');
+  }
+  const existingMappings = findEraporDefaultColumnMappingsByYear(targetClass.academic_year_id);
+  const nextMappings = [
+    ...existingMappings.filter(item => !(item.semester === semester
+      && item.subject_id === subjectScopeId && columnKeys.has(item.column_key))),
+    ...mappings.map(item => ({
+      semester: semester as 1 | 2,
+      subject_id: subjectScopeId,
+      column_key: normalizeEraporText(columnsById.get(item.external_id)!.label),
+      source_component_type: item.source_component_type,
+    })),
+  ];
+  const subjectIds = new Set([
+    subjectId,
+    ...findAllSubjects().map(subject => subject.id),
+    ...nextMappings.flatMap(item => item.subject_id ? [item.subject_id] : []),
+  ]);
+  for (const candidateSubjectId of subjectIds) {
+    const sourcesBySemester = new Map<number, Set<string>>();
+    for (const candidateSemester of [1, 2]) {
+      const effectiveByColumn = new Map<string, string | null>();
+      for (const item of nextMappings) {
+        if (item.semester === candidateSemester && item.subject_id === null) effectiveByColumn.set(item.column_key, item.source_component_type);
+      }
+      for (const item of nextMappings) {
+        if (item.semester === candidateSemester && item.subject_id === candidateSubjectId) effectiveByColumn.set(item.column_key, item.source_component_type);
+      }
+      const sourceTypes = [...effectiveByColumn.values()].filter((value): value is string => !!value);
+      if (new Set(sourceTypes).size !== sourceTypes.length) {
+        return jsonError(res, 'Setiap jenis nilai SIGAP hanya dapat dipetakan ke satu kolom e-Rapor untuk mapel dan semester yang sama', 422, 'DUPLICATE_ERAPOR_SOURCE');
+      }
+      sourcesBySemester.set(candidateSemester, new Set(sourceTypes));
+    }
+    const semesterOneSources = sourcesBySemester.get(1) ?? new Set<string>();
+    const semesterTwoSources = sourcesBySemester.get(2) ?? new Set<string>();
+    if ([...semesterOneSources].some(sourceType => semesterTwoSources.has(sourceType))) {
+      return jsonError(res, 'Gunakan jenis nilai SIGAP yang berbeda untuk Semester I dan II agar nilainya tidak saling menimpa', 422, 'ERAPOR_SOURCE_USED_IN_OTHER_SEMESTER');
+    }
+  }
+
+  try {
+    persistEraporDefaultColumnMappings(
+      targetClass.academic_year_id,
+      subjectScopeId,
+      semester as 1 | 2,
+      mappings.map(item => ({
+        column_key: normalizeEraporText(columnsById.get(item.external_id)!.label),
+        source_component_type: item.source_component_type,
+      })),
+      req.user.id,
+    );
+    const scopeMessage = scope === 'subject' ? 'mapel ini di semua kelas' : 'semua mapel pada tahun ajaran ini';
+    return jsonSuccess(res, `Pemetaan default untuk ${scopeMessage} dan ${semester === 1 ? 'Semester I' : 'Semester II'} tersimpan`, { saved: mappings.length, scope });
+  } catch (error: unknown) {
+    Logger.error('Failed to save e-Rapor default column mappings', error as Error);
+    return jsonError(res, 'Pemetaan default e-Rapor gagal disimpan', 500, 'ERAPOR_DEFAULT_MAPPING_SAVE_FAILED');
+  }
+};
+
 export const saveEraporGrades = (req: NaraRequest, res: NaraResponse) => {
   if (!req.user) return jsonError(res, 'Sesi login diperlukan', 401);
   const form = EraporGradeSaveSchema.safeParse(req.body);
@@ -205,8 +325,9 @@ export const saveEraporGrades = (req: NaraRequest, res: NaraResponse) => {
   if (!canEditScope(req.user.id, classId, subjectId)) return jsonError(res, 'Anda tidak memiliki akses untuk mengubah nilai mapel dan kelas ini', 403);
   if (isTeacherActor(req.user.id) && !attendanceConfirmedToday(req.user.id)) return jsonError(res, 'Konfirmasi kehadiran hari ini diperlukan sebelum mengakses nilai', 403, 'CONFIRMATION_REQUIRED');
 
+  const targetClass = findClassById(classId);
   const template = findEraporGradeTemplate(classId, subjectId, semester);
-  if (!template) return jsonError(res, 'Unggah template e-Rapor untuk kelas, mapel, dan semester ini terlebih dahulu', 409, 'ERAPOR_TEMPLATE_REQUIRED');
+  if (!targetClass || !template) return jsonError(res, 'Unggah template e-Rapor untuk kelas, mapel, dan semester ini terlebih dahulu', 409, 'ERAPOR_TEMPLATE_REQUIRED');
   const roster = findStudentsByClass(classId);
   const mappings = findEraporStudentMappings(classId);
   const mappedStudentIds = new Set(mappings.map(mapping => mapping.student_id));
@@ -223,9 +344,13 @@ export const saveEraporGrades = (req: NaraRequest, res: NaraResponse) => {
     return jsonError(res, 'Template e-Rapor tersimpan tidak valid. Unggah ulang file dari e-Rapor.', 409, 'INVALID_ERAPOR_TEMPLATE');
   }
   const columnsByExternalId = new Map(columns.map(column => [column.externalId, column]));
-  const sourceMappingByExternalId = new Map(findEraporColumnMappings(template.id)
-    .filter(item => !!item.source_component_type)
-    .map(item => [item.external_id, item.source_component_type!]));
+  const sourceMappingByExternalId = new Map([...resolveEraporColumnSources(
+    template.id,
+    targetClass.academic_year_id,
+    subjectId,
+    semester as 1 | 2,
+    columns,
+  )].filter((entry): entry is [string, string] => !!entry[1]));
   const changes = [] as Array<{ student_id: string; subject_id: string; class_id: string; type: string; score: number | null }>;
   for (const entry of entries) {
     if (entry.scores.length !== columns.length || new Set(entry.scores.map(score => score.external_id)).size !== columns.length) {
@@ -282,9 +407,13 @@ export const exportEraporGrades = (req: NaraRequest, res: NaraResponse) => {
     return jsonError(res, 'Daftar siswa berubah sejak template diunggah. Unggah ulang template e-Rapor terbaru.', 409, 'ERAPOR_ROSTER_MISMATCH');
   }
   const grades = findGradesByClassSubject(classId, subjectId);
-  const sourceMappingByExternalId = new Map(findEraporColumnMappings(template.id)
-    .filter(item => !!item.source_component_type)
-    .map(item => [item.external_id, item.source_component_type!]));
+  const sourceMappingByExternalId = new Map([...resolveEraporColumnSources(
+    template.id,
+    targetClass.academic_year_id,
+    subjectId,
+    semester as 1 | 2,
+    workbook.columns,
+  )].filter((entry): entry is [string, string] => !!entry[1]));
   const typeByExternalId = new Map(workbook.columns.map(column => [
     column.externalId,
     sourceMappingByExternalId.get(column.externalId) ?? column.gradeType,
@@ -306,7 +435,9 @@ export const exportEraporGrades = (req: NaraRequest, res: NaraResponse) => {
     const templateScores = new Map<string, number>();
     for (const column of workbook.columns) {
       const sourceType = typeByExternalId.get(column.externalId);
-      const score = sourceType ? gradeScores.get(sourceType) : undefined;
+      const score = sourceType
+        ? gradeScores.get(sourceType) ?? (sourceType !== column.gradeType ? gradeScores.get(column.gradeType) : undefined)
+        : undefined;
       if (score !== undefined) templateScores.set(column.gradeType, score);
     }
     rowsByMemberId.set(mapping.external_member_id, { name: student.name, scores: templateScores });

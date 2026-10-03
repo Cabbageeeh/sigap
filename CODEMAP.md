@@ -10,9 +10,9 @@
 
 ## Stats
 
-- Files indexed: 321
-- Total lines: 36635
-- Total exports: 980
+- Files indexed: 322
+- Total lines: 36917
+- Total exports: 988
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -53,8 +53,8 @@
 - `dashboard.ts` (31L) — dashboardPage
 - `gradeAudit.ts` (39L) — gradeAuditPage, gradeAuditData
 - `grades.ts` (375L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, addGradeComponentType, renameGradeComponentType, +3
-- `gradesErapor.ts` (332L) — gradesEraporPage, saveEraporColumnMappings, saveEraporGrades, exportEraporGrades
-- `gradesEraporImport.ts` (252L) — eraporImportMiddleware, importEraporGrades
+- `gradesErapor.ts` (463L) — gradesEraporPage, saveEraporColumnMappings, saveEraporDefaultColumnMappings, saveEraporGrades, exportEraporGrades
+- `gradesEraporImport.ts` (268L) — eraporImportMiddleware, importEraporGrades
 - `headmaster.ts` (111L) — headmasterDashboardPage, headmasterDashboardData, headmasterReportsPage, headmasterClassGradesPage, headmasterTeacherAttendancePage, listOutsideConfirmations
 - `home.ts` (17L) — landingPage
 - `index.ts` (35L)
@@ -99,9 +99,9 @@
 - `appSettings.ts` (32L) — findSetting, findSettingNumber, upsertSetting, findTeacherPresenceMode, isTeacherPresenceEnabled
 - `assets.ts` (23L) — createAsset, findAssetsByUserId
 - `classes.ts` (95L) — findAllClasses, findAllClassesWithHomeroom, findClassesByAcademicYearWithHomeroom, findClassById, findClassByName, findClassesByAcademicYear, findClassesByGrade, findClassesByTeacherUser, +5
-- `eraporGrades.ts` (218L) — findEraporGradeTemplate, findEraporStudentMappings, findEraporGradeTemplatesByClass, findEraporColumnMappings, findEraporColumnMappingsByClassSubject, saveEraporTemplateSetup, saveEraporColumnMappings, saveEraporGradeChanges, +6
+- `eraporGrades.ts` (273L) — findEraporGradeTemplate, findEraporStudentMappings, findEraporGradeTemplatesByClass, findEraporColumnMappings, findEraporDefaultColumnMappingsByYear, saveEraporDefaultColumnMappings, findEraporColumnMappingsByClassSubject, saveEraporTemplateSetup, +10
 - `gradeAuditLogs.ts` (39L) — logGradeChange, getGradeAuditLogsPaginated
-- `gradeComponents.ts` (60L) — findGradeComponentsByYear, upsertGradeComponents, addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent
+- `gradeComponents.ts` (64L) — findGradeComponentsByYear, upsertGradeComponents, addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent
 - `grades.ts` (330L) — findAllGrades, findGradeById, findGradesByStudent, findGradesByStudentForParent, findGradesByStudentForTeacher, findGradesByClassSubject, findGradesByTeacher, findGradeByUniqueKey, +14
 - `headmaster.ts` (474L) — getTodaySessions, getMissedConfirmations, getJournalCompleteness, getGradeProgress, getClassOverview, getTeacherAttendanceOverview, getTeacherAttendanceHistory, findClassGradeDetails, +5
 - `index.ts` (26L)
@@ -150,8 +150,8 @@
 
 ### app/validators/
 
-- `index.ts` (105L) — zodToErrors
-- `schemas.ts` (395L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +77
+- `index.ts` (106L) — zodToErrors
+- `schemas.ts` (399L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +78
 
 ### migrations/
 
@@ -200,6 +200,7 @@
 - `20260928000001_journals_allow_missing_confirmation.ts` (54L) — up, down
 - `20261002000001_create_erapor_grade_templates.ts` (43L) — up, down
 - `20261002000002_create_erapor_column_mappings.ts` (20L) — up, down
+- `20261003000001_create_erapor_default_column_mappings.ts` (27L) — up, down
 
 ### resources/
 
@@ -258,7 +259,7 @@
 - `dashboard.svelte` (196L)
 - `gradeAudit.svelte` (77L)
 - `grades.svelte` (386L)
-- `gradesErapor.svelte` (450L)
+- `gradesErapor.svelte` (493L)
 - `journals.svelte` (258L)
 - `landing.svelte` (57L)
 - `parents.svelte` (21L)
@@ -337,7 +338,7 @@
 
 ### routes/
 
-- `web.ts` ★ (253L)
+- `web.ts` ★ (254L)
 
 ### scripts/
 
@@ -621,6 +622,7 @@
 
 - `const` **gradesEraporPage**
 - `const` **saveEraporColumnMappings**
+- `const` **saveEraporDefaultColumnMappings**
 - `const` **saveEraporGrades**
 - `const` **exportEraporGrades**
 
@@ -896,6 +898,8 @@
 - `const` **findEraporStudentMappings**
 - `const` **findEraporGradeTemplatesByClass**
 - `const` **findEraporColumnMappings**
+- `const` **findEraporDefaultColumnMappingsByYear**
+- `const` **saveEraporDefaultColumnMappings**
 - `const` **findEraporColumnMappingsByClassSubject**
 - `const` **saveEraporTemplateSetup**
 - `const` **saveEraporColumnMappings**
@@ -903,6 +907,8 @@
 - `const` **saveEraporImportSetup**
 - `iface` **EraporTemplateSetup**
 - `iface` **EraporImportSetup**
+- `iface` **EraporDefaultColumnMapping**
+- `iface` **EraporDefaultColumnMappingInput**
 - `iface` **EraporGradeChangeInput**
 - `iface` **EraporGradeChange**
 - `iface` **EraporColumnMappingInput**
@@ -1437,6 +1443,7 @@
 - `const` **EraporNewStudentsSchema**
 - `const` **EraporGradeSaveSchema**
 - `const` **EraporColumnMappingsSchema**
+- `const` **EraporDefaultColumnMappingsSchema**
 - `const` **AnnouncementSchema**
 - `const` **UpdateAnnouncementSchema**
 - `type` **LoginInput**
@@ -1698,6 +1705,11 @@
 - `const` **down**
 
 ### `migrations/20261002000002_create_erapor_column_mappings.ts`
+
+- `const` **up**
+- `const` **down**
+
+### `migrations/20261003000001_create_erapor_default_column_mappings.ts`
 
 - `const` **up**
 - `const` **down**

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Manual Book SIGAP — Sistem Informasi Guru, Absensi, dan Prestasi</title>
+<title>Manual Book SIGAP - Sistem Informasi Guru, Absensi, dan Prestasi</title>
 <style>
   :root {
     --bg: hsl(48 22% 95.5%);
@@ -122,7 +122,7 @@
   figure img { width: 100%; border: 1px solid var(--line); border-radius: 8px;
                box-shadow: 0 6px 22px hsl(195 9% 14% / .10); }
   figcaption { font-size: 8.6pt; color: var(--muted); margin-top: 1.6mm; padding-left: 1mm; }
-  figcaption::before { content: "Gambar " counter(fig) " — "; font-weight: 700; color: var(--primary); }
+  figcaption::before { content: "Gambar " counter(fig) " - "; font-weight: 700; color: var(--primary); }
 
   .kv { display: grid; grid-template-columns: 34mm 1fr; gap: 1.5mm 4mm; font-size: 9.6pt; margin: 3mm 0 4mm; }
   .kv dt { font-weight: 700; }
@@ -151,8 +151,8 @@
     <div class="rule"></div>
     <p class="kicker">Manual Book &nbsp;·&nbsp; Panduan Pengguna</p>
     <h1>SIGAP</h1>
-    <p class="sub">Sistem Informasi Guru, Absensi, dan Prestasi — satu tempat untuk data sekolah,
-      kehadiran guru, jurnal mengajar, nilai, dan pemantauan orang tua.</p>
+    <p class="sub">Sistem Informasi Guru, Absensi, dan Prestasi - kelola data sekolah, kehadiran guru,
+      jurnal, nilai, serta alur impor dan ekspor e-Rapor SMP 2025.2.</p>
     <div class="shots">
       <img src="images/manual/01-dashboard-admin.png" alt="Dasbor administrator">
       <img src="images/manual/24-guru-jurnal-presensi.png" alt="Jurnal mengajar dan presensi siswa">
@@ -170,28 +170,29 @@
 <section class="toc">
   <h1 class="first">Daftar Isi</h1>
   <ol>
-    <li class="part">Bagian 1 — Mengenal SIGAP</li>
+    <li class="part">Bagian 1 - Mengenal SIGAP</li>
     <li class="sub">1.1 Masalah yang dijawab SIGAP</li>
     <li class="sub">1.2 Empat peran pengguna</li>
     <li class="sub">1.3 Yang perlu disiapkan</li>
-    <li class="part">Bagian 2 — Mulai Memakai</li>
+    <li class="part">Bagian 2 - Mulai Memakai</li>
     <li class="sub">2.1 Masuk ke sistem</li>
     <li class="sub">2.2 Mengenal layar kerja</li>
     <li class="sub">2.3 Profil dan kata sandi</li>
     <li class="sub">2.4 Keluar</li>
-    <li class="part">Bagian 3 — Administrator</li>
+    <li class="part">Bagian 3 - Administrator</li>
     <li class="sub">3.1 Profil sekolah dan batas lokasi</li>
     <li class="sub">3.2 Kalender sekolah: hari libur dan hari Sabtu</li>
     <li class="sub">3.3 Periode akademik dan publikasi nilai</li>
     <li class="sub">3.4 Mata pelajaran dan KKM</li>
     <li class="sub">3.5 Kelas dan siswa</li>
-    <li class="sub">3.6 Import siswa massal sekaligus akun orang tua</li>
+    <li class="sub">3.6 Impor siswa dan unduh data kelas</li>
     <li class="sub">3.7 Data guru dan kontrak mengajar</li>
     <li class="sub">3.8 Jadwal pelajaran</li>
     <li class="sub">3.9 Pengaturan QR absen dan layar QR</li>
     <li class="sub">3.10 Pengguna, peran, dan hak akses</li>
     <li class="sub">3.11 Pengumuman</li>
-    <li class="part">Bagian 4 — Guru</li>
+    <li class="sub">3.12 Pengaturan e-Rapor</li>
+    <li class="part">Bagian 4 - Guru</li>
     <li class="sub">4.1 Dashboard jadwal hari ini</li>
     <li class="sub">4.2 Konfirmasi kehadiran dengan QR</li>
     <li class="sub">4.3 Jurnal mengajar dan presensi siswa</li>
@@ -199,7 +200,8 @@
     <li class="sub">4.5 Rekap absensi siswa</li>
     <li class="sub">4.6 Rapor siswa</li>
     <li class="sub">4.7 Mengunduh dokumen resmi (PDF)</li>
-    <li class="part">Bagian 5 — Kepala Sekolah</li>
+    <li class="sub">4.8 Mengisi dan mengekspor nilai e-Rapor</li>
+    <li class="part">Bagian 5 - Kepala Sekolah</li>
     <li class="sub">5.1 Delapan kartu ringkasan</li>
     <li class="sub">5.2 Pintasan pengawasan</li>
     <li class="sub">5.3 Rata-rata Nilai per Kelas</li>
@@ -208,18 +210,18 @@
     <li class="sub">5.6 Monitoring Konfirmasi</li>
     <li class="sub">5.7 Laporan Kehadiran Guru</li>
     <li class="sub">5.8 Audit Nilai</li>
-    <li class="part">Bagian 6 — Orang Tua/Wali</li>
-    <li class="part">Bagian 7 — Alur Harian Ringkas</li>
-    <li class="part">Bagian 8 — Tips dan Pemecahan Masalah</li>
-    <li class="part">Lampiran A — Menu yang tampak per peran</li>
-    <li class="part">Lampiran B — Glosarium</li>
-    <li class="part">Lampiran C — Akun demo lingkungan percobaan</li>
+    <li class="part">Bagian 6 - Orang Tua/Wali</li>
+    <li class="part">Bagian 7 - Alur Harian Ringkas</li>
+    <li class="part">Bagian 8 - Tips dan Pemecahan Masalah</li>
+    <li class="part">Lampiran A - Menu yang tampak per peran</li>
+    <li class="part">Lampiran B - Glosarium</li>
+    <li class="part">Lampiran C - Akun demo lingkungan percobaan</li>
   </ol>
 </section>
 
 <!-- ══════════════════════ BAGIAN 1 ══════════════════════ -->
 <section>
-  <h1>Bagian 1 — Mengenal SIGAP</h1>
+  <h1>Bagian 1 - Mengenal SIGAP</h1>
 
   <h2>1.1 Masalah yang dijawab SIGAP</h2>
   <p>SIGAP menyatukan kebutuhan sekolah yang biasanya berjalan terpisah di buku, kertas, dan lembar sebar.</p>
@@ -229,22 +231,22 @@
       <tr><td>Data guru, siswa, kelas, mapel</td><td>Buku induk dan berkas terpisah</td><td>Satu basis data, terhubung sejak awal</td></tr>
       <tr><td>Absensi guru</td><td>Catatan manual, rawan titip absen</td><td>Scan QR di sekolah dengan posisi GPS dan jarak ke sekolah</td></tr>
       <tr><td>Jurnal mengajar</td><td>Buku jurnal kertas</td><td>Terisi per jadwal, sekaligus menjadi presensi siswa</td></tr>
-      <tr><td>Nilai dan rapor</td><td>Rekap spreadsheet</td><td>Nilai per komponen, rapor tercetak, orang tua memantau sendiri</td></tr>
+      <tr><td>Nilai dan rapor</td><td>Rekap spreadsheet terpisah</td><td>Nilai per komponen, rapor tercetak, dan ekspor e-Rapor dari template sekolah</td></tr>
       <tr><td>Informasi ke orang tua</td><td>Surat atau grup obrolan</td><td>Notifikasi dan pengumuman di akun orang tua</td></tr>
     </tbody>
   </table>
   <p>Yang membuat SIGAP berbeda: <b>data siswa langsung terhubung ke akun orang tuanya</b>. Satu akun orang tua
-    hanya bisa melihat nilai dan absensi anaknya sendiri — bukan kelas, bukan sekolah.</p>
+    hanya bisa melihat nilai dan absensi anaknya sendiri - bukan kelas, bukan sekolah.</p>
 
   <h2>1.2 Empat peran pengguna</h2>
   <div class="roles">
-    <div class="role"><h4>Administrator</h4><p>Mengisi seluruh data master (profil sekolah, kalender libur, periode akademik, mapel, kelas, siswa, guru, orang tua), mengatur pengguna dan hak akses, mengatur QR absen, membuat pengumuman.</p></div>
-    <div class="role"><h4>Guru</h4><p>Konfirmasi kehadiran harian lewat QR, mengisi jurnal mengajar beserta presensi siswa, memasukkan dan mengubah nilai kelas yang diampunya, melihat jadwal mengajarnya, mengunduh dokumen lingkup kelasnya.</p></div>
+    <div class="role"><h4>Administrator</h4><p>Mengisi data master, mengelola roster siswa dan akun orang tua, mengatur pengguna, hak akses, QR absen, serta mengimpor template dan memetakan kolom e-Rapor.</p></div>
+    <div class="role"><h4>Guru</h4><p>Konfirmasi kehadiran lewat QR, mengisi jurnal dan presensi siswa, memasukkan nilai kelas yang diampunya, serta menyiapkan/mengekspor nilai e-Rapor sesuai aksesnya.</p></div>
     <div class="role"><h4>Kepala Sekolah</h4><p>Mengawasi kehadiran guru, melihat rekap nilai per kelas, memeriksa riwayat perubahan nilai (audit), membaca laporan konfirmasi di luar radius sekolah, mengunduh dokumen lingkup sekolah.</p></div>
     <div class="role"><h4>Orang Tua/Wali</h4><p>Melihat daftar anaknya, nilai dan rapor tiap anak, rekap absensi anak, serta pengumuman dan notifikasi dari sekolah.</p></div>
   </div>
-  <p>Satu akun hanya punya satu peran. Hak akses menentukan menu apa yang muncul di sidebar — jadi tidak ada tombol
-    yang “hilang”, memang tidak ditampilkan untuk peran tersebut.</p>
+  <p>Satu akun dapat memiliki satu atau beberapa peran. Gabungan hak akses dari peran-peran itu menentukan menu dan
+    tindakan yang tersedia; karena itu suatu menu bisa tidak tampil bila akun belum memiliki hak terkait.</p>
 
   <h2>1.3 Yang perlu disiapkan</h2>
   <ul class="plain">
@@ -252,19 +254,19 @@
     <li><b>Alamat aplikasi:</b> diberikan sekolah, misalnya <code>http://localhost:5555</code> pada lingkungan percobaan atau alamat server sekolah.</li>
     <li><b>Akun:</b> username dan kata sandi dibuatkan administrator.</li>
     <li><b>Izin kamera dan lokasi:</b> diminta sekali saat pertama kali memakai fitur absensi.</li>
-    <li><b>Kamera:</b> dibutuhkan untuk memindai kode QR kehadiran guru. Bukti kehadiran adalah pindai QR itu sendiri — sistem menyimpan waktu, posisi, dan jarak ke sekolah, bukan foto.</li>
+    <li><b>Kamera:</b> dibutuhkan untuk memindai kode QR kehadiran guru. Bukti kehadiran adalah pindai QR itu sendiri - sistem menyimpan waktu, posisi, dan jarak ke sekolah, bukan foto.</li>
     <li><b>Kalender pendidikan sekolah:</b> daftar tanggal libur khusus dan keputusan apakah hari Sabtu masuk, disiapkan bersama kepala sekolah sebelum tahun ajaran berjalan.</li>
   </ul>
-  <div class="note"><b>Catatan</b>SIGAP dirancang agar satu orang di sekolah (administrator atau petugas tata usaha) cukup mengelola seluruh data master. Guru, kepala sekolah, dan orang tua tidak perlu memasang apa pun — mereka memakai aplikasi lewat peramban di komputer maupun HP.</div>
+  <div class="note"><b>Catatan</b>SIGAP dirancang agar satu orang di sekolah (administrator atau petugas tata usaha) cukup mengelola seluruh data master. Guru, kepala sekolah, dan orang tua tidak perlu memasang apa pun - mereka memakai aplikasi lewat peramban di komputer maupun HP.</div>
 </section>
 
 <!-- ══════════════════════ BAGIAN 2 ══════════════════════ -->
 <section>
-  <h1>Bagian 2 — Mulai Memakai</h1>
+  <h1>Bagian 2 - Mulai Memakai</h1>
 
   <h2>2.1 Masuk ke sistem</h2>
   <figure><img src="images/manual/00-login.png" alt="Halaman masuk SIGAP">
-    <figcaption>Halaman masuk — username dan kata sandi diberikan sekolah.</figcaption></figure>
+    <figcaption>Halaman masuk - username dan kata sandi diberikan sekolah.</figcaption></figure>
   <ol class="steps">
     <li>Buka alamat SIGAP di peramban.</li>
     <li>Halaman awal adalah <b>Beranda</b>. Klik tombol masuk untuk membuka halaman <b>Akses SIGAP</b>.</li>
@@ -272,7 +274,7 @@
     <li>Klik <b>Masuk</b>.</li>
     <li>Anda dibawa ke layar sesuai peran: administrator ke <i>Dashboard</i>, guru ke <i>Jadwal Mengajar</i>, kepala sekolah ke <i>Dashboard Pengawasan</i>, orang tua ke <i>Dashboard Anak</i>.</li>
   </ol>
-  <p>Lupa kata sandi? Hubungi administrator sekolah — hanya administrator yang dapat menyetel ulang kata sandi melalui menu <b>Pengguna</b>.</p>
+  <p>Lupa kata sandi? Hubungi administrator sekolah - hanya administrator yang dapat menyetel ulang kata sandi melalui menu <b>Pengguna</b>.</p>
 
   <h2>2.2 Mengenal layar kerja</h2>
   <figure><img src="images/manual/01-dashboard-admin.png" alt="Dashboard administrator">
@@ -288,7 +290,7 @@
   </table>
   <p>Kebiasaan antarmuka yang berlaku di seluruh aplikasi:</p>
   <ul class="plain">
-    <li>Tombol di kanan atas halaman (misal <b>Tambah Siswa</b>, <b>Import CSV</b>) membuka formulir di tengah layar, bukan halaman baru.</li>
+    <li>Tombol di kanan atas halaman (misal <b>Tambah Siswa</b>, <b>Impor daftar siswa</b>) membuka formulir di tengah layar, bukan halaman baru.</li>
     <li>Kolom pencarian di atas tabel menyaring data tanpa memuat ulang halaman.</li>
     <li>Kolom <b>Aksi</b> di ujung kanan tabel berisi tombol ubah (pensil) dan hapus (tempat sampah).</li>
     <li>Pesan hijau berarti berhasil, pesan merah berarti ada yang perlu diperbaiki.</li>
@@ -297,28 +299,28 @@
 
   <h2>2.3 Profil dan kata sandi</h2>
   <figure><img src="images/manual/14-profil.png" alt="Halaman profil saya">
-    <figcaption>Profil Saya — dua tab: data profil dan ganti kata sandi.</figcaption></figure>
+    <figcaption>Profil Saya - dua tab: data profil dan ganti kata sandi.</figcaption></figure>
   <p>Menu <b>Akun → Profil Saya</b> berisi dua tab:</p>
   <ol class="steps">
-    <li><b>Profil</b> — mengubah nama, username, telepon, dan foto profil (unggah gambar).</li>
-    <li><b>Kata Sandi</b> — isi <b>Kata sandi lama</b>, lalu <b>Kata sandi baru</b> beserta konfirmasinya, lalu simpan.</li>
+    <li><b>Profil</b> - mengubah nama, username, telepon, dan foto profil (unggah gambar).</li>
+    <li><b>Kata Sandi</b> - isi <b>Kata sandi lama</b>, lalu <b>Kata sandi baru</b> beserta konfirmasinya, lalu simpan.</li>
   </ol>
   <p>Ganti kata sandi pertama kali setelah akun Anda dibuat administrator.</p>
 
   <h2>2.4 Keluar</h2>
-  <p>Klik <b>Keluar</b> di bagian bawah sidebar. Jangan hanya menutup tab — keluar memastikan sesi Anda benar-benar
+  <p>Klik <b>Keluar</b> di bagian bawah sidebar. Jangan hanya menutup tab - keluar memastikan sesi Anda benar-benar
     berakhir, terutama di komputer sekolah yang dipakai bersama.</p>
 </section>
 
 <!-- ══════════════════════ BAGIAN 3 ══════════════════════ -->
 <section>
-  <h1>Bagian 3 — Administrator</h1>
+  <h1>Bagian 3 - Administrator</h1>
   <p>Administrator adalah orang pertama yang mengoperasikan SIGAP. Urutan di bawah ini adalah urutan yang disarankan,
     karena menu berikutnya bergantung pada data sebelumnya.</p>
 
   <h2>3.1 Profil sekolah dan batas lokasi (geofence)</h2>
   <figure><img src="images/manual/07-profil-sekolah.png" alt="Formulir profil sekolah">
-    <figcaption>Profil sekolah — identitas sekaligus penentu batas lokasi absensi guru.</figcaption></figure>
+    <figcaption>Profil sekolah - identitas sekaligus penentu batas lokasi absensi guru.</figcaption></figure>
   <p>Menu <b>Data Master → Profil Sekolah</b>. Isi identitas sekolah: nama, NPSN, nama kepala sekolah, telepon, email, dan alamat.</p>
   <p>Tiga kolom berikut menentukan cara kerja absensi guru:</p>
   <table>
@@ -333,117 +335,120 @@
 
   <h2>3.2 Kalender sekolah: hari libur dan hari Sabtu</h2>
   <figure><img src="images/manual/13-kalender-sekolah.png" alt="Halaman kalender sekolah">
-    <figcaption>Kalender Sekolah — sakelar hari Sabtu di kiri, daftar tanggal libur khusus di kanan.</figcaption></figure>
+    <figcaption>Kalender Sekolah - sakelar hari Sabtu di kiri, daftar tanggal libur khusus di kanan.</figcaption></figure>
   <p>Menu <b>Data Master → Kalender Sekolah</b>. Halaman ini memberi tahu SIGAP kapan sekolah benar-benar efektif bekerja, sehingga tidak ada lagi guru yang ditagih absen pada hari libur.</p>
   <ol class="steps">
-    <li><b>Hari Sabtu masuk</b> — sakelar pada kartu <i>Hari Efektif</i>. Biarkan aktif bila sekolah bekerja Senin–Sabtu; matikan bila hanya sampai Jumat. Hari Minggu selalu diliburkan.</li>
-    <li><b>Tanggal Libur Khusus</b> — isi <b>Tanggal</b> dan <b>Nama Libur</b> (misal <code>Libur Awal Ramadan</code>), lalu klik <b>Tambah Libur</b>. Hapus lewat ikon tempat sampah bila ternyata sekolah masuk.</li>
+    <li><b>Hari Sabtu masuk</b> - sakelar pada kartu <i>Hari Efektif</i>. Biarkan aktif bila sekolah bekerja Senin-Sabtu; matikan bila hanya sampai Jumat. Hari Minggu selalu diliburkan.</li>
+    <li><b>Tanggal Libur Khusus</b> - isi <b>Tanggal</b> dan <b>Nama Libur</b> (misal <code>Libur Awal Ramadan</code>), lalu klik <b>Tambah Libur</b>. Hapus lewat ikon tempat sampah bila ternyata sekolah masuk.</li>
   </ol>
   <p>Yang dipengaruhi kalender ini:</p>
   <table>
     <thead><tr><th style="width:42%">Bagian</th><th>Efek pada hari non-efektif</th></tr></thead>
     <tbody>
-      <tr><td>Halaman Nilai guru</td><td>tidak menuntut scan QR — nilai tetap terbuka</td></tr>
+      <tr><td>Halaman Nilai guru</td><td>tidak menuntut scan QR - nilai tetap terbuka</td></tr>
       <tr><td>Form Jurnal mengajar</td><td>sesi hari itu tidak ditawarkan, termasuk untuk jurnal susulan</td></tr>
       <tr><td>Alarm <i>Guru Tanpa Konfirmasi</i></td><td>hari itu tidak dihitung, jadi tidak muncul baris palsu</td></tr>
       <tr><td><i>Kehadiran Guru (30 Hari)</i> dan <i>Monitoring</i></td><td>hari itu dikeluarkan dari perhitungan hari mengajar</td></tr>
     </tbody>
   </table>
-  <p>Isi kalender di awal tahun ajaran bersama kepala sekolah. Sekolah yang berbeda punya keputusan berbeda soal hari Sabtu — sistem mengikuti pengaturan Anda, bukan sebaliknya.</p>
+  <p>Isi kalender di awal tahun ajaran bersama kepala sekolah. Sekolah yang berbeda punya keputusan berbeda soal hari Sabtu - sistem mengikuti pengaturan Anda, bukan sebaliknya.</p>
 
   <h2>3.3 Periode akademik dan publikasi nilai</h2>
   <figure><img src="images/manual/15-tahun-ajaran.png" alt="Daftar periode akademik">
-    <figcaption>Periode akademik — satu periode aktif menjadi acuan seluruh data.</figcaption></figure>
+    <figcaption>Periode akademik - satu periode aktif menjadi acuan seluruh data.</figcaption></figure>
   <p>Menu <b>Data Master → Periode Akademik</b>.</p>
   <ol class="steps">
     <li>Klik <b>Tambah</b> dan isi nama periode (misal <code>2025/2026</code>), tanggal mulai, dan tanggal selesai.</li>
-    <li>Tandai satu periode sebagai <b>Aktif</b> — semua kelas, jadwal, jurnal, dan nilai mengacu ke periode aktif ini.</li>
+    <li>Tandai satu periode sebagai <b>Aktif</b> - semua kelas, jadwal, jurnal, dan nilai mengacu ke periode aktif ini.</li>
     <li>Pada periode aktif, atur <b>Publikasi Nilai</b>: aktif berarti orang tua dapat melihat nilai dan rapor; mati berarti nilai hanya dilihat guru dan kepala sekolah.</li>
   </ol>
   <p>Gunakan tombol publikasi ini sebagai “keran” di akhir semester, setelah semua nilai guru selesai diinput.</p>
 
   <h2>3.4 Mata pelajaran dan KKM</h2>
   <figure><img src="images/manual/17-mata-pelajaran.png" alt="Daftar mata pelajaran">
-    <figcaption>Mata Pelajaran — kode dan KKM per mapel menjadi dasar predikat rapor.</figcaption></figure>
+    <figcaption>Mata Pelajaran - kode dan KKM per mapel menjadi dasar predikat rapor.</figcaption></figure>
   <p>Menu <b>Data Master → Mata Pelajaran</b>. Tambahkan mapel beserta <b>kode</b> dan <b>KKM</b> (kriteria ketuntasan
     minimum). KKM dipakai sistem untuk menandai nilai tuntas/tidak tuntas dan menghitung predikat pada rapor.</p>
 
   <h2>3.5 Kelas dan siswa</h2>
   <figure><img src="images/manual/05-kelas.png" alt="Daftar kelas dan siswa">
-    <figcaption>Kelas &amp; Siswa — kelas dibuat lebih dulu, lalu siswa diisi ke dalamnya.</figcaption></figure>
+    <figcaption>Kelas &amp; Siswa - kelas dibuat lebih dulu, lalu siswa diisi ke dalamnya.</figcaption></figure>
   <ol class="steps">
     <li><b>Buat kelas</b> lebih dulu: nama kelas (misal <code>10A</code>), tingkat, dan periode akademik.</li>
     <li>Klik kelas untuk membuka <b>daftar siswa</b> kelas tersebut.</li>
-    <li>Tambah siswa satu per satu dengan <b>Tambah Siswa</b>, atau massal lewat <b>Import CSV</b> (lihat 3.6).</li>
+    <li>Tambah siswa satu per satu dengan <b>Tambah Siswa</b>, atau massal lewat <b>Impor daftar siswa</b> (lihat 3.6).</li>
   </ol>
   <p>Isian siswa: <b>NIS</b>, <b>nama</b>, <b>kelas</b>, <b>telepon</b>, <b>alamat</b>.</p>
   <figure><img src="images/manual/02-siswa.png" alt="Daftar siswa per kelas">
     <figcaption>Daftar siswa dalam satu kelas, lengkap dengan kolom aksi ubah dan hapus.</figcaption></figure>
-  <p>Di halaman <b>Kelas</b>, setiap baris menyediakan dua pintasan: <b>Kelola siswa</b> untuk membuka daftar siswa, dan <b>Daftar PDF</b> untuk mengunduh lembar daftar siswa beserta nama orang tua/wali, telepon, dan alamatnya — biasa dipakai tata usaha untuk formulir cetak.</p>
+  <p>Di halaman <b>Kelas</b>, setiap baris menyediakan pintasan untuk membuka daftar siswa dan mengunduh <b>Daftar PDF</b>. Pada halaman siswa kelas, tombol <b>Unduh data kelas (.xlsx)</b> menghasilkan berkas Excel berisi roster saat ini untuk dilengkapi atau diperbarui; lihat 3.6.</p>
   <figure><img src="images/manual/04-siswa-detail-ortu.png" alt="Blok akun orang tua pada formulir siswa">
-    <figcaption>Blok <i>Akun Orang Tua</i> di dalam formulir siswa — membuat, menautkan, atau melepas akun.</figcaption></figure>
+    <figcaption>Blok <i>Akun Orang Tua</i> di dalam formulir siswa - membuat, menautkan, atau melepas akun.</figcaption></figure>
   <p>Di dalam formulir siswa ada blok <b>Akun Orang Tua</b> dengan tiga pilihan:</p>
   <ul class="plain">
-    <li><b>Buat akun baru</b> — isi nama orang tua dan kata sandi. Username otomatis memakai NIS anak.</li>
-    <li><b>Pakai akun yang ada</b> — menautkan akun orang tua yang sudah punya anak lain, sehingga satu akun bisa melihat beberapa anak sekaligus.</li>
-    <li><b>Lepas akun</b> — memutus hubungan; jika akun itu tidak lagi menaungi anak mana pun, akunnya ikut terhapus.</li>
+    <li><b>Buat akun baru</b> - isi nama orang tua dan kata sandi. Username otomatis memakai NIS anak.</li>
+    <li><b>Pakai akun yang ada</b> - menautkan akun orang tua yang sudah punya anak lain, sehingga satu akun bisa melihat beberapa anak sekaligus.</li>
+    <li><b>Lepas akun</b> - memutus hubungan; jika akun itu tidak lagi menaungi anak mana pun, akunnya ikut terhapus.</li>
   </ul>
 
-  <h2>3.6 Import siswa massal sekaligus akun orang tua</h2>
-  <figure><img src="images/manual/03-siswa-import-csv.png" alt="Jendela import CSV siswa">
-    <figcaption>Import CSV — unduh template, pilih berkas, tentukan kata sandi awal akun orang tua.</figcaption></figure>
-  <p>Untuk mengisi puluhan siswa sekaligus, gunakan <b>Import CSV</b> di halaman siswa.</p>
+  <h2>3.6 Impor siswa dan unduh data kelas</h2>
+  <p>Di halaman <b>Kelas &amp; Siswa</b>, tombol impor bernama <b>Impor daftar siswa</b>. SIGAP menerima Excel <code>.xlsx</code> dan CSV <code>.csv</code>. Gunakan template umum untuk memasukkan siswa baru, atau unduh roster kelas yang sudah berisi data saat ini untuk melengkapi data siswa dan orang tua.</p>
   <ol class="steps">
-    <li>Klik <b>Import CSV</b> → jendela formulir terbuka.</li>
-    <li>Klik <b>Unduh Template</b> untuk mendapatkan berkas <code>import-siswa.csv</code>.</li>
-    <li>Isi data mulai <b>baris ke-2</b>. Satu baris = satu siswa.</li>
-    <li>Kembali ke SIGAP, klik <b>Choose file</b>, pilih berkas yang sudah diisi.</li>
-    <li>Jika ada baris yang mengisi <b>Nama Orang Tua</b>, isi <b>Kata Sandi Awal Orang Tua</b> (minimal 8 karakter). Kata sandi ini dipakai untuk semua akun orang tua yang dibuat dari berkas tersebut.</li>
-    <li>Klik <b>Import</b>.</li>
-    <li>Baca hasilnya: jumlah siswa yang masuk, jumlah akun orang tua yang dibuat, dan daftar baris yang ditolak beserta alasannya.</li>
+    <li>Buka halaman siswa dari <b>Kelas &amp; Siswa</b>. Untuk memperbarui satu kelas, buka kelas yang dimaksud.</li>
+    <li>Pada halaman kelas, klik <b>Unduh data kelas (.xlsx)</b>. File <code>data-kelas-[nama-kelas].xlsx</code> memuat siswa dan data yang sudah tersimpan; jika kelas kosong, file hanya berisi baris judul kolom. Untuk template umum, buka impor dari halaman daftar siswa dan unduh Excel atau CSV.</li>
+    <li>Isi satu siswa per baris. Pada file data kelas, kolom <b>ID Siswa SIGAP (jangan diubah)</b> dipakai untuk mengenali siswa lama. Jangan mengedit atau menghapus ID tersebut. Baris siswa baru ditambahkan di bagian bawah dengan ID kosong; isi NIS dan nama.</li>
+    <li>Pilih file <code>.xlsx</code> atau <code>.csv</code> melalui formulir <b>Impor daftar siswa</b>. Jika membuka impor dari halaman kelas, seluruh baris masuk ke kelas itu dan kolom Kelas pada berkas diabaikan.</li>
+    <li>Jika membuat akun orang tua baru, isi <b>Nama Orang Tua</b> dan <b>Kata sandi awal akun orang tua</b> (minimal 8 karakter). Satu kata sandi yang dimasukkan dipakai untuk akun baru yang dibuat dari impor. Untuk akun orang tua yang sudah ada, perubahan nama/kontak tidak memerlukan kata sandi baru.</li>
+    <li>Klik <b>Impor siswa</b>. Hasil menampilkan jumlah siswa ditambahkan/diperbarui, akun orang tua dibuat/diperbarui, serta rincian baris yang gagal.</li>
   </ol>
   <table>
-    <caption>Urutan kolom pada template</caption>
-    <thead><tr><th class="c" style="width:9%">Kolom</th><th style="width:31%">Isi</th><th>Keterangan</th></tr></thead>
+    <caption>Kolom pada kedua jenis berkas</caption>
+    <thead><tr><th>Header</th><th>Template umum .xlsx / .csv</th><th>Data kelas .xlsx</th></tr></thead>
     <tbody>
-      <tr><td class="c"><b>A</b></td><td>NIS</td><td>Wajib. Tidak boleh sama dengan NIS yang sudah ada.</td></tr>
-      <tr><td class="c"><b>B</b></td><td>Nama Siswa</td><td>Wajib.</td></tr>
-      <tr><td class="c"><b>C</b></td><td>Kelas</td><td>Harus sama persis dengan nama kelas yang sudah dibuat. Diabaikan bila import dilakukan dari halaman kelas.</td></tr>
-      <tr><td class="c"><b>D</b></td><td>Telepon Siswa</td><td>Opsional.</td></tr>
-      <tr><td class="c"><b>E</b></td><td>Alamat Siswa</td><td>Opsional.</td></tr>
-      <tr><td class="c"><b>F</b></td><td>Nama Orang Tua</td><td>Opsional — tetapi kalau terisi, akun orang tua dibuat otomatis.</td></tr>
-      <tr><td class="c"><b>G</b></td><td>Telepon Orang Tua</td><td>Opsional.</td></tr>
-      <tr><td class="c"><b>H</b></td><td>Alamat Orang Tua</td><td>Opsional.</td></tr>
+      <tr><td>ID Siswa SIGAP</td><td>-</td><td>A - jangan diubah; kosong untuk siswa baru</td></tr>
+      <tr><td>NIS</td><td>A</td><td>B</td></tr>
+      <tr><td>Nama Siswa</td><td>B</td><td>C</td></tr>
+      <tr><td>Kelas</td><td>C</td><td>D - diabaikan saat impor dari halaman kelas</td></tr>
+      <tr><td>Telepon Siswa</td><td>D</td><td>E</td></tr>
+      <tr><td>Alamat Siswa</td><td>E</td><td>F</td></tr>
+      <tr><td>Nama Orang Tua</td><td>F</td><td>G</td></tr>
+      <tr><td>Telepon Orang Tua</td><td>G</td><td>H</td></tr>
+      <tr><td>Alamat Orang Tua</td><td>H</td><td>I</td></tr>
     </tbody>
   </table>
+  <p>NIS dan Nama Siswa wajib untuk siswa baru. Pada baris siswa lama yang memiliki ID SIGAP, biarkan data identitas yang tidak ingin diubah tetap kosong. Kolom orang tua bersifat opsional.</p>
   <p><b>Yang perlu diketahui:</b></p>
   <ul class="plain">
     <li>Pemisah antar kolom adalah <b>koma</b>. Teks yang mengandung koma harus diapit tanda kutip, contoh: <code>"Jl. Mawar No. 5, RT 01/RW 02"</code>. Berkas berpemisah titik-koma (<code>;</code>) juga diterima.</li>
-    <li>Baris pertama boleh header; sistem membacanya sebagai penanda kolom, jadi <b>urutan kolom boleh diubah</b> selama nama kolomnya dikenali.</li>
-    <li>Membuka CSV di Excel dengan pengaturan regional Indonesia sering membuat semua kolom menumpuk di satu sel. Itu hanya tampilan: selama isinya dipisah koma, sistem tetap membacanya dengan benar. Untuk melihat per kolom, gunakan <b>Data → From Text/CSV</b> lalu pilih pemisah <i>Comma</i>.</li>
-    <li>Baris dengan NIS yang sudah dipakai tidak akan menimpa data lama — baris itu dilewati dan dilaporkan, sehingga Anda bisa memperbaiki berkas lalu mengimpor ulang bagian yang gagal saja.</li>
-    <li>Import dari halaman sebuah kelas mengabaikan kolom Kelas: semua baris masuk ke kelas yang sedang dibuka.</li>
+    <li>Template umum tersedia dalam format Excel <code>.xlsx</code> dan CSV <code>.csv</code>; CSV tetap didukung untuk berkas lama. Template Excel menampilkan kolom terpisah dan header yang jelas.</li>
+    <li>Pada file data kelas, baris dengan ID SIGAP memperbarui siswa tersebut. Kolom yang dibiarkan kosong pada siswa lama tidak menghapus data tersimpan. Data kontak orang tua yang kosong juga tidak menghapus kontak tersimpan.</li>
+    <li>Siswa baru pada impor kelas harus memiliki NIS dan nama. NIS yang sudah dipakai siswa atau akun lain ditolak; hasil impor menjelaskan baris yang bermasalah.</li>
+    <li>Untuk file umum, kolom wajib adalah NIS, nama, dan kelas. Sistem mengenali header yang tersedia, jadi urutan kolom boleh diubah selama nama header tetap dikenali.</li>
+    <li>Nama orang tua membuat akun baru hanya jika belum ada akun yang tertaut dan kata sandi awal diisi. Jika sudah ada akun orang tua yang tertaut, nama/kontaknya diperbarui; kata sandi tidak berubah.</li>
+    <li>Membuka CSV di Excel dengan pengaturan regional Indonesia bisa membuat semua kolom menumpuk di satu sel. Untuk melihatnya per kolom, gunakan <b>Data → From Text/CSV</b> dan pilih pemisah yang cocok dengan file (koma atau titik-koma). Saat mengimpor, SIGAP membaca kedua pemisah tersebut.</li>
+    <li>Unduh data kelas selalu mengikuti isi SIGAP saat file dibuat. NIS, nama, atau informasi orang tua yang belum tersedia akan kosong di berkas dan dapat dilengkapi.</li>
+    <li>Import dari halaman sebuah kelas mengabaikan kolom Kelas: semua siswa baru masuk ke kelas yang sedang dibuka.</li>
   </ul>
 
   <h2>3.7 Data guru dan kontrak mengajar</h2>
   <figure><img src="images/manual/18-data-guru.png" alt="Data guru">
-    <figcaption>Data Guru — menautkan akun pengguna ke identitas guru dan mata pelajaran yang diampu.</figcaption></figure>
+    <figcaption>Data Guru - menautkan akun pengguna ke identitas guru dan mata pelajaran yang diampu.</figcaption></figure>
   <ul class="plain">
     <li><b>Data Master → Data Guru</b>: tautkan seorang guru ke akun pengguna, isi NIP, telepon, dan mata pelajaran yang diampu.</li>
     <li><b>Akademik → Kontrak Mengajar</b>: menentukan guru mengajar kelas mana saja, dan siapa <b>wali kelas</b>-nya. Satu kelas punya satu wali kelas per periode akademik.</li>
   </ul>
   <figure><img src="images/manual/16-kontrak-mengajar.png" alt="Kontrak mengajar">
-    <figcaption>Kontrak Mengajar — batas kelas yang terlihat oleh tiap guru ditentukan di sini.</figcaption></figure>
+    <figcaption>Kontrak Mengajar - batas kelas yang terlihat oleh tiap guru ditentukan di sini.</figcaption></figure>
   <p>Kontrak mengajar inilah yang membuat seorang guru hanya melihat kelas tertentu di layarnya.</p>
   <figure><img src="images/manual/19-data-ortu.png" alt="Daftar akun orang tua">
-    <figcaption>Data Orang Tua bersifat baca-saja: pembuatan dan perubahan akun dilakukan dari halaman siswa atau lewat import CSV.</figcaption></figure>
+    <figcaption>Data Orang Tua bersifat baca-saja: pembuatan dan perubahan akun dilakukan dari halaman siswa atau lewat impor daftar siswa.</figcaption></figure>
   <p>Menu <b>Data Master → Data Orang Tua</b> hanya membaca: daftar akun wali beserta jumlah anak yang terhubung.
-    Pembuatan dan perubahan akun orang tua dilakukan dari formulir siswa (3.5) atau lewat import CSV (3.6), supaya
+    Pembuatan dan perubahan akun orang tua dilakukan dari formulir siswa (3.5) atau lewat impor daftar siswa (3.6), supaya
     relasi akun dan anak tidak terpisah.</p>
 
   <h2>3.8 Jadwal pelajaran</h2>
   <figure><img src="images/manual/06-jadwal.png" alt="Jadwal pelajaran">
-    <figcaption>Jadwal Pelajaran — daftar sesi per kelas dan per guru.</figcaption></figure>
+    <figcaption>Jadwal Pelajaran - daftar sesi per kelas dan per guru.</figcaption></figure>
   <p>Menu <b>Akademik → Jadwal Pelajaran</b>. Pilih periode akademik, lalu saring per kelas atau guru untuk melihat
     jadwal yang berjalan.</p>
   <p>Tombol <b>Tambah</b> membuka formulir: kelas, mata pelajaran, guru, hari, jam mulai, dan jam selesai. Jam pada
@@ -452,43 +457,63 @@
 
   <h2>3.9 Pengaturan QR absen dan layar QR</h2>
   <figure><img src="images/manual/08-pengaturan-qr.png" alt="Pengaturan QR absen">
-    <figcaption>Pengaturan QR Absen — menentukan berapa lama satu kode QR berlaku.</figcaption></figure>
-  <p>Menu <b>Kehadiran → Pengaturan QR Absen</b> mengatur <b>interval pergantian QR</b> — berapa detik satu kode QR
-    berlaku sebelum berganti. Nilai kecil (misal 30–60 detik) membuat QR tidak bisa difoto lalu dipakai dari rumah.</p>
+    <figcaption>Pengaturan QR Absen - menentukan berapa lama satu kode QR berlaku.</figcaption></figure>
+  <p>Menu <b>Kehadiran → Pengaturan QR Absen</b> mengatur <b>interval pergantian QR</b> - berapa detik satu kode QR
+    berlaku sebelum berganti. Nilai kecil (misal 30-60 detik) membuat QR tidak bisa difoto lalu dipakai dari rumah.</p>
   <p>Setelah disimpan, buka <b>Layar QR Absen</b> untuk menampilkan QR berukuran besar di TV atau proyektor di ruang guru.</p>
   <figure><img src="images/manual/09-layar-qr.png" alt="Layar QR untuk proyektor">
-    <figcaption>Layar QR Absen — tampilan untuk TV/proyektor, berganti otomatis sesuai interval.</figcaption></figure>
+    <figcaption>Layar QR Absen - tampilan untuk TV/proyektor, berganti otomatis sesuai interval.</figcaption></figure>
   <p>Kode pada layar ini dibuat dari data sekolah dan diperbarui otomatis sesuai interval. Guru memindainya dari akun masing-masing.</p>
 
   <h2>3.10 Pengguna, peran, dan hak akses</h2>
   <figure><img src="images/manual/11-pengguna.png" alt="Manajemen pengguna">
-    <figcaption>Pengguna — menambah akun, menentukan peran, menonaktifkan akun.</figcaption></figure>
+    <figcaption>Pengguna - menambah akun, menentukan peran, menonaktifkan akun.</figcaption></figure>
   <ul class="plain">
     <li><b>Manajemen → Pengguna</b>: menambah akun, mengatur nama, telepon, peran, dan status aktif. Akun yang dinonaktifkan tidak bisa masuk tetapi datanya tetap tersimpan.</li>
     <li><b>Manajemen → Peran &amp; Hak Akses</b>: setiap peran tersusun dari kumpulan hak akses (misalnya <code>journals.create</code>, <code>grades.edit</code>, <code>students.view</code>). Menambah hak ke sebuah peran langsung mengubah menu yang muncul di sidebar pengguna peran itu.</li>
   </ul>
   <figure><img src="images/manual/12-peran.png" alt="Peran dan hak akses">
-    <figcaption>Peran &amp; Hak Akses — centang hak tertentu untuk membentuk wewenang sebuah peran.</figcaption></figure>
+    <figcaption>Peran &amp; Hak Akses - centang hak tertentu untuk membentuk wewenang sebuah peran.</figcaption></figure>
 
   <h2>3.11 Pengumuman</h2>
   <figure><img src="images/manual/10-pengumuman.png" alt="Pengumuman">
-    <figcaption>Pengumuman — informasi sekolah yang tampil di dasbor pengguna sasaran.</figcaption></figure>
+    <figcaption>Pengumuman - informasi sekolah yang tampil di dasbor pengguna sasaran.</figcaption></figure>
   <p>Menu <b>Laporan &amp; Informasi → Pengumuman</b>. Judul dan isi pengumuman tersimpan dan muncul di dasbor pengguna
     yang menjadi sasarannya, termasuk orang tua.</p>
+
+  <h2>3.12 Pengaturan e-Rapor</h2>
+  <p>Menu <b>Penilaian → Pengaturan e-Rapor</b> hanya tersedia untuk administrator. Pengaturan ini menyimpan struktur file e-Rapor sekolah dan menentukan kolom mana yang mengambil nilai dari komponen SIGAP.</p>
+  <h3>Simpan template untuk kelas, mapel, dan semester</h3>
+  <ol class="steps">
+    <li>Pilih <b>Kelas</b>, <b>Mata pelajaran</b>, dan <b>Semester I/II</b> yang sama dengan file dari e-Rapor.</li>
+    <li>Unggah file nilai <code>.xls</code> dari e-Rapor SMP 2025.2, atau file <code>.xlsx</code> yang benar-benar disimpan ulang melalui Excel. Batas ukuran 2 MB. File harus mempertahankan struktur e-Rapor, termasuk identitas sekolah, kelas/rombel, daftar siswa, dan kolom penilaian yang didukung. Header harus memiliki <code>mapel_id</code>, <code>id_anggota_rombel</code>, dan <code>status kunci</code>; kolom penilaian harus berurutan setelah identitas siswa dan mencakup satu atau lebih <b>Sumatif</b> serta kolom <b>Non Tes</b> dan <b>Tes</b>. File nilai kosong boleh dipakai untuk mendaftarkan format.</li>
+    <li>Klik <b>Periksa dan unggah</b>. NPSN pada file harus sama dengan NPSN pada Profil Sekolah SIGAP jika NPSN sekolah sudah diisi. Kelas, tingkat, mapel, dan semester pilihan juga harus sesuai dengan file.</li>
+    <li>SIGAP mencocokkan siswa memakai ID anggota rombel yang sudah dipetakan, atau nama unik di kelas. Jika file memuat siswa baru yang belum terdaftar, pratinjau meminta <b>NIS asli</b> setiap siswa. Isi NIS lalu klik <b>Buat siswa dan simpan</b>. Siswa baru tidak otomatis memiliki akun orang tua.</li>
+    <li>Roster SIGAP juga harus lengkap: jika ada siswa SIGAP yang tidak ada pada file, impor ditolak. Periksa roster lebih dahulu pada <b>Kelas &amp; Siswa</b>. Setelah berhasil, template tersimpan untuk kombinasi kelas, mapel, dan semester tersebut. Unggah kembali jika format/file sumber perlu diperbarui.</li>
+  </ol>
+  <h3>Atur sumber tiap kolom penilaian</h3>
+  <ul class="plain">
+    <li>Pada bagian <b>Sumber setiap kolom e-Rapor</b>, admin dapat memilih jenis nilai SIGAP untuk sebuah kolom, misalnya memetakan <b>Sumatif 1</b> dan <b>Sumatif 2</b>. Nilai yang dipetakan cukup dimasukkan sekali di halaman <b>Nilai Siswa</b>; nilai yang sama akan ditampilkan pada kolom e-Rapor dan ikut diekspor.</li>
+    <li>Pilihan <b>Isi langsung di halaman e-Rapor</b> berarti kolom itu tidak terhubung ke nilai rutin SIGAP. Guru yang berhak mengedit dapat mengisi nilainya pada tabel e-Rapor.</li>
+    <li>Nilai komponen biasa seperti tugas/ulangan harian tetap dapat dipantau di halaman nilai SIGAP. Hanya kolom yang admin petakan yang mengambil nilai dari komponen tersebut.</li>
+    <li>Pemetaan selalu disimpan untuk kelas, mapel, dan semester yang dipilih. Centang <b>Terapkan juga sebagai default</b> sebelum menekan <b>Simpan pemetaan</b> untuk menyimpan aturan yang sama bagi semua mapel atau mapel terpilih pada tahun ajaran dan semester itu. Default dipakai template lain jika kolomnya belum punya pemetaan khusus.</li>
+    <li>Default khusus mapel mengalahkan default semua mapel; pemetaan khusus template mengalahkan keduanya. Pilih jenis nilai berbeda untuk membedakan semester. Jika sumber diganti, nilai lama tetap tersimpan pada jenis sebelumnya dan perlu diperiksa.</li>
+  </ul>
+  <p>Setelah template dan roster cocok, tombol <b>Unduh .xls (format sekolah)</b> dan <b>Unduh .xlsx</b> tersedia. Keduanya mempertahankan struktur template sekolah yang diimpor dan mengisi nilai SIGAP sesuai pemetaan; pilih hasil unduhan yang diperlukan untuk proses unggah e-Rapor. Ekspor membutuhkan pemetaan seluruh siswa pada template yang masih cocok dengan roster SIGAP.</p>
 </section>
 
 <!-- ══════════════════════ BAGIAN 4 ══════════════════════ -->
 <section>
-  <h1>Bagian 4 — Guru</h1>
+  <h1>Bagian 4 - Guru</h1>
 
   <h2>4.1 Dashboard jadwal hari ini</h2>
   <figure><img src="images/manual/20-guru-jadwal.png" alt="Jadwal mengajar guru dengan akses terkunci">
-    <figcaption>Jadwal Mengajar — sebelum konfirmasi, daftar sesi masih terkunci dan tersedia tombol <i>Scan QR Absen</i>.</figcaption></figure>
-  <p>Guru masuk ke halaman <b>Jadwal Mengajar</b>. Isinya daftar sesi hari itu: kelas, mata pelajaran, jam mulai–selesai.</p>
+    <figcaption>Jadwal Mengajar - sebelum konfirmasi, daftar sesi masih terkunci dan tersedia tombol <i>Scan QR Absen</i>.</figcaption></figure>
+  <p>Guru masuk ke halaman <b>Jadwal Mengajar</b>. Isinya daftar sesi hari itu: kelas, mata pelajaran, jam mulai-selesai.</p>
   <div class="warn"><b>Perlu diketahui</b>Konfirmasi kehadiran mengikat catatan mengajar pada hari itu. Halaman Jadwal
     Mengajar baru menampilkan daftar sesi setelah guru memindai QR, dan <b>jurnal serta nilai</b> menuntut konfirmasi yang
-    sama <b>pada hari guru itu memang terjadwal mengajar</b>. Di hari tanpa jam mengajar — libur, akhir pekan, atau hari
-    kosong — daftar nilai tetap terbuka dan bisa diisi.</div>
+    sama <b>pada hari guru itu memang terjadwal mengajar</b>. Di hari tanpa jam mengajar - libur, akhir pekan, atau hari
+    kosong - daftar nilai tetap terbuka dan bisa diisi.</div>
 
   <h2>4.2 Konfirmasi kehadiran dengan QR</h2>
   <p>Menu <b>Kehadiran → Konfirmasi Kehadiran</b>.</p>
@@ -508,30 +533,30 @@
       <tr><td>Di luar radius sekolah</td><td>Tetap tersimpan, tetapi ditandai <b>di luar sekolah</b> dan masuk laporan kepala sekolah</td></tr>
     </tbody>
   </table>
-  <p>Satu guru hanya punya satu catatan konfirmasi per hari. Setelah terverifikasi, seluruh menu guru terbuka — klik
+  <p>Satu guru hanya punya satu catatan konfirmasi per hari. Setelah terverifikasi, seluruh menu guru terbuka - klik
     <b>Lihat Jadwal Hari Ini</b> untuk kembali.</p>
 
   <h2>4.3 Jurnal mengajar dan presensi siswa</h2>
   <figure><img src="images/manual/21-guru-jurnal.png" alt="Daftar jurnal mengajar">
-    <figcaption>Jurnal Mengajar — daftar catatan yang sudah diisi beserta tombol <i>Tambah Jurnal</i>.</figcaption></figure>
+    <figcaption>Jurnal Mengajar - daftar catatan yang sudah diisi beserta tombol <i>Tambah Jurnal</i>.</figcaption></figure>
   <p>Menu <b>Akademik → Jurnal Mengajar</b>. Halaman ini berisi jurnal yang sudah Anda isi, tombol
     <b>Tambah Jurnal</b> di kanan atas, dan <b>Unduh Rekap PDF</b> untuk mencetak daftar jurnal (tanggal, guru, kelas,
     mapel, jam, materi) pada bulan berjalan.</p>
   <figure><img src="images/manual/22-guru-jurnal-form.png" alt="Form tambah jurnal">
-    <figcaption>Form jurnal — tanggal dan bukti kehadiran terisi otomatis; Anda memilih jadwal dan menulis materi.</figcaption></figure>
+    <figcaption>Form jurnal - tanggal dan bukti kehadiran terisi otomatis; Anda memilih jadwal dan menulis materi.</figcaption></figure>
   <p>Isi jurnal untuk sesi yang <b>sudah berlangsung</b>. Sesi yang terlewat masih bisa ditutup sampai <b>tiga hari ke
-    belakang</b> — ditandai keterangan <i>susulan</i> — dengan syarat Anda tercatat men-scan QR pada hari sesi itu
-    berlangsung. Tanggal dan konfirmasi kehadiran terisi otomatis — Anda tidak perlu mengetiknya.</p>
+    belakang</b> - ditandai keterangan <i>susulan</i> - dengan syarat Anda tercatat men-scan QR pada hari sesi itu
+    berlangsung. Tanggal dan konfirmasi kehadiran terisi otomatis - Anda tidak perlu mengetiknya.</p>
   <figure><img src="images/manual/23-guru-jurnal-dropdown.png" alt="Dropdown pilihan sesi yang menunggu jurnal">
-    <figcaption>Kolom Jadwal — hanya sesi milik Anda yang sudah lewat jam selesainya dalam empat hari terakhir, lengkap dengan tanggal, kelas, mapel, dan jam.</figcaption></figure>
+    <figcaption>Kolom Jadwal - hanya sesi milik Anda yang sudah lewat jam selesainya dalam empat hari terakhir, lengkap dengan tanggal, kelas, mapel, dan jam.</figcaption></figure>
   <ol class="steps">
     <li>Klik kolom <b>Jadwal</b>, lalu pilih sesi yang ingin dicatat.</li>
     <li>Jika jurnal untuk sesi itu sudah ada, sistem menampilkannya kembali dan materi akan diperbarui, bukan dibuat duplikat.</li>
-    <li>Isi <b>Materi</b> — ringkasan yang diajarkan hari itu.</li>
+    <li>Isi <b>Materi</b> - ringkasan yang diajarkan hari itu.</li>
     <li>Bagian <b>Presensi Siswa</b> otomatis memunculkan daftar siswa kelas tersebut. Setiap siswa punya empat tombol: <b>Hadir</b>, <b>Sakit</b>, <b>Izin</b>, <b>Alpa</b>. Semua siswa awalnya dianggap Hadir; ubah yang tidak masuk saja. Ringkasan jumlah tiap status terlihat di kanan atas daftar.</li>
   </ol>
   <figure><img src="images/manual/24-guru-jurnal-presensi.png" alt="Presensi siswa pada form jurnal">
-    <figcaption>Presensi siswa dalam jurnal — satu sentuhan per siswa, rekap status otomatis.</figcaption></figure>
+    <figcaption>Presensi siswa dalam jurnal - satu sentuhan per siswa, rekap status otomatis.</figcaption></figure>
   <ol class="steps" start="5">
     <li>Klik <b>Simpan</b>. Materi dan presensi tersimpan sekaligus.</li>
   </ol>
@@ -541,32 +566,34 @@
 
   <h2>4.4 Nilai siswa</h2>
   <figure><img src="images/manual/25-guru-nilai.png" alt="Halaman nilai siswa">
-    <figcaption>Nilai Siswa — pilih kelas dan mapel, lalu isi per komponen penilaian.</figcaption></figure>
+    <figcaption>Nilai Siswa - pilih kelas dan mapel, lalu isi per komponen penilaian.</figcaption></figure>
   <p>Menu <b>Penilaian → Nilai Siswa</b>.</p>
   <ol class="steps">
-    <li>Pilih <b>Kelas</b> dan <b>Mapel</b> pada penyaring di atas.</li>
-    <li>Sistem menampilkan daftar siswa beserta komponen nilai yang berlaku pada periode aktif (misalnya Tugas, UTS, UAS) dan <b>Nilai Akhir</b> hasil perhitungan bobot.</li>
-    <li>Klik <b>Tambah</b> untuk memasukkan atau mengubah nilai satu siswa, atau isi beberapa nilai lalu klik <b>Simpan</b>.</li>
+    <li>Pilih <b>Kelas</b>, <b>Mapel</b>, dan <b>Jenis Penilaian</b> pada penyaring di atas.</li>
+    <li>Klik <b>Lihat Rekap</b>. Tabel menampilkan nilai siswa untuk seluruh komponen, <b>Nilai Akhir</b>, <b>Predikat</b>, dan status KKM.</li>
+    <li>Sel pada komponen yang dipilih di penyaring dapat diedit langsung. Setelah selesai, klik <b>Simpan Semua Perubahan</b>.</li>
+    <li>Tombol <b>+</b> menambah jenis penilaian. Ikon pensil mengganti namanya dan ikon tempat sampah menghapus jenis beserta nilainya. Bobot Nilai Akhir dikelola melalui tombol <b>Bobot</b> pada halaman <b>Periode Akademik</b>.</li>
     <li><b>Predikat</b> dan status tuntas dihitung otomatis memakai KKM mata pelajaran.</li>
   </ol>
   <p>Guru hanya dapat menilai kelas dan mapel sesuai kontrak mengajarnya. Soal konfirmasi: pada hari Anda <b>terjadwal
-    mengajar</b>, nilai baru terbuka setelah memindai QR — sama seperti jurnal. Pada hari yang tidak ada jam mengajar untuk
+    mengajar</b>, nilai baru terbuka setelah memindai QR - sama seperti jurnal. Pada hari yang tidak ada jam mengajar untuk
     Anda, daftar nilai tetap bisa dibuka dan diisi seperti biasa.</p>
+  <p>Nilai di halaman ini adalah nilai SIGAP untuk pemantauan per komponen. Jika administrator menghubungkan komponen tersebut ke kolom e-Rapor (Bagian 3.12), guru mengisi sekali dan nilainya akan terbawa ke ekspor resmi. Komponen yang tidak dipetakan tetap menjadi nilai rutin SIGAP.</p>
   <p>Setelah kelas dan mapel terpilih, tombol <b>Unduh PDF Rekap</b> di kanan atas mengunduh lembar rekap nilai kelas
     tersebut. Bagi guru yang bukan wali kelas, lembar itu hanya memuat mapel yang ia ampu sendiri.</p>
 
   <h2>4.5 Rekap absensi siswa</h2>
   <figure><img src="images/manual/26-guru-absensi.png" alt="Rekap absensi siswa">
-    <figcaption>Absensi Siswa — baca ulang presensi yang lahir dari jurnal mengajar.</figcaption></figure>
+    <figcaption>Absensi Siswa - baca ulang presensi yang lahir dari jurnal mengajar.</figcaption></figure>
   <p>Menu <b>Akademik → Absensi Siswa</b> adalah baca ulang presensi yang sudah tercatat lewat jurnal: per kelas, per
     tanggal, per siswa. Pilih kelas dan rentang tanggal, maka seluruh siswa kelas itu tampil beserta jumlah Hadir,
-    Sakit, Izin, Alpa, dan Total. Karena absensi lahir dari jurnal, halaman ini tidak punya formulir isian — cara
+    Sakit, Izin, Alpa, dan Total. Karena absensi lahir dari jurnal, halaman ini tidak punya formulir isian - cara
     menambah catatan absensi adalah dengan mengisi jurnal mengajar.</p>
   <p>Dua tombol di sebelah <b>Terapkan</b> mengunduh hasil yang sedang tampil: <b>Unduh PDF Rekap</b> (rekapitulasi
     kehadiran dengan baris jumlah dan persentase hadir) dan <b>Unduh Daftar Siswa</b> (identitas siswa beserta kontak
     orang tua/wali).</p>
   <div class="note"><b>Angka Anda bukan angka kepala sekolah</b>Sebagai guru pengampu, yang dihitung hanya sesi yang
-    <b>Anda ajar sendiri</b>, jadi totalnya lebih kecil daripada yang dilihat kepala sekolah untuk kelas yang sama — bukan
+    <b>Anda ajar sendiri</b>, jadi totalnya lebih kecil daripada yang dilihat kepala sekolah untuk kelas yang sama - bukan
     karena data hilang. Bila sekolah butuh rekap satu kelas penuh (misalnya untuk rapat dewan guru), yang mengunduh adalah
     kepala sekolah atau administrator.</div>
 
@@ -575,7 +602,7 @@
     Aksi pada baris siswa. Kolom Aksi ini hanya muncul untuk kelas tempat Anda tercatat sebagai <b>wali kelas</b>.
     Guru pengampu biasa tidak melihat tombolnya, dan administrator tidak punya akses ke halaman rapor.</p>
   <figure><img src="images/manual/27-guru-rapor.png" alt="Lembar rapor">
-    <figcaption>Rapor — rekap nilai dan kehadiran satu siswa, siap dicetak.</figcaption></figure>
+    <figcaption>Rapor - rekap nilai dan kehadiran satu siswa, siap dicetak.</figcaption></figure>
   <p>Lembar rapor berisi <b>Laporan Hasil Belajar Siswa</b>: identitas dan kelas, nilai per mata pelajaran (UAS, UTS,
     Kuis Harian, Tugas), Nilai Akhir, KKM, Predikat, status Tuntas, serta rekap kehadiran. Bagian bawah disediakan
     untuk tanda tangan orang tua/wali dan kepala sekolah. Klik <b>Cetak Rapor</b> di kanan atas (atau
@@ -588,7 +615,7 @@
     administrator memeriksa <b>Akademik → Kontrak Mengajar</b> dan mencentang <i>Wali kelas</i> untuk kelas tersebut.</div>
 
   <h2>4.7 Mengunduh dokumen resmi (PDF)</h2>
-  <p>SIGAP menghasilkan berkas PDF sendiri — tanpa aplikasi lain, tanpa plugin peramban. Berkasnya diunduh apa adanya,
+  <p>SIGAP menghasilkan berkas PDF sendiri - tanpa aplikasi lain, tanpa plugin peramban. Berkasnya diunduh apa adanya,
     jadi penampilannya sama di komputer mana pun dan bisa langsung dilampirkan atau dicetak.</p>
   <table>
     <thead><tr><th style="width:27%">Dokumen</th><th style="width:33%">Diunduh dari</th><th>Isinya</th></tr></thead>
@@ -604,15 +631,21 @@
   <ol class="steps">
     <li><b>Yang terunduh adalah yang sedang tampil.</b> Rentang tanggal dan kelas yang Anda pilih pada layar ikut dipakai dokumen, jadi atur penyaringnya lebih dulu, baru unduh. Tanpa penyaring, sistem memakai bulan berjalan.</li>
     <li><b>Tombol unduh hanya muncul untuk yang berhak</b>, dan server memeriksa ulang hak itu saat berkas diminta. Guru mendapat kelas yang ia ampu; guru yang bukan wali kelas hanya mendapat mapelnya sendiri pada lembar nilai.</li>
-    <li><b>Setiap dokumen mencantumkan siapa dan kapan dicetak</b>, pada baris kecil di bagian bawah halaman pertama — berguna sebagai bukti dokumen itu keluar dari sistem, bukan hasil suntingan.</li>
+    <li><b>Setiap dokumen mencantumkan siapa dan kapan dicetak</b>, pada baris kecil di bagian bawah halaman pertama - berguna sebagai bukti dokumen itu keluar dari sistem, bukan hasil suntingan.</li>
   </ol>
   <div class="note"><b>Berkas tidak disimpan di server</b>Setelah diunduh, dokumen menjadi tanggung jawab pengguna yang
-    mengunduhnya — jangan menaruhnya di komputer bersama ruang guru.</div>
+    mengunduhnya - jangan menaruhnya di komputer bersama ruang guru.</div>
+
+  <h2>4.8 Mengisi dan mengekspor nilai e-Rapor</h2>
+  <p>Dari halaman <b>Penilaian → Nilai Siswa</b>, pilih kelas dan mapel lalu klik <b>Impor / Ekspor e-Rapor</b>. Pilih semester yang sama dengan template. Guru perlu memiliki akses nilai untuk kelas dan mapel tersebut; pada hari terjadwal mengajar, konfirmasi QR mungkin diperlukan.</p>
+  <p>Jika template belum tersimpan, unggah file e-Rapor sekolah <code>.xls</code> atau <code>.xlsx</code> sesuai petunjuk administrator. Jika roster file belum sama dengan SIGAP, hubungi admin untuk meninjau dan menyesuaikan daftar siswa. Guru tidak dapat membuat siswa baru dari pratinjau impor.</p>
+  <p>Pada tabel e-Rapor, kolom yang telah dipetakan admin akan menampilkan nilai dari komponen SIGAP dan tidak perlu diisi lagi. Kolom <b>Isi langsung di halaman e-Rapor</b> dapat diisi pada tabel tersebut. Klik <b>Simpan nilai</b> setelah perubahan langsung. Setelah template dan roster siap, pilih <b>Unduh .xls (format sekolah)</b> atau <b>Unduh .xlsx</b>. Berkas memuat kolom dan tata letak template yang terdaftar untuk kelas, mapel, dan semester yang dipilih.</p>
+  <p>Jika Anda perlu mengganti sumber nilai atau nama komponen, minta administrator memperbarui <b>Sumber setiap kolom e-Rapor</b>. Pastikan nilai sudah diperiksa sebelum mengekspor.</p>
 </section>
 
 <!-- ══════════════════════ BAGIAN 5 ══════════════════════ -->
 <section>
-  <h1>Bagian 5 — Kepala Sekolah</h1>
+  <h1>Bagian 5 - Kepala Sekolah</h1>
   <p>Kepala sekolah masuk ke halaman <b>Pengawasan Sekolah</b> (kelompok menu <i>Dasbor Kepala Sekolah</i>).</p>
   <figure><img src="images/manual/30-kepsek-dashboard.png" alt="Dasbor pengawasan kepala sekolah">
     <figcaption>Dasbor pengawasan: delapan kartu ringkasan, rata-rata nilai per kelas, dan kehadiran guru 30 hari.</figcaption></figure>
@@ -627,11 +660,11 @@
       <tr><td><b>Mapel</b></td><td>Jumlah mata pelajaran.</td></tr>
       <tr><td><b>Jadwal Hari Ini</b></td><td>Sesi yang seharusnya berjalan hari ini.</td></tr>
       <tr><td><b>Konfirmasi</b></td><td>Sesi hari ini yang gurunya sudah memindai QR.</td></tr>
-      <tr><td><b>Belum Konfirmasi</b></td><td>Sesi hari ini yang gurunya belum memindai QR — angka yang paling perlu diperhatikan setiap pagi.</td></tr>
+      <tr><td><b>Belum Konfirmasi</b></td><td>Sesi hari ini yang gurunya belum memindai QR - angka yang paling perlu diperhatikan setiap pagi.</td></tr>
       <tr><td><b>Jurnal Hari Ini</b></td><td>Jumlah jurnal yang sudah diisi hari ini.</td></tr>
     </tbody>
   </table>
-  <p>Empat kartu paling kanan bersifat <i>hari ini</i>. Pada hari libur, akhir pekan, atau hari Sabtu yang sudah dimatikan di Kalender Sekolah, keempatnya memang bernilai <b>0</b> — itu konsekuensi kalender yang benar, bukan gangguan. Empat kartu di kiri selalu terisi karena menghitung data sekolah, bukan kegiatan harian.</p>
+  <p>Empat kartu paling kanan bersifat <i>hari ini</i>. Pada hari libur, akhir pekan, atau hari Sabtu yang sudah dimatikan di Kalender Sekolah, keempatnya memang bernilai <b>0</b> - itu konsekuensi kalender yang benar, bukan gangguan. Empat kartu di kiri selalu terisi karena menghitung data sekolah, bukan kegiatan harian.</p>
 
   <h2>5.2 Pintasan pengawasan</h2>
   <p>Tepat di bawah kartu ringkasan ada empat kartu pintasan. Semuanya hanya membuka halaman; tidak ada data yang berubah dari sana.</p>
@@ -649,9 +682,9 @@
   <h2>5.3 Rata-rata Nilai per Kelas</h2>
   <p>Tabel ini merangkum tiap kelas aktif: <b>Kelas, Siswa, Dinilai, Rata-rata Nilai, Kehadiran, Status, Aksi</b>.</p>
   <ul class="plain">
-    <li>Kolom <b>Dinilai</b> memakai format <code>32/32</code> — berapa siswa yang sudah punya nilai dibandingkan jumlah siswanya. Kelas dengan <code>0/32</code> berarti belum ada nilai masuk sama sekali.</li>
+    <li>Kolom <b>Dinilai</b> memakai format <code>32/32</code> - berapa siswa yang sudah punya nilai dibandingkan jumlah siswanya. Kelas dengan <code>0/32</code> berarti belum ada nilai masuk sama sekali.</li>
     <li>Kolom <b>Status</b> menandai kelas yang perlu ditindaklanjuti (misal <i>Perlu perhatian</i>) bila rata-rata nilainya di bawah 75, kehadiran siswanya di bawah 90%, atau masih ada siswa yang belum dinilai.</li>
-    <li>Tautan <b>Detail nilai</b> membuka lembar nilai per siswa untuk kelas tersebut — hanya membaca, kepala sekolah tidak mengubah angka di sini. Di lembar itu ada <b>Unduh PDF Rekap Nilai</b> untuk memperoleh rata-rata nilai per siswa per mata pelajaran dalam satu berkas.</li>
+    <li>Tautan <b>Detail nilai</b> membuka lembar nilai per siswa untuk kelas tersebut - hanya membaca, kepala sekolah tidak mengubah angka di sini. Di lembar itu ada <b>Unduh PDF Rekap Nilai</b> untuk memperoleh rata-rata nilai per siswa per mata pelajaran dalam satu berkas.</li>
   </ul>
   <figure><img src="images/manual/34-kepsek-nilai-kelas.png" alt="Detail nilai satu kelas">
     <figcaption>Detail nilai satu kelas: siswa, mata pelajaran, jenis penilaian, nilai, dan tanggal.</figcaption></figure>
@@ -659,26 +692,26 @@
   <h2>5.4 Kehadiran Guru (30 Hari)</h2>
   <p>Tabel kedua membandingkan konfirmasi QR dengan hari mengajar yang dijadwalkan: <b>Guru, Hari Hadir, Tingkat Kehadiran, Status, Aksi</b>. Barisnya berbunyi misalnya <code>Siti Rahayu · 20/21 · 95,24% · Normal</code>, dan guru di bawah 90% ditandai <i>Perlu perhatian</i>. Tautan <b>Riwayat</b> membuka daftar hari guru tersebut.</p>
   <figure><img src="images/manual/35-kepsek-absensi-guru.png" alt="Riwayat kehadiran satu guru">
-    <figcaption>Riwayat kehadiran satu guru — kolom Sesi dan Jarak menunjukkan berapa sesi yang diampu hari itu dan di mana posisi guru saat memindai.</figcaption></figure>
+    <figcaption>Riwayat kehadiran satu guru - kolom Sesi dan Jarak menunjukkan berapa sesi yang diampu hari itu dan di mana posisi guru saat memindai.</figcaption></figure>
   <p>Lembar riwayat menampilkan <b>Tanggal, Kelas, Mata Pelajaran, Sesi, Status, Waktu, Lokasi, Jarak</b>.</p>
 
   <h2>5.5 Guru Tanpa Konfirmasi (7 Hari)</h2>
   <p>Satu baris berarti satu guru pada satu hari: ia punya jadwal mengajar, tetapi tidak ada pemindaian QR pada hari itu. Kolomnya <b>Guru, Tanggal, Sesi Terlewat, Kelas, Mapel, Status</b>.</p>
-  <p>Aturannya mengikuti cara guru bekerja: satu pemindaian berlaku untuk satu hari penuh, bukan per jam pelajaran. Karena itu baris di tabel ini muncul meskipun guru tersebut hanya melewatkan scan pagi — jumlah sesinya ikut ditampilkan agar terlihat seberapa besar dampaknya pada hari itu.</p>
+  <p>Aturannya mengikuti cara guru bekerja: satu pemindaian berlaku untuk satu hari penuh, bukan per jam pelajaran. Karena itu baris di tabel ini muncul meskipun guru tersebut hanya melewatkan scan pagi - jumlah sesinya ikut ditampilkan agar terlihat seberapa besar dampaknya pada hari itu.</p>
 
   <h2>5.6 Monitoring Konfirmasi</h2>
   <p>Menu <b>Kehadiran → Monitoring Konfirmasi</b> membuka <i>Log Kehadiran Guru</i>. Bagian atas menampilkan ringkasan hari ini, misalnya <b>15 dari 16 guru sudah konfirmasi hari ini · Batas tepat waktu 07:00</b>. Di bawahnya ada penyaring <b>Dari Tanggal</b>, <b>Sampai Tanggal</b>, dan <b>Guru</b> (tombol <i>Reset</i> muncul saat penyaring aktif). Gunakan rentang tanggal untuk melihat histori, misalnya satu bulan terakhir.</p>
   <figure><img src="images/manual/31-kepsek-monitoring-guru.png" alt="Log kehadiran guru dengan rentang tanggal">
-    <figcaption>Log kehadiran guru setelah rentang tanggal diperlebar — tiap baris adalah satu konfirmasi QR beserta waktu dan jaraknya.</figcaption></figure>
-  <p>Tombol <b>Unduh PDF</b> di sebelah penyaring menghasilkan <b>Daftar Hadir Guru</b> untuk persis rentang yang sedang tampil — berkas yang biasa dipakai untuk rekap bulanan atau keperluan tanda tangan. Baris pertamanya menyebut jumlah pindai dan batas jam tepat waktu yang berlaku, dan tiap baris memuat jarak serta status dalam/luar radius.</p>
+    <figcaption>Log kehadiran guru setelah rentang tanggal diperlebar - tiap baris adalah satu konfirmasi QR beserta waktu dan jaraknya.</figcaption></figure>
+  <p>Tombol <b>Unduh PDF</b> di sebelah penyaring menghasilkan <b>Daftar Hadir Guru</b> untuk persis rentang yang sedang tampil - berkas yang biasa dipakai untuk rekap bulanan atau keperluan tanda tangan. Baris pertamanya menyebut jumlah pindai dan batas jam tepat waktu yang berlaku, dan tiap baris memuat jarak serta status dalam/luar radius.</p>
 
   <h2>5.7 Laporan Kehadiran Guru</h2>
-  <p>Menu <b>Laporan → Laporan Kehadiran Guru</b> khusus menampilkan konfirmasi yang tercatat <b>di luar radius sekolah</b> — kolomnya <b>Guru, Kelas, Mapel, Jarak, Konfirmasi, Status</b>. Laporan inilah yang dipakai menindaklanjuti dugaan absensi tidak di lokasi.</p>
+  <p>Menu <b>Laporan → Laporan Kehadiran Guru</b> khusus menampilkan konfirmasi yang tercatat <b>di luar radius sekolah</b> - kolomnya <b>Guru, Kelas, Mapel, Jarak, Konfirmasi, Status</b>. Laporan inilah yang dipakai menindaklanjuti dugaan absensi tidak di lokasi.</p>
   <figure><img src="images/manual/32-kepsek-laporan-hadir.png" alt="Laporan konfirmasi di luar radius">
     <figcaption>Konfirmasi di luar radius sekolah, lengkap dengan jarak dari titik pusat sekolah.</figcaption></figure>
 
   <h2>5.8 Audit Nilai</h2>
-  <p>Menu <b>Penilaian → Audit Nilai</b> berisi riwayat perubahan nilai: <b>Waktu, Siswa, Mapel, Kelas, Jenis, Aksi, Nilai, Oleh</b>. Setiap perubahan tercatat otomatis — nilai lama dan nilai baru sama-sama ditampilkan — dan tidak dapat dihapus dari layar. Ini pegangan saat ada keberatan orang tua terhadap sebuah nilai.</p>
+  <p>Menu <b>Penilaian → Audit Nilai</b> berisi riwayat perubahan nilai: <b>Waktu, Siswa, Mapel, Kelas, Jenis, Aksi, Nilai, Oleh</b>. Setiap perubahan tercatat otomatis - nilai lama dan nilai baru sama-sama ditampilkan - dan tidak dapat dihapus dari layar. Ini pegangan saat ada keberatan orang tua terhadap sebuah nilai.</p>
   <figure><img src="images/manual/33-kepsek-audit-nilai.png" alt="Riwayat audit nilai">
     <figcaption>Riwayat audit nilai: siapa mengubah, kapan, dan berapa nilai sebelumnya.</figcaption></figure>
 
@@ -687,13 +720,13 @@
 
 <!-- ══════════════════════ BAGIAN 6 ══════════════════════ -->
 <section>
-  <h1>Bagian 6 — Orang Tua/Wali</h1>
+  <h1>Bagian 6 - Orang Tua/Wali</h1>
 
   <h2>6.1 Masuk dan melihat daftar anak</h2>
   <figure><img src="images/manual/40-ortu-dashboard.png" alt="Dashboard orang tua">
-    <figcaption>Dashboard orang tua — semua anak yang tertaut pada satu akun.</figcaption></figure>
+    <figcaption>Dashboard orang tua - semua anak yang tertaut pada satu akun.</figcaption></figure>
   <p>Orang tua masuk memakai <b>username = NIS anak</b> dan kata sandi yang diberikan sekolah (bisa dibuatkan lewat
-    import CSV atau oleh administrator di halaman siswa). Dasbor menampilkan seluruh anak yang tertaut ke akun
+    impor daftar siswa atau oleh administrator di halaman siswa). Dasbor menampilkan seluruh anak yang tertaut ke akun
     tersebut, lengkap dengan kelas dan ringkasan kehadirannya.</p>
 
   <h2>6.2 Nilai dan rapor anak</h2>
@@ -701,12 +734,13 @@
     <figcaption>Nilai anak per mata pelajaran beserta predikat.</figcaption></figure>
   <p>Pilih anak, lalu buka <b>Nilai</b>. Yang terlihat: nilai tiap komponen per mata pelajaran, nilai akhir, predikat,
     dan keterangan tuntas terhadap KKM.</p>
+  <p>Setelah nilai dipublikasikan, bagian <b>Nilai Resmi e-Rapor</b> juga dapat tampil terpisah bila template e-Rapor tersedia dan memiliki nilai. Bagian ini mengikuti kolom resmi e-Rapor yang disiapkan untuk kelas, mapel, dan semester tersebut; nilai tugas harian atau komponen lain tetap ada pada rekap nilai SIGAP.</p>
   <div class="note"><b>Publikasi nilai</b>Nilai baru tampil setelah sekolah <b>mempublikasikan nilai</b> pada periode
     akademik (diatur administrator/kepala sekolah di menu Periode Akademik). Sebelum itu, halaman tetap terbuka tetapi
     daftar nilai kosong.</div>
   <figure><img src="images/manual/43-ortu-rapor.png" alt="Rapor anak">
-    <figcaption>Rapor anak — dapat dicetak atau disimpan sebagai PDF.</figcaption></figure>
-  <p>Klik <b>Lihat Rapor</b> di kanan atas halaman nilai untuk membuka lembar rekap satu anak — nilai akhir, predikat,
+    <figcaption>Rapor anak - dapat dicetak atau disimpan sebagai PDF.</figcaption></figure>
+  <p>Klik <b>Lihat Rapor</b> di kanan atas halaman nilai untuk membuka lembar rekap satu anak - nilai akhir, predikat,
     dan rekap kehadiran dalam format siap cetak. Di halaman itu Anda dapat berpindah ke anak lain pada akun Anda lewat
     tombol <b>‹ sebelumnya</b> dan <b>berikutnya ›</b>, atau kembali ke nilai anak lewat tautan <b>Kembali</b>.</p>
 
@@ -723,7 +757,7 @@
 
 <!-- ══════════════════════ BAGIAN 7 ══════════════════════ -->
 <section>
-  <h1>Bagian 7 — Alur Harian Ringkas</h1>
+  <h1>Bagian 7 - Alur Harian Ringkas</h1>
 
   <h2>7.1 Satu hari untuk guru</h2>
   <table>
@@ -738,16 +772,17 @@
 
   <h2>7.2 Menyiapkan awal semester (administrator)</h2>
   <ol class="steps">
-    <li>Profil sekolah — identitas, koordinat, radius, jam mulai.</li>
-    <li>Kalender sekolah — tentukan hari Sabtu masuk atau tidak, lalu catat tanggal libur khusus bersama kepala sekolah.</li>
+    <li>Profil sekolah - identitas, koordinat, radius, jam mulai.</li>
+    <li>Kalender sekolah - tentukan hari Sabtu masuk atau tidak, lalu catat tanggal libur khusus bersama kepala sekolah.</li>
     <li>Periode akademik baru → tandai <b>Aktif</b>.</li>
     <li>Mata pelajaran beserta KKM.</li>
     <li>Kelas untuk periode itu.</li>
-    <li>Import CSV siswa (isi kolom orang tua bila ingin akun wali dibuat sekaligus).</li>
+    <li>Impor daftar siswa. Untuk kelas yang sudah dibuat, unduh <b>data kelas (.xlsx)</b> agar roster dan identitas yang sudah tersedia ikut terisi; lengkapi data orang tua sesuai kebutuhan.</li>
     <li>Data guru + kontrak mengajar + wali kelas.</li>
     <li>Jadwal pelajaran per kelas.</li>
     <li>Pengaturan QR absen → pastikan layar QR tampil dengan benar.</li>
     <li>Buat akun pengguna dan tentukan perannya.</li>
+    <li>Untuk e-Rapor, unggah template tiap kombinasi kelas/mapel/semester dan petakan kolom penilaian ke jenis nilai SIGAP (Bagian 3.12).</li>
   </ol>
 
   <h2>7.3 Akhir semester (administrator &amp; kepala sekolah)</h2>
@@ -755,16 +790,17 @@
     <li>Kepala sekolah memeriksa <b>Audit Nilai</b> dan <b>Sesi terlewat</b>.</li>
     <li>Guru memastikan seluruh jurnal dan nilai lengkap.</li>
     <li>Administrator melengkapi kalender sekolah bila ada libur yang belum tercatat.</li>
-    <li>Unduh berkas arsip: <b>Daftar Hadir Guru</b> per bulan, <b>Rekapitulasi Jurnal Mengajar</b>, dan <b>Lembar Rekapitulasi Nilai</b> per kelas dari dasbor kepala sekolah.</li>
-    <li>Administrator mengaktifkan <b>Publikasi Nilai</b> pada periode aktif.</li>
-    <li>Orang tua dapat melihat nilai dan rapor anaknya; cetak rapor bila diperlukan.</li>
-    <li>Nonaktifkan publikasi bila nilai masih perlu diperbaiki.</li>
+    <li>Guru mengisi komponen nilai SIGAP; kolom e-Rapor yang sudah dipetakan akan mengikuti nilainya.</li>
+    <li>Periksa template, roster, nilai langsung, dan hasil <b>Unduh .xls/.xlsx</b> e-Rapor sebelum mengunggah berkas ke sistem e-Rapor sekolah.</li>
+    <li>Unduh berkas arsip lain: <b>Daftar Hadir Guru</b>, <b>Rekapitulasi Jurnal Mengajar</b>, dan <b>Lembar Rekapitulasi Nilai</b>.</li>
+    <li>Administrator mengaktifkan <b>Publikasi Nilai</b> pada periode aktif agar orang tua dapat melihat rekap SIGAP dan nilai resmi e-Rapor yang tersedia.</li>
+    <li>Tarik publikasi bila nilai perlu diperbaiki lagi.</li>
   </ol>
 </section>
 
 <!-- ══════════════════════ BAGIAN 8 ══════════════════════ -->
 <section>
-  <h1>Bagian 8 — Tips dan Pemecahan Masalah</h1>
+  <h1>Bagian 8 - Tips dan Pemecahan Masalah</h1>
   <table>
     <thead><tr><th style="width:26%">Gejala</th><th style="width:31%">Penyebab umum</th><th>Yang dilakukan</th></tr></thead>
     <tbody>
@@ -777,19 +813,27 @@
       <tr><td>Tombol <i>Unduh PDF</i> tidak muncul di layar</td><td>Dokumen itu memang di luar lingkup peran Anda</td><td>Minta peran yang berhak: kepala sekolah untuk lingkup penuh, guru untuk mapelnya sendiri</td></tr>
       <tr><td>Guru tetap diminta scan QR pada hari libur</td><td>Tanggal libur belum dicatat di kalender sekolah</td><td>Administrator mengisi <b>Data Master → Kalender Sekolah</b> (Bagian 3.2)</td></tr>
       <tr><td>Alarm kepala sekolah menandai hari Sabtu</td><td>Sakelar <i>Hari Sabtu masuk</i> masih aktif padahal sekolah libur</td><td>Matikan sakelarnya di Kalender Sekolah</td></tr>
-      <tr><td>Import CSV menolak banyak baris</td><td>NIS sudah dipakai, nama kelas tidak sama persis, atau kolom orang tua terisi tanpa kata sandi</td><td>Baca daftar alasan per baris, perbaiki berkasnya, impor ulang bagian yang gagal</td></tr>
-      <tr><td>Semua kolom CSV menumpuk di satu sel</td><td>Pengaturan regional Excel memakai pemisah titik-koma</td><td>Tidak masalah untuk sistem. Untuk melihat per kolom: <b>Data → From Text/CSV</b>, pemisah <i>Comma</i></td></tr>
+      <tr><td>Impor siswa menolak baris</td><td>NIS sudah dipakai, kelas tidak dikenali, atau akun orang tua baru belum diberi kata sandi awal</td><td>Baca rincian baris pada hasil impor; perbaiki data lalu impor kembali</td></tr>
+      <tr><td>File e-Rapor tidak dikenal atau kolom nilai tidak ditemukan</td><td>File bukan workbook e-Rapor asli, struktur/header diubah, atau file hanya diganti ekstensi</td><td>Unduh ulang file dari e-Rapor SMP 2025.2. Jika perlu <code>.xlsx</code>, gunakan <b>File → Save As → Excel Workbook (.xlsx)</b> dan pertahankan header serta susunan kolom aslinya</td></tr>
+      <tr><td>Siswa lama ikut dianggap siswa baru saat impor kelas</td><td>Kolom <b>ID Siswa SIGAP</b> kosong, berubah, atau dihapus</td><td>Unduh ulang data kelas dan jangan ubah kolom ID siswa. Untuk siswa baru, biarkan ID kosong dan isi NIS serta nama</td></tr>
+      <tr><td>Saya mengosongkan kontak orang tua, tetapi data lama tetap ada</td><td>Kolom kosong pada baris siswa lama tidak menghapus data tersimpan</td><td>Isi nilai baru yang ingin disimpan; ubah atau lepas akun lewat formulir siswa bila perlu menghapus relasi akun</td></tr>
+      <tr><td>Semua kolom CSV menumpuk di satu sel</td><td>Pengaturan regional Excel memakai pemisah yang berbeda</td><td>Tidak masalah untuk sistem. Untuk melihat per kolom: <b>Data → From Text/CSV</b>, pilih pemisah yang sesuai (koma atau titik-koma)</td></tr>
+      <tr><td>Unggah e-Rapor menyatakan kelas/rombel atau NPSN berbeda</td><td>Pilihan di SIGAP tidak sama dengan identitas pada workbook</td><td>Cocokkan kelas, mapel, semester, dan NPSN Profil Sekolah. Gunakan file asli dari e-Rapor atau simpan sebagai <code>.xlsx</code> dari Excel tanpa mengubah identitas dan struktur</td></tr>
+      <tr><td>Unggah e-Rapor meminta NIS siswa baru</td><td>Ada siswa pada workbook yang belum cocok dengan roster SIGAP</td><td>Admin masukkan NIS asli pada pratinjau lalu buat siswa. NIS wajib dan harus unik; akun orang tua dibuat terpisah</td></tr>
+      <tr><td>Roster SIGAP memuat siswa yang tidak ada pada file e-Rapor</td><td>Isi kelas di SIGAP dan file tidak sama</td><td>Periksa/selaraskan daftar siswa kelas sebelum mengunggah template</td></tr>
+      <tr><td>Ekspor e-Rapor belum tersedia</td><td>Template belum diunggah, pemetaan siswa belum lengkap, atau roster berubah</td><td>Admin unggah kembali template untuk kelas/mapel/semester yang dipilih dan pastikan semua siswa cocok</td></tr>
+      <tr><td>Nilai e-Rapor kosong meski nilai tugas sudah diisi</td><td>Kolom template belum dipetakan ke komponen nilai yang diisi</td><td>Minta admin mengatur <b>Sumber setiap kolom e-Rapor</b>, atau isi kolom itu langsung bila pilihannya <i>Isi langsung</i></td></tr>
       <tr><td>Orang tua tidak melihat nilai</td><td>Publikasi nilai periode aktif masih mati</td><td>Aktifkan di <b>Periode Akademik</b></td></tr>
       <tr><td>Nilai anak tidak lengkap</td><td>Guru belum menyimpan nilai komponen</td><td>Cek <b>Progres nilai</b> di dasbor kepala sekolah</td></tr>
       <tr><td>Data sudah diubah tapi layar masih lama</td><td>Sesi peramban menggantung</td><td>Muat ulang halaman (<code>Ctrl+R</code>)</td></tr>
-      <tr><td>Lupa kata sandi</td><td>—</td><td>Administrator menyetel ulang di <b>Pengguna</b>; pengguna dapat menggantinya sendiri di <b>Profil Saya</b> bila masih ingat sandi lama</td></tr>
+      <tr><td>Lupa kata sandi</td><td>-</td><td>Administrator menyetel ulang di <b>Pengguna</b>; pengguna dapat menggantinya sendiri di <b>Profil Saya</b> bila masih ingat sandi lama</td></tr>
       <tr><td>QR di layar tidak berganti</td><td>Interval terlalu besar atau halaman layar QR tidak aktif</td><td>Perkecil interval di <b>Pengaturan QR Absen</b>, buka ulang layar QR</td></tr>
     </tbody>
   </table>
 
   <h2>Tiga kebiasaan yang membuat data selalu rapi</h2>
   <ol class="steps">
-    <li>Guru mengisi jurnal <b>pada hari yang sama</b> — presensi siswa lahir dari jurnal.</li>
+    <li>Guru mengisi jurnal <b>pada hari yang sama</b> - presensi siswa lahir dari jurnal.</li>
     <li>Administrator tidak mengubah NIS siswa yang sudah punya riwayat nilai.</li>
     <li>Publikasi nilai dipakai sebagai keran, bukan dibiarkan terbuka sepanjang semester.</li>
   </ol>
@@ -797,42 +841,45 @@
 
 <!-- ══════════════════════ LAMPIRAN ══════════════════════ -->
 <section>
-  <h1>Lampiran A — Menu yang tampak per peran</h1>
+  <h1>Lampiran A - Menu yang tampak per peran</h1>
   <table>
     <thead><tr><th style="width:34%">Kelompok menu</th><th class="c">Admin</th><th class="c">Guru</th><th class="c">Kepala Sekolah</th><th class="c">Orang Tua</th></tr></thead>
     <tbody>
       <tr><td>Dashboard</td><td class="c"><span class="yes">•</span></td><td class="c">Jadwal Mengajar</td><td class="c">Pengawasan Sekolah</td><td class="c">Dashboard Anak</td></tr>
-      <tr><td>Profil Sekolah</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Kalender Sekolah</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Periode Akademik</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Mata Pelajaran</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Kelas &amp; Siswa</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Data Guru</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Data Orang Tua</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Jadwal Pelajaran</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Kontrak Mengajar</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Jurnal Mengajar</td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Absensi Siswa</td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Nilai Siswa</td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Audit Nilai</td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Konfirmasi Kehadiran</td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Monitoring Konfirmasi</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Pengaturan QR Absen</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Pengawasan Sekolah</td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Laporan Kehadiran Guru</td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Pengumuman</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Pengguna</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td></tr>
-      <tr><td>Peran &amp; Hak Akses</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td><td class="c"><span class="no">–</span></td></tr>
+      <tr><td>Profil Sekolah</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Kalender Sekolah</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Periode Akademik</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Mata Pelajaran</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Kelas &amp; Siswa</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Data Guru</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Data Orang Tua</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Jadwal Pelajaran</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Kontrak Mengajar</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Jurnal Mengajar</td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Absensi Siswa</td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Nilai Siswa</td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Pengaturan e-Rapor</td><td class="c"><span class="yes">ya</span></td><td class="c">Impor / Ekspor e-Rapor di Nilai Siswa</td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Audit Nilai</td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Konfirmasi Kehadiran</td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Monitoring Konfirmasi</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Pengaturan QR Absen</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Pengawasan Sekolah</td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Laporan Kehadiran Guru</td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Pengumuman</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Pengguna</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td></tr>
+      <tr><td>Peran &amp; Hak Akses</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td><td class="c"><span class="no">-</span></td></tr>
       <tr><td>Profil Saya</td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="yes">ya</span></td><td class="c"><span class="yes">ya</span></td></tr>
     </tbody>
   </table>
-  <p>Daftar di atas mengikuti hak akses, sehingga dapat berubah jika administrator menyesuaikan peran. Orang tua tidak punya menu Pengumuman: pengumuman sekolah dan notifikasi nilai anaknya tampil langsung di halaman Dashboard Anak. Administrator memang tidak diberi akses ke Jurnal Mengajar, Nilai Siswa, dan Rapor — itu pilihan desain, bukan kekurangan hak akses.</p>
+  <p>Daftar di atas mengikuti hak akses, sehingga dapat berubah jika administrator menyesuaikan peran. Orang tua tidak punya menu Pengumuman: pengumuman sekolah dan notifikasi nilai anaknya tampil langsung di halaman Dashboard Anak. Administrator memang tidak diberi akses ke Jurnal Mengajar, Nilai Siswa, dan Rapor - itu pilihan desain, bukan kekurangan hak akses.</p>
 </section>
 
 <section>
-  <h1>Lampiran B — Glosarium</h1>
+  <h1>Lampiran B - Glosarium</h1>
   <dl class="kv">
     <dt>NIS</dt><dd>Nomor induk siswa. Dipakai sebagai username akun orang tuanya.</dd>
+    <dt>ID Siswa SIGAP</dt><dd>ID internal untuk mencocokkan dan memperbarui siswa saat impor file data kelas; bukan NIS dan bukan ID anggota rombel e-Rapor.</dd>
+    <dt>ID anggota rombel</dt><dd>Identitas siswa/anggota kelas dari e-Rapor yang dipakai untuk mencocokkan siswa dengan baris pada template sekolah.</dd>
     <dt>Periode akademik</dt><dd>Tahun ajaran aktif; semua kelas, jadwal, jurnal, dan nilai mengacu ke sini.</dd>
     <dt>Mapel</dt><dd>Mata pelajaran.</dd>
     <dt>KKM</dt><dd>Kriteria ketuntasan minimum; ambang nilai tuntas per mata pelajaran.</dd>
@@ -841,21 +888,22 @@
     <dt>Predikat</dt><dd>Label mutu nilai akhir.</dd>
     <dt>Konfirmasi kehadiran</dt><dd>Absensi guru harian lewat pindai QR, berisi waktu, jarak, dan posisi guru.</dd>
     <dt>Geofence</dt><dd>Pembatas area berbasis radius sekolah.</dd>
-    <dt>Hari efektif</dt><dd>Hari yang dihitung sebagai hari bekerja: Senin–Jumat, Sabtu bila sakelarnya aktif, dikurangi tanggal libur khusus.</dd>
+    <dt>Hari efektif</dt><dd>Hari yang dihitung sebagai hari bekerja: Senin-Jumat, Sabtu bila sakelarnya aktif, dikurangi tanggal libur khusus.</dd>
     <dt>Jurnal mengajar</dt><dd>Catatan kegiatan belajar per sesi; sekaligus sumber data absensi siswa.</dd>
     <dt>Jurnal susulan</dt><dd>Jurnal untuk sesi yang terlewat, masih boleh ditulis sampai tiga hari ke belakang bila guru tercatat hadir pada hari sesi itu.</dd>
     <dt>Sesi terlewat</dt><dd>Hari mengajar yang dijadwalkan tetapi gurunya tidak memindai QR.</dd>
     <dt>Audit nilai</dt><dd>Riwayat perubahan nilai: pelaku, waktu, nilai lama, nilai baru.</dd>
     <dt>Publikasi nilai</dt><dd>Saklar yang membuat nilai dan rapor terlihat oleh orang tua.</dd>
+    <dt>Pemetaan e-Rapor</dt><dd>Hubungan antara kolom penilaian pada template sekolah dan jenis nilai SIGAP; kolom tanpa sumber diisi langsung pada halaman e-Rapor.</dd>
     <dt>Wali kelas</dt><dd>Guru yang bertanggung jawab atas satu kelas.</dd>
     <dt>Unduh PDF</dt><dd>Berkas dokumen buatan sistem: rekap absensi, daftar siswa, lembar nilai, daftar hadir guru, dan rekap jurnal.</dd>
   </dl>
 </section>
 
 <section>
-  <h1>Lampiran C — Akun demo lingkungan percobaan</h1>
+  <h1>Lampiran C - Akun demo lingkungan percobaan</h1>
   <p>Akun berikut tersedia setelah <code>npm run seed</code> dijalankan pada <b>lingkungan percobaan</b>. Jangan
-    memakainya di lingkungan sekolah yang sebenarnya — ganti seluruh kata sandinya.</p>
+    memakainya di lingkungan sekolah yang sebenarnya - ganti seluruh kata sandinya.</p>
   <table>
     <thead><tr><th style="width:30%">Peran</th><th style="width:16%">Username</th><th style="width:18%">Kata sandi</th><th>Catatan</th></tr></thead>
     <tbody>
@@ -864,21 +912,21 @@
       <tr><td>Guru Matematika &amp; Biologi</td><td><code>budi</code></td><td><code>teacher123</code></td><td>Wali kelas 10C, mengampu beberapa rombel</td></tr>
       <tr><td>Guru Bahasa Inggris</td><td><code>siti</code></td><td><code>teacher123</code></td><td>Wali kelas 10B</td></tr>
       <tr><td>Guru lain (15 akun)</td><td><code>ratna</code> (wali 10A), <code>agus</code> (10D), <code>endang</code> (11A), <code>nia</code> (11B), <code>dwi</code> (11C), <code>bambang</code> (12A), <code>retno</code> (12B), <code>yusuf</code>, <code>tri</code>, <code>laksmi</code>, <code>hafiz</code>, <code>nur</code>, <code>fitri</code>, <code>hendra</code>, <code>maskur</code></td><td><code>teacher123</code></td><td>Satu akun per guru; sembilan di antaranya wali kelas</td></tr>
-      <tr><td>Orang Tua — satu anak</td><td><code>20261001</code></td><td><code>parent123</code></td><td>Username = NIS anak; tiap siswa punya akun orang tuanya sendiri</td></tr>
-      <tr><td>Orang Tua — banyak anak</td><td><code>10001</code></td><td><code>parent123</code></td><td>Keluarga contoh: satu akun menaungi 10 anak (NIS 10001–10010)</td></tr>
+      <tr><td>Orang Tua - satu anak</td><td><code>20261001</code></td><td><code>parent123</code></td><td>Username = NIS anak; tiap siswa punya akun orang tuanya sendiri</td></tr>
+      <tr><td>Orang Tua - banyak anak</td><td><code>10001</code></td><td><code>parent123</code></td><td>Keluarga contoh: satu akun menaungi 10 anak (NIS 10001-10010)</td></tr>
     </tbody>
   </table>
   <p>Data hasil seed berisi 288 siswa pada 9 rombel (32 siswa per kelas), 17 guru, dan 15 mata pelajaran, lengkap dengan
-    30 hari jadwal, jurnal, absensi, dan nilai — jadi semua tabel dan grafik terisi saat dibuka. Kehadiran guru tercatat
+    30 hari jadwal, jurnal, absensi, dan nilai - jadi semua tabel dan grafik terisi saat dibuka. Kehadiran guru tercatat
     satu pindai per orang per hari, dan <b>Kalender Sekolah</b> sudah diisi empat tanggal libur contoh (dua sudah lewat,
     dua masih akan datang) supaya perbedaan hari efektif terlihat di layar.</p>
 </section>
 
 <footer class="colophon">
-  <p><b>Manual Book SIGAP</b> — Sistem Informasi Guru, Absensi, dan Prestasi. Disusun mengikuti tampilan SIGAP versi
+  <p><b>Manual Book SIGAP</b> - Sistem Informasi Guru, Absensi, dan Prestasi. Disusun mengikuti tampilan SIGAP versi
   berjalan. Jika antarmuka sekolah Anda sudah disesuaikan, nama menu bisa sedikit berbeda; alur kerjanya tetap sama.</p>
   <p>Berkas ini tersedia dalam tiga bentuk: <code>docs/manual-book.md</code> (sumber teks),
-  <code>docs/manual-book.html</code> (versi cetak), dan <code>docs/manual-book.pdf</code> (hasil ekspor).</p>
+  <code>docs/manual-book.html</code> (versi cetak), dan <code>output/pdf/Manual-Book-SIGAP.pdf</code> (hasil ekspor terbaru).</p>
 </footer>
 
 </div>

@@ -54,6 +54,7 @@ export {
   EraporTemplateSchema,
   EraporNewStudentsSchema,
   EraporColumnMappingsSchema,
+  EraporDefaultColumnMappingsSchema,
   EraporGradeSaveSchema,
   gradeTypeSlug,
   AnnouncementSchema,

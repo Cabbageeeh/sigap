@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panduan Cepat SIGAP - Impor Siswa dan e-Rapor</title>
+<style>
+  :root { --ink:#22292b; --muted:#6f7472; --brand:#b8472b; --soft:#f4f1eb; --line:#ded9d0; --paper:#fff; --green:#286e57; --warn:#9b4b23; }
+  * { box-sizing:border-box; }
+  @page { size:A4; margin:0; }
+  html { -webkit-print-color-adjust:exact; print-color-adjust:exact; background:var(--soft); }
+  body { margin:0; color:var(--ink); background:var(--soft); font-family:'Public Sans',system-ui,-apple-system,'Segoe UI',Arial,sans-serif; font-size:9.2pt; line-height:1.5; }
+  .page { width:210mm; height:297mm; position:relative; padding:15mm 16mm 17mm; margin:0 auto; background:var(--paper); break-after:page; page-break-after:always; }
+  .page:last-child { break-after:auto; page-break-after:auto; }
+  h1,h2,h3,p { margin-top:0; }
+  h1 { font-size:23pt; line-height:1.1; letter-spacing:-.04em; margin:0 0 3mm; }
+  h2 { font-size:15pt; line-height:1.2; margin:0 0 2mm; letter-spacing:-.02em; }
+  h3 { font-size:10.4pt; line-height:1.25; margin:4mm 0 1.5mm; }
+  p { margin-bottom:2mm; }
+  .kicker { color:var(--brand); font-size:8pt; text-transform:uppercase; letter-spacing:.18em; font-weight:700; margin-bottom:2mm; }
+  .subtitle { color:var(--muted); font-size:11pt; line-height:1.45; max-width:155mm; }
+  .topline { height:2px; width:20mm; background:var(--brand); margin:5mm 0; }
+  .logo { height:15mm; width:auto; object-fit:contain; object-position:left; }
+  .brand-row { display:flex; align-items:center; justify-content:space-between; gap:8mm; }
+  .cover { background:linear-gradient(145deg,#fff 0%,#fff 60%,#f8f0e9 100%); }
+  .cover-main { padding-top:11mm; }
+  .cover h1 { font-size:37pt; max-width:145mm; }
+  .cover .subtitle { font-size:14pt; max-width:142mm; }
+  .workflow { display:grid; grid-template-columns:repeat(3,1fr); gap:3mm; margin:10mm 0 7mm; }
+  .flow-card { min-height:36mm; border:1px solid var(--line); border-radius:3mm; padding:4mm; background:#fff; }
+  .flow-card .num { display:inline-flex; width:7mm; height:7mm; border-radius:50%; align-items:center; justify-content:center; background:var(--brand); color:white; font-weight:700; font-size:9pt; margin-bottom:2mm; }
+  .flow-card b { display:block; margin-bottom:1mm; }
+  .flow-card span { color:var(--muted); font-size:8.3pt; }
+  .role-strip { display:flex; gap:2mm; flex-wrap:wrap; margin-top:6mm; }
+  .tag { border:1px solid var(--line); border-radius:99px; padding:1.3mm 3mm; font-size:8pt; font-weight:600; color:#515755; background:#fff; }
+  .lead { color:var(--muted); font-size:9.7pt; margin-bottom:4mm; }
+  .steps { list-style:none; padding:0; margin:3mm 0 4mm; counter-reset:step; }
+  .steps li { position:relative; padding-left:9mm; margin:0 0 2.5mm; break-inside:avoid; }
+  .steps li:before { counter-increment:step; content:counter(step); position:absolute; left:0; top:.3mm; display:flex; width:6.2mm; height:6.2mm; justify-content:center; align-items:center; color:#fff; background:var(--brand); border-radius:50%; font-size:8pt; font-weight:700; }
+  .bullets { padding-left:5mm; margin:2mm 0 3mm; }
+  .bullets li { padding-left:.5mm; margin-bottom:1.7mm; break-inside:avoid; }
+  .panel { border:1px solid var(--line); border-left:3px solid var(--brand); border-radius:0 2.5mm 2.5mm 0; padding:3.2mm 4mm; margin:3mm 0; background:#fffaf7; break-inside:avoid; }
+  .panel.good { border-left-color:var(--green); background:#f3faf6; }
+  .panel.warn { border-left-color:var(--warn); background:#fff8f3; }
+  .panel b.label { display:block; font-size:7.5pt; color:var(--brand); text-transform:uppercase; letter-spacing:.12em; margin-bottom:1mm; }
+  .panel.good b.label { color:var(--green); }
+  .panel.warn b.label { color:var(--warn); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:3mm; margin:3mm 0; }
+  .card { border:1px solid var(--line); border-radius:2.5mm; padding:3mm 3.5mm; background:#fff; break-inside:avoid; }
+  .card h3 { margin-top:0; }
+  table { width:100%; border-collapse:collapse; margin:3mm 0 4mm; font-size:8.3pt; }
+  th,td { text-align:left; vertical-align:top; border:1px solid var(--line); padding:2mm 2.3mm; }
+  th { background:var(--soft); }
+  tr { break-inside:avoid; }
+  .footer { position:absolute; bottom:7mm; left:16mm; right:16mm; display:flex; justify-content:space-between; color:#92938f; font-size:7pt; border-top:1px solid var(--line); padding-top:2mm; }
+  .cover .footer { border-color:#e9e2d8; }
+  .checklist { list-style:none; padding:0; margin:2mm 0 3mm; }
+  .checklist li { margin:0 0 1.7mm; }
+  .box { display:inline-block; width:4mm; height:4mm; border:1px solid #92938f; border-radius:1mm; vertical-align:-.7mm; margin-right:2mm; }
+  code { font-family:Consolas,'Cascadia Mono',monospace; background:#f1eee8; border-radius:1mm; padding:.2mm 1mm; font-size:.92em; }
+  .muted { color:var(--muted); }
+  .small { font-size:8pt; }
+  .compact li { margin-bottom:1.2mm; }
+  @media screen { body { padding:8mm 0; } .page { margin:0 auto 8mm; box-shadow:0 2mm 10mm #0002; } }
+</style>
+</head>
+<body>
+<section class="page cover">
+  <div class="brand-row"><img class="logo" src="images/manual/logo.png" alt="Logo SIGAP"><span class="tag">PANDUAN CEPAT · 6 HALAMAN</span></div>
+  <div class="cover-main">
+    <p class="kicker">SIGAP · Sistem Informasi Guru, Absensi, dan Prestasi</p>
+    <div class="topline"></div>
+    <h1>Impor siswa dan<br>nilai e-Rapor</h1>
+    <p class="subtitle">Langkah praktis untuk menyiapkan roster kelas, menyimpan format sekolah, mengisi nilai satu kali, dan menyiapkan berkas ekspor.</p>
+    <div class="workflow">
+      <div class="flow-card"><span class="num">1</span><b>Siapkan roster</b><span>Admin memastikan NIS dan daftar siswa di kelas SIGAP.</span></div>
+      <div class="flow-card"><span class="num">2</span><b>Simpan format</b><span>Admin mengunggah template untuk kelas, mapel, dan semester.</span></div>
+      <div class="flow-card"><span class="num">3</span><b>Petakan nilai</b><span>Kolom e-Rapor ditautkan ke komponen nilai SIGAP.</span></div>
+      <div class="flow-card"><span class="num">4</span><b>Isi nilai</b><span>Guru mengisi komponen SIGAP sekali dan melengkapi kolom langsung.</span></div>
+      <div class="flow-card"><span class="num">5</span><b>Ekspor</b><span>Guru mengunduh .xls atau .xlsx sesuai kebutuhan sekolah.</span></div>
+      <div class="flow-card"><span class="num">6</span><b>Publikasikan</b><span>Admin menerbitkan nilai agar orang tua dapat melihatnya.</span></div>
+    </div>
+    <div class="panel good"><b class="label">Untuk siapa panduan ini?</b>Admin menyiapkan data dan pemetaan. Guru mengisi nilai, memeriksa hasil, lalu mengekspor file.</div>
+    <div class="role-strip"><span class="tag">Admin sekolah</span><span class="tag">Guru</span><span class="tag">e-Rapor SMP 2025.2</span></div>
+  </div>
+  <div class="footer"><span>Panduan cepat SIGAP · 3 Oktober 2026</span><span>01 / 06</span></div>
+</section>
+
+<section class="page">
+  <p class="kicker">Admin · Data siswa</p>
+  <h2>1. Lengkapi data siswa per kelas</h2>
+  <p class="lead">Unduh roster kelas yang sudah ada agar nama dan NIS tidak perlu diketik ulang. File ini juga dapat dipakai untuk melengkapi data orang tua.</p>
+  <ol class="steps">
+    <li>Buka <b>Kelas &amp; Siswa</b>, lalu pilih kelas.</li>
+    <li>Klik <b>Unduh data kelas (.xlsx)</b>. File <code>data-kelas-[nama-kelas].xlsx</code> berisi data yang sudah tersimpan. Jika kelas masih kosong, hanya ada judul kolom.</li>
+    <li>Lengkapi kolom yang diperlukan. Jangan ubah atau hapus kolom <b>ID Siswa SIGAP</b> pada baris siswa lama.</li>
+    <li>Tambahkan siswa baru pada baris berikutnya. Biarkan ID SIGAP kosong; isi NIS dan nama siswa.</li>
+    <li>Kembali ke SIGAP, klik <b>Impor daftar siswa</b>, pilih file yang telah diisi, lalu klik <b>Impor siswa</b>.</li>
+  </ol>
+  <table>
+    <thead><tr><th>Baris pada file</th><th>Cara mengisinya</th><th>Hasil</th></tr></thead>
+    <tbody>
+      <tr><td>Siswa lama dengan ID SIGAP</td><td>Isi hanya data yang ingin diperbarui. Sel kosong membiarkan data lama tetap ada.</td><td>Data siswa diperbarui tanpa membuat duplikat.</td></tr>
+      <tr><td>Siswa baru tanpa ID SIGAP</td><td>Isi NIS asli dan nama. NIS harus unik. Kolom kelas diabaikan saat impor dari halaman kelas.</td><td>Siswa ditambahkan ke kelas yang sedang dibuka.</td></tr>
+      <tr><td>Data orang tua</td><td>Isi nama dan kontak jika tersedia. Kata sandi awal wajib untuk akun orang tua baru.</td><td>Username akun orang tua memakai NIS anak.</td></tr>
+    </tbody>
+  </table>
+  <div class="grid2">
+    <div class="card"><h3>Roster kelas yang sudah ada</h3><p class="small">Pakai <b>Unduh data kelas (.xlsx)</b>. File menyertakan ID internal SIGAP dan data yang tersedia.</p></div>
+    <div class="card"><h3>Daftar baru atau impor umum</h3><p class="small">Pakai template <b>Excel (.xlsx)</b> atau <b>CSV (.csv)</b>. Isi NIS, nama siswa, dan kelas.</p></div>
+  </div>
+  <div class="panel warn"><b class="label">Akun orang tua</b>Nama orang tua saja belum membuat akun baru. Isi nama orang tua dan kata sandi awal minimal 8 karakter. Jika orang tua sudah tertaut, kata sandi tidak berubah.</div>
+  <div class="footer"><span>Panduan cepat SIGAP · Impor siswa</span><span>02 / 06</span></div>
+</section>
+
+<section class="page">
+  <p class="kicker">Admin · Format e-Rapor</p>
+  <h2>2. Simpan template sekolah</h2>
+  <p class="lead">Satu template disimpan untuk satu kombinasi kelas, mapel, dan semester. File kosong boleh digunakan untuk menyimpan format; nilai yang sudah terisi juga akan masuk ke SIGAP.</p>
+  <ol class="steps">
+    <li>Buka <b>Penilaian &gt; Pengaturan e-Rapor</b>.</li>
+    <li>Pilih kelas, mata pelajaran, dan Semester I atau II yang sama dengan file sumber e-Rapor.</li>
+    <li>Unggah file <code>.xls</code> asli dari e-Rapor SMP 2025.2 atau <code>.xlsx</code> yang benar-benar disimpan ulang melalui Excel. Ukuran maksimal 2 MB.</li>
+    <li>Klik <b>Periksa dan unggah</b>. Periksa pesan hasil validasi.</li>
+    <li>Jika pratinjau menampilkan siswa baru, verifikasi nama dan isi <b>NIS asli</b> untuk setiap siswa. Klik <b>Buat siswa dan simpan</b>.</li>
+  </ol>
+  <h3>Struktur yang perlu dipertahankan</h3>
+  <div class="grid2">
+    <div class="card"><h3>Identitas dan roster</h3><ul class="bullets compact"><li>Header <code>mapel_id</code></li><li>Header <code>id_anggota_rombel</code></li><li>Header <code>status kunci</code></li><li>Daftar siswa dan ID rombel dari file sekolah</li></ul></div>
+    <div class="card"><h3>Kolom nilai</h3><ul class="bullets compact"><li>Satu atau lebih kolom Sumatif</li><li>Kolom Akhir Semester Non Tes</li><li>Kolom Akhir Semester Tes</li><li>Urutan header dan kolom nilai asli</li></ul></div>
+  </div>
+  <div class="panel warn"><b class="label">Jangan lakukan</b>Jangan menamai file lain dengan ekstensi <code>.xls</code> atau <code>.xlsx</code> saja. File <code>.xlsx</code> harus menjadi workbook Excel yang sebenarnya dan header e-Rapor perlu dipertahankan.</div>
+  <div class="panel"><b class="label">Pencocokan siswa</b>SIGAP memakai pemetaan ID anggota rombel atau nama unik. NIS wajib untuk siswa baru dan harus benar-benar NIS sekolah. Siswa baru yang dibuat dari e-Rapor tidak otomatis memiliki akun orang tua.</div>
+  <p class="small muted">NPSN pada file harus cocok dengan Profil Sekolah SIGAP jika NPSN sudah diisi. Siswa yang ada di roster SIGAP tetapi tidak ada di file perlu diperiksa sebelum impor.</p>
+  <div class="footer"><span>Panduan cepat SIGAP · Simpan template</span><span>03 / 06</span></div>
+</section>
+
+<section class="page">
+  <p class="kicker">Admin · Pemetaan nilai</p>
+  <h2>3. Tentukan sumber setiap kolom</h2>
+  <p class="lead">Pemetaan menentukan kolom e-Rapor mana yang mengikuti komponen nilai rutin SIGAP. Atur setelah template berhasil disimpan.</p>
+  <table>
+    <thead><tr><th>Pilihan pada SIGAP</th><th>Arti bagi guru</th></tr></thead>
+    <tbody>
+      <tr><td><b>Jenis nilai SIGAP</b>, misalnya Sumatif 1</td><td>Kolom e-Rapor mengambil nilai dari komponen itu. Guru mengisi di halaman Nilai Siswa, lalu nilainya muncul di e-Rapor.</td></tr>
+      <tr><td><b>Isi langsung di halaman e-Rapor</b></td><td>Tidak terhubung ke komponen nilai rutin. Guru mengisi kolom tersebut di tabel e-Rapor.</td></tr>
+    </tbody>
+  </table>
+  <h3>Contoh</h3>
+  <div class="card">
+    <table>
+      <thead><tr><th>Kolom pada template</th><th>Sumber yang dipilih</th><th>Guru mengisi di</th></tr></thead>
+      <tbody>
+        <tr><td>Sumatif 1</td><td>Sumatif 1</td><td>Nilai Siswa SIGAP</td></tr>
+        <tr><td>Sumatif 2</td><td>Sumatif 2</td><td>Nilai Siswa SIGAP</td></tr>
+        <tr><td>Kolom catatan khusus</td><td>Isi langsung di halaman e-Rapor</td><td>Tabel e-Rapor</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <ol class="steps">
+    <li>Untuk setiap kolom pada bagian <b>Sumber setiap kolom e-Rapor</b>, pilih komponen nilai yang sesuai atau pilih isi langsung.</li>
+    <li>Gunakan jenis nilai yang berbeda bila Semester I dan II mewakili nilai yang berbeda.</li>
+    <li>Pemetaan selalu disimpan untuk kelas, mapel, dan semester yang sedang dibuka. Untuk menerapkannya juga sebagai default, centang <b>Terapkan juga sebagai default</b>, pilih cakupan <b>Semua mapel</b> atau <b>Mapel ini</b>, lalu klik satu tombol <b>Simpan pemetaan</b>.</li>
+  </ol>
+  <div class="panel"><b class="label">Urutan aturan</b>Default berlaku pada template lain di tahun ajaran dan semester yang sama jika kolomnya belum memiliki pemetaan khusus. Default khusus mapel mengalahkan default semua mapel; pemetaan khusus template tetap diutamakan. Kolom tanpa sumber masih dapat diisi langsung oleh guru.</div>
+  <div class="panel good"><b class="label">Hasilnya</b>Guru memasukkan nilai yang dipetakan sekali di halaman Nilai Siswa. Kolom e-Rapor yang memakai sumber SIGAP akan tampil dari nilai itu dan terkunci untuk edit langsung.</div>
+  <div class="panel warn"><b class="label">Saat mengubah pemetaan</b>Nilai lama tetap tersimpan pada komponen sebelumnya. Periksa sumber lama dan baru. Nilai langsung yang sudah ada dapat disalin ke sumber baru jika sumber itu masih kosong.</div>
+  <p class="small muted">Nama dan pilihan komponen nilai dikelola pada menu Tahun Ajaran. Pastikan komponen yang diperlukan sudah tersedia sebelum menetapkan sumbernya.</p>
+  <div class="footer"><span>Panduan cepat SIGAP · Pemetaan nilai</span><span>04 / 06</span></div>
+</section>
+
+<section class="page">
+  <p class="kicker">Guru · Isi dan ekspor</p>
+  <h2>4. Isi nilai lalu unduh file</h2>
+  <div class="grid2">
+    <div class="card"><h3>A. Nilai rutin SIGAP</h3><ol class="bullets"><li>Buka <b>Penilaian &gt; Nilai Siswa</b>.</li><li>Pilih kelas, mapel, dan jenis nilai.</li><li>Klik <b>Lihat Rekap</b>, isi nilai, lalu klik <b>Simpan Semua Perubahan</b>.</li></ol></div>
+    <div class="card"><h3>B. Nilai resmi e-Rapor</h3><ol class="bullets"><li>Klik <b>Impor / Ekspor e-Rapor</b>.</li><li>Pilih kelas, mapel, dan semester.</li><li>Klik <b>Tampilkan nilai</b>.</li></ol></div>
+  </div>
+  <h3>Lengkapi nilai e-Rapor</h3>
+  <ol class="steps">
+    <li>Jika template belum disimpan, unggah file sumber dari e-Rapor. Guru dapat menyimpan template sesuai aksesnya, tetapi hanya admin yang dapat membuat siswa dari pratinjau roster.</li>
+    <li>Kolom yang dipetakan akan menampilkan nilai SIGAP. Kolom dengan pilihan <b>Isi langsung di halaman e-Rapor</b> dapat diedit pada tabel.</li>
+    <li>Isi atau koreksi nilai langsung, lalu klik <b>Simpan nilai</b>. Nilai harus berupa angka 0 sampai 100. Mengosongkan nilai langsung lalu menyimpan akan menghapus nilai tersebut.</li>
+    <li>Setelah semua siswa cocok, unduh <b>.xls (format sekolah)</b> atau <b>.xlsx</b>. Tombol ekspor tampil jika template tersedia dan pemetaan roster lengkap.</li>
+    <li>Buka file unduhan dan periksa kelas, mapel, semester, siswa, serta nilainya. Lalu unggah file tersebut ke e-Rapor sekolah.</li>
+  </ol>
+  <table>
+    <thead><tr><th>Sumber nilai di e-Rapor</th><th>Diisi pada</th><th>Diekspor</th></tr></thead>
+    <tbody>
+      <tr><td>Sudah dipetakan ke nilai SIGAP</td><td>Penilaian &gt; Nilai Siswa</td><td>Otomatis mengikuti komponen SIGAP</td></tr>
+      <tr><td>Isi langsung di halaman e-Rapor</td><td>Tabel e-Rapor</td><td>Setelah klik Simpan nilai</td></tr>
+    </tbody>
+  </table>
+  <div class="panel"><b class="label">Akses guru</b>Guru harus memiliki akses nilai untuk kelas dan mapel yang dipilih. Pada hari terjadwal mengajar, SIGAP dapat meminta guru mengonfirmasi kehadiran dengan QR sebelum membuka nilai.</div>
+  <div class="footer"><span>Panduan cepat SIGAP · Guru</span><span>05 / 06</span></div>
+</section>
+
+<section class="page">
+  <p class="kicker">Pemeriksaan · Publikasi</p>
+  <h2>5. Periksa masalah umum</h2>
+  <table>
+    <thead><tr><th>Pesan atau kondisi</th><th>Tindakan</th></tr></thead>
+    <tbody>
+      <tr><td>File tidak dikenali sebagai format e-Rapor</td><td>Unduh ulang file asli. Jika perlu <code>.xlsx</code>, simpan melalui Excel sebagai Excel Workbook dan pertahankan header serta susunannya.</td></tr>
+      <tr><td>Kelas atau mapel tidak cocok</td><td>Samakan pilihan kelas, tingkat, mapel, dan semester dengan file e-Rapor.</td></tr>
+      <tr><td>NPSN berbeda</td><td>Cocokkan NPSN file dan Profil Sekolah di SIGAP.</td></tr>
+      <tr><td>Pratinjau meminta NIS siswa baru</td><td>Admin masukkan NIS asli yang unik. ID Siswa SIGAP dan ID anggota rombel bukan NIS.</td></tr>
+      <tr><td>Roster SIGAP berisi siswa yang tidak ada di file</td><td>Periksa roster kelas dan sesuaikan sebelum mengunggah template.</td></tr>
+      <tr><td>Tombol ekspor tidak tampil</td><td>Pastikan template sudah tersimpan dan setiap siswa pada roster terpetakan ke ID anggota rombel.</td></tr>
+      <tr><td>Kolom nilai e-Rapor kosong</td><td>Admin periksa sumber pemetaan. Kolom isi langsung perlu diisi guru pada tabel e-Rapor.</td></tr>
+    </tbody>
+  </table>
+  <h3>Sebelum mengirim file ke e-Rapor</h3>
+  <ul class="checklist">
+    <li><span class="box"></span>Kelas, mapel, semester, dan NPSN cocok.</li>
+    <li><span class="box"></span>Daftar siswa dan ID anggota rombel sudah cocok.</li>
+    <li><span class="box"></span>Nilai yang dipetakan dan nilai langsung sudah diperiksa.</li>
+    <li><span class="box"></span>Perubahan nilai langsung sudah disimpan.</li>
+    <li><span class="box"></span>File ekspor dibuka dan diperiksa sebelum diunggah.</li>
+  </ul>
+  <div class="panel good"><b class="label">Agar orang tua dapat melihat nilai</b>Admin buka <b>Periode Akademik</b> dan klik <b>Publikasikan Nilai</b>. Nilai resmi e-Rapor tampil terpisah dari nilai harian SIGAP jika template dan nilainya tersedia.</div>
+  <p class="small muted">Panduan ini membahas impor siswa dan alur e-Rapor. Untuk kehadiran, jurnal, rapor, laporan, dan fitur lainnya, lihat <b>Manual Book SIGAP</b>.</p>
+  <div class="footer"><span>Panduan cepat SIGAP · Daftar cek</span><span>06 / 06</span></div>
+</section>
+</body>
+</html>
