@@ -11,7 +11,7 @@
 ## Stats
 
 - Files indexed: 319
-- Total lines: 36003
+- Total lines: 36011
 - Total exports: 974
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
@@ -392,7 +392,7 @@
 - `headmaster.test.ts` (206L)
 - `journals.test.ts` (144L)
 - `notifications.test.ts` (102L)
-- `parent.test.ts` (148L)
+- `parent.test.ts` (156L)
 - `parents.test.ts` (71L)
 - `rapor.test.ts` (154L)
 - `reportExports.test.ts` (212L)

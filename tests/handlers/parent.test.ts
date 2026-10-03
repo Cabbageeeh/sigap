@@ -12,9 +12,15 @@ vi.mock('@queries/students', () => ({
 
 vi.mock('@queries/grades', () => ({
   findGradesByStudent: vi.fn(),
+  findGradesByClassSubject: vi.fn(() => []),
   getStudentGradeSummaries: vi.fn(),
   getGradesPublicationForStudent: vi.fn(),
   findGradeProgressionByStudent: vi.fn(() => []),
+}));
+
+vi.mock('@queries/eraporGrades', () => ({
+  findEraporColumnMappings: vi.fn(() => []),
+  findEraporGradeTemplatesByClass: vi.fn(() => []),
 }));
 
 vi.mock('@queries/studentAttendance', () => ({
@@ -122,6 +128,7 @@ describe('parentGradesPage', () => {
       studentName: 'Ani',
       gradesPublished: true,
       summaries: [summary],
+      eraporScores: [],
       progression: [],
     });
   });
@@ -141,6 +148,7 @@ describe('parentGradesPage', () => {
       studentName: 'Ani',
       gradesPublished: false,
       summaries: [],
+      eraporScores: [],
       progression: [],
     });
   });
