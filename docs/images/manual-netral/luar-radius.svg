@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Ilustrasi laporan konfirmasi di luar radius</title>
+  <desc id="desc">Contoh netral pemantauan konfirmasi guru yang berada di luar radius lokasi sekolah.</desc>
+  <rect width="1280" height="720" fill="#f7f6f3"/>
+  <rect width="230" height="720" fill="#fff"/>
+  <path d="M230 0v720" stroke="#dedbd4"/>
+  <rect x="25" y="24" width="38" height="38" rx="12" fill="#f7ebe6"/>
+  <circle cx="44" cy="43" r="10" fill="#b94c2e"/>
+  <text x="76" y="43" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#252a2c">SIGAP</text>
+  <text x="76" y="60" font-family="Arial,sans-serif" font-size="9" letter-spacing="1.4" fill="#77736d">SISTEM INFORMASI GURU</text>
+  <text x="31" y="148" font-family="Arial,sans-serif" font-size="13" fill="#736f69">Dashboard Pengawasan</text>
+  <rect x="15" y="174" width="200" height="44" rx="11" fill="#f8eeea"/>
+  <circle cx="40" cy="196" r="8" fill="#bd4b2e"/>
+  <text x="60" y="202" font-family="Arial,sans-serif" font-size="13" fill="#bd4b2e">Konfirmasi di Luar Radius</text>
+  <text x="31" y="257" font-family="Arial,sans-serif" font-size="13" fill="#736f69">Laporan Kehadiran Guru</text>
+  <text x="278" y="78" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2.2" fill="#bd4b2e">PENGAWASAN</text>
+  <text x="278" y="126" font-family="Arial,sans-serif" font-size="36" font-weight="700" fill="#252a2c">Konfirmasi di Luar Radius</text>
+  <text x="278" y="158" font-family="Arial,sans-serif" font-size="16" fill="#716d67">Tinjau jarak konfirmasi terhadap titik lokasi sekolah.</text>
+  <rect x="278" y="188" width="950" height="115" rx="18" fill="#fff" stroke="#dedbd4"/>
+  <text x="310" y="225" font-family="Arial,sans-serif" font-size="12" letter-spacing="1.6" fill="#716d67">TOTAL KONFIRMASI</text>
+  <text x="310" y="275" font-family="Arial,sans-serif" font-size="38" font-weight="700" fill="#252a2c">347</text>
+  <path d="M530 208v74" stroke="#dedbd4"/>
+  <text x="565" y="225" font-family="Arial,sans-serif" font-size="12" letter-spacing="1.6" fill="#716d67">DI LUAR RADIUS</text>
+  <text x="565" y="275" font-family="Arial,sans-serif" font-size="38" font-weight="700" fill="#bd4b2e">4</text>
+  <path d="M760 208v74" stroke="#dedbd4"/>
+  <text x="795" y="225" font-family="Arial,sans-serif" font-size="12" letter-spacing="1.6" fill="#716d67">LOKASI ACUAN</text>
+  <text x="795" y="271" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#252a2c">Nama Sekolah</text>
+  <text x="795" y="290" font-family="Arial,sans-serif" font-size="13" fill="#716d67">Radius yang ditetapkan admin</text>
+  <rect x="278" y="326" width="950" height="314" rx="18" fill="#fff" stroke="#dedbd4"/>
+  <text x="310" y="366" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#252a2c">Daftar konfirmasi untuk ditinjau</text>
+  <rect x="310" y="389" width="886" height="40" rx="8" fill="#f3f1ec"/>
+  <text x="328" y="414" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#716d67">TANGGAL</text>
+  <text x="478" y="414" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#716d67">GURU</text>
+  <text x="690" y="414" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#716d67">SESI</text>
+  <text x="898" y="414" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#716d67">JARAK</text>
+  <text x="1055" y="414" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#716d67">STATUS</text>
+  <g font-family="Arial,sans-serif" font-size="14" fill="#252a2c">
+    <text x="328" y="465">Tanggal konfirmasi</text><text x="478" y="465">Nama Guru</text><text x="690" y="465">Kelas - Mapel</text><text x="898" y="465">347 m</text>
+    <text x="328" y="515">Tanggal konfirmasi</text><text x="478" y="515">Nama Guru</text><text x="690" y="515">Kelas - Mapel</text><text x="898" y="515">412 m</text>
+    <text x="328" y="565">Tanggal konfirmasi</text><text x="478" y="565">Nama Guru</text><text x="690" y="565">Kelas - Mapel</text><text x="898" y="565">295 m</text>
+  </g>
+  <g fill="#fff1eb"><rect x="1035" y="443" width="136" height="30" rx="15"/><rect x="1035" y="493" width="136" height="30" rx="15"/><rect x="1035" y="543" width="136" height="30" rx="15"/></g>
+  <g font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#bd4b2e"><text x="1065" y="463">Perlu ditinjau</text><text x="1065" y="513">Perlu ditinjau</text><text x="1065" y="563">Perlu ditinjau</text></g>
+  <path d="M310 484h886M310 534h886M310 584h886" stroke="#eeeae4"/>
+</svg>

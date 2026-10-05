@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Ilustrasi profil sekolah</title>
+  <desc id="desc">Contoh netral halaman profil sekolah dengan data yang dapat diisi sesuai sekolah masing-masing.</desc>
+  <rect width="1280" height="720" fill="#f7f6f3"/>
+  <rect width="230" height="720" fill="#fff"/>
+  <path d="M230 0v720" stroke="#dedbd4"/>
+  <rect x="25" y="24" width="38" height="38" rx="12" fill="#f7ebe6"/>
+  <circle cx="44" cy="43" r="10" fill="#b94c30"/>
+  <text x="76" y="43" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#252a2c">SIGAP</text>
+  <text x="76" y="60" font-family="Arial,sans-serif" font-size="9" letter-spacing="1.4" fill="#77736d">SISTEM INFORMASI GURU</text>
+  <rect x="15" y="122" width="200" height="44" rx="11" fill="#f8eeea"/>
+  <circle cx="40" cy="144" r="8" fill="#bd4b2e"/>
+  <text x="60" y="150" font-family="Arial,sans-serif" font-size="15" fill="#bd4b2e">Profil Sekolah</text>
+  <text x="31" y="207" font-family="Arial,sans-serif" font-size="13" fill="#736f69">Kalender Sekolah</text>
+  <text x="31" y="251" font-family="Arial,sans-serif" font-size="13" fill="#736f69">Periode Akademik</text>
+  <text x="31" y="295" font-family="Arial,sans-serif" font-size="13" fill="#736f69">Mata Pelajaran</text>
+  <text x="31" y="339" font-family="Arial,sans-serif" font-size="13" fill="#736f69">Kelas &amp; Siswa</text>
+  <text x="31" y="383" font-family="Arial,sans-serif" font-size="13" fill="#736f69">Data Guru</text>
+  <text x="31" y="427" font-family="Arial,sans-serif" font-size="13" fill="#736f69">Jadwal Pelajaran</text>
+  <text x="278" y="78" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2.2" fill="#bd4b2e">DATA MASTER</text>
+  <text x="278" y="126" font-family="Arial,sans-serif" font-size="38" font-weight="700" fill="#252a2c">Profil Sekolah</text>
+  <text x="278" y="158" font-family="Arial,sans-serif" font-size="16" fill="#716d67">Atur identitas dan lokasi sekolah untuk kebutuhan SIGAP.</text>
+  <rect x="278" y="190" width="950" height="250" rx="18" fill="#fff" stroke="#dedbd4"/>
+  <text x="310" y="231" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#252a2c">Informasi sekolah</text>
+  <text x="310" y="270" font-family="Arial,sans-serif" font-size="13" fill="#716d67">Nama sekolah</text>
+  <rect x="310" y="282" width="420" height="48" rx="10" fill="#faf9f7" stroke="#dedbd4"/>
+  <text x="328" y="312" font-family="Arial,sans-serif" font-size="15" fill="#77736d">Nama Sekolah</text>
+  <text x="754" y="270" font-family="Arial,sans-serif" font-size="13" fill="#716d67">NPSN</text>
+  <rect x="754" y="282" width="205" height="48" rx="10" fill="#faf9f7" stroke="#dedbd4"/>
+  <text x="772" y="312" font-family="Arial,sans-serif" font-size="15" fill="#77736d">Nomor NPSN</text>
+  <text x="983" y="270" font-family="Arial,sans-serif" font-size="13" fill="#716d67">Kepala sekolah</text>
+  <rect x="983" y="282" width="213" height="48" rx="10" fill="#faf9f7" stroke="#dedbd4"/>
+  <text x="1001" y="312" font-family="Arial,sans-serif" font-size="15" fill="#77736d">Nama kepala sekolah</text>
+  <text x="310" y="366" font-family="Arial,sans-serif" font-size="13" fill="#716d67">Email sekolah</text>
+  <rect x="310" y="378" width="420" height="42" rx="10" fill="#faf9f7" stroke="#dedbd4"/>
+  <text x="328" y="405" font-family="Arial,sans-serif" font-size="14" fill="#77736d">email@sekolah.sch.id</text>
+  <text x="754" y="366" font-family="Arial,sans-serif" font-size="13" fill="#716d67">Telepon</text>
+  <rect x="754" y="378" width="442" height="42" rx="10" fill="#faf9f7" stroke="#dedbd4"/>
+  <text x="772" y="405" font-family="Arial,sans-serif" font-size="14" fill="#77736d">Nomor telepon sekolah</text>
+  <rect x="278" y="462" width="950" height="184" rx="18" fill="#fff" stroke="#dedbd4"/>
+  <text x="310" y="504" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#252a2c">Lokasi dan kehadiran</text>
+  <text x="310" y="542" font-family="Arial,sans-serif" font-size="13" fill="#716d67">Alamat</text>
+  <rect x="310" y="554" width="515" height="54" rx="10" fill="#faf9f7" stroke="#dedbd4"/>
+  <text x="328" y="587" font-family="Arial,sans-serif" font-size="14" fill="#77736d">Alamat sekolah</text>
+  <text x="851" y="542" font-family="Arial,sans-serif" font-size="13" fill="#716d67">Radius lokasi</text>
+  <rect x="851" y="554" width="165" height="54" rx="10" fill="#faf9f7" stroke="#dedbd4"/>
+  <text x="870" y="587" font-family="Arial,sans-serif" font-size="14" fill="#77736d">150 meter</text>
+  <rect x="1034" y="554" width="162" height="54" rx="10" fill="#23282a"/>
+  <text x="1060" y="587" font-family="Arial,sans-serif" font-size="14" font-weight="700" fill="#fff">Simpan profil</text>
+</svg>

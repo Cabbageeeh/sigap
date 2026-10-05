@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Ilustrasi layar QR absen</title>
+  <desc id="desc">Contoh netral layar QR SIGAP. Kode yang digambar hanya ilustrasi dan tidak dapat digunakan untuk absensi.</desc>
+  <rect width="1280" height="720" fill="#f7f6f3"/>
+  <text x="640" y="75" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="3" fill="#bd4b2e">ABSENSI GURU HARIAN</text>
+  <text x="640" y="130" text-anchor="middle" font-family="Arial,sans-serif" font-size="42" font-weight="700" fill="#252a2c">Nama Sekolah</text>
+  <text x="640" y="162" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" fill="#716d67">Layar konfirmasi kehadiran guru</text>
+  <rect x="332" y="203" width="616" height="420" rx="28" fill="#fff" stroke="#dedbd4" stroke-width="2"/>
+  <rect x="503" y="232" width="274" height="274" rx="20" fill="#fff" stroke="#dedbd4" stroke-width="2"/>
+  <rect x="528" y="257" width="224" height="224" fill="#fff"/>
+  <g fill="#252a2c">
+    <path d="M528 257h72v72h-72z M540 269v48h48v-48z M552 281h24v24h-24z" fill-rule="evenodd"/>
+    <path d="M680 257h72v72h-72z M692 269v48h48v-48z M704 281h24v24h-24z" fill-rule="evenodd"/>
+    <path d="M528 409h72v72h-72z M540 421v48h48v-48z M552 433h24v24h-24z" fill-rule="evenodd"/>
+    <path d="M616 257h12v12h-12z M640 257h12v24h-12z M616 281h24v12h-24z M652 293h12v12h-12z M616 305h12v24h-12z M640 317h24v12h-24z M664 269h12v24h-12z M676 341h12v12h-12z M700 341h12v12h-12z M724 341h12v12h-12z M616 353h12v12h-12z M640 353h12v12h-12z M664 365h24v12h-24z M700 365h12v24h-12z M724 377h12v12h-12z M616 389h24v12h-24z M652 401h12v12h-12z M676 401h12v12h-12z M700 413h12v12h-12z M724 401h12v24h-12z M616 425h12v12h-12z M640 437h24v12h-24z M676 449h12v12h-12z M700 437h12v12h-12z M724 461h12v12h-12z M616 461h24v12h-24z M652 473h12v12h-12z M664 329h12v12h-12z M688 317h12v12h-12z M712 305h12v12h-12z M628 341h12v12h-12z M652 377h12v12h-12z M688 389h12v12h-12z"/>
+  </g>
+  <text x="640" y="543" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="2" fill="#716d67">CONTOH - BUKAN KODE AKTIF</text>
+  <text x="640" y="579" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" fill="#252a2c">Guru memindai QR dari perangkat pribadi</text>
+  <rect x="406" y="600" width="468" height="7" rx="4" fill="#ece9e3"/>
+  <rect x="406" y="600" width="278" height="7" rx="4" fill="#bd4b2e"/>
+</svg>
