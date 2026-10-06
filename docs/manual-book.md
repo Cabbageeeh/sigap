@@ -16,6 +16,17 @@ Panduan penggunaan untuk administrator, guru, kepala sekolah, dan orang tua/wali
 5. Jika akses diaktifkan, guru dapat mengubah pemetaan khusus untuk kelas/mapel yang diajar. Guru mengisi kolom yang tidak dipetakan langsung di halaman e-Rapor, menyimpan, lalu mengunduh `.xls` atau `.xlsx`.
 6. Admin memublikasikan nilai agar orang tua dapat melihatnya.
 
+## Siapa mengatur apa di SIGAP?
+
+| Peran | Tanggung jawab utama | Menu yang sering dipakai |
+|---|---|---|
+| **Administrator** | Menyiapkan data sekolah, kelas, roster, akun, jadwal, template/default e-Rapor, dan akses pemetaan | Profil Sekolah, Kelas & Siswa, Data Guru, Pengaturan e-Rapor |
+| **Guru** | Mengonfirmasi kehadiran, mengisi jurnal, presensi siswa, nilai, serta ekspor e-Rapor untuk kelas/mapel yang diampu | Jadwal Mengajar, Jurnal Mengajar, Nilai Siswa |
+| **Kepala Sekolah** | Memantau ringkasan sekolah, sesi terlewat, audit, serta memeriksa dan memublikasikan nilai sesuai hak akses | Pengawasan Sekolah, Audit Nilai, Periode Akademik |
+| **Orang tua/wali** | Melihat nilai dan kehadiran anak setelah publikasi; memperbarui kata sandi | Dashboard Anak, Profil Saya |
+
+Menu mengikuti peran dan hak akses akun. Jika menu tidak terlihat, hubungi administrator sekolah untuk memeriksa akun atau akses.
+
 ## 1. Impor atau lengkapi data siswa per kelas
 
 Cara ini paling mudah untuk melengkapi NIS dan data orang tua tanpa menyalin ulang roster.
@@ -201,8 +212,6 @@ Satu akun dapat memiliki satu atau beberapa peran. Gabungan hak akses dari peran
 - **Alamat aplikasi**: diberikan sekolah, misalnya `http://localhost:5555` pada lingkungan percobaan atau alamat server sekolah.
 - **Akun**: username dan kata sandi dibuatkan administrator.
 - **Izin kamera dan lokasi**: diminta sekali saat pertama kali memakai fitur absensi.
-- **Kamera**: dibutuhkan untuk memindai kode QR kehadiran guru. Bukti kehadiran adalah pindai QR itu sendiri - sistem menyimpan waktu, posisi, dan jarak ke sekolah, bukan foto.
-- **Kalender pendidikan sekolah**: daftar tanggal libur khusus dan keputusan apakah hari Sabtu masuk, disiapkan bersama kepala sekolah sebelum tahun ajaran berjalan.
 
 > Catatan: SIGAP dirancang agar satu orang di sekolah (administrator atau petugas tata usaha) cukup mengelola seluruh data master. Guru, kepala sekolah, dan orang tua tidak perlu memasang apa pun - mereka memakai aplikasi lewat peramban di komputer maupun HP.
 >
@@ -458,11 +467,8 @@ Menu **Penilaian > Pengaturan e-Rapor** menyimpan struktur file e-Rapor sekolah 
 - Di pengaturan rinci **Sumber setiap kolom e-Rapor**, admin atau guru pengampu (jika diizinkan) dapat memilih jenis nilai SIGAP untuk sebuah kolom, misalnya memetakan **Sumatif 1** dan **Sumatif 2**. Nilai yang dipetakan cukup dimasukkan sekali di halaman **Nilai Siswa**; nilai yang sama akan ditampilkan pada kolom e-Rapor dan ikut diekspor.
 - Pilihan **Isi langsung di halaman e-Rapor** berarti kolom itu tidak terhubung ke nilai rutin SIGAP. Guru yang berhak mengedit dapat mengisi nilainya pada tabel e-Rapor.
 - Nilai komponen biasa seperti tugas/ulangan harian tetap dapat dipantau di halaman nilai SIGAP. Hanya kolom yang admin petakan yang mengambil nilai dari komponen tersebut.
-- Guru hanya menyimpan pemetaan untuk kelas, mapel, dan semester yang sedang dibuka. Admin dapat mencentang **Terapkan juga sebagai default** sebelum menekan **Simpan pemetaan** untuk menerapkan aturan pada semua mapel atau mapel terpilih di tahun ajaran dan semester itu. Default dipakai template lain jika kolomnya belum punya pemetaan khusus. Default khusus mapel mengalahkan default semua mapel; pemetaan khusus template mengalahkan keduanya.
-- Riwayat menyimpan perubahan pemetaan lokal maupun default, nama pelaku, dan waktunya. Riwayat perubahan sakelar akses guru tampil pada pengaturan akses.
+- Guru menyimpan pemetaan untuk kelas, mapel, dan semester yang dipilih. Admin dapat mencentang **Terapkan juga sebagai default** sebelum menekan **Simpan pemetaan** untuk memakai aturan pada mapel terpilih atau semua mapel. Default dipakai template lain yang belum memiliki pemetaan khusus. Default khusus mapel mengalahkan default umum; pemetaan template mengalahkan keduanya.
 - Pilih jenis nilai yang berbeda untuk membedakan penilaian Semester I dan II. Jika pemetaan diganti, periksa nilai pada sumber lama dan baru; data lama tetap tersimpan. Kolom tanpa sumber tetap diisi langsung pada halaman e-Rapor.
-
-Setelah template dan roster cocok, tombol **Unduh .xls (format sekolah)** dan **Unduh .xlsx** tersedia. Keduanya mempertahankan struktur template sekolah yang diimpor dan mengisi nilai SIGAP sesuai pemetaan; pilih hasil unduhan yang diperlukan untuk proses unggah e-Rapor. Ekspor membutuhkan pemetaan seluruh siswa pada template yang masih cocok dengan roster SIGAP.
 
 ---
 
@@ -553,7 +559,7 @@ Rapor dibuka dari halaman yang sama: **Akademik > Absensi Siswa** > pilih kelas 
 
 Lembar rapor berisi **Laporan Hasil Belajar Siswa**: identitas dan kelas, nilai per mata pelajaran (UAS, UTS, Kuis Harian, Tugas), Nilai Akhir, KKM, Predikat, status Tuntas, serta rekap kehadiran. Bagian bawah disediakan untuk tanda tangan orang tua/wali dan kepala sekolah. Klik **Cetak Rapor** di kanan atas (atau `Ctrl+P`) untuk mencetak atau menyimpannya sebagai PDF.
 
-Di sekitar tombol cetak itu ada baris navigasi yang hanya muncul di layar (tidak ikut tercetak): **Kembali** ke halaman tempat rapor dibuka, serta **‹ siswa sebelumnya** dan **siswa berikutnya ›** untuk berpindah antar siswa dalam kelas yang sama, dengan penanda posisi seperti `7 / 32`. Orang tua berpindah di antara anak-anak pada akunnya sendiri. Dengan begitu memeriksa satu rombel cukup dilakukan tanpa kembali ke daftar setiap kali.
+Tombol **Sebelumnya**/**Berikutnya** berpindah antar-anak, sedangkan **Kembali** menuju halaman nilai.
 
 > Satu kelas hanya punya satu wali kelas per periode akademik. Jika tombol Rapor tidak muncul pada kelas yang Anda kira, minta administrator memeriksa **Akademik > Kontrak Mengajar** dan mencentang *Wali kelas* untuk kelas tersebut.
 

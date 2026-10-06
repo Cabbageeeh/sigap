@@ -27,8 +27,8 @@
     margin: 0;
     background: var(--bg);
     color: var(--ink);
-    font-family: 'Public Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-    font-size: 10.5pt;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11pt;
     line-height: 1.62;
   }
 
@@ -50,7 +50,7 @@
   p { margin: 0 0 2.6mm; }
   a { color: var(--primary); text-decoration: none; }
   code { background: var(--soft); border-radius: 4px; padding: .5px 4px; font-size: .93em;
-         font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; }
+         font-family: inherit; color: #8b3927; }
   hr { border: 0; border-top: 1px solid var(--line); margin: 6mm 0; }
 
   /* ── cover ────────────────────────────────────────── */
@@ -174,21 +174,22 @@
 
   /* Aturan cetak PDF A4: tipografi stabil, foto dan tabel dirender tanpa tata letak CSS Grid. */
   @page { size: A4; margin: 25mm 18mm 25mm; }
-  body { font-family: Arial, Helvetica, sans-serif; font-size: 16.8pt; line-height: 1.48; color: #25292b; background: #fff; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11.2pt; line-height: 1.43; color: #25292b; background: #fff; }
   .sheet { max-width: none; margin: 0; padding: 0; }
-  h1 { color: #bd4b2d; font-size: 20pt; line-height: 1.2; margin: 0 0 3mm; page-break-after: avoid; }
+  h1 { color: #bd4b2d; font-size: 18pt; line-height: 1.2; margin: 0 0 3mm; page-break-after: avoid; }
   h1.chapter-title { page-break-before: auto; }
   h1.first-chapter { page-break-before: always; }
   .cover h1, .toc h1, .qpage h1 { page-break-before: avoid; }
-  h2 { color: #25292b; font-size: 17.3pt; line-height: 1.2; margin: 5mm 0 2mm; page-break-after: avoid; }
-  h3 { font-size: 15.8pt; margin: 4mm 0 1.5mm; page-break-after: avoid; }
-  p { margin: 0 0 2.5mm; }
+  h2 { color: #25292b; font-size: 13.5pt; line-height: 1.22; margin: 4.5mm 0 2mm; page-break-after: avoid; }
+  h3 { color: #4b4c4b; font-size: 11.5pt; margin: 3.5mm 0 1.5mm; page-break-after: avoid; }
+  p { margin: 0 0 2.2mm; }
   a { color: #bd4b2d; }
   .cover { height: 232mm; min-height: 0; padding: 0; page-break-after: always; background: #f6f3ed; }
   .cover-hero { height: 91mm; padding: 12mm; }
   .cover-body { padding: 8mm 12mm 6mm; }
   .cover-strip { width: 100%; height: auto; margin: 0 0 4mm; border: 1px solid #dedbd5; }
   .cover-topics, .cover-audience { display: table; width: 100%; }
+  .cover-topics td, .cover-audience td { border: 0; background: transparent; }
   .shots, .qflow, .qgrid, .roles, .toc-grid { display: table; width: 100%; }
   .qflow td { width: 33%; border: 0; padding: 1mm; vertical-align: top; }
   .qgrid td { width: 50%; border: 0; padding: 0 2mm; vertical-align: top; }
@@ -200,29 +201,37 @@
   .toc li { margin: 0 0 1.5mm; }
   .toc li.part { color: #bd4b2d; font-weight: bold; margin-top: 3mm; }
   .toc li.sub { color: #706f6c; padding-left: 3mm; }
-  .qpage { page-break-after: always; font-size: 9.5pt; line-height: 1.38; }
+  .qpage { page-break-after: always; font-size: 10.2pt; line-height: 1.4; }
   .quick-guide { page-break-before: avoid; }
-  .qpage h1 { color: #25292b; font-size: 20pt; margin-bottom: 2mm; }
-  .qpage h2 { margin: 3mm 0 1.5mm; font-size: 11pt; }
-  .qpage h3 { margin: 2mm 0 1mm; font-size: 9.5pt; }
+  .qpage h1 { color: #25292b; font-size: 18pt; margin-bottom: 2mm; }
+  .qpage h2 { margin: 3mm 0 1.5mm; font-size: 11.5pt; }
+  .qpage h3 { margin: 2mm 0 1mm; font-size: 10.5pt; }
   .qpage p { margin-bottom: 1.5mm; }
   .qflow .qcard { display: table-cell; width: 33%; vertical-align: top; }
   .qcard, .role { border: 1px solid #dedbd5; padding: 2mm; }
-  .qcard b { font-size: 8.5pt; }
-  .qcard p { font-size: 8.2pt; line-height: 1.3; }
+  .qcard b { font-size: 9.2pt; }
+  .qcard p { font-size: 9pt; line-height: 1.35; }
   .qsteps { margin: 1.5mm 0 2.5mm; padding-left: 5mm; }
   .qsteps li { margin-bottom: 1mm; }
-  .qcallout, .note, .warn, .tip { border: 1px solid #dedbd5; border-left: 3px solid #bd4b2d; padding: 2mm 2.5mm; margin: 2mm 0; }
-  .warn, .qcallout.warn { border-left-color: #b52222; }
-  table { width: 100%; border-collapse: collapse; font-size: 14.8pt; margin: 2mm 0 3mm; }
-  .qtable { font-size: 8.4pt; }
-  th, td { border: 1px solid #dedbd5; padding: 1.5mm 2mm; vertical-align: top; }
+  .note, .tip, .warn, .qcallout { border: 1px solid #e7cbbf; border-left: 3px solid #bd4b2d; border-radius: 0 5px 5px 0; padding: 2.5mm 3mm; margin: 2.5mm 0; }
+  .note, .qcallout { background: #fbf2ec; }
+  .tip { background: #eef6f2; border-color: #cfe0d7; border-left-color: #48866f; }
+  .warn, .qcallout.warn { background: #fff3eb; border-color: #efd2c3; border-left-color: #c04d31; }
+  table { width: 100%; border-collapse: collapse; font-size: 10.2pt; line-height: 1.34; margin: 2.5mm 0 3.5mm; }
+  .qtable { font-size: 9.3pt; }
+  th, td { border: 1px solid #e1dad4; padding: 1.7mm 2mm; vertical-align: top; }
+  th { background: #bd4b2d; color: #fff; border-color: #a94129; text-align: left; }
+  tbody tr:nth-child(even) td { background: #faf3ee; }
   .qtable th, .qtable td { padding: 1mm 1.5mm; }
-  thead th { background: #f3f1ed; }
-  figure { margin: 3mm 0 4mm; }
-  figure img { width: 100%; }
-  figcaption { color: #706f6c; font-size: 9pt; }
-  ol.steps > li, .qsteps li { margin-bottom: 1.6mm; }
+  .qflow td, .qgrid td, .toc-grid td { background: transparent; }
+  code, pre, kbd, samp { font-family: Arial, Helvetica, sans-serif; font-size: .94em; color: #8b3927; }
+  code { background: #f6e9e1; padding: .2mm 1mm; }
+  figure { margin: 3mm 0 3.5mm; page-break-inside: avoid; }
+  figure img { width: 100%; max-height: 92mm; object-fit: contain; border: 1px solid #e1dad4; background: #fff; padding: 1.5mm; }
+  figcaption { color: #716c67; font-size: 9.2pt; margin-top: 1.5mm; }
+  ol.steps > li, .qsteps li { margin-bottom: 1.7mm; }
+  .chapter-title { border-bottom: 2px solid #bd4b2d; padding-bottom: 2mm; }
+  .qtable th { background: #873e2d; }
   .colophon { font-size: 9pt; margin-top: 5mm; padding-top: 3mm; }
 </style>
 </head>
@@ -286,6 +295,22 @@
         <tr><td><b>Orang tua/wali</b></td><td>Masuk dengan akun dari sekolah, pilih anak, lihat nilai dan absensi.</td><td>Dashboard Anak</td></tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="qpage">
+    <p class="qkicker">Panduan cepat · Pembagian tugas</p>
+    <h1 class="qtitle">Siapa mengatur apa di SIGAP?</h1>
+    <p class="qintro">Gunakan panduan ini untuk mengetahui siapa yang perlu mengerjakan atau membantu ketika suatu menu belum tersedia.</p>
+    <table class="qtable">
+      <thead><tr><th>Peran</th><th>Tanggung jawab utama</th><th>Menu yang sering dipakai</th></tr></thead>
+      <tbody>
+        <tr><td><b>Administrator</b></td><td>Menyiapkan data sekolah, kelas, roster, akun, jadwal, template dan default e-Rapor, serta akses pemetaan.</td><td>Profil Sekolah, Kelas &amp; Siswa, Data Guru, Pengaturan e-Rapor</td></tr>
+        <tr><td><b>Guru</b></td><td>Mengonfirmasi kehadiran, mengisi jurnal, presensi siswa, nilai, dan ekspor e-Rapor untuk kelas/mapel yang diampu.</td><td>Jadwal Mengajar, Jurnal Mengajar, Nilai Siswa</td></tr>
+        <tr><td><b>Kepala Sekolah</b></td><td>Memantau ringkasan sekolah, sesi terlewat, audit nilai, serta memeriksa dan memublikasikan nilai sesuai hak akses.</td><td>Pengawasan Sekolah, Audit Nilai, Periode Akademik</td></tr>
+        <tr><td><b>Orang tua/wali</b></td><td>Melihat nilai dan kehadiran anak setelah nilai dipublikasikan; memperbarui kata sandi akun.</td><td>Dashboard Anak, Profil Saya</td></tr>
+      </tbody>
+    </table>
+    <div class="qcallout"><b>Menu tidak terlihat?</b><br>Menu mengikuti peran dan hak akses akun. Hubungi administrator sekolah untuk memeriksa akun atau meminta akses yang diperlukan.</div>
   </div>
 
   <div class="qpage">
@@ -393,7 +418,24 @@
       <li><b>Kolom kosong:</b> periksa pemetaan; kolom isian langsung perlu diisi di halaman e-Rapor.</li>
       <li><b>Nilai belum terlihat orang tua:</b> admin perlu memublikasikan nilai melalui Periode Akademik.</li>
     </ul>
-    <div class="qcallout"><b>Alur mudah diingat</b><br>Isi nilai di SIGAP > lengkapi kolom manual e-Rapor > simpan > unduh > periksa > unggah ke e-Rapor sekolah.</div>
+    <div class="qcallout"><b>Alur mudah diingat</b><br>Isi nilai di SIGAP &gt; lengkapi kolom manual e-Rapor &gt; simpan &gt; unduh &gt; periksa &gt; unggah ke e-Rapor sekolah.</div>
+  </div>
+
+  <div class="qpage">
+    <p class="qkicker">Panduan cepat · Jika ekspor e-Rapor bermasalah</p>
+    <h1 class="qtitle">Periksa penyebabnya satu per satu</h1>
+    <p class="qintro">Cek hal yang paling sering membuat berkas ditolak sebelum mengulang proses. Jangan mengubah identitas, header, atau susunan kolom template asli.</p>
+    <table class="qtable">
+      <thead><tr><th>Gejala</th><th>Yang diperiksa</th><th>Tindakan</th></tr></thead>
+      <tbody>
+        <tr><td>Format tidak dikenali</td><td>File, ekstensi, dan struktur workbook</td><td>Unduh ulang file asli e-Rapor, atau buka di Excel lalu pilih <b>Save As &gt; Excel Workbook (.xlsx)</b>. Jangan sekadar mengganti ekstensi.</td></tr>
+        <tr><td>Kelas, mapel, atau semester tidak cocok</td><td>Pilihan di SIGAP dan identitas pada file</td><td>Pilih kelas, mata pelajaran, dan semester yang sama persis dengan template.</td></tr>
+        <tr><td>NPSN berbeda</td><td>Identitas sekolah pada file dan Profil Sekolah</td><td>Samakan NPSN di kedua tempat sebelum mengunggah.</td></tr>
+        <tr><td>Jumlah siswa berbeda</td><td>Roster kelas SIGAP dan daftar pada template</td><td>Periksa nama serta ID anggota rombel; minta admin menyelaraskan siswa yang belum cocok.</td></tr>
+        <tr><td>Nilai tidak terisi otomatis</td><td>Pemetaan sumber setiap kolom</td><td>Pastikan kolom dipetakan ke komponen nilai yang benar. Kolom isian langsung perlu diisi di halaman e-Rapor.</td></tr>
+      </tbody>
+    </table>
+    <div class="qcallout warn"><b>Sebelum mengunggah hasil</b><br>Buka file ekspor dan periksa kelas, mapel, semester, daftar siswa, serta kolom nilai. Gunakan format unduhan yang diminta e-Rapor sekolah.</div>
   </div>
 </section>
 
@@ -533,8 +575,6 @@
     <li><b>Alamat aplikasi:</b> diberikan sekolah, misalnya <code>http://localhost:5555</code> pada lingkungan percobaan atau alamat server sekolah.</li>
     <li><b>Akun:</b> username dan kata sandi dibuatkan administrator.</li>
     <li><b>Izin kamera dan lokasi:</b> diminta sekali saat pertama kali memakai fitur absensi.</li>
-    <li><b>Kamera:</b> dibutuhkan untuk memindai kode QR kehadiran guru. Bukti kehadiran adalah pindai QR itu sendiri - sistem menyimpan waktu, posisi, dan jarak ke sekolah, bukan foto.</li>
-    <li><b>Kalender pendidikan sekolah:</b> daftar tanggal libur khusus dan keputusan apakah hari Sabtu masuk, disiapkan bersama kepala sekolah sebelum tahun ajaran berjalan.</li>
   </ul>
 </section>
 
@@ -776,11 +816,9 @@
     <li>Di pengaturan rinci <b>Sumber setiap kolom e-Rapor</b>, admin atau guru pengampu (jika diizinkan) dapat memilih jenis nilai SIGAP untuk sebuah kolom, misalnya memetakan <b>Sumatif 1</b> dan <b>Sumatif 2</b>. Nilai yang dipetakan cukup dimasukkan sekali di halaman <b>Nilai Siswa</b>; nilai yang sama akan ditampilkan pada kolom e-Rapor dan ikut diekspor.</li>
     <li>Pilihan <b>Isi langsung di halaman e-Rapor</b> berarti kolom itu tidak terhubung ke nilai rutin SIGAP. Guru yang berhak mengedit dapat mengisi nilainya pada tabel e-Rapor.</li>
     <li>Nilai komponen biasa seperti tugas/ulangan harian tetap dapat dipantau di halaman nilai SIGAP. Hanya kolom yang admin petakan yang mengambil nilai dari komponen tersebut.</li>
-    <li>Guru hanya menyimpan pemetaan untuk kelas, mapel, dan semester yang sedang dibuka. Admin dapat mencentang <b>Terapkan juga sebagai default</b> sebelum menekan <b>Simpan pemetaan</b> untuk menerapkan aturan pada semua mapel atau mapel terpilih di tahun ajaran dan semester itu. Default dipakai template lain jika kolomnya belum punya pemetaan khusus.</li>
-    <li>Default khusus mapel mengalahkan default semua mapel; pemetaan khusus template mengalahkan keduanya. Pilih jenis nilai berbeda untuk membedakan semester. Jika sumber diganti, nilai lama tetap tersimpan pada jenis sebelumnya dan perlu diperiksa.</li>
-    <li>Riwayat menyimpan perubahan pemetaan lokal maupun default, nama pelaku, dan waktunya. Riwayat perubahan sakelar akses guru tampil pada pengaturan akses.</li>
+    <li>Guru menyimpan pemetaan untuk kelas, mapel, dan semester yang dipilih. Admin dapat mencentang <b>Terapkan juga sebagai default</b> sebelum menekan <b>Simpan pemetaan</b> untuk menggunakan aturan pada mapel terpilih atau semua mapel. Default dipakai template lain yang belum memiliki pemetaan khusus.</li>
+    <li>Default khusus mapel mengalahkan default umum; pemetaan template mengalahkan keduanya. Gunakan jenis nilai berbeda untuk setiap semester. Jika sumber diganti, nilai lama tetap tersimpan pada jenis sebelumnya dan perlu diperiksa.</li>
   </ul>
-  <p>Setelah template dan roster cocok, tombol <b>Unduh .xls (format sekolah)</b> dan <b>Unduh .xlsx</b> tersedia. Keduanya mempertahankan struktur template sekolah yang diimpor dan mengisi nilai SIGAP sesuai pemetaan; pilih hasil unduhan yang diperlukan untuk proses unggah e-Rapor. Ekspor membutuhkan pemetaan seluruh siswa pada template yang masih cocok dengan roster SIGAP.</p>
 </section>
 
 <!-- ══════════════════════ BAGIAN 4 ══════════════════════ -->
@@ -1021,9 +1059,8 @@
     daftar nilai kosong.</div>
   <figure><img src="images/manual/43-ortu-rapor.png" alt="Rapor anak">
     <figcaption>Rapor anak - dapat dicetak atau disimpan sebagai PDF.</figcaption></figure>
-  <p>Klik <b>Lihat Rapor</b> di kanan atas halaman nilai untuk membuka lembar rekap satu anak - nilai akhir, predikat,
-    dan rekap kehadiran dalam format siap cetak. Di halaman itu Anda dapat berpindah ke anak lain pada akun Anda lewat
-    tombol <b>‹ sebelumnya</b> dan <b>berikutnya ›</b>, atau kembali ke nilai anak lewat tautan <b>Kembali</b>.</p>
+  <p>Klik <b>Lihat Rapor</b> di kanan atas halaman nilai untuk membuka rekap nilai akhir, predikat, dan kehadiran dalam
+    format siap cetak. Tombol <b>Sebelumnya</b>/<b>Berikutnya</b> berpindah antar-anak; <b>Kembali</b> menuju halaman nilai.</p>
 
   <h2>6.3 Absensi anak</h2>
   <figure><img src="images/manual/42-ortu-absensi.png" alt="Absensi anak">
@@ -1162,7 +1199,7 @@
     <dt>ID Siswa SIGAP</dt><dd>ID internal untuk mencocokkan dan memperbarui siswa saat impor file data kelas; bukan NIS dan bukan ID anggota rombel e-Rapor.</dd>
     <dt>ID anggota rombel</dt><dd>Identitas siswa/anggota kelas dari e-Rapor yang dipakai untuk mencocokkan siswa dengan baris pada template sekolah.</dd>
     <dt>Periode akademik</dt><dd>Tahun ajaran aktif; semua kelas, jadwal, jurnal, dan nilai mengacu ke sini.</dd>
-    <dt>Mapel</dt><dd style="page-break-after: always">Mata pelajaran.</dd>
+    <dt>Mapel</dt><dd>Mata pelajaran.</dd>
     <dt>Konfirmasi kehadiran</dt><dd>Absensi guru harian lewat pindai QR, berisi waktu, jarak, dan posisi guru.</dd>
     <dt>Geofence</dt><dd>Pembatas area berbasis radius sekolah.</dd>
     <dt>Hari efektif</dt><dd>Hari yang dihitung sebagai hari bekerja: Senin-Jumat, Sabtu bila sakelarnya aktif, dikurangi tanggal libur khusus.</dd>
@@ -1179,7 +1216,7 @@
     <dt>Template e-Rapor</dt><dd>File sumber sekolah berisi struktur kolom, identitas, dan daftar siswa. Simpan per kelas, mapel, dan semester; pertahankan header aslinya.</dd>
     <dt>Pemetaan default</dt><dd>Aturan sumber nilai yang admin terapkan untuk semua mapel atau mapel tertentu pada tahun ajaran dan semester yang sama.</dd>
     <dt>Nilai langsung e-Rapor</dt><dd>Nilai yang guru masukkan pada tabel e-Rapor saat kolomnya tidak mengambil nilai dari komponen SIGAP.</dd>
-    <dt style="page-break-before: always">Wali kelas</dt><dd>Guru yang bertanggung jawab atas satu kelas.</dd>
+    <dt>Wali kelas</dt><dd>Guru yang bertanggung jawab atas satu kelas.</dd>
     <dt>KKM</dt><dd>Kriteria ketuntasan minimum; ambang nilai tuntas per mata pelajaran.</dd>
     <dt>Komponen nilai</dt><dd>Jenis penilaian (misal Tugas, UTS, UAS) beserta bobotnya.</dd>
     <dt>Nilai akhir</dt><dd>Hasil perhitungan bobot seluruh komponen.</dd>
@@ -1188,13 +1225,6 @@
     <dt>Pemetaan lokal</dt><dd>Aturan sumber nilai khusus untuk template kelas, mapel, dan semester yang sedang dibuka. Aturan ini mengalahkan default.</dd>
   </dl>
 </section>
-
-<footer class="colophon">
-  <p><b>Manual Book SIGAP</b> - Sistem Informasi Guru, Absensi, dan Prestasi. Disusun mengikuti tampilan SIGAP versi
-  berjalan. Jika antarmuka sekolah Anda sudah disesuaikan, nama menu bisa sedikit berbeda; alur kerjanya tetap sama.</p>
-  <p>Berkas ini tersedia dalam tiga bentuk: <code>docs/manual-book.md</code> (sumber teks),
-  <code>docs/manual-book.html</code> (versi cetak), dan <code>output/pdf/Manual-Book-SIGAP.pdf</code> (hasil ekspor terbaru).</p>
-</footer>
 
 </div>
 </body>
