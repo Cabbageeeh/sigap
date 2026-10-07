@@ -10,9 +10,9 @@
 
 ## Stats
 
-- Files indexed: 326
-- Total lines: 37329
-- Total exports: 998
+- Files indexed: 334
+- Total lines: 38007
+- Total exports: 1036
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -58,7 +58,7 @@
 - `gradesEraporSettings.ts` (22L) — saveEraporTeacherMappingAccess
 - `headmaster.ts` (111L) — headmasterDashboardPage, headmasterDashboardData, headmasterReportsPage, headmasterClassGradesPage, headmasterTeacherAttendancePage, listOutsideConfirmations
 - `home.ts` (17L) — landingPage
-- `index.ts` (36L)
+- `index.ts` (37L)
 - `journals.ts` (293L) — journalsPage, listJournals, journalData, addJournal, editJournal, removeJournal
 - `notifications.ts` (20L) — notificationsData, markNotificationsRead
 - `parent.ts` (124L) — parentDashboardPage, parentDashboardData, childAttendancePage, parentGradesPage
@@ -70,6 +70,7 @@
 - `schedules.ts` (186L) — schedulesPage, listSchedules, scheduleData, addSchedule, editSchedule, removeSchedule
 - `schoolCalendar.ts` (88L) — schoolCalendarPage, addSchoolHoliday, removeSchoolHoliday, saveSchoolCalendarSettings
 - `schoolLocations.ts` (54L) — schoolLocationsPage, saveSchoolProfile
+- `schoolMessages.ts` (153L) — schoolMessagesPage, schoolMessagesData, startSchoolConversation, sendSchoolMessage, changeSchoolConversationStatus, reportSchoolMessage, schoolCommunicationAdminPage, schoolCommunicationAdminData, +3
 - `studentAttendance.ts` (120L) — studentAttendancePage, listAttendanceByJournal, listAttendanceByStudent, saveAttendance, removeAttendance
 - `studentRosterExports.ts` (52L) — exportClassStudentImportTemplate
 - `students.ts` (458L) — studentsPage, classStudentsPage, listStudents, studentsByClass, studentData, addStudent, editStudent, addStudentParentAccount, +5
@@ -105,7 +106,7 @@
 - `gradeComponents.ts` (64L) — findGradeComponentsByYear, upsertGradeComponents, addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent
 - `grades.ts` (330L) — findAllGrades, findGradeById, findGradesByStudent, findGradesByStudentForParent, findGradesByStudentForTeacher, findGradesByClassSubject, findGradesByTeacher, findGradeByUniqueKey, +14
 - `headmaster.ts` (474L) — getTodaySessions, getMissedConfirmations, getJournalCompleteness, getGradeProgress, getClassOverview, getTeacherAttendanceOverview, getTeacherAttendanceHistory, findClassGradeDetails, +5
-- `index.ts` (26L)
+- `index.ts` (27L)
 - `journals.ts` (98L) — findAllJournals, findJournalById, findJournalsBySchedule, findJournalByScheduleAndDate, findJournalsByTeacher, findJournalsByDateRange, findJournalReportRows, createJournal, +4
 - `notifications.ts` (41L) — createGradePublishedNotifications, findNotificationsByUser, getUnreadNotificationCount, markAllNotificationsRead
 - `parents.ts` (181L) — findAllParents, findParentById, findParentByUserId, getParentsPaginated, findParentAccountByStudentId, findParentAccountOptions, createParentAccountForStudent, linkParentAccountToStudent, +4
@@ -113,6 +114,7 @@
 - `schedules.ts` (83L) — findAllSchedules, findScheduleById, findSchedulesByClass, findSchedulesByTeacher, findTeacherSchedulesByDay, findSchedulesByDay, createSchedule, updateSchedule, +5
 - `schoolCalendar.ts` (61L) — findSchoolHolidays, findSchoolHolidayByDate, createSchoolHoliday, deleteSchoolHoliday, isSaturdaySchoolDay, setSaturdaySchoolDay, isTeachingDay, findNonTeachingDays, +1
 - `schoolLocations.ts` (25L) — findSchoolLocationById, findActiveSchoolLocation, createSchoolLocation, updateSchoolLocation
+- `schoolMessages.ts` (122L) — findSchoolContacts, findSchoolConversations, findSchoolConversation, findSchoolMessages, findSchoolCommunicationRestriction, countRecentSchoolMessages, createSchoolConversation, createSchoolMessage, +7
 - `sessions.ts` (50L) — findSessionById, createSession, deleteSession, deleteSessionsByUserId, cleanupExpiredSessions, getUserBySessionId
 - `stats.ts` (192L) — getDashboardStats, getDashboardCharts, getClassSubjectStats, DashboardStats, AttendanceTrendPoint, AttendanceStatusSlice, ClassSizePoint, ConfirmationWeekPoint, +2
 - `studentAttendance.ts` (85L) — findAllStudentAttendance, findStudentAttendanceById, findAttendanceByJournal, findAttendanceByStudent, findAttendanceBySchedule, createStudentAttendance, upsertStudentAttendance, updateStudentAttendance, +4
@@ -137,7 +139,7 @@
 - `Migrator.ts` (141L) — migrate, migrateRollback, migrateStatus, migrateFresh
 - `Pdf.ts` (372L) — renderTablePdf, PdfColumn, PdfReport, PdfCell
 - `QrCode.ts` (93L) — generateQrCodeData, verifyQrToken, QrCodeData
-- `Seeder.ts` (51L) — seed
+- `Seeder.ts` (52L) — seed
 - `SQLite.ts` (120L)
 - `Storage.ts` (104L) — configure, put, putFile, get, exists, del, url, filePath, +3
 - `StudentCsvParser.ts` (212L) — parseStudentCsv, CsvStudentRow, CsvImportResult
@@ -146,13 +148,15 @@
 
 ### app/types/
 
-- `models.ts` (319L) — User, Session, Role, Permission, Asset, UserRole, RolePermission, AcademicYear, +24
+- `models.ts` (320L) — User, Session, Role, Permission, Asset, UserRole, RolePermission, AcademicYear, +24
+- `schoolMessages.ts` (46L) — SchoolConversation, SchoolMessage, SchoolContact, SchoolMessageReport
 - `shared.ts` (435L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +38
 
 ### app/validators/
 
 - `index.ts` (107L) — zodToErrors
 - `schemas.ts` (403L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +79
+- `schoolMessages.ts` (22L) — StartSchoolConversationSchema, SendSchoolMessageSchema, ReportSchoolMessageSchema, SchoolConversationStatusSchema, SchoolCommunicationSettingsSchema, SchoolCommunicationRestrictionSchema
 
 ### migrations/
 
@@ -203,6 +207,7 @@
 - `20261002000002_create_erapor_column_mappings.ts` (20L) — up, down
 - `20261003000001_create_erapor_default_column_mappings.ts` (27L) — up, down
 - `20261003000002_create_erapor_configuration_audit_logs.ts` (43L) — up, down
+- `20261007000001_create_school_messages.ts` (32L) — up, down
 
 ### resources/
 
@@ -230,7 +235,7 @@
 - `RoleModal.svelte` (152L)
 - `SearchableSelect.svelte` (115L) — SearchableSelectOption
 - `Select.svelte` (40L)
-- `Sidebar.svelte` (376L)
+- `Sidebar.svelte` (386L)
 - `SigapIcon.svelte` (46L)
 - `StatCard.svelte` (81L)
 - `Switch.svelte` (52L)
@@ -272,7 +277,9 @@
 - `roles.svelte` (273L)
 - `schedules.svelte` (304L)
 - `schoolCalendar.svelte` (158L)
+- `schoolCommunicationAdmin.svelte` (92L)
 - `schoolLocations.svelte` (233L)
+- `schoolMessages.svelte` (156L)
 - `studentAttendance.svelte` (140L)
 - `students.svelte` (427L)
 - `subjects.svelte` (73L)
@@ -338,11 +345,11 @@
 ### resources/types/
 
 - `forms.ts` (475L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +39
-- `index.ts` (15L)
+- `index.ts` (16L)
 
 ### routes/
 
-- `web.ts` ★ (256L)
+- `web.ts` ★ (269L)
 
 ### scripts/
 
@@ -358,6 +365,7 @@
 - `gen-resource.ts` (653L) — up, down, find, create, get, update, delete, list, +5
 - `lint-layers.ts` (335L)
 - `migrate.ts` (35L)
+- `reset-data.ts` (27L)
 - `seed.ts` (10L)
 
 ### seeds/
@@ -726,6 +734,20 @@
 - `const` **schoolLocationsPage**
 - `const` **saveSchoolProfile**
 
+### `app/handlers/schoolMessages.ts`
+
+- `const` **schoolMessagesPage**
+- `const` **schoolMessagesData**
+- `const` **startSchoolConversation**
+- `const` **sendSchoolMessage**
+- `const` **changeSchoolConversationStatus**
+- `const` **reportSchoolMessage**
+- `const` **schoolCommunicationAdminPage**
+- `const` **schoolCommunicationAdminData**
+- `const` **saveSchoolCommunicationSettings**
+- `const` **saveSchoolCommunicationRestriction**
+- `const` **reviewSchoolMessageReport**
+
 ### `app/handlers/studentAttendance.ts`
 
 - `const` **studentAttendancePage**
@@ -1075,6 +1097,24 @@
 - `const` **createSchoolLocation**
 - `const` **updateSchoolLocation**
 
+### `app/queries/schoolMessages.ts`
+
+- `const` **findSchoolContacts**
+- `const` **findSchoolConversations**
+- `const` **findSchoolConversation**
+- `const` **findSchoolMessages**
+- `const` **findSchoolCommunicationRestriction**
+- `const` **countRecentSchoolMessages**
+- `const` **createSchoolConversation**
+- `const` **createSchoolMessage**
+- `const` **markSchoolConversationRead**
+- `const` **updateSchoolConversationStatus**
+- `const` **createSchoolMessageReport**
+- `const` **findSchoolMessageReports**
+- `const` **reviewSchoolMessageReport**
+- `const` **findSchoolCommunicationRestrictions**
+- `const` **saveSchoolCommunicationRestriction**
+
 ### `app/queries/sessions.ts`
 
 - `const` **findSessionById**
@@ -1359,6 +1399,13 @@
 - `iface` **Notification**
 - `type` **TeacherPresenceMode**
 
+### `app/types/schoolMessages.ts`
+
+- `iface` **SchoolConversation**
+- `iface` **SchoolMessage**
+- `iface` **SchoolContact**
+- `iface` **SchoolMessageReport**
+
 ### `app/types/shared.ts`
 
 - `iface` **User**
@@ -1501,6 +1548,15 @@
 - `type` **EraporGradeSaveInput**
 - `type` **AnnouncementInput**
 - `type` **UpdateAnnouncementInput**
+
+### `app/validators/schoolMessages.ts`
+
+- `const` **StartSchoolConversationSchema**
+- `const` **SendSchoolMessageSchema**
+- `const` **ReportSchoolMessageSchema**
+- `const` **SchoolConversationStatusSchema**
+- `const` **SchoolCommunicationSettingsSchema**
+- `const` **SchoolCommunicationRestrictionSchema**
 
 ### `migrations/20230513055909_users.ts`
 
@@ -1730,6 +1786,11 @@
 - `const` **down**
 
 ### `migrations/20261003000002_create_erapor_configuration_audit_logs.ts`
+
+- `const` **up**
+- `const` **down**
+
+### `migrations/20261007000001_create_school_messages.ts`
 
 - `const` **up**
 - `const` **down**
@@ -2015,6 +2076,7 @@
 - `app/handlers/schedules.ts` → `@core`, `@queries/academicYears`, `@queries/classes`, `@queries/schedules`, `@queries/subjects`, `@queries/teacherClassAssignments`, `@queries/teachers`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/schoolCalendar.ts` → `@core`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/schoolLocations.ts` → `@core`, `@queries/schoolLocations`, `@queries/users`, `@services/Logger`, `@validators`
+- `app/handlers/schoolMessages.ts` → `@core`, `@queries/appSettings`, `@queries/schoolMessages`, `@queries/users`, `@services/Logger`, `@types`, `@validators`, `@validators/schoolMessages`
 - `app/handlers/studentAttendance.ts` → `@core`, `@queries/classes`, `@queries/journals`, `@queries/schedules`, `@queries/studentAttendance`, `@queries/teacherClassAssignments`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/studentRosterExports.ts` → `@core`, `@queries/classes`, `@queries/students`, `@queries/users`, `@services/EraporXlsx`
 - `app/handlers/students.ts` → `@core`, `@queries/classes`, `@queries/students`, `@queries/users`, `@services/Authenticate`, `@services/Logger`, `@services/StudentCsvParser`, `@services/StudentXlsxParser`, `@validators`
@@ -2050,6 +2112,7 @@
 - `app/queries/schedules.ts` → `@services/SQLite`, `@types`
 - `app/queries/schoolCalendar.ts` → `./appSettings`, `@services/SQLite`
 - `app/queries/schoolLocations.ts` → `@services/SQLite`, `@types`
+- `app/queries/schoolMessages.ts` → `@services/SQLite`, `@types`
 - `app/queries/sessions.ts` → `@services/SQLite`, `@types`
 - `app/queries/stats.ts` → `./appSettings`, `@services/SQLite`
 - `app/queries/studentAttendance.ts` → `@services/SQLite`, `@types`
@@ -2125,7 +2188,9 @@
 - `resources/Pages/roles.svelte` → `../Components/Button.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/RoleModal.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/schedules.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/SearchableSelect.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/schoolCalendar.svelte` → `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `../Components/Switch.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/schoolCommunicationAdmin.svelte` → `../Components/Button.svelte`, `../Components/Modal.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `../types`
 - `resources/Pages/schoolLocations.svelte` → `../Components/Badge.svelte`, `../Components/Button.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/schoolMessages.svelte` → `../Components/Button.svelte`, `../Components/Modal.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `../types`, `@lucide/svelte`
 - `resources/Pages/studentAttendance.svelte` → `../Components/Button.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/SearchableSelect.svelte`, `../Components/Sidebar.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/students.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/SearchableSelect.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/subjects.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
@@ -2137,10 +2202,11 @@
 - `resources/Pages/teachers.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/users.svelte` → `../Components/Button.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../Components/UserModal.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/types/index.ts` → `./types`
-- `routes/web.ts` → `@core`, `@handlers/academicYears`, `@handlers/announcements`, `@handlers/assets`, `@handlers/attendance`, `@handlers/auth`, `@handlers/classes`, `@handlers/dashboard`, `@handlers/gradeAudit`, `@handlers/grades`, `@handlers/gradesErapor`, `@handlers/gradesEraporImport`, `@handlers/gradesEraporSettings`, `@handlers/headmaster`, `@handlers/home`, `@handlers/journals`, `@handlers/notifications`, `@handlers/parent`, `@handlers/parents`, `@handlers/rapor`, `@handlers/reportExports`, `@handlers/reports`, `@handlers/roles`, `@handlers/schedules`, `@handlers/schoolCalendar`, `@handlers/schoolLocations`, `@handlers/studentAttendance`, `@handlers/studentRosterExports`, `@handlers/students`, `@handlers/subjects`, `@handlers/teacherAssignments`, `@handlers/teacherConfirmations`, `@handlers/teacherPresence`, `@handlers/teacherSchedule`, `@handlers/teachers`, `@handlers/users`, `@middlewares/auth`, `@middlewares/rateLimit`
+- `routes/web.ts` → `@core`, `@handlers/academicYears`, `@handlers/announcements`, `@handlers/assets`, `@handlers/attendance`, `@handlers/auth`, `@handlers/classes`, `@handlers/dashboard`, `@handlers/gradeAudit`, `@handlers/grades`, `@handlers/gradesErapor`, `@handlers/gradesEraporImport`, `@handlers/gradesEraporSettings`, `@handlers/headmaster`, `@handlers/home`, `@handlers/journals`, `@handlers/notifications`, `@handlers/parent`, `@handlers/parents`, `@handlers/rapor`, `@handlers/reportExports`, `@handlers/reports`, `@handlers/roles`, `@handlers/schedules`, `@handlers/schoolCalendar`, `@handlers/schoolLocations`, `@handlers/schoolMessages`, `@handlers/studentAttendance`, `@handlers/studentRosterExports`, `@handlers/students`, `@handlers/subjects`, `@handlers/teacherAssignments`, `@handlers/teacherConfirmations`, `@handlers/teacherPresence`, `@handlers/teacherSchedule`, `@handlers/teachers`, `@handlers/users`, `@middlewares/auth`, `@middlewares/rateLimit`
 - `scripts/eval-agent.ts` → `@handlers/evaltests`
 - `scripts/gen-resource.ts` → `../../app/handlers/${camelPlural}`, `../Components/Button.svelte`, `../Components/Header.svelte`, `../helpers/mocks`, `../types`, `@core`, `@handlers/${camelPlural}`, `@inertiajs/svelte`, `@queries`, `@queries/${camelPlural}`, `@queries/users`, `@services/Logger`, `@services/SQLite`, `@types`, `@validators`
 - `scripts/migrate.ts` → `@services/Migrator`
+- `scripts/reset-data.ts` → `@services/Migrator`, `@services/SQLite`, `@services/Seeder`
 - `scripts/seed.ts` → `@services/Seeder`
 - `seeds/01_permissions.ts` → `../app/services/SQLite`
 - `seeds/02_roles.ts` → `../app/services/SQLite`

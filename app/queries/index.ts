@@ -23,3 +23,4 @@ export * from './announcements';
 export * from './notifications';
 export * from './stats';
 export * from './appSettings';
+export * from './schoolMessages';

@@ -12,3 +12,4 @@ export * from './forms';
 
 // Add custom frontend-only types below
 // export * from './custom';
+export type { SchoolContact, SchoolConversation, SchoolMessage, SchoolMessageReport } from '../../app/types/schoolMessages';

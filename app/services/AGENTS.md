@@ -28,7 +28,7 @@ Infrastructure code wrapped in functions. No classes, no singletons. Each servic
 | `LoginThrottle.ts` | Per-IP + per-username login attempt limiter | auth handler |
 | `View.ts` | Inertia HTML shell renderer | renderer middleware |
 | `Migrator.ts` | Migration runner (up/down/status/fresh) | scripts/migrate.ts |
-| `Seeder.ts` | Seed runner | scripts/seed.ts |
+| `Seeder.ts` | Seed runner: permissions, roles, and admin only; demo seed files are excluded | scripts/seed.ts, scripts/reset-data.ts |
 | `index.ts` | barrel exports |
 
 ## SQLite Wrapper API

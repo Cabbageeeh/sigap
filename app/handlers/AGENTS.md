@@ -12,6 +12,7 @@ Request handlers — functions that receive `NaraRequest` / `NaraResponse` and r
 
 | File | Purpose |
 |------|---------|
+| `schoolMessages.ts` | Parent–teacher conversations and admin report moderation/settings |
 | `academicYears.ts` | academic year CRUD + activation |
 | `assets.ts` | avatar upload + static asset serving |
 | `attendance.ts` | student attendance records |

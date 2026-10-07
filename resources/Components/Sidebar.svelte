@@ -15,7 +15,7 @@
   import { useMachine, normalizeProps, portal } from "@zag-js/svelte";
   import {
     Menu, LogOut, LayoutDashboard, CalendarCheck, BookOpen, GraduationCap,
-    Users, ChartColumn, Calendar, School, BookMarked, UserCheck, UserCog,
+    Users, ChartColumn, Calendar, School, BookMarked, UserCheck, UserCog, MessageCircle,
     CalendarClock, MapPin, Shield, User, History, Bell, Megaphone, QrCode, CalendarOff, FileSpreadsheet,
   } from '@lucide/svelte';
   import type { NotificationView } from '../types';
@@ -65,13 +65,16 @@
   let isNotificationsOpen = $state(false);
 
   $effect(() => {
-    api(() => axios.get('/notifications/data'), { showSuccessToast: false }).then(result => {
+    const loadNotifications = () => api(() => axios.get('/notifications/data'), { showSuccessToast: false, showErrorToast: false }).then(result => {
       if (result.success && result.data) {
         const data = result.data as { unread: number; notifications: NotificationView[] };
         unreadCount = data.unread;
         notifications = data.notifications;
       }
     });
+    void loadNotifications();
+    const timer = setInterval(() => { if (!document.hidden) void loadNotifications(); }, 30000);
+    return () => clearInterval(timer);
   });
 
   async function markAllRead(): Promise<void> {
@@ -116,6 +119,10 @@
 
   let menuSections = $derived([
     { label: null, links: [dashboardLink] },
+    { label: 'Komunikasi', links: [
+      { href: '/messages', label: isParent ? 'Hubungi Guru' : 'Pesan Orang Tua', group: 'messages', icon: MessageCircle, show: isParent || isTeacher },
+      { href: '/communication/settings', label: 'Pengaturan Komunikasi', group: 'communication', icon: MessageCircle, show: isAdmin },
+    ] },
     {
       label: 'Data Master',
       links: [
@@ -245,6 +252,9 @@
                 <p class="text-sm font-medium text-foreground">{n.title}</p>
               </div>
               {#if n.body}<p class="text-xs text-muted-foreground mt-0.5">{n.body}</p>{/if}
+              {#if n.type === 'school_message' || n.type === 'school_message_report'}
+                <Button variant="outline" size="sm" class="mt-2" onclick={() => router.visit(n.type === 'school_message' ? '/messages' : '/communication/settings')}>Buka {n.type === 'school_message' ? 'pesan' : 'laporan'}</Button>
+              {/if}
               <p class="text-[10px] text-muted-foreground/70 mt-1">{new Date(n.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</p>
             </div>
           {/each}

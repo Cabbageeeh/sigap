@@ -33,3 +33,4 @@ export * as attendance from './attendance';
 export * as reports from './reports';
 export * as parent from './parent';
 export * as headmaster from './headmaster';
+export * as schoolMessages from './schoolMessages';

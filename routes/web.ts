@@ -34,10 +34,23 @@ import * as headmaster from '@handlers/headmaster';
 import * as announcements from '@handlers/announcements';
 import * as notifications from '@handlers/notifications';
 import * as rapor from '@handlers/rapor';
+import * as schoolMessages from '@handlers/schoolMessages';
 import Auth from '@middlewares/auth';
 import { strictRateLimit } from '@middlewares/rateLimit';
 
 const Route = createRouter();
+
+Route.get('/messages', [Auth], schoolMessages.schoolMessagesPage);
+Route.get('/messages/data', [Auth], schoolMessages.schoolMessagesData);
+Route.post('/messages', [Auth], schoolMessages.startSchoolConversation);
+Route.post('/messages/:id/reply', [Auth], schoolMessages.sendSchoolMessage);
+Route.put('/messages/:id/status', [Auth], schoolMessages.changeSchoolConversationStatus);
+Route.post('/messages/:id/report/:messageId', [Auth], schoolMessages.reportSchoolMessage);
+Route.get('/communication/settings', [Auth], schoolMessages.schoolCommunicationAdminPage);
+Route.get('/communication/data', [Auth], schoolMessages.schoolCommunicationAdminData);
+Route.put('/communication/settings', [Auth], schoolMessages.saveSchoolCommunicationSettings);
+Route.put('/communication/restrictions', [Auth], schoolMessages.saveSchoolCommunicationRestriction);
+Route.put('/communication/reports/:id/review', [Auth], schoolMessages.reviewSchoolMessageReport);
 
 // Public
 Route.get('/', home.landingPage);

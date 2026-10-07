@@ -129,6 +129,8 @@ Server (ultimate-express)
 
 ## Database Schema
 
+Communication uses `school_conversations` (student and parent/teacher participants), `school_messages` (text messages), `school_message_reports` (reported messages) and `school_message_restrictions` (suspended senders). Only participants can read conversations; admins can read reported messages through moderation endpoints.
+
 | Table | Key Columns | Relations |
 |---|---|---|
 | `users` | id (uuid), username, name, password, phone, avatar, is_active | has many roles via `user_roles` |
@@ -167,17 +169,11 @@ Server (ultimate-express)
 - All timestamps: `biginteger` unix milliseconds via `Date.now()`
 - Foreign keys: `.onDelete('CASCADE')`
 
-## Demo Accounts (after `npm run seed`)
+## Akun awal (setelah npm run seed)
 
-|Role|Username|Password|Notes|
-|---|---|---|---|
-|Admin|admin|admin123|full access, manage master data|
-|Kepala Sekolah|kepala|kepala123|oversight dashboards, reports, audit|
-|Guru (Matematika + Biologi)|budi|teacher123|mengajar 10A MAT, 10B BIO|
-|Guru (Bahasa Inggris)|siti|teacher123|mengajar 10A & 10B ENG|
-|Orang Tua|10001|parent123|10 anak (NIS 10001–10010), lihat nilai + absensi|
+Seed hanya mengisi peran, hak akses, dan akun admin (username: admin; kata sandi awal: admin123). Berkas seed demo tidak dijalankan. Data sekolah diisi dari aplikasi.
 
-Demo data (`seeds/07_demo_data.ts`): 14 hari konfirmasi + jurnal guru (1 sesi sengaja tidak dikonfirmasi untuk demo alarm kepala sekolah, 1 konfirmasi di luar radius), nilai UAS untuk semua siswa, audit log, notifikasi parent, pengumuman, dan nilai terpublikasi.
+Untuk mengosongkan database yang sudah berisi data, jalankan npm run data:reset -- --confirm. Perintah ini membuat cadangan database, membangun ulang tabel, lalu menjalankan seed akun admin. Semua akun lama dan data sekolah dihapus; segera ubah kata sandi admin setelah reset.
 
 ## Middleware
 

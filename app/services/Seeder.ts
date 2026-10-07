@@ -14,6 +14,7 @@ function listSeedFiles(): string[] {
   return readdirSync(SEEDS_DIR)
     .filter(f => f.endsWith('.ts') || f.endsWith('.js'))
     .filter(f => !f.endsWith('.d.ts'))
+    .filter(f => /^(01_permissions|02_roles|03_admin)\.(ts|js)$/.test(f))
     .sort();
 }
 

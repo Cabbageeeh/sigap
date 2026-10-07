@@ -14,6 +14,8 @@ Inertia.js pages rendered by Svelte 5. Each page is a route destination — the 
 
 | File | Purpose |
 |------|---------|
+| `schoolMessages.svelte` | Parent–teacher messages, topic creation, replies and reports |
+| `schoolCommunicationAdmin.svelte` | Communication settings, reported messages and sender restrictions |
 | `academicYears.svelte` | Academic year CRUD |
 | `classes.svelte` | Class CRUD |
 | `dashboard.svelte` | Role-aware dashboard with stats |

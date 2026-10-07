@@ -35,23 +35,17 @@ npm run dev
 
 Open [http://localhost:5555](http://localhost:5555).
 
-### Default accounts
+### Default account
 
-After `npm run migrate:fresh` the seeders create these accounts:
+Seed creates only permissions, roles, and the admin account: **admin / admin123**. Demo students, teachers, classes, grades, and school data are not seeded.
 
-| Username | Password | Role |
-|---|---|---|
-| `admin` | `admin123` | admin |
-| `budi` | `teacher123` | teacher |
-| `siti` | `teacher123` | teacher |
-| `10001` | `parent123` | parent (NIS anak) |
+Running npm run seed does not delete existing data. To empty an existing database and recreate only the admin account, stop the application first and run:
 
-The demo also seeds:
-- 1 academic year (`2025/2026`)
-- 2 classes (`10A`, `10B`)
-- 3 subjects (`Mathematics`, `Biology`, `English`)
-- 10 students
-- 1 school location (`Main Campus`)
+```bash
+npm run data:reset -- --confirm
+```
+
+This deletes all existing accounts and school data after creating a SQLite backup under the database backups directory. Change the admin password after logging in. Restart the application when finished.
 
 ---
 

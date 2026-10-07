@@ -12,6 +12,7 @@ Raw SQL functions in `app/queries/`. The only layer that touches `SQLite`. Handl
 
 | File | Purpose |
 |------|---------|
+| `schoolMessages.ts` | Authorized teacher contacts, conversations, rate limits, reports and restrictions |
 | `users.ts` | CRUD + `isAdmin`, `hasPermission`, `hasRole`, role sync |
 | `roles.ts` | CRUD + role-permission junction + permission lookups |
 | `sessions.ts` | session CRUD + expiry cleanup + `getUserBySessionId` |
