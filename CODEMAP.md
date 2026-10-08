@@ -11,8 +11,8 @@
 ## Stats
 
 - Files indexed: 334
-- Total lines: 38075
-- Total exports: 1038
+- Total lines: 38081
+- Total exports: 1037
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -24,7 +24,7 @@
 
 ### app/config/
 
-- `constants.ts` (53L) — SERVER, AUTH, RATE_LIMIT, UPLOAD, CACHE, LOGGING, QR, QR_REFRESH_INTERVAL_DEFAULT, +2
+- `constants.ts` (49L) — SERVER, AUTH, RATE_LIMIT, UPLOAD, CACHE, LOGGING, QR, QR_REFRESH_INTERVAL_DEFAULT, +1
 - `env.ts` (65L) — env, initEnv, checkFeatureConfig, getEnvSummary, Env
 - `index.ts` (18L)
 
@@ -59,7 +59,7 @@
 - `headmaster.ts` (111L) — headmasterDashboardPage, headmasterDashboardData, headmasterReportsPage, headmasterClassGradesPage, headmasterTeacherAttendancePage, listOutsideConfirmations
 - `home.ts` (17L) — landingPage
 - `index.ts` (37L)
-- `journals.ts` (293L) — journalsPage, listJournals, journalData, addJournal, editJournal, removeJournal
+- `journals.ts` (303L) — journalsPage, listJournals, journalData, addJournal, editJournal, removeJournal
 - `notifications.ts` (20L) — notificationsData, markNotificationsRead
 - `parent.ts` (124L) — parentDashboardPage, parentDashboardData, childAttendancePage, parentGradesPage
 - `parents.ts` (63L) — parentsPage, listParents, parentData, parentByUser
@@ -479,7 +479,6 @@
 - `const` **QR**
 - `const` **QR_REFRESH_INTERVAL_DEFAULT**
 - `const` **TEACHER_PRESENCE**
-- `const` **JOURNAL_LATE_DAYS**
 
 ### `app/config/env.ts`
 
@@ -2067,7 +2066,7 @@
 - `app/handlers/gradesEraporSettings.ts` → `@core`, `@queries/eraporGrades`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/headmaster.ts` → `@core`, `@queries/appSettings`, `@queries/classes`, `@queries/schoolLocations`, `@queries/stats`, `@queries/teacherConfirmations`, `@queries/teachers`, `@queries/users`
 - `app/handlers/home.ts` → `@core`, `@queries`
-- `app/handlers/journals.ts` → `../types/shared`, `@config/constants`, `@core`, `@queries/appSettings`, `@queries/journals`, `@queries/schedules`, `@queries/schoolCalendar`, `@queries/studentAttendance`, `@queries/students`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@types`, `@validators`
+- `app/handlers/journals.ts` → `../types/shared`, `@core`, `@queries/academicYears`, `@queries/appSettings`, `@queries/journals`, `@queries/schedules`, `@queries/schoolCalendar`, `@queries/studentAttendance`, `@queries/students`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@types`, `@validators`
 - `app/handlers/notifications.ts` → `@core`, `@queries/notifications`
 - `app/handlers/parent.ts` → `@core`, `@queries/eraporGrades`, `@queries/grades`, `@queries/parents`, `@queries/studentAttendance`, `@queries/students`, `@queries/subjects`, `@queries/users`, `@services/EraporWorkbook`, `@services/Logger`
 - `app/handlers/parents.ts` → `@core`, `@queries/parents`, `@queries/students`, `@queries/users`

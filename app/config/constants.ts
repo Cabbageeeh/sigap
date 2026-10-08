@@ -46,7 +46,3 @@ export const TEACHER_PRESENCE = {
   MODE_QR: 'qr',
   MODE_OFF: 'off',
 } as const;
-
-// A missed journal can still be filed this many days later, but only for a day
-// the teacher actually confirmed presence — the oversight alarm covers the rest.
-export const JOURNAL_LATE_DAYS = 3;

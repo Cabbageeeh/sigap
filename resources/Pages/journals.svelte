@@ -174,7 +174,7 @@
   {#if permissions.canCreate && journalSlots.length === 0}
     <div class="relative overflow-hidden rounded-2xl border border-border bg-card p-5 mb-6 flex items-center gap-3 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
       <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-success-500/10 shrink-0"><BookOpen class="h-4.5 w-4.5 text-success-600 dark:text-success-400" /></span>
-      <p class="text-sm text-muted-foreground">Semua sesi tiga hari terakhir sudah terisi jurnal — tidak ada yang menunggu.</p>
+      <p class="text-sm text-muted-foreground">Semua sesi pada periode tahun ajaran ini sudah terisi jurnal — tidak ada yang menunggu.</p>
     </div>
   {/if}
 

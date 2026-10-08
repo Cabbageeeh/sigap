@@ -13,7 +13,7 @@ import { isTeachingDay } from '@queries/schoolCalendar';
 import { isAdmin, hasPermission } from '@queries/users';
 import { isTeacherUser } from '@queries/teacherClassAssignments';
 import { JournalSchema, UpdateJournalSchema, zodToErrors } from '@validators';
-import { JOURNAL_LATE_DAYS } from '@config/constants';
+import { findActiveAcademicYear } from '@queries/academicYears';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -44,16 +44,22 @@ const canManage = (userId: string, permission: string): boolean =>
 const buildJournalSlots = (userId: string, journals: Journal[], now: number): JournalSlotView[] => {
   const slots: JournalSlotView[] = [];
   const presenceRequired = isTeacherPresenceEnabled();
+  const academicYear = findActiveAcademicYear();
+  if (!academicYear) return slots;
 
-  for (let back = 0; back <= JOURNAL_LATE_DAYS; back += 1) {
-    const day = startOfDayMs(now - back * DAY_MS);
+  const todayStart = startOfDayMs(now);
+  const periodStart = startOfDayMs(academicYear.start_at);
+  const periodEnd = Math.min(startOfDayMs(academicYear.end_at), todayStart);
+
+  for (let day = periodEnd; day >= periodStart; day -= DAY_MS) {
     if (!isTeachingDay(day)) continue;
     const confirmed = !presenceRequired || !!findConfirmationByTeacherOnDay(userId, day);
+    const isLate = day < todayStart;
 
     for (const schedule of findTeacherSchedulesByDay(userId, new Date(day).getDay())) {
       if (day + minutesOf(schedule.end_time) * 60000 > now) continue;
       const journal = journals.find(j => j.schedule_id === schedule.id && j.date >= day && j.date < day + DAY_MS);
-      if (journal && back > 0) continue;
+      if (journal && isLate) continue;
       if (!journal && !confirmed) continue;
 
       slots.push({
@@ -63,7 +69,7 @@ const buildJournalSlots = (userId: string, journals: Journal[], now: number): Jo
         subject_name: schedule.subject_name ?? '',
         time: `${clockOf(schedule.start_time)}–${clockOf(schedule.end_time)}`,
         date: day,
-        is_late: back > 0,
+        is_late: isLate,
         journal_id: journal?.id ?? null,
       });
     }
@@ -163,9 +169,13 @@ export const addJournal = (req: NaraRequest, res: NaraResponse) => {
   const now = Date.now();
   const todayStart = startOfDayMs(now);
   const day = parsed.data.date ? startOfDayMs(parsed.data.date) : todayStart;
+  const academicYear = findActiveAcademicYear();
 
-  if (day > todayStart || day < todayStart - JOURNAL_LATE_DAYS * DAY_MS) {
-    return jsonError(res, `Jurnal hanya bisa diisi untuk ${JOURNAL_LATE_DAYS} hari terakhir`, 422, 'JOURNAL_OUT_OF_RANGE');
+  if (!academicYear || schedule.academic_year_id !== academicYear.id
+    || day > todayStart
+    || day < startOfDayMs(academicYear.start_at)
+    || day > startOfDayMs(academicYear.end_at)) {
+    return jsonError(res, 'Jurnal hanya bisa diisi dalam periode tahun ajaran aktif', 422, 'JOURNAL_OUT_OF_RANGE');
   }
   if (!isTeachingDay(day) || new Date(day).getDay() !== schedule.day_of_week) {
     return jsonError(res, 'Tanggal itu bukan hari efektif dengan jadwal tersebut', 422, 'JOURNAL_WRONG_DAY');
