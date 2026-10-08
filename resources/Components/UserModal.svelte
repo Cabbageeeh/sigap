@@ -117,6 +117,9 @@
                   <p class="text-xs text-muted-foreground col-span-2">No roles available</p>
                 {/if}
               </div>
+              {#if hasRole('teacher')}
+                <p class="rounded-xl bg-secondary p-3 text-xs text-muted-foreground">Profil guru akan otomatis dibuat dan muncul di menu Data Guru. NIP dan mata pelajaran dapat dilengkapi di sana.</p>
+              {/if}
             </div>
           </div>
         </form>

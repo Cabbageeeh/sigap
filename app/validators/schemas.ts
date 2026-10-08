@@ -156,6 +156,7 @@ export const StudentImportSchema = z.object({
 export const TeacherSchema = z.object({
   nip: z.string().trim().min(4, 'NIP minimal 4 karakter').max(50, 'NIP maksimal 50 karakter'),
   name: z.string().trim().min(2, 'Nama minimal 2 karakter').max(100, 'Nama maksimal 100 karakter'),
+  username: usernameSchema.optional(),
   subject_ids: z.array(z.string().uuid('ID mata pelajaran tidak valid')).max(50, 'Maksimal 50 mata pelajaran').default([]),
 });
 

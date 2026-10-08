@@ -93,7 +93,7 @@ export const addTeacher = (req: NaraRequest, res: NaraResponse) => {
   const parsed = TeacherSchema.safeParse(req.body);
   if (!parsed.success) return jsonValidationError(res, 'Data guru tidak valid', zodToErrors(parsed.error));
 
-  const { nip, name, subject_ids: subjectIds } = parsed.data;
+  const { nip, name, username: requestedUsername, subject_ids: subjectIds } = parsed.data;
 
   if (findTeacherByEmployeeId(nip)) {
     return jsonError(res, 'NIP sudah terdaftar', 409, 'DUPLICATE_NIP');
@@ -113,9 +113,12 @@ export const addTeacher = (req: NaraRequest, res: NaraResponse) => {
     activeYearId = resolved;
   }
 
-  const username = buildTeacherUsername(nip);
+  const username = requestedUsername || buildTeacherUsername(nip);
   if (!username) {
     return jsonError(res, 'Tidak dapat membuat username unik untuk NIP ini', 409, 'USERNAME_EXHAUSTED');
+  }
+  if (usernameExists(username)) {
+    return jsonError(res, 'Username sudah digunakan', 409, 'DUPLICATE_USERNAME');
   }
 
   try {

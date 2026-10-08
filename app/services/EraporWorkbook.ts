@@ -269,6 +269,33 @@ const parseCells = (rowHtml: string): HtmlCell[] => {
   return cells;
 };
 
+const expandHtmlRows = (rowHtmls: string[]): string[][] => {
+  const grid: string[][] = [];
+  const occupied: boolean[][] = Array.from({ length: rowHtmls.length }, () => []);
+  rowHtmls.forEach((rowHtml, rowIndex) => {
+    let columnIndex = 0;
+    for (const cell of parseCells(rowHtml)) {
+      while (occupied[rowIndex]?.[columnIndex]) columnIndex += 1;
+      const readSpan = (name: 'colspan' | 'rowspan'): number => {
+        const rawSpan = new RegExp(`\\b${name}\\s*=\\s*["']?(\\d+)`, 'i').exec(cell.openTag)?.[1];
+        const span = Number(rawSpan);
+        return Number.isSafeInteger(span) && span > 0 && span <= MAX_XLSX_COLUMNS ? span : 1;
+      };
+      const columnSpan = readSpan('colspan');
+      const rowSpan = readSpan('rowspan');
+      for (let rowOffset = 0; rowOffset < rowSpan && rowIndex + rowOffset < rowHtmls.length; rowOffset += 1) {
+        for (let columnOffset = 0; columnOffset < columnSpan; columnOffset += 1) {
+          occupied[rowIndex + rowOffset]![columnIndex + columnOffset] = true;
+        }
+      }
+      grid[rowIndex] ??= [];
+      grid[rowIndex]![columnIndex] = cell.value;
+      columnIndex += columnSpan;
+    }
+  });
+  return grid;
+};
+
 const readRows = (html: string): string[] => [...html.matchAll(/<tr\b[^>]*>[\s\S]*?<\/tr\s*>/gi)].map(match => match[0]);
 
 const gradeTypeFor = (semester: number, category: EraporAssessmentColumn['category'], externalId: string): string => {
@@ -308,8 +335,9 @@ export const parseEraporWorkbook = (source: string, semester: number): ParsedEra
     throw new Error('Header file e-Rapor tidak lengkap. Unggah format asli dari e-Rapor.');
   }
 
-  const assessmentLabels = parseCells(rows[headerIndex + 1] ?? '').map(cell => cell.value);
-  const assessmentIds = parseCells(rows[headerIndex + 2] ?? '').map(cell => cell.value);
+  const headerGrid = expandHtmlRows(rows.slice(headerIndex, headerIndex + 3));
+  const assessmentLabels = headerGrid[1] ?? [];
+  const assessmentIds = headerGrid[2] ?? [];
   const learningColumns = assessmentLabels.flatMap((label, cellIndex) =>
     /^sumatif\s+\d+$/i.test(label) ? [{ label, cellIndex }] : []);
   const finalLabelsByColumn = new Map<number, string>();

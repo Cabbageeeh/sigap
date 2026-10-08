@@ -23,6 +23,34 @@ export const createUser = (data: {
   return findUserById(data.id)!;
 };
 
+export const createUserWithRoles = (data: {
+  id: string;
+  name?: string | null;
+  username: string;
+  password: string;
+}, roleIds: string[], createTeacherProfile: boolean): User => SQLite.transaction(() => {
+  const now = Date.now();
+  SQLite.exec`
+    INSERT INTO users (id, name, username, password, created_at, updated_at)
+    VALUES (${data.id}, ${data.name ?? null}, ${data.username}, ${data.password}, ${now}, ${now})
+  `;
+  for (const roleId of roleIds) {
+    SQLite.exec`INSERT INTO user_roles (id, user_id, role_id, created_at)
+      VALUES (${randomUUID()}, ${data.id}, ${roleId}, ${now})`;
+  }
+  if (createTeacherProfile) {
+    SQLite.exec`INSERT INTO teachers (id, user_id, employee_id, phone, created_at, updated_at)
+      VALUES (${randomUUID()}, ${data.id}, NULL, NULL, ${now}, ${now})`;
+  }
+  return findUserById(data.id)!;
+});
+
+export const createTeacherProfileIfMissing = (userId: string): void => {
+  SQLite.exec`INSERT INTO teachers (id, user_id, employee_id, phone, created_at, updated_at)
+    SELECT ${randomUUID()}, ${userId}, NULL, NULL, ${Date.now()}, ${Date.now()}
+    WHERE NOT EXISTS (SELECT 1 FROM teachers WHERE user_id = ${userId})`;
+};
+
 export const updateUser = (id: string, data: Partial<Omit<User, 'id' | 'created_at'>>): User | undefined => {
   const { id: _id, created_at: _created_at, ...rest } = data as Record<string, unknown>;
   SQLite.update('users', { id }, rest);

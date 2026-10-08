@@ -4,7 +4,7 @@ import { hashPassword } from '@services/Authenticate';
 import Logger from '@services/Logger';
 import {
   getUsersPaginated, createUser, updateUser, deleteUsers,
-  getUserRoles, getRolesForUsers, isAdmin, syncRoles
+  getUserRoles, getRolesForUsers, isAdmin, syncRoles, createUserWithRoles, createTeacherProfileIfMissing
 } from '@queries';
 import { findAllRoles, findRoleBySlug, getUsersWithRole } from '@queries/roles';
 import { findStudentsByParent } from '@queries/students';
@@ -127,15 +127,13 @@ export const addUser = (req: NaraRequest, res: NaraResponse) => {
   const canAssignRoles = isAdmin(req.user.id);
 
   try {
-    const user = createUser({
-      id: randomUUID(),
-      name, username,
-      password: hashPassword(password),
-    });
+    const allRoles = roles?.length && canAssignRoles ? findAllRoles() : [];
+    const roleIds = roles?.map(slug => allRoles.find(r => r.slug === slug)?.id).filter((id): id is string => !!id) ?? [];
+    const user = roles?.includes('teacher')
+      ? createUserWithRoles({ id: randomUUID(), name, username, password: hashPassword(password) }, roleIds, true)
+      : createUser({ id: randomUUID(), name, username, password: hashPassword(password) });
 
-    if (roles?.length && canAssignRoles) {
-      const allRoles = findAllRoles();
-      const roleIds = roles.map(slug => allRoles.find(r => r.slug === slug)?.id).filter(Boolean) as string[];
+    if (roles?.length && canAssignRoles && !roles.includes('teacher')) {
       syncRoles(user.id, roleIds);
     }
     const userRoles = getUserRoles(user.id);
@@ -197,6 +195,9 @@ export const editUser = (req: NaraRequest, res: NaraResponse) => {
       }
 
       syncRoles(id, roleIds);
+      if (roles.includes('teacher')) createTeacherProfileIfMissing(id);
+    } else if (currentRoles.includes('teacher')) {
+      createTeacherProfileIfMissing(id);
     }
 
     const userRoles = getUserRoles(id);

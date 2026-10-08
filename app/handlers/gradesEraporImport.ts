@@ -161,7 +161,6 @@ export const importEraporGrades = (req: NaraRequest, res: NaraResponse) => {
 
   const isConfirmedImport = req.body.confirm_import === '1';
   if (studentMatches.missingStudents.length > 0 && !isConfirmedImport) {
-    if (!isAdmin(req.user.id)) return jsonError(res, 'Ada siswa yang belum terdaftar. Minta admin SIGAP meninjau dan menambahkan siswa.', 409, 'ERAPOR_STUDENTS_NEED_ADMIN');
     return jsonSuccess(res, 'Isi NIS siswa baru untuk melanjutkan impor.', {
       preview_required: true,
       preview: {
@@ -175,9 +174,6 @@ export const importEraporGrades = (req: NaraRequest, res: NaraResponse) => {
     });
   }
 
-  if (studentMatches.missingStudents.length > 0 && !isAdmin(req.user.id)) {
-    return jsonError(res, 'Hanya admin yang dapat membuat data siswa dari file e-Rapor.', 403, 'ADMIN_REQUIRED');
-  }
   if (newStudents.length !== studentMatches.missingStudents.length) {
     return jsonError(res, 'Isi NIS untuk setiap siswa baru yang tampil sebelum melanjutkan.', 422, 'ERAPOR_STUDENT_DATA_MISMATCH');
   }

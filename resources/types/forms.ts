@@ -258,6 +258,7 @@ export interface TeacherForm {
   id: string | null;
   nip: string;
   name: string;
+  username: string;
   subject_ids: string[];
 }
 
@@ -380,7 +381,7 @@ export function createEmptyStudentParentForm(): StudentParentForm {
 }
 
 export function createEmptyTeacherForm(): TeacherForm {
-  return { id: null, nip: '', name: '', subject_ids: [] };
+  return { id: null, nip: '', name: '', username: '', subject_ids: [] };
 }
 
 export function teacherToForm(teacher: Teacher & { user_name?: string | null }): TeacherForm {
@@ -388,6 +389,7 @@ export function teacherToForm(teacher: Teacher & { user_name?: string | null }):
     id: teacher.id,
     nip: teacher.employee_id || '',
     name: teacher.user_name || '',
+    username: '',
     subject_ids: [],
   };
 }

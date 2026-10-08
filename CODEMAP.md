@@ -11,8 +11,8 @@
 ## Stats
 
 - Files indexed: 334
-- Total lines: 38007
-- Total exports: 1036
+- Total lines: 38075
+- Total exports: 1038
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -54,7 +54,7 @@
 - `gradeAudit.ts` (39L) — gradeAuditPage, gradeAuditData
 - `grades.ts` (375L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, addGradeComponentType, renameGradeComponentType, +3
 - `gradesErapor.ts` (486L) — gradesEraporPage, saveEraporColumnMappings, saveEraporDefaultColumnMappings, saveEraporGrades, exportEraporGrades
-- `gradesEraporImport.ts` (268L) — eraporImportMiddleware, importEraporGrades
+- `gradesEraporImport.ts` (264L) — eraporImportMiddleware, importEraporGrades
 - `gradesEraporSettings.ts` (22L) — saveEraporTeacherMappingAccess
 - `headmaster.ts` (111L) — headmasterDashboardPage, headmasterDashboardData, headmasterReportsPage, headmasterClassGradesPage, headmasterTeacherAttendancePage, listOutsideConfirmations
 - `home.ts` (17L) — landingPage
@@ -78,9 +78,9 @@
 - `teacherAssignments.ts` (83L) — teacherAssignmentsPage, saveTeacherAssignments
 - `teacherConfirmations.ts` (214L) — teacherConfirmationsPage, confirmPage, listTeacherConfirmations, teacherConfirmationData, submitTeacherConfirmation, outsideConfirmationsData
 - `teacherPresence.ts` (66L) — teacherPresencePage, saveTeacherPresenceSettings, qrDisplayPage, qrCodeData
-- `teachers.ts` (229L) — teachersPage, listTeachers, teacherData, teacherByUser, addTeacher, editTeacher, removeTeacher, assignTeacherSubjects
+- `teachers.ts` (232L) — teachersPage, listTeachers, teacherData, teacherByUser, addTeacher, editTeacher, removeTeacher, assignTeacherSubjects
 - `teacherSchedule.ts` (51L) — teacherSchedulePage, listTodaySchedules, todayScheduleDetail
-- `users.ts` (252L) — dashboardPage, usersPage, profilePage, changeProfile, addUser, editUser, removeUsers
+- `users.ts` (253L) — dashboardPage, usersPage, profilePage, changeProfile, addUser, editUser, removeUsers
 
 ### app/middlewares/
 
@@ -123,13 +123,13 @@
 - `teacherClassAssignments.ts` (143L) — findTeacherClassAssignments, findTeacherClassAssignmentsByAcademicYear, isTeacherUser, isTeacherAssignedToClass, isTeacherHomeroomOfClass, isTeacherAssignedToClassSubject, isTeacherAssignedToStudent, syncTeacherClassAssignments, +1
 - `teacherConfirmations.ts` (171L) — findAllTeacherConfirmations, getConfirmationLogsPaginated, countTeachersConfirmedOn, findConfirmationReportRows, findTeacherConfirmationById, findConfirmationsByTeacher, findConfirmationsBySchedule, findTodayConfirmationBySchedule, +7
 - `teachers.ts` (117L) — findAllTeachers, findAllTeachersForAssignment, findTeacherByEmployeeId, countActiveTeachers, findTeacherUsersForSchedule, findTeacherById, findTeacherByUserId, findTeachersBySubject, +7
-- `users.ts` (163L) — findUserById, findUserByUsername, createUser, updateUser, deleteUser, deleteUsers, usernameExists, searchUsers, +12
+- `users.ts` (191L) — findUserById, findUserByUsername, createUser, createUserWithRoles, createTeacherProfileIfMissing, updateUser, deleteUser, deleteUsers, +14
 
 ### app/services/
 
 - `Authenticate.ts` (58L) — hashPassword, comparePassword, processLogin, logout
 - `CacheStore.ts` (153L) — createCacheStore, assetCache, templateCache, CacheStoreOptions, CacheStats, CacheStore
-- `EraporWorkbook.ts` (412L) — normalizeEraporText, parseEraporWorkbook, parseEraporWorkbookFile, renderEraporWorkbook, EraporAssessmentColumn, EraporWorkbookRow, ParsedEraporWorkbook
+- `EraporWorkbook.ts` (440L) — normalizeEraporText, parseEraporWorkbook, parseEraporWorkbookFile, renderEraporWorkbook, EraporAssessmentColumn, EraporWorkbookRow, ParsedEraporWorkbook
 - `EraporXlsx.ts` (234L) — eraporExcelColumnName, createEraporXlsx
 - `Geolocation.ts` (33L) — EARTH_RADIUS_METERS, toRadians, haversineDistance, isInsideRadius, validateCoordinates, GeoPoint
 - `GradeCalculator.ts` (44L) — computeFinalScore, predikatOf, isPassed, GradeComponentWeight
@@ -155,7 +155,7 @@
 ### app/validators/
 
 - `index.ts` (107L) — zodToErrors
-- `schemas.ts` (403L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +79
+- `schemas.ts` (404L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +79
 - `schoolMessages.ts` (22L) — StartSchoolConversationSchema, SendSchoolMessageSchema, ReportSchoolMessageSchema, SchoolConversationStatusSchema, SchoolCommunicationSettingsSchema, SchoolCommunicationRestrictionSchema
 
 ### migrations/
@@ -239,7 +239,7 @@
 - `SigapIcon.svelte` (46L)
 - `StatCard.svelte` (81L)
 - `Switch.svelte` (52L)
-- `UserModal.svelte` (135L)
+- `UserModal.svelte` (138L)
 
 ### resources/Components/charts/
 
@@ -286,7 +286,7 @@
 - `teacherAssignments.svelte` (357L)
 - `teacherConfirmations.svelte` (162L)
 - `teacherPresence.svelte` (174L)
-- `teachers.svelte` (124L)
+- `teachers.svelte` (130L)
 - `users.svelte` (236L)
 
 ### resources/Pages/auth/
@@ -344,7 +344,7 @@
 
 ### resources/types/
 
-- `forms.ts` (475L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +39
+- `forms.ts` (477L) — createEmptyUserForm, userToForm, isApiSuccess, isApiError, createEmptyRoleForm, roleToForm, createEmptyAcademicYearForm, academicYearToForm, +39
 - `index.ts` (16L)
 
 ### routes/
@@ -1232,6 +1232,8 @@
 - `const` **findUserById**
 - `const` **findUserByUsername**
 - `const` **createUser**
+- `const` **createUserWithRoles**
+- `const` **createTeacherProfileIfMissing**
 - `const` **updateUser**
 - `const` **deleteUser**
 - `const` **deleteUsers**

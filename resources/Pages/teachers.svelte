@@ -56,7 +56,12 @@
   }
 
   async function submit(): Promise<void> {
-    const payload = { nip: form.nip.trim(), name: form.name.trim(), subject_ids: form.subject_ids };
+    const payload = {
+      nip: selected && !form.nip.trim() ? undefined : form.nip.trim(),
+      name: form.name.trim(),
+      username: selected ? undefined : form.username.trim() || undefined,
+      subject_ids: form.subject_ids,
+    };
     const result = selected
       ? await api(() => axios.put(`/teachers/${selected!.id}`, payload))
       : await api(() => axios.post('/teachers', payload));
@@ -68,7 +73,7 @@
     if (result.success) { isDeleteOpen = false; router.visit('/teachers', { preserveScroll: true }); }
   }
 
-  const columns = [{ key: 'employee_id', label: 'NIP' }, { key: 'user_name', label: 'Nama' }, { key: 'subject_names', label: 'Daftar Mapel' }];
+  const columns = [{ key: 'employee_id', label: 'NIP' }, { key: 'user_name', label: 'Nama' }, { key: 'user_username', label: 'Username' }, { key: 'subject_names', label: 'Daftar Mapel' }];
 </script>
 
 {#snippet rowActions(item: TeacherRow)}
@@ -93,10 +98,11 @@
   <DataTable {columns} rows={teachers} rowAction={rowActions} />
   {#if meta}<Pagination {meta} />{/if}
 
-<Modal bind:open={isOpen} title={selected ? 'Edit Guru' : 'Tambah Guru'} description={selected ? 'Ubah NIP, nama, dan kompetensi mata pelajaran guru.' : 'Akun login dibuat otomatis: guru_[4 digit terakhir NIP] dengan kata sandi guru123.'}>
+<Modal bind:open={isOpen} title={selected ? 'Edit Guru' : 'Tambah Guru'} description={selected ? 'Ubah NIP, nama, dan kompetensi mata pelajaran guru.' : 'Tentukan username login guru. Jika dikosongkan, username dibuat dari 4 digit terakhir NIP; kata sandi awal guru123.'}>
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
     <div class="flex flex-col gap-0"><Label for="nip" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">NIP</Label><Input id="nip" bind:value={form.nip} required /></div>
     <div class="flex flex-col gap-0"><Label for="name" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Nama</Label><Input id="name" bind:value={form.name} required /></div>
+    {#if !selected}<div class="flex flex-col gap-0"><Label for="teacher-username" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Username login</Label><Input id="teacher-username" bind:value={form.username} placeholder="Contoh: budi.santoso" /><p class="mt-1 text-xs text-muted-foreground">Boleh dikosongkan untuk membuat username otomatis dari NIP.</p></div>{/if}
     <fieldset>
       <Label class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Mata Pelajaran</Label>
       {#if subjects.length === 0}

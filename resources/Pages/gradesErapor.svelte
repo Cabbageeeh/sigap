@@ -247,10 +247,10 @@
     </a>
     {#if permissions.canExport && hasTemplate && rosterReady}
       <div class="flex flex-wrap gap-2">
-        <Button href={exportUrl('xls')} download variant="outline">
+        <Button href={exportUrl('xls')} download>
           <Download class="h-4 w-4" /> Unduh .xls (format sekolah)
         </Button>
-        <Button href={exportUrl('xlsx')} download>
+        <Button href={exportUrl('xlsx')} download variant="outline">
           <Download class="h-4 w-4" /> Unduh .xlsx
         </Button>
       </div>
@@ -310,9 +310,9 @@
       </div>
       <div class="mb-4 rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm">
         <p class="font-medium text-foreground">Sebelum mengunggah</p>
-        {#if canManageStudents}
-          <p class="mt-1 text-muted-foreground">Jika ada siswa di file yang belum terdaftar, SIGAP akan meminta NIS asli sebelum membuat datanya. Siswa yang ada di SIGAP tetapi tidak ada di file harus diperiksa terlebih dahulu.</p>
-          <a href={`/classes/${selectedClassId}/students`} use:inertia class="mt-2 inline-flex font-medium text-primary underline">Periksa atau impor siswa kelas ini</a>
+        {#if canManageStudents || permissions.canEdit}
+          <p class="mt-1 text-muted-foreground">Jika ada siswa di file yang belum terdaftar, admin atau guru yang ditugaskan pada kelas dan mapel ini dapat membuat datanya setelah mengisi NIS asli. Siswa yang ada di SIGAP tetapi tidak ada di file harus diperiksa terlebih dahulu.</p>
+          {#if canManageStudents}<a href={`/classes/${selectedClassId}/students`} use:inertia class="mt-2 inline-flex font-medium text-primary underline">Periksa atau impor siswa kelas ini</a>{/if}
         {:else}
           <p class="mt-1 text-muted-foreground">Pastikan daftar siswa sama dengan kelas pada file. Jika berbeda, minta admin SIGAP memperbarui daftar siswa sebelum mengunggah.</p>
         {/if}
