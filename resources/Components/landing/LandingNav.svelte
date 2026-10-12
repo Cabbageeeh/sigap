@@ -30,7 +30,7 @@
     <a href="/" use:inertia class="flex items-center gap-3" aria-label="SIGAP — SMP Negeri 48 Surabaya">
       <SigapIcon size={30} />
       <span aria-hidden="true" class="h-7 w-px bg-[#deddd8] dark:bg-white/[0.12]"></span>
-      <SchoolLogo size={30} />
+      <SchoolLogo size={44} />
     </a>
 
     <div class="hidden items-center gap-7 text-[13px] font-semibold text-[#69645a] lg:flex dark:text-[#a3a6a4]">

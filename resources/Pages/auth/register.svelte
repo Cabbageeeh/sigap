@@ -54,7 +54,7 @@
       <a href="/" use:inertia class="flex items-center gap-3" aria-label="SIGAP — SMP Negeri 48 Surabaya">
         <SigapIcon size={30} />
         <span aria-hidden="true" class="h-7 w-px bg-border"></span>
-        <SchoolLogo size={30} />
+        <SchoolLogo size={44} />
       </a>
       <div class="flex items-center gap-2">
         <a href="/login" use:inertia class="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">Masuk</a>

@@ -300,7 +300,7 @@
   </button>
   <a href="/" use:inertia class="flex items-center gap-2" aria-label="SIGAP — SMP Negeri 48 Surabaya">
     <SigapIcon size={28} />
-    <SchoolLogo size={27} />
+    <SchoolLogo size={36} />
   </a>
   <div class="flex items-center gap-2">
     {@render notificationBell('top-full')}
@@ -321,7 +321,7 @@
               <p class="font-heading font-semibold tracking-tight text-lg">SIGAP</p>
               <p class="text-[9px] uppercase tracking-[0.12em] text-muted-foreground truncate">SMP Negeri 48 Surabaya</p>
             </div>
-            <SchoolLogo size={28} class="ml-1" />
+            <SchoolLogo size={38} class="ml-1" />
           </a>
           <button {...sheetApi.getCloseTriggerProps()} onclick={() => isMenuOpen = false} aria-label="Tutup menu" class="text-muted-foreground hover:text-foreground transition-colors p-1">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -360,7 +360,7 @@
       <p class="font-heading font-semibold tracking-tight text-lg">SIGAP</p>
       <p class="text-[9px] uppercase tracking-[0.12em] text-muted-foreground truncate">SMP Negeri 48 Surabaya</p>
     </div>
-    <SchoolLogo size={28} class="ml-auto" />
+    <SchoolLogo size={40} class="ml-auto" />
   </div>
 
   <nav bind:this={desktopNav} class="flex-1 overflow-y-auto px-3 py-4">
