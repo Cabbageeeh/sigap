@@ -12,7 +12,7 @@
 
 <span
   data-slot="school-logo"
-  class={cn("inline-flex shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-black/10", className)}
+  class={cn("inline-flex shrink-0 items-center justify-center", className)}
   style={`width: ${size}px; height: ${size}px`}
 >
   <img src={schoolLogo} alt="Logo SMP Negeri 48 Surabaya" class="block h-full w-full object-contain" />
