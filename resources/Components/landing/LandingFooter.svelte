@@ -1,4 +1,5 @@
 <script lang="ts">
+  import SchoolLogo from '../SchoolLogo.svelte';
   import SigapIcon from '../SigapIcon.svelte';
 
   const year = new Date().getFullYear();
@@ -8,8 +9,9 @@
   <div class="mx-auto flex max-w-7xl flex-col gap-7 border-t border-[#e6dfd2] py-8 sm:flex-row sm:items-center sm:justify-between dark:border-white/[0.08]">
     <div class="flex items-center gap-4">
       <SigapIcon size={28} />
+      <SchoolLogo size={28} />
       <span class="hidden h-5 w-px bg-[#e2dacd] sm:block dark:bg-white/[0.1]"></span>
-      <p class="max-w-md text-xs leading-5 text-[#7c807e] dark:text-[#918a7f]">Sistem Informasi Guru, Absensi, dan Prestasi.</p>
+      <p class="max-w-md text-xs leading-5 text-[#7c807e] dark:text-[#918a7f]">Sistem Informasi Guru, Absensi, dan Prestasi · SMP Negeri 48 Surabaya.</p>
     </div>
     <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-semibold text-[#8e877d] dark:text-[#898277]">
       <span>© {year} SIGAP</span>

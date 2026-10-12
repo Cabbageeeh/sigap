@@ -4,6 +4,7 @@
   import { api } from '$lib/api'
   import { password_generator } from '$lib/utils/password'
   import { Toast } from '$lib/toast'
+  import SchoolLogo from '../../Components/SchoolLogo.svelte'
   import SigapIcon from '../../Components/SigapIcon.svelte'
   import DarkModeToggle from '../../Components/DarkModeToggle.svelte'
   import Button from '../../Components/Button.svelte'
@@ -50,7 +51,11 @@
 <div class="min-h-[100dvh] bg-background text-foreground font-body antialiased selection:bg-primary/20 selection:text-foreground">
   <header class="px-4 pt-4 sm:px-6 lg:px-8">
     <nav class="mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl border border-border bg-card/90 px-4 shadow-[0_8px_30px_rgba(32,36,38,0.04)] backdrop-blur-xl sm:px-5 dark:shadow-none">
-      <a href="/" use:inertia class="flex items-center gap-3" aria-label="SIGAP Beranda"><SigapIcon size={30} /></a>
+      <a href="/" use:inertia class="flex items-center gap-3" aria-label="SIGAP — SMP Negeri 48 Surabaya">
+        <SigapIcon size={30} />
+        <span aria-hidden="true" class="h-7 w-px bg-border"></span>
+        <SchoolLogo size={30} />
+      </a>
       <div class="flex items-center gap-2">
         <a href="/login" use:inertia class="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">Masuk</a>
         <DarkModeToggle />

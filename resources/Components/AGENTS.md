@@ -32,6 +32,7 @@ Reusable Svelte 5 UI components shared across pages. All use TypeScript and Tail
 | `RoleModal.svelte` | Create/edit role modal | Zag JS dialog — open/close via `bind:open` |
 | `PageHeader.svelte` | Page title block (eyebrow + title + description + actions) | `eyebrow`, `title`, `description`, `actions` (snippet) |
 | `PageShell.svelte` | Standard page wrapper (sidebar offset + max-width container) | `bare` (no sidebar offset), `class` |
+| `SchoolLogo.svelte` | SMP Negeri 48 Surabaya logo image wrapper | `size`, `class` |
 | `SigapIcon.svelte` | Reference logo image wrapper | — |
 | `SearchableSelect.svelte` | Searchable dropdown (Zag JS combobox) | `value` (bindable, `string | number | null`), `options: { value, label }[]`, `placeholder`, `disabled`, `onchange` |
 | `Select.svelte` | Styled select dropdown | `value` (bindable), `placeholder`, `children` |

@@ -2,6 +2,7 @@
   import { inertia, page } from '@inertiajs/svelte';
   import { ArrowRight, Menu, X } from '@lucide/svelte';
   import DarkModeToggle from '../DarkModeToggle.svelte';
+  import SchoolLogo from '../SchoolLogo.svelte';
   import SigapIcon from '../SigapIcon.svelte';
 
   interface User {
@@ -26,8 +27,10 @@
     class="mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl border border-black/[0.06] bg-white/90 px-4 shadow-[0_8px_30px_rgba(18,46,31,0.06)] backdrop-blur-xl sm:px-5 dark:border-white/[0.08] dark:bg-[#171915]/90 dark:shadow-none"
     aria-label="Navigasi utama"
   >
-    <a href="/" use:inertia class="flex items-center gap-3" aria-label="SIGAP Beranda">
+    <a href="/" use:inertia class="flex items-center gap-3" aria-label="SIGAP — SMP Negeri 48 Surabaya">
       <SigapIcon size={30} />
+      <span aria-hidden="true" class="h-7 w-px bg-[#deddd8] dark:bg-white/[0.12]"></span>
+      <SchoolLogo size={30} />
     </a>
 
     <div class="hidden items-center gap-7 text-[13px] font-semibold text-[#69645a] lg:flex dark:text-[#a3a6a4]">

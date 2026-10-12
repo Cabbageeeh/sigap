@@ -10,6 +10,7 @@
   import { cn } from '$lib/utils';
   import Button from './Button.svelte';
   import DarkModeToggle from './DarkModeToggle.svelte';
+  import SchoolLogo from './SchoolLogo.svelte';
   import SigapIcon from './SigapIcon.svelte';
   import * as dialog from "@zag-js/dialog";
   import { useMachine, normalizeProps, portal } from "@zag-js/svelte";
@@ -297,8 +298,9 @@
   <button {...sheetApi.getTriggerProps()} onclick={() => isMenuOpen = !isMenuOpen} aria-label="Buka menu" class="p-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
     <Menu class="h-5 w-5" />
   </button>
-  <a href="/" use:inertia class="flex items-center gap-2">
+  <a href="/" use:inertia class="flex items-center gap-2" aria-label="SIGAP — SMP Negeri 48 Surabaya">
     <SigapIcon size={28} />
+    <SchoolLogo size={27} />
   </a>
   <div class="flex items-center gap-2">
     {@render notificationBell('top-full')}
@@ -313,12 +315,13 @@
     <div {...sheetApi.getPositionerProps()}>
       <div {...sheetApi.getContentProps()} class="bg-card fixed inset-y-0 left-0 z-50 h-full w-[84%] max-w-[300px] border-r border-border flex flex-col transition ease-in-out duration-300 font-body">
         <div class="flex items-center justify-between px-5 h-[4.5rem] border-b border-border shrink-0">
-          <a href="/" use:inertia onclick={() => isMenuOpen = false} class="flex items-center gap-2">
+          <a href="/" use:inertia onclick={() => isMenuOpen = false} class="flex items-center gap-2" aria-label="SIGAP — SMP Negeri 48 Surabaya">
             <SigapIcon size={30} showText={false} />
             <div class="min-w-0">
               <p class="font-heading font-semibold tracking-tight text-lg">SIGAP</p>
-              <p class="text-[9px] uppercase tracking-[0.12em] text-muted-foreground truncate">Sistem Informasi Guru, Absensi, dan Prestasi</p>
+              <p class="text-[9px] uppercase tracking-[0.12em] text-muted-foreground truncate">SMP Negeri 48 Surabaya</p>
             </div>
+            <SchoolLogo size={28} class="ml-1" />
           </a>
           <button {...sheetApi.getCloseTriggerProps()} onclick={() => isMenuOpen = false} aria-label="Tutup menu" class="text-muted-foreground hover:text-foreground transition-colors p-1">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -351,12 +354,13 @@
 
 <!-- ───────────── DESKTOP SIDEBAR ───────────── -->
 <aside data-slot="sidebar" class="hidden lg:flex fixed inset-y-0 left-0 z-30 w-64 bg-card border-r border-border flex-col">
-  <div class="h-[4.5rem] shrink-0 flex items-center gap-3 px-5 border-b border-border">
+  <div class="h-[4.5rem] shrink-0 flex items-center gap-2 px-5 border-b border-border">
     <SigapIcon size={30} showText={false} />
     <div class="min-w-0">
       <p class="font-heading font-semibold tracking-tight text-lg">SIGAP</p>
-      <p class="text-[9px] uppercase tracking-[0.12em] text-muted-foreground truncate">Sistem Informasi Guru, Absensi, dan Prestasi</p>
+      <p class="text-[9px] uppercase tracking-[0.12em] text-muted-foreground truncate">SMP Negeri 48 Surabaya</p>
     </div>
+    <SchoolLogo size={28} class="ml-auto" />
   </div>
 
   <nav bind:this={desktopNav} class="flex-1 overflow-y-auto px-3 py-4">

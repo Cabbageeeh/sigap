@@ -10,8 +10,8 @@
 
 ## Stats
 
-- Files indexed: 334
-- Total lines: 38081
+- Files indexed: 335
+- Total lines: 38118
 - Total exports: 1037
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
@@ -233,9 +233,10 @@
 - `Pagination.svelte` (69L)
 - `QrScanner.svelte` (209L)
 - `RoleModal.svelte` (152L)
+- `SchoolLogo.svelte` (20L)
 - `SearchableSelect.svelte` (115L) — SearchableSelectOption
 - `Select.svelte` (40L)
-- `Sidebar.svelte` (386L)
+- `Sidebar.svelte` (390L)
 - `SigapIcon.svelte` (46L)
 - `StatCard.svelte` (81L)
 - `Switch.svelte` (52L)
@@ -252,10 +253,10 @@
 
 - `LandingCta.svelte` (33L)
 - `LandingFeatures.svelte` (114L)
-- `LandingFooter.svelte` (21L)
+- `LandingFooter.svelte` (23L)
 - `LandingHero.svelte` (195L)
 - `LandingModules.svelte` (20L)
-- `LandingNav.svelte` (110L)
+- `LandingNav.svelte` (113L)
 - `LandingRoles.svelte` (50L)
 - `LandingTrust.svelte` (37L)
 - `LandingWorkflow.svelte` (54L)
@@ -291,8 +292,8 @@
 
 ### resources/Pages/auth/
 
-- `login.svelte` (95L)
-- `register.svelte` (121L)
+- `login.svelte` (98L)
+- `register.svelte` (126L)
 
 ### resources/Pages/headmaster/
 
@@ -2152,12 +2153,13 @@
 - `resources/Components/EraporTeacherMappingAccess.svelte` → `@inertiajs/svelte`
 - `resources/Components/Header.svelte` → `./DarkModeToggle.svelte`, `./SigapIcon.svelte`, `@inertiajs/svelte`, `@lucide/svelte`, `@zag-js/dialog`, `@zag-js/menu`, `@zag-js/svelte`
 - `resources/Components/landing/LandingCta.svelte` → `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Components/landing/LandingFooter.svelte` → `../SigapIcon.svelte`
+- `resources/Components/landing/LandingFooter.svelte` → `../SchoolLogo.svelte`, `../SigapIcon.svelte`
 - `resources/Components/landing/LandingHero.svelte` → `../SigapIcon.svelte`, `@inertiajs/svelte`
-- `resources/Components/landing/LandingNav.svelte` → `../DarkModeToggle.svelte`, `../SigapIcon.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Components/landing/LandingNav.svelte` → `../DarkModeToggle.svelte`, `../SchoolLogo.svelte`, `../SigapIcon.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Components/Modal.svelte` → `@zag-js/dialog`, `@zag-js/svelte`
 - `resources/Components/Pagination.svelte` → `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Components/RoleModal.svelte` → `../types`, `./Button.svelte`, `./Input.svelte`, `./Label.svelte`, `./Switch.svelte`, `@lucide/svelte`, `@zag-js/dialog`, `@zag-js/svelte`
+- `resources/Components/SchoolLogo.svelte` → `../assets/smpn48-surabaya-logo.jpeg`
 - `resources/Components/SearchableSelect.svelte` → `@lucide/svelte`, `@zag-js/combobox`, `@zag-js/svelte`
 - `resources/Components/Select.svelte` → `@lucide/svelte`
 - `resources/Components/SigapIcon.svelte` → `../assets/sigap-logo-dark.png`, `../assets/sigap-logo.png`, `../assets/sigap-mark-dark.png`, `../assets/sigap-mark.png`
@@ -2166,8 +2168,8 @@
 - `resources/lib/permissions.ts` → `@inertiajs/svelte`
 - `resources/Pages/academicYears.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Select.svelte`, `../Components/Sidebar.svelte`, `../Components/Switch.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/announcements.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/auth/login.svelte` → `../../Components/Button.svelte`, `../../Components/DarkModeToggle.svelte`, `../../Components/Input.svelte`, `../../Components/Label.svelte`, `../../Components/SigapIcon.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
-- `resources/Pages/auth/register.svelte` → `../../Components/Button.svelte`, `../../Components/DarkModeToggle.svelte`, `../../Components/Input.svelte`, `../../Components/Label.svelte`, `../../Components/SigapIcon.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/auth/login.svelte` → `../../Components/Button.svelte`, `../../Components/DarkModeToggle.svelte`, `../../Components/Input.svelte`, `../../Components/Label.svelte`, `../../Components/SchoolLogo.svelte`, `../../Components/SigapIcon.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
+- `resources/Pages/auth/register.svelte` → `../../Components/Button.svelte`, `../../Components/DarkModeToggle.svelte`, `../../Components/Input.svelte`, `../../Components/Label.svelte`, `../../Components/SchoolLogo.svelte`, `../../Components/SigapIcon.svelte`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/classes.svelte` → `../Components/Button.svelte`, `../Components/ConfirmDialog.svelte`, `../Components/DataTable.svelte`, `../Components/Input.svelte`, `../Components/Label.svelte`, `../Components/Modal.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/SearchableSelect.svelte`, `../Components/Sidebar.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/dashboard.svelte` → `../Components/BentoCard.svelte`, `../Components/Sidebar.svelte`, `../Components/StatCard.svelte`, `../Components/charts/AttendanceDonut.svelte`, `../Components/charts/AttendanceTrendChart.svelte`, `../Components/charts/ClassSizeBars.svelte`, `../Components/charts/ConfirmationWeekChart.svelte`, `../types`, `@inertiajs/svelte`, `@lucide/svelte`
 - `resources/Pages/gradeAudit.svelte` → `../Components/DataTable.svelte`, `../Components/PageHeader.svelte`, `../Components/PageShell.svelte`, `../Components/Pagination.svelte`, `../Components/Sidebar.svelte`, `../types`
