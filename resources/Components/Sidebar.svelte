@@ -237,7 +237,7 @@
       {/if}
     </button>
     {#if isNotificationsOpen}
-      <div class="absolute {direction === 'top-full' ? 'top-full mt-2' : 'bottom-full mb-2'} right-0 w-80 max-h-96 overflow-y-auto bg-card border border-border rounded-2xl shadow-[0_18px_60px_rgba(0,0,0,0.14)] z-50">
+      <div class="absolute {direction === 'top-full' ? 'top-full mt-2 right-0' : 'bottom-full mb-2 left-0'} w-[min(20rem,calc(100vw-1rem))] max-h-96 overflow-y-auto bg-card border border-border rounded-2xl shadow-[0_18px_60px_rgba(0,0,0,0.14)] z-50">
         <div class="flex items-center justify-between px-4 py-2.5 border-b border-border sticky top-0 bg-card">
           <p class="font-heading text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">Notifikasi</p>
           {#if unreadCount > 0}
