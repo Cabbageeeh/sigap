@@ -10,9 +10,10 @@
   import type { User, UserForm, PaginationMeta, RoleInfo } from '../types';
   import { createEmptyUserForm, userToForm } from '../types';
   import Button from '../Components/Button.svelte';
+  import Input from '../Components/Input.svelte';
   import PageHeader from '../Components/PageHeader.svelte';
   import PageShell from '../Components/PageShell.svelte';
-  import { Users, Plus, Pencil, Trash2, ArrowUpRight } from '@lucide/svelte';
+  import { Users, Plus, Pencil, Trash2, ArrowUpRight, Search, X } from '@lucide/svelte';
 
   interface Props {
     users?: User[];
@@ -46,8 +47,29 @@
 
   let showUserModal: boolean = $state(false);
   let isSubmitting: boolean = $state(false);
+  let searchValue = $state('');
   let mode: 'create' | 'edit' = $state('create');
   let form: UserForm = $state(createEmptyUserForm());
+
+  $effect(() => { searchValue = search; });
+
+  function submitSearch(): void {
+    const params = new URLSearchParams();
+    const query = searchValue.trim();
+    if (query) params.set('search', query);
+    const queryString = params.toString();
+    router.visit(queryString ? `/users?${queryString}` : '/users', { preserveScroll: true });
+  }
+
+  function clearSearch(): void {
+    searchValue = '';
+    router.visit('/users', { preserveScroll: true });
+  }
+
+  function refreshUsers(): void {
+    const query = search.trim();
+    router.visit(query ? `/users?search=${encodeURIComponent(query)}` : '/users', { preserveScroll: true, preserveState: true });
+  }
 
   function openCreateUser(): void {
     mode = 'create';
@@ -93,7 +115,7 @@
 
     if (result.success) {
       closeUserModal();
-      router.visit('/users', { preserveScroll: true, preserveState: true });
+      refreshUsers();
     }
 
     isSubmitting = false;
@@ -109,7 +131,7 @@
     const result = await api(() => axios.delete('/users', { data: { ids: [id] } }));
 
     if (result.success) {
-      router.visit('/users', { preserveScroll: true, preserveState: true });
+      refreshUsers();
     }
 
     isSubmitting = false;
@@ -138,6 +160,22 @@
           </div>
         {/snippet}
       </PageHeader>
+
+      <div class="mb-6">
+        <form class="flex flex-col gap-2 sm:flex-row" onsubmit={(event) => { event.preventDefault(); submitSearch(); }}>
+          <label class="sr-only" for="users-search">Cari nama atau username</label>
+          <Input id="users-search" type="search" placeholder="Cari nama atau username..." bind:value={searchValue} class="flex-1" />
+          <div class="flex gap-2">
+            <Button type="submit" variant="outline"><Search class="w-4 h-4" /> Cari</Button>
+            {#if searchValue.trim() || search.trim()}
+              <Button type="button" variant="ghost" onclick={clearSearch}><X class="w-4 h-4" /> Hapus filter</Button>
+            {/if}
+          </div>
+        </form>
+        {#if search.trim()}
+          <p class="mt-2 text-sm text-muted-foreground">Ditemukan {total} pengguna untuk “{search}”.</p>
+        {/if}
+      </div>
 
       <!-- Table -->
       {#if users && users.length}
@@ -212,8 +250,13 @@
           <div class="w-14 h-14 rounded-full bg-muted border border-border flex items-center justify-center mb-6">
             <Users class="h-6 w-6 text-muted-foreground" />
           </div>
-          <h3 class="font-heading font-semibold text-xl tracking-tight text-foreground mb-2">Belum ada pengguna</h3>
-          <p class="text-sm text-muted-foreground max-w-xs mb-8">Mulai dengan menambahkan orang pertama ke sistem.</p>
+          <h3 class="font-heading font-semibold text-xl tracking-tight text-foreground mb-2">{search.trim() ? 'Pengguna tidak ditemukan' : 'Belum ada pengguna'}</h3>
+          <p class="text-sm text-muted-foreground max-w-xs mb-8">
+            {search.trim() ? `Tidak ada pengguna yang cocok dengan “${search}”. Coba kata kunci lain atau hapus filter.` : 'Mulai dengan menambahkan orang pertama ke sistem.'}
+          </p>
+          {#if search.trim()}
+            <Button variant="outline" onclick={clearSearch}><X class="w-4 h-4" /> Hapus filter</Button>
+          {/if}
           {#if permissions.canCreate}
             <Button onclick={openCreateUser} size="lg">
               <Plus class="w-4 h-4" />

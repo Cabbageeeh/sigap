@@ -3,7 +3,7 @@ import { jsonSuccess, jsonError, jsonValidationError, isUniqueConstraintError } 
 import { hashPassword, comparePassword, processLogin as loginSession, logout as endSession } from '@services/Authenticate';
 import LoginThrottle from '@services/LoginThrottle';
 import Logger from '@services/Logger';
-import { findUserByUsername, findUserById, updatePassword, deleteSessionsByUserId } from '@queries';
+import { findUserByUsername, findUserById, updatePassword, deleteSessionsByUserId, findLoginLockoutMinutes } from '@queries';
 import { LoginSchema, ChangePasswordSchema, zodToErrors } from '@validators';
 
 export const loginPage = (req: NaraRequest, res: NaraResponse) => {
@@ -26,6 +26,8 @@ export const submitLogin = (req: NaraRequest, res: NaraResponse) => {
   const { username, password } = parsed.data;
   const identifier = username;
   const ip = req.ip || 'unknown';
+  const lockoutMs = findLoginLockoutMinutes() * 60_000;
+  LoginThrottle.configure({ lockoutMs, windowMs: lockoutMs });
 
   if (LoginThrottle.isLockedOut(identifier, ip)) {
     const mins = Math.ceil(LoginThrottle.getRemainingLockoutTime(identifier, ip) / 60000);

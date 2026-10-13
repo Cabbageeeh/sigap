@@ -42,6 +42,7 @@ export const schoolMessagesData = (req: NaraRequest, res: NaraResponse) => {
   if (conversation && messagePage === 1) messages.markSchoolConversationRead(conversation, userId);
   return jsonSuccess(res, 'Pesan dimuat.', {
     settings: communicationSettings(), restriction: messages.findSchoolCommunicationRestriction(userId) ?? null,
+    children: hasRole(userId, 'parent') ? messages.findSchoolChildren(userId) : [],
     contacts: hasRole(userId, 'parent') ? messages.findSchoolContacts(userId) : [],
     conversations: messages.findSchoolConversations(userId, 50, (queryInt(req, 'page') - 1) * 50),
     conversation: conversation ?? null,

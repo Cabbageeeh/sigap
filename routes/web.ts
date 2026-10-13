@@ -1,6 +1,7 @@
 import { createRouter } from '@core';
 import * as home from '@handlers/home';
 import * as auth from '@handlers/auth';
+import * as loginSecuritySettings from '@handlers/loginSecuritySettings';
 import * as users from '@handlers/users';
 import * as roles from '@handlers/roles';
 import * as assets from '@handlers/assets';
@@ -60,6 +61,8 @@ Route.get('/login', auth.loginPage);
 Route.post('/login', strictRateLimit(), auth.submitLogin);
 Route.post('/logout', strictRateLimit(), auth.logout);
 Route.post('/change-password', [Auth], auth.changePassword);
+Route.get('/login-security', [Auth], loginSecuritySettings.loginSecuritySettingsPage);
+Route.put('/login-security', [Auth], loginSecuritySettings.saveLoginSecuritySettings);
 
 // Protected - Dashboard
 Route.get('/dashboard', [Auth], dashboard.dashboardPage);

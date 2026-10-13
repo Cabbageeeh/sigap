@@ -316,4 +316,4 @@ export interface Notification {
   read_at: number | null;
   created_at: number;
 }
-export type { SchoolContact, SchoolConversation, SchoolMessage, SchoolMessageReport } from './schoolMessages';
+export type { SchoolChild, SchoolContact, SchoolConversation, SchoolMessage, SchoolMessageReport } from './schoolMessages';

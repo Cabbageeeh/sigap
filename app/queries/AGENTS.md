@@ -12,7 +12,7 @@ Raw SQL functions in `app/queries/`. The only layer that touches `SQLite`. Handl
 
 | File | Purpose |
 |------|---------|
-| `schoolMessages.ts` | Authorized teacher contacts, conversations, rate limits, reports and restrictions |
+| `schoolMessages.ts` | Active-year parent child roster and authorized teacher contacts, conversations, rate limits, reports and restrictions |
 | `users.ts` | CRUD + `isAdmin`, `hasPermission`, `hasRole`, role sync |
 | `roles.ts` | CRUD + role-permission junction + permission lookups |
 | `sessions.ts` | session CRUD + expiry cleanup + `getUserBySessionId` |
@@ -38,7 +38,7 @@ Raw SQL functions in `app/queries/`. The only layer that touches `SQLite`. Handl
 | `announcements.ts` | Announcement CRUD + latest list with author names |
 | `notifications.ts` | In-app notifications (create on grade publish, list, unread count, mark read) |
 | `stats.ts` | Dashboard + class-subject aggregated metrics |
-| `appSettings.ts` | Key-value application settings (find, findNumber, upsert) — used for QR and e-Rapor mapping access |
+| `appSettings.ts` | Key-value application settings (find, findNumber, upsert) — used for QR, e-Rapor mapping access, and login lockout duration |
 | `index.ts` | barrel export (`export * from './X'`) |
 
 ## Static SQL → Template Literals (auto-parameterized, safe)

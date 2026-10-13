@@ -1,6 +1,12 @@
 import SQLite from '@services/SQLite';
 import { randomUUID } from 'crypto';
-import type { SchoolContact, SchoolConversation, SchoolMessage, SchoolMessageReport } from '@types';
+import type { SchoolChild, SchoolContact, SchoolConversation, SchoolMessage, SchoolMessageReport } from '@types';
+
+export const findSchoolChildren = (parentId: string): SchoolChild[] => SQLite.all<SchoolChild>(`
+  SELECT st.id student_id, st.name student_name, c.name class_name
+  FROM students st JOIN classes c ON c.id = st.class_id
+  JOIN academic_years ay ON ay.id = c.academic_year_id AND ay.is_active = 1
+  WHERE st.parent_user_id = ? ORDER BY st.name, c.name`, [parentId]);
 
 export const findSchoolContacts = (parentId: string): SchoolContact[] => SQLite.all<SchoolContact>(`
   SELECT st.id student_id, st.name student_name, c.name class_name, u.id teacher_user_id,

@@ -17,7 +17,7 @@
   import {
     Menu, LogOut, LayoutDashboard, CalendarCheck, BookOpen, GraduationCap,
     Users, ChartColumn, Calendar, School, BookMarked, UserCheck, UserCog, MessageCircle,
-    CalendarClock, MapPin, Shield, User, History, Bell, Megaphone, QrCode, CalendarOff, FileSpreadsheet,
+    CalendarClock, MapPin, Shield, User, History, Bell, Megaphone, QrCode, CalendarOff, FileSpreadsheet, LockKeyhole,
   } from '@lucide/svelte';
   import type { NotificationView } from '../types';
 
@@ -185,6 +185,7 @@
       links: [
         { href: '/users', label: 'Pengguna', group: 'users', icon: Users, show: isAdmin },
         { href: '/roles', label: 'Peran & Hak Akses', group: 'roles', icon: Shield, show: isAdmin },
+        { href: '/login-security', label: 'Keamanan Login', group: 'login-security', icon: LockKeyhole, show: isAdmin },
       ],
     },
     {

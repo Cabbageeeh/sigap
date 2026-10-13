@@ -11,8 +11,8 @@ const store = new Map<string, Entry>();
 
 const config = {
   maxAttempts: RATE_LIMIT.MAX_LOGIN_ATTEMPTS,
-  lockoutMs: RATE_LIMIT.LOGIN_LOCKOUT_MS,
-  windowMs: RATE_LIMIT.LOGIN_LOCKOUT_MS,
+  lockoutMs: RATE_LIMIT.LOGIN_LOCKOUT_DEFAULT_MINUTES * 60_000,
+  windowMs: RATE_LIMIT.LOGIN_LOCKOUT_DEFAULT_MINUTES * 60_000,
 };
 
 const cleanup = setInterval(() => {
@@ -116,7 +116,10 @@ function getAttemptCounts(identifier: string, ip: string): { identifierAttempts:
 }
 
 function configure(options: Partial<typeof config>): void {
+  const settingsChanged = (options.lockoutMs !== undefined && options.lockoutMs !== config.lockoutMs) ||
+    (options.windowMs !== undefined && options.windowMs !== config.windowMs);
   Object.assign(config, options);
+  if (settingsChanged) store.clear();
 }
 
 export default {

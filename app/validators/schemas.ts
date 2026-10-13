@@ -228,6 +228,10 @@ export const TeacherPresenceSettingsSchema = z.object({
   qr_refresh_interval: z.number().int().min(1, 'Interval minimal 1 menit').max(1440, 'Interval maksimal 1440 menit (24 jam)'),
 });
 
+export const LoginSecuritySettingsSchema = z.object({
+  login_lockout_minutes: z.number().int().min(1, 'Waktu tunggu minimal 1 menit').max(15, 'Waktu tunggu maksimal 15 menit'),
+});
+
 export const SchoolHolidaySchema = z.object({
   date: z.number().int().positive('Tanggal libur tidak valid'),
   name: z.string().trim().min(3, 'Nama libur minimal 3 karakter').max(80, 'Nama libur maksimal 80 karakter'),
@@ -388,6 +392,7 @@ export type ScheduleInput = z.infer<typeof ScheduleSchema>;
 export type UpdateScheduleInput = z.infer<typeof UpdateScheduleSchema>;
 export type SchoolProfileInput = z.infer<typeof SchoolProfileSchema>;
 export type TeacherPresenceSettingsInput = z.infer<typeof TeacherPresenceSettingsSchema>;
+export type LoginSecuritySettingsInput = z.infer<typeof LoginSecuritySettingsSchema>;
 export type SchoolHolidayInput = z.infer<typeof SchoolHolidaySchema>;
 export type SchoolCalendarSettingsInput = z.infer<typeof SchoolCalendarSettingsSchema>;
 export type TeacherConfirmationInput = z.infer<typeof TeacherConfirmationSchema>;

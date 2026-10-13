@@ -17,6 +17,7 @@ Request handlers — functions that receive `NaraRequest` / `NaraResponse` and r
 | `assets.ts` | avatar upload + static asset serving |
 | `attendance.ts` | student attendance records |
 | `auth.ts` | login/logout/change-password (session + throttle) |
+| `loginSecuritySettings.ts` | Admin login lockout duration settings |
 | `classes.ts` | class CRUD |
 | `dashboard.ts` | dashboard page + stats |
 | `grades.ts` | grade CRUD + audit logging on every change |

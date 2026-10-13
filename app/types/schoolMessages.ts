@@ -32,6 +32,11 @@ export interface SchoolContact {
   teacher_name: string;
   teaching: string;
 }
+export interface SchoolChild {
+  student_id: string;
+  student_name: string;
+  class_name: string;
+}
 export interface SchoolMessageReport {
   id: string;
   reason: string;
