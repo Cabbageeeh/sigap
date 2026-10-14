@@ -20,7 +20,7 @@ Request handlers — functions that receive `NaraRequest` / `NaraResponse` and r
 | `loginSecuritySettings.ts` | Admin login lockout duration settings |
 | `classes.ts` | class CRUD |
 | `dashboard.ts` | dashboard page + stats |
-| `grades.ts` | grade CRUD + audit logging on every change |
+| `grades.ts` | grade CRUD, teacher-specific calculation settings, and audit logging |
 | `gradesErapor.ts` | e-Rapor grade entry, template/default column mapping, and `.xls`/`.xlsx` export |
 | `gradesEraporSettings.ts` | Admin control for teacher e-Rapor mapping access |
 | `gradesEraporImport.ts` | e-Rapor file preview, admin- or assigned-teacher-confirmed student creation, template import, and grade import |

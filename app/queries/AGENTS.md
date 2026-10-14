@@ -30,9 +30,9 @@ Raw SQL functions in `app/queries/`. The only layer that touches `SQLite`. Handl
 | `teacherConfirmations.ts` | CRUD + schedule/teacher/today filters + anti-cheat location data |
 | `journals.ts` | CRUD + schedule/teacher/date filters |
 | `studentAttendance.ts` | CRUD + journal/student/schedule filters + upsert + bulk delete by journal |
-| `grades.ts` | CRUD + student/class/subject/teacher filters + pagination + bulk delete + weighted final-score summaries (KKM, predikat, pass status) + publication check |
+| `grades.ts` | CRUD + initial/final scores + teacher-specific weighted or average summaries + publication check |
 | `eraporGrades.ts` | e-Rapor template, student-ID, default/teacher mapping, configuration audit logs + transactional grade imports |
-| `gradeComponents.ts` | Component weights per academic year (find by year + bulk upsert) |
+| `gradeComponents.ts` | Assessment component names per academic year (find by year + bulk upsert) |
 | `gradeAuditLogs.ts` | Append-only grade change history (log + paginated list with names) |
 | `headmaster.ts` | Headmaster oversight: today sessions, missed sessions, journal completeness, grade progress, outside confirmations |
 | `announcements.ts` | Announcement CRUD + latest list with author names |

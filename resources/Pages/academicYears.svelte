@@ -2,7 +2,6 @@
   import { page as inertiaPage, inertia, router } from '@inertiajs/svelte';
   import axios from 'axios';
   import { api } from '$lib/api';
-  import { Toast } from '$lib/toast';
   import Sidebar from '../Components/Sidebar.svelte';
   import DataTable from '../Components/DataTable.svelte';
   import Button from '../Components/Button.svelte';
@@ -42,7 +41,7 @@
   let componentYear: AcademicYear | null = $state(null);
   let activateYear: AcademicYear | null = $state(null);
   let publishYear: AcademicYear | null = $state(null);
-  let componentRows = $state<{ type: string; name: string; weight: number }[]>([]);
+  let componentRows = $state<{ type: string; name: string }[]>([]);
   let startInput = $state('');
   let endInput = $state('');
 
@@ -103,7 +102,7 @@
   async function openComponents(year: AcademicYear): Promise<void> {
     const result = await api(() => axios.get(`/academic-years/${year.id}/components`), { showSuccessToast: false });
     if (result.success && result.data) {
-      componentRows = (result.data as { type: string; name: string; weight: number }[]).map(c => ({ ...c }));
+      componentRows = (result.data as { type: string; name: string }[]).map(c => ({ ...c }));
       componentYear = year;
       isComponentsOpen = true;
     }
@@ -111,11 +110,6 @@
 
   async function saveComponents(): Promise<void> {
     if (!componentYear) return;
-    const total = componentRows.filter(c => c.weight > 0).reduce((sum, c) => sum + c.weight, 0);
-    if (Math.abs(total - 100) > 0.001) {
-      Toast(`Total bobot harus 100 (sekarang ${total})`, 'error');
-      return;
-    }
     const result = await api(() => axios.put(`/academic-years/${componentYear!.id}/components`, { components: componentRows }));
     if (result.success) isComponentsOpen = false;
   }
@@ -131,7 +125,7 @@
 
 {#snippet rowActions(year: AcademicYear)}
   {#if permissions.canEdit}
-    <Button variant="outline" size="sm" class="mr-1" onclick={() => openComponents(year)}>Bobot</Button>
+    <Button variant="outline" size="sm" class="mr-1" onclick={() => openComponents(year)}>Komponen Nilai</Button>
     <Button variant="outline" size="sm" class="mr-1" onclick={() => confirmPublish(year)}>{year.is_grades_published === 1 ? 'Tarik Publikasi' : 'Publikasikan'}</Button>
     <Button variant="outline" size="icon-sm" title="Ubah tahun ajaran" aria-label="Ubah tahun ajaran" class="mr-1" onclick={() => openEdit(year)}><Pencil class="w-4 h-4" /></Button>
     <Button variant="outline" size="sm" class="mr-1" onclick={() => confirmActivate(year)}>Aktifkan</Button>
@@ -165,18 +159,12 @@
   </form>
 </Modal>
 
-<Modal bind:open={isComponentsOpen} title="Bobot Komponen Nilai" description="Atur nama dan bobot komponen penilaian. Total bobot harus 100.">
+<Modal bind:open={isComponentsOpen} title="Komponen Nilai" description="Atur jenis penilaian yang tersedia. Setiap guru dapat memilih perhitungan rata-rata atau mengatur bobot untuk kelas dan mapel yang diampu.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); saveComponents(); }}>
     {#each componentRows as row, idx (row.type)}
-      <div class="grid grid-cols-[1fr_5rem] gap-3 items-end">
-        <div class="flex flex-col gap-0">
-          <Label class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Nama</Label>
-          <Input bind:value={row.name} required />
-        </div>
-        <div class="flex flex-col gap-0">
-          <Label class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Bobot %</Label>
-          <Input type="number" min={0} max={100} bind:value={row.weight} required />
-        </div>
+      <div class="flex flex-col gap-0">
+        <Label class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Nama jenis penilaian</Label>
+        <Input bind:value={row.name} required />
       </div>
     {/each}
     <div class="flex justify-end gap-2 pt-4 border-t border-border mt-2">

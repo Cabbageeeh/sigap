@@ -1,7 +1,7 @@
 import type { NaraRequest, NaraResponse } from '@core';
 import { jsonSuccess, jsonCreated, jsonError, jsonServerError, jsonValidationError, jsonPaginated, queryInt, queryString } from '@core';
 import Logger from '@services/Logger';
-import { getGradesPaginated, findGradeById, findGradesByStudent, findGradesByStudentForTeacher, createGrade, updateGrade, deleteGrade, getClassSubjectSummary, upsertGradesBulk } from '@queries/grades';
+import { getGradesPaginated, findGradeById, findGradesByStudent, findGradesByStudentForTeacher, createGrade, updateGrade, deleteGrade, getClassSubjectSummary, upsertGradesBulk, saveTeacherGradeCalculationSettings } from '@queries/grades';
 import { logGradeChange } from '@queries/gradeAuditLogs';
 import { findAllStudents, findStudentsByTeacherUser, findStudentById } from '@queries/students';
 import { findAllSubjects } from '@queries/subjects';
@@ -18,8 +18,8 @@ import { isTeacherPresenceEnabled } from '@queries/appSettings';
 import { findTeacherSchedulesByDay } from '@queries/schedules';
 import { isTeachingDay } from '@queries/schoolCalendar';
 import { isAdmin, hasPermission, hasRole } from '@queries/users';
-import { GradeSchema, BulkGradesSchema, AddGradeComponentSchema, DeleteGradeComponentSchema, gradeTypeSlug, zodToErrors } from '@validators';
-import { addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent } from '@queries/gradeComponents';
+import { GradeSchema, BulkGradesSchema, TeacherGradeCalculationSettingsSchema, AddGradeComponentSchema, DeleteGradeComponentSchema, gradeTypeSlug, zodToErrors } from '@validators';
+import { addGradeComponent, findGradeComponent, findGradeComponentsByYear, renameGradeComponent, deleteGradeComponent } from '@queries/gradeComponents';
 import { findClassById } from '@queries/classes';
 
 const isTeacherActor = (userId: string): boolean => !hasRole(userId, 'parent') && !isAdmin(userId) && isTeacherUser(userId);
@@ -84,7 +84,7 @@ export const gradesPage = (req: NaraRequest, res: NaraResponse) => {
   const totalPages = Math.ceil(total / limit);
   const summaryAllowed = !!classId && !!subjectId
     && (!teacherUserId || canViewTeacherGrade(teacherUserId, classId, subjectId));
-  const summary = summaryAllowed ? getClassSubjectSummary(classId!, subjectId!) : null;
+  const summary = summaryAllowed ? getClassSubjectSummary(classId!, subjectId!, teacherUserId) : null;
 
   return res.inertia('grades', {
     permissions,
@@ -160,7 +160,7 @@ export const addGrade = (req: NaraRequest, res: NaraResponse) => {
   const teacherUserId = req.user.id;
 
   try {
-    const item = createGrade({ ...parsed.data, teacher_user_id: teacherUserId });
+    const item = createGrade({ ...parsed.data, initial_score: parsed.data.initial_score ?? null, teacher_user_id: teacherUserId });
     logGradeChange({
       grade_id: item.id,
       student_id: parsed.data.student_id,
@@ -170,6 +170,8 @@ export const addGrade = (req: NaraRequest, res: NaraResponse) => {
       action: 'create',
       old_score: null,
       new_score: parsed.data.score,
+      old_initial_score: null,
+      new_initial_score: parsed.data.initial_score ?? null,
       user_id: req.user.id,
     });
     return jsonCreated(res, 'Grade created', item);
@@ -201,12 +203,52 @@ export const saveGradesBulk = (req: NaraRequest, res: NaraResponse) => {
       logGradeChange({
         grade_id: r.grade_id, student_id: r.student_id, subject_id, class_id, type,
         action: r.action, old_score: r.old_score, new_score: r.new_score, user_id: req.user.id,
+        old_initial_score: r.old_initial_score, new_initial_score: r.new_initial_score,
       });
     }
     return jsonSuccess(res, `${results.length} nilai berhasil disimpan`, { saved: results.length });
   } catch (error: unknown) {
     Logger.error('Failed to bulk save grades', error as Error);
     return jsonServerError(res, 'Failed to save grades');
+  }
+};
+
+export const saveGradeCalculationSettings = (req: NaraRequest, res: NaraResponse) => {
+  if (!req.user) return jsonError(res, 'Unauthorized', 401);
+  if (!isTeacherActor(req.user.id) || (!hasPermission(req.user.id, 'grades.edit') && !hasPermission(req.user.id, 'grades.create'))) return jsonError(res, 'Forbidden', 403);
+  if (!attendanceConfirmedToday(req.user.id)) return confirmationRequired(res);
+
+  const parsed = TeacherGradeCalculationSettingsSchema.safeParse(req.body);
+  if (!parsed.success) return jsonValidationError(res, 'Data pengaturan nilai tidak valid', zodToErrors(parsed.error));
+  const { class_id, subject_id, mode, weights } = parsed.data;
+  if (!isTeacherAssignedToClassSubject(req.user.id, class_id, subject_id)) {
+    return jsonError(res, 'Guru hanya dapat mengatur perhitungan nilai untuk mapel dan kelas yang diampu', 403, 'GRADE_SCOPE_FORBIDDEN');
+  }
+
+  const cls = findClassById(class_id);
+  if (!cls) return jsonError(res, 'Kelas tidak ditemukan', 404);
+  const componentTypes = findGradeComponentsByYear(cls.academic_year_id).map(component => component.type);
+  if (mode === 'weighted' && (
+    weights.length !== componentTypes.length
+    || weights.some(item => !componentTypes.includes(item.type))
+    || new Set(weights.map(item => item.type)).size !== weights.length
+  )) {
+    return jsonError(res, 'Atur bobot untuk setiap jenis penilaian yang tersedia', 422, 'INVALID_GRADE_WEIGHTS');
+  }
+
+  try {
+    saveTeacherGradeCalculationSettings({
+      academic_year_id: cls.academic_year_id,
+      class_id,
+      subject_id,
+      teacher_user_id: req.user.id,
+      mode,
+      weights: mode === 'weighted' ? weights : [],
+    });
+    return jsonSuccess(res, 'Pengaturan perhitungan nilai disimpan');
+  } catch (error: unknown) {
+    Logger.error('Failed to save grade calculation settings', error as Error);
+    return jsonServerError(res, 'Gagal menyimpan pengaturan perhitungan nilai');
   }
 };
 
@@ -334,6 +376,8 @@ export const editGrade = (req: NaraRequest, res: NaraResponse) => {
       action: 'update',
       old_score: existing.score,
       new_score: parsed.data.score ?? existing.score,
+      old_initial_score: existing.initial_score,
+      new_initial_score: parsed.data.initial_score ?? existing.initial_score,
       user_id: req.user.id,
     });
     return jsonSuccess(res, 'Grade updated', item);
@@ -368,6 +412,8 @@ export const removeGrade = (req: NaraRequest, res: NaraResponse) => {
     action: 'delete',
     old_score: existing.score,
     new_score: null,
+    old_initial_score: existing.initial_score,
+    new_initial_score: null,
     user_id: req.user.id,
   });
   return jsonSuccess(res, 'Grade deleted');

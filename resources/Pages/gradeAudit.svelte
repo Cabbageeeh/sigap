@@ -17,7 +17,8 @@
     kelas: log.class_name,
     jenis: typeLabel(log.type),
     aksi: actionLabel(log.action),
-    nilai: scoreLabel(log.old_score, log.new_score),
+    nilai_awal: scoreLabel(log.old_initial_score, log.new_initial_score),
+    nilai_akhir: scoreLabel(log.old_score, log.new_score),
     user: log.user_name,
   })));
 
@@ -28,7 +29,8 @@
     { key: 'kelas', label: 'Kelas' },
     { key: 'jenis', label: 'Jenis' },
     { key: 'aksi', label: 'Aksi', align: 'center' as const },
-    { key: 'nilai', label: 'Nilai', align: 'right' as const },
+    { key: 'nilai_awal', label: 'Nilai Awal', align: 'right' as const },
+    { key: 'nilai_akhir', label: 'Nilai Akhir', align: 'right' as const },
     { key: 'user', label: 'Oleh' },
   ];
 

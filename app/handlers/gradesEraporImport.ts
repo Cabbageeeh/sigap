@@ -107,6 +107,8 @@ const auditGradeChanges = (changes: EraporGradeChange[], userId: string): void =
       action: change.action,
       old_score: change.old_score,
       new_score: change.new_score,
+      old_initial_score: change.old_initial_score,
+      new_initial_score: change.new_initial_score,
       user_id: userId,
     });
   }

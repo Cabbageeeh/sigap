@@ -237,6 +237,7 @@ export interface Grade {
   class_id: string;
   type: string;
   score: number;
+  initial_score: number | null;
   date: number;
   teacher_user_id: string;
   created_at?: number;
@@ -258,6 +259,7 @@ export interface GradeSummaryRow {
   student_name: string;
   nis: string;
   scores: Record<string, number | null>;
+  initial_scores: Record<string, number | null>;
   grade_ids: Record<string, string>;
   final_score: number | null;
   kkm: number;
@@ -289,7 +291,6 @@ export interface StudentGradeProgression {
 export interface GradeSummaryComponent {
   type: string;
   name: string;
-  weight: number;
 }
 
 export interface ClassSubjectSummary {
@@ -297,6 +298,8 @@ export interface ClassSubjectSummary {
   subjectName: string;
   kkm: number;
   components: GradeSummaryComponent[];
+  calculation_mode: 'weighted' | 'average';
+  component_weights: Record<string, number>;
   rows: GradeSummaryRow[];
 }
 
@@ -309,6 +312,8 @@ export interface GradeAuditLogRow {
   type: string;
   old_score: number | null;
   new_score: number | null;
+  old_initial_score: number | null;
+  new_initial_score: number | null;
   user_name: string;
   created_at: number;
 }

@@ -49,12 +49,13 @@
     </nav>
   </header>
 
-  <main class="flex min-h-[calc(100dvh-5rem)] items-center justify-center px-4 py-12 sm:px-6">
+  <main class="flex min-h-[calc(100dvh-5rem)] items-center justify-center px-4 pt-4 pb-8 sm:px-6 sm:pt-5 sm:pb-9">
     <div class="w-full max-w-[460px]" in:fly={{ y: 16, duration: 500 }}>
-      <div class="mb-8">
-        <p class="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Akses SIGAP</p>
-        <h1 class="text-[clamp(2rem,6vw,3.25rem)] font-semibold leading-[1] tracking-[-0.045em]">Selamat datang kembali.</h1>
-        <p class="mt-4 max-w-md text-sm leading-6 text-muted-foreground">Masuk dengan akun yang diberikan sekolah untuk melanjutkan ke ruang kerja Anda.</p>
+      <div class="mb-6 flex flex-col items-center gap-3">
+        <SchoolLogo size={88} />
+        <h1 class="text-center text-xl font-semibold tracking-[-0.03em]">
+          Selamat datang di SIGAP<br />SMP Negeri 48 Surabaya
+        </h1>
       </div>
 
       <section class="rounded-[24px] border border-border bg-card p-5 shadow-[0_18px_55px_rgba(32,36,38,0.06)] sm:p-7 dark:shadow-none">

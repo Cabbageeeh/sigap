@@ -112,7 +112,7 @@
     isParent
       ? { href: '/parent/dashboard', label: 'Dashboard', group: 'parent', icon: LayoutDashboard, show: true }
       : isHeadmaster
-        ? { href: '/headmaster/dashboard', label: 'Dashboard', group: 'headmaster', icon: LayoutDashboard, show: true }
+        ? { href: '/headmaster/dashboard', label: 'Pengawasan Sekolah', group: 'headmaster', icon: LayoutDashboard, show: true }
         : isTeacher
           ? { href: '/teacher/schedule', label: 'Dashboard', group: 'teacher', icon: LayoutDashboard, show: true }
           : { href: '/dashboard', label: 'Dashboard', group: 'dashboard', icon: LayoutDashboard, show: true },
@@ -175,7 +175,6 @@
     {
       label: 'Laporan & Informasi',
       links: [
-        { href: '/headmaster/dashboard', label: 'Pengawasan Sekolah', group: 'headmaster', icon: ChartColumn, show: isHeadmaster },
         { href: '/headmaster/reports', label: 'Laporan Kehadiran Guru', group: 'headmaster-reports', icon: ChartColumn, show: isHeadmaster && presenceOn },
         { href: '/announcements', label: 'Pengumuman', group: 'announcements', icon: Megaphone, show: isAdmin },
       ],
@@ -196,14 +195,24 @@
     },
   ] as MenuSection[]);
 
-  let visibleMenuSections = $derived(
-    menuSections
+  let visibleMenuSections = $derived.by(() => {
+    const sections = menuSections
       .map(section => ({
         ...section,
         links: section.links.filter(item => item.show),
       }))
-      .filter(section => section.links.length > 0),
-  );
+      .filter(section => section.links.length > 0);
+
+    if (!isHeadmaster || isAdmin) return sections;
+
+    const links = sections.flatMap(section => section.links);
+    const oversightLinks = new Set(['teacher-confirmations', 'attendance', 'grade-audit', 'headmaster-reports']);
+    return [
+      { label: null, links: links.filter(item => item.group === 'headmaster') },
+      { label: 'Pengawasan', links: links.filter(item => oversightLinks.has(item.group)) },
+      { label: 'Akun', links: links.filter(item => item.group === 'profile') },
+    ].filter(section => section.links.length > 0);
+  });
 
   function isActive(item: MenuLink): boolean {
     return item.group === group;

@@ -49,6 +49,7 @@ export {
   StudentAttendanceSchema,
   GradeSchema,
   BulkGradesSchema,
+  TeacherGradeCalculationSettingsSchema,
   AddGradeComponentSchema,
   DeleteGradeComponentSchema,
   GradeComponentsSchema,

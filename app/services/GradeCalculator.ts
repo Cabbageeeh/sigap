@@ -29,6 +29,15 @@ export const computeFinalScore = (scores: Record<string, number | null>, compone
   return Math.round((total / weightSum) * 10) / 10;
 };
 
+export const computeAverageScore = (scores: Record<string, number | null>): number | null => {
+  const values = Object.values(scores).filter((score): score is number =>
+    score !== null && score !== undefined && Number.isFinite(score),
+  );
+  if (values.length === 0) return null;
+  const average = values.reduce((sum, score) => sum + score, 0) / values.length;
+  return Math.round(average * 10) / 10;
+};
+
 export const predikatOf = (score: number | null, kkm: number): string | null => {
   if (score === null) return null;
   if (score >= 90) return 'A';

@@ -18,7 +18,7 @@ Infrastructure code wrapped in functions. No classes, no singletons. Each servic
 | `Storage.ts` | Local file storage + `url()` + `filePath()` | assets handler |
 | `CacheStore.ts` | In-memory LRU (`assetCache`, `templateCache`) | View, assets |
 | `Geolocation.ts` | Haversine distance and coordinate validation | teacher confirmation handler |
-| `GradeCalculator.ts` | Pure weighted final-score, predikat, and pass-status computation | grades queries |
+| `GradeCalculator.ts` | Pure weighted or average final-score, predikat, and pass-status computation | grades queries |
 | `StudentCsvParser.ts` | Pure CSV parsing + validation for student bulk imports | students handler |
 | `StudentXlsxParser.ts` | Read the first worksheet from student-import `.xlsx` files and normalize rows for CSV validation | students handler |
 | `EraporWorkbook.ts` | Parse e-Rapor 2025.2 HTML `.xls` and OOXML `.xlsx` templates, then fill saved scores | e-Rapor grade handler |

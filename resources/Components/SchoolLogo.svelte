@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cn } from "$lib/utils.js";
-  import schoolLogo from "../assets/smpn48-surabaya-logo.jpeg";
+  import schoolLogo from "../assets/smpn48-surabaya-logo-transparent.png";
 
   interface Props {
     size?: number;

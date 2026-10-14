@@ -286,6 +286,7 @@ export const GradeSchema = z.object({
   class_id: z.string().uuid('Invalid class ID'),
   type: gradeTypeSlug,
   score: z.number().min(0, 'Score must be at least 0').max(100, 'Score must be at most 100'),
+  initial_score: z.number().min(0, 'Nilai awal minimal 0').max(100, 'Nilai awal maksimal 100').nullable().optional(),
   date: z.number({ message: 'Date is required' }),
   teacher_user_id: z.string().uuid('Invalid teacher user ID').optional(),
 });
@@ -297,8 +298,22 @@ export const BulkGradesSchema = z.object({
   entries: z.array(z.object({
     student_id: z.string().uuid('Invalid student ID'),
     score: z.number().min(0, 'Score must be at least 0').max(100, 'Score must be at most 100'),
+    initial_score: z.number().min(0, 'Nilai awal minimal 0').max(100, 'Nilai awal maksimal 100').nullable().default(null),
   })).min(1, 'At least one entry is required').max(200),
 });
+
+export const TeacherGradeCalculationSettingsSchema = z.object({
+  class_id: z.string().uuid('Kelas tidak valid'),
+  subject_id: z.string().uuid('Mata pelajaran tidak valid'),
+  mode: z.enum(['weighted', 'average']),
+  weights: z.array(z.object({
+    type: gradeTypeSlug,
+    weight: z.number().min(0, 'Bobot minimal 0').max(100, 'Bobot maksimal 100'),
+  })).max(50),
+}).refine(
+  data => data.mode !== 'weighted' || Math.abs(data.weights.reduce((sum, item) => sum + item.weight, 0) - 100) < 0.001,
+  { message: 'Total bobot harus 100', path: ['weights'] },
+);
 
 export const AddGradeComponentSchema = z.object({
   class_id: z.string().uuid('Invalid class ID'),
@@ -312,12 +327,8 @@ export const GradeComponentsSchema = z.object({
   components: z.array(z.object({
     type: gradeTypeSlug,
     name: z.string().min(1, 'Name is required').max(50, 'Name must be at most 50 characters'),
-    weight: z.number().min(0, 'Weight must be at least 0').max(100, 'Weight must be at most 100'),
   })).min(1, 'At least one component is required'),
-}).refine(
-  data => Math.abs(data.components.filter(c => c.weight > 0).reduce((sum, c) => sum + c.weight, 0) - 100) < 0.001,
-  { message: 'Weights must sum to 100', path: ['components'] }
-);
+});
 
 export const EraporTemplateSchema = z.object({
   class_id: z.string().uuid('Kelas tidak valid'),
