@@ -139,6 +139,7 @@ export interface BulkGradeEntry {
   student_id: string;
   score: number;
   initial_score: number | null;
+  remedial_score?: number | null;
 }
 
 export interface BulkGradeResult {
@@ -149,6 +150,8 @@ export interface BulkGradeResult {
   new_score: number;
   old_initial_score: number | null;
   new_initial_score: number | null;
+  old_remedial_score: number | null;
+  new_remedial_score: number | null;
 }
 
 export const upsertGradesBulk = (
@@ -163,9 +166,10 @@ export const upsertGradesBulk = (
     const results: BulkGradeResult[] = [];
     for (const entry of entries) {
       const existing = findGradeByUniqueKey(entry.student_id, subjectId, classId, type);
+      const remedialScore = entry.remedial_score === undefined ? existing?.remedial_score ?? null : entry.remedial_score;
       if (existing) {
-        if (existing.score === entry.score && existing.initial_score === entry.initial_score) continue;
-        updateGrade(existing.id, { score: entry.score, initial_score: entry.initial_score });
+        if (existing.score === entry.score && existing.initial_score === entry.initial_score && existing.remedial_score === remedialScore) continue;
+        updateGrade(existing.id, { score: entry.score, initial_score: entry.initial_score, remedial_score: remedialScore });
         results.push({
           grade_id: existing.id,
           student_id: entry.student_id,
@@ -174,9 +178,11 @@ export const upsertGradesBulk = (
           new_score: entry.score,
           old_initial_score: existing.initial_score,
           new_initial_score: entry.initial_score,
+          old_remedial_score: existing?.remedial_score ?? null,
+          new_remedial_score: remedialScore,
         });
       } else {
-        const item = createGrade({ student_id: entry.student_id, subject_id: subjectId, class_id: classId, type, score: entry.score, initial_score: entry.initial_score, date: now, teacher_user_id: teacherUserId });
+        const item = createGrade({ student_id: entry.student_id, subject_id: subjectId, class_id: classId, type, score: entry.score, initial_score: entry.initial_score, remedial_score: remedialScore, date: now, teacher_user_id: teacherUserId });
         results.push({
           grade_id: item.id,
           student_id: entry.student_id,
@@ -185,6 +191,8 @@ export const upsertGradesBulk = (
           new_score: entry.score,
           old_initial_score: null,
           new_initial_score: entry.initial_score,
+          old_remedial_score: null,
+          new_remedial_score: remedialScore,
         });
       }
     }
@@ -241,12 +249,12 @@ export const getGradesPaginated = (
   return { data, total: countRow?.count ?? 0 };
 };
 
-export const createGrade = (data: Omit<Grade, 'id' | 'created_at' | 'updated_at'>): Grade => {
+export const createGrade = (data: Omit<Grade, 'id' | 'created_at' | 'updated_at' | 'remedial_score'> & { remedial_score?: number | null }): Grade => {
   const now = Date.now();
   const id = randomUUID();
   SQLite.exec`
-    INSERT INTO grades (id, student_id, subject_id, class_id, type, score, initial_score, date, teacher_user_id, created_at, updated_at)
-    VALUES (${id}, ${data.student_id}, ${data.subject_id}, ${data.class_id}, ${data.type}, ${data.score}, ${data.initial_score}, ${data.date}, ${data.teacher_user_id}, ${now}, ${now})
+    INSERT INTO grades (id, student_id, subject_id, class_id, type, score, initial_score, remedial_score, date, teacher_user_id, created_at, updated_at)
+    VALUES (${id}, ${data.student_id}, ${data.subject_id}, ${data.class_id}, ${data.type}, ${data.score}, ${data.initial_score}, ${data.remedial_score ?? null}, ${data.date}, ${data.teacher_user_id}, ${now}, ${now})
   `;
   return findGradeById(id)!;
 };
@@ -303,8 +311,8 @@ export const getClassSubjectSummary = (classId: string, subjectId: string, teach
   const calculation = selectedTeacherUserId
     ? findTeacherGradeCalculationSettings(meta.yearId, classId, subjectId, selectedTeacherUserId)
     : { mode: 'average' as const, weights: {} };
-  const gradeRows = SQLite.all<{ student_id: string; type: string; score: number; initial_score: number | null; grade_id: string }>(
-    `SELECT g.student_id, g.type, g.score, g.initial_score, g.id AS grade_id
+  const gradeRows = SQLite.all<{ student_id: string; type: string; score: number; initial_score: number | null; remedial_score: number | null; grade_id: string }>(
+    `SELECT g.student_id, g.type, g.score, g.initial_score, g.remedial_score, g.id AS grade_id
      FROM grades g
      WHERE g.class_id = ? AND g.subject_id = ?`,
     [classId, subjectId]
@@ -315,15 +323,16 @@ export const getClassSubjectSummary = (classId: string, subjectId: string, teach
     [classId],
   );
 
-  const byStudent = new Map<string, { student_id: string; student_name: string; nis: string; scores: Record<string, number | null>; initial_scores: Record<string, number | null>; grade_ids: Record<string, string> }>();
+  const byStudent = new Map<string, { student_id: string; student_name: string; nis: string; scores: Record<string, number | null>; initial_scores: Record<string, number | null>; remedial_scores: Record<string, number | null>; grade_ids: Record<string, string> }>();
   for (const st of allStudents) {
-    byStudent.set(st.id, { student_id: st.id, student_name: st.name, nis: st.nis, scores: {}, initial_scores: {}, grade_ids: {} });
+    byStudent.set(st.id, { student_id: st.id, student_name: st.name, nis: st.nis, scores: {}, initial_scores: {}, remedial_scores: {}, grade_ids: {} });
   }
   for (const row of gradeRows) {
     const entry = byStudent.get(row.student_id);
     if (!entry) continue;
     entry.scores[row.type] = row.score;
     entry.initial_scores[row.type] = row.initial_score;
+    entry.remedial_scores[row.type] = row.remedial_score;
     entry.grade_ids[row.type] = row.grade_id;
   }
 
@@ -338,6 +347,7 @@ export const getClassSubjectSummary = (classId: string, subjectId: string, teach
       nis: entry.nis,
       scores: entry.scores,
       initial_scores: entry.initial_scores,
+      remedial_scores: entry.remedial_scores,
       grade_ids: entry.grade_ids,
       final_score: finalScore,
       kkm: meta.kkm,
@@ -366,8 +376,8 @@ export const getStudentGradeSummaries = (studentId: string): { published: boolea
   );
   if (!meta) return { published, summaries: [] };
 
-  const gradeRows = SQLite.all<{ subject_id: string; class_id: string; teacher_user_id: string; subject_name: string; kkm: number; type: string; score: number }>(
-    `SELECT g.subject_id, g.class_id, g.teacher_user_id, s.name AS subject_name, s.kkm AS kkm, g.type, g.score
+  const gradeRows = SQLite.all<{ subject_id: string; class_id: string; teacher_user_id: string; subject_name: string; kkm: number; type: string; score: number; initial_score: number | null; remedial_score: number | null }>(
+    `SELECT g.subject_id, g.class_id, g.teacher_user_id, s.name AS subject_name, s.kkm AS kkm, g.type, g.score, g.initial_score, g.remedial_score
      FROM grades g
      JOIN subjects s ON s.id = g.subject_id
      JOIN classes c ON c.id = g.class_id
@@ -388,6 +398,8 @@ export const getStudentGradeSummaries = (studentId: string): { published: boolea
         subject_name: row.subject_name,
         kkm: row.kkm,
         scores: {},
+        initial_scores: {},
+        remedial_scores: {},
         component_labels: Object.fromEntries(components.map(component => [component.type, component.name])),
         final_score: null,
         predikat: null,
@@ -397,6 +409,8 @@ export const getStudentGradeSummaries = (studentId: string): { published: boolea
       settingsBySubject.set(row.subject_id, findTeacherGradeCalculationSettings(meta.yearId, row.class_id, row.subject_id, row.teacher_user_id));
     }
     entry.scores[row.type] = row.score;
+    entry.initial_scores[row.type] = row.initial_score;
+    entry.remedial_scores[row.type] = row.remedial_score;
   }
   for (const entry of bySubject.values()) {
     const calculation = settingsBySubject.get(entry.subject_id) ?? { mode: 'average' as const, weights: {} };

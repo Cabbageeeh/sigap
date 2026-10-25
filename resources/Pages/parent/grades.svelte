@@ -10,7 +10,7 @@
     subject_id: string;
     subject_name: string;
     semester: number;
-    columns: Array<{ external_id: string; label: string; score: number | null }>;
+    columns: Array<{ external_id: string; label: string; score: number | null; initial_score: number | null; remedial_score: number | null }>;
   }
 
   let { studentId = '', studentName = '', gradesPublished = false, summaries = [], eraporScores = [], progression = [] }: {
@@ -58,6 +58,7 @@
       <p class="text-sm text-muted-foreground">Belum ada nilai.</p>
     </div>
   {:else}
+    <p class="mb-4 text-sm text-muted-foreground">Nilai awal adalah hasil sebelum remedial. Nilai remedial adalah hasil perbaikan, sedangkan nilai akhir ditetapkan guru untuk perhitungan nilai mapel. Tanda — berarti nilai belum dicatat.</p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       {#each summaries as summary}
         <article class="bg-card border border-border rounded-2xl overflow-hidden">
@@ -66,17 +67,29 @@
             <span class="font-mono-accent text-[10px] text-muted-foreground shrink-0">KKM {summary.kkm}</span>
           </header>
           <div class="px-5 py-4">
-            <div class="flex flex-col gap-2 text-sm">
-              {#each Object.entries(summary.scores) as [type, score]}
-                <div class="flex justify-between">
-                  <span class="text-muted-foreground">{summary.component_labels[type] ?? typeLabel(type)}</span>
-                  <span class="text-foreground font-medium">{score ?? '—'}</span>
-                </div>
-              {/each}
-              <div class="flex justify-between border-t border-border/60 pt-2 mt-1">
-                <span class="text-muted-foreground font-medium">Nilai Akhir</span>
-                <span class="text-foreground font-semibold">{summary.final_score ?? '—'}</span>
-              </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead><tr class="text-xs text-muted-foreground border-b border-border">
+                  <th class="py-2 text-left font-medium">Penilaian</th>
+                  <th class="px-2 py-2 text-right font-medium">Awal</th>
+                  <th class="px-2 py-2 text-right font-medium">Remedial</th>
+                  <th class="pl-2 py-2 text-right font-medium">Akhir</th>
+                </tr></thead>
+                <tbody>
+                  {#each Object.entries(summary.scores) as [type, score]}
+                    <tr class="border-b border-border/60 last:border-0">
+                      <td class="py-3 pr-2 text-muted-foreground">{summary.component_labels[type] ?? typeLabel(type)}</td>
+                      <td class="px-2 py-3 text-right font-medium">{summary.initial_scores[type] ?? '—'}</td>
+                      <td class="px-2 py-3 text-right font-medium">{summary.remedial_scores[type] ?? '—'}</td>
+                      <td class="pl-2 py-3 text-right font-semibold">{score ?? '—'}</td>
+                    </tr>
+                  {/each}
+                </tbody>
+              </table>
+            </div>
+            <div class="flex justify-between border-t border-border pt-3 mt-2 text-sm">
+              <span class="text-muted-foreground font-medium">Nilai Akhir Mapel</span>
+              <span class="font-semibold">{summary.final_score ?? '—'}</span>
             </div>
           </div>
           <footer class="px-5 py-3 border-t border-border bg-secondary/30 flex items-center justify-between">
@@ -108,13 +121,23 @@
               <span class="font-heading text-sm font-semibold text-foreground truncate">{group.subject_name}</span>
               <span class="font-mono-accent text-[10px] text-muted-foreground shrink-0">Semester {group.semester === 1 ? 'I' : 'II'}</span>
             </header>
-            <div class="px-5 py-4 flex flex-col gap-2 text-sm">
-              {#each group.columns as column (column.external_id)}
-                <div class="flex justify-between gap-4">
-                  <span class="text-muted-foreground">{column.label}</span>
-                  <span class="text-foreground font-medium">{column.score ?? '—'}</span>
-                </div>
-              {/each}
+            <div class="overflow-x-auto px-5 py-4">
+              <table class="w-full text-sm">
+                <thead><tr class="border-b border-border text-xs text-muted-foreground">
+                  <th class="py-2 text-left font-medium">Penilaian</th><th class="px-2 py-2 text-right font-medium">Awal</th>
+                  <th class="px-2 py-2 text-right font-medium">Remedial</th><th class="pl-2 py-2 text-right font-medium">Akhir</th>
+                </tr></thead>
+                <tbody>
+                  {#each group.columns as column (column.external_id)}
+                    <tr class="border-b border-border/60 last:border-0">
+                      <td class="py-3 pr-2 text-muted-foreground">{column.label}</td>
+                      <td class="px-2 py-3 text-right font-medium">{column.initial_score ?? '—'}</td>
+                      <td class="px-2 py-3 text-right font-medium">{column.remedial_score ?? '—'}</td>
+                      <td class="pl-2 py-3 text-right font-semibold">{column.score ?? '—'}</td>
+                    </tr>
+                  {/each}
+                </tbody>
+              </table>
             </div>
           </article>
         {/each}

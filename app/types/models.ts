@@ -237,6 +237,7 @@ export interface Grade {
   type: string;
   score: number;
   initial_score: number | null;
+  remedial_score: number | null;
   date: number;
   teacher_user_id: string;
   created_at: number;
@@ -265,6 +266,8 @@ export interface GradeAuditLog {
   new_score: number | null;
   old_initial_score: number | null;
   new_initial_score: number | null;
+  old_remedial_score: number | null;
+  new_remedial_score: number | null;
   user_id: string;
   created_at: number;
 }

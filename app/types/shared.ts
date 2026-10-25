@@ -238,6 +238,7 @@ export interface Grade {
   type: string;
   score: number;
   initial_score: number | null;
+  remedial_score: number | null;
   date: number;
   teacher_user_id: string;
   created_at?: number;
@@ -260,6 +261,7 @@ export interface GradeSummaryRow {
   nis: string;
   scores: Record<string, number | null>;
   initial_scores: Record<string, number | null>;
+  remedial_scores: Record<string, number | null>;
   grade_ids: Record<string, string>;
   final_score: number | null;
   kkm: number;
@@ -268,6 +270,8 @@ export interface GradeSummaryRow {
 }
 
 export interface SubjectGradeSummary {
+  initial_scores: Record<string, number | null>;
+  remedial_scores: Record<string, number | null>;
   subject_id: string;
   subject_name: string;
   kkm: number;
@@ -314,6 +318,8 @@ export interface GradeAuditLogRow {
   new_score: number | null;
   old_initial_score: number | null;
   new_initial_score: number | null;
+  old_remedial_score: number | null;
+  new_remedial_score: number | null;
   user_name: string;
   created_at: number;
 }

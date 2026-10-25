@@ -165,6 +165,8 @@ export interface EraporGradeChange {
   new_score: number | null;
   old_initial_score: number | null;
   new_initial_score: number | null;
+  old_remedial_score: number | null;
+  new_remedial_score: number | null;
 }
 
 export interface EraporColumnMappingInput {
@@ -287,9 +289,9 @@ export const saveEraporColumnMappings = (
       if (existingSource) continue;
       const id = randomUUID();
       SQLite.run(
-        `INSERT INTO grades (id, student_id, subject_id, class_id, type, score, initial_score, date, teacher_user_id, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [id, grade.student_id, grade.subject_id, grade.class_id, mapping.source_component_type, grade.score, grade.initial_score, grade.date, grade.teacher_user_id, now, now],
+        `INSERT INTO grades (id, student_id, subject_id, class_id, type, score, initial_score, remedial_score, date, teacher_user_id, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [id, grade.student_id, grade.subject_id, grade.class_id, mapping.source_component_type, grade.score, grade.initial_score, grade.remedial_score, grade.date, grade.teacher_user_id, now, now],
       );
       transferred.push({
         grade_id: id,
@@ -302,6 +304,7 @@ export const saveEraporColumnMappings = (
         new_score: grade.score,
         old_initial_score: null,
         new_initial_score: grade.initial_score,
+        old_remedial_score: null, new_remedial_score: grade.remedial_score,
       });
     }
   }
@@ -332,13 +335,13 @@ export const saveEraporGradeChanges = (
     if (change.score === null) {
       if (!existing) continue;
       SQLite.run('DELETE FROM grades WHERE id = ?', [existing.id]);
-      results.push({ ...change, grade_id: existing.id, action: 'delete', old_score: existing.score, new_score: null, old_initial_score: existing.initial_score, new_initial_score: null });
+      results.push({ ...change, grade_id: existing.id, action: 'delete', old_score: existing.score, new_score: null, old_initial_score: existing.initial_score, new_initial_score: null, old_remedial_score: existing.remedial_score, new_remedial_score: null });
       continue;
     }
     if (existing?.score === change.score) continue;
     if (existing) {
       SQLite.run('UPDATE grades SET score = ?, date = ?, teacher_user_id = ?, updated_at = ? WHERE id = ?', [change.score, now, teacherUserId, now, existing.id]);
-      results.push({ ...change, grade_id: existing.id, action: 'update', old_score: existing.score, new_score: change.score, old_initial_score: existing.initial_score, new_initial_score: existing.initial_score });
+      results.push({ ...change, grade_id: existing.id, action: 'update', old_score: existing.score, new_score: change.score, old_initial_score: existing.initial_score, new_initial_score: existing.initial_score, old_remedial_score: existing.remedial_score, new_remedial_score: existing.remedial_score });
       continue;
     }
     const id = randomUUID();
@@ -347,7 +350,7 @@ export const saveEraporGradeChanges = (
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [id, change.student_id, change.subject_id, change.class_id, change.type, change.score, now, teacherUserId, now, now],
     );
-    results.push({ ...change, grade_id: id, action: 'create', old_score: null, new_score: change.score, old_initial_score: null, new_initial_score: null });
+    results.push({ ...change, grade_id: id, action: 'create', old_score: null, new_score: change.score, old_initial_score: null, new_initial_score: null, old_remedial_score: null, new_remedial_score: null });
   }
   return results;
 });

@@ -159,7 +159,7 @@ Communication uses `school_conversations` (student and parent/teacher participan
 | `app_settings` | key (text), value (text), updated_at | key-value store for app settings (qr_refresh_interval, etc) |
 | `journals` | id (uuid), schedule_id, teacher_confirmation_id, date, material | belongs to `schedules`, `teacher_confirmations` |
 | `student_attendance` | id (uuid), student_id, schedule_id, journal_id, status | belongs to `students`, `schedules`, `journals` |
-| `grades` | id (uuid), student_id, subject_id, class_id, type, score, date, teacher_user_id | belongs to `students`, `subjects`, `classes`, `users` |
+| `grades` | id (uuid), student_id, subject_id, class_id, type, score, initial_score, remedial_score, date, teacher_user_id | belongs to `students`, `subjects`, `classes`, `users` |
 | `erapor_grade_templates` | id, academic_year_id, class_id, subject_id, semester, mapel_id, template_html | one saved e-Rapor import layout per class/mapel/semester |
 | `erapor_student_mappings` | id, class_id, student_id, external_member_id | maps SIGAP students to e-Rapor rombel IDs |
 | `erapor_configuration_audit_logs` | id, action, scope, old/new mapping or setting values, changed_by_user_id, changed_at | audit history for e-Rapor mapping and teacher access changes |

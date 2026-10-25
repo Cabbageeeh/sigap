@@ -18,6 +18,7 @@
     jenis: typeLabel(log.type),
     aksi: actionLabel(log.action),
     nilai_awal: scoreLabel(log.old_initial_score, log.new_initial_score),
+    nilai_remedial: scoreLabel(log.old_remedial_score, log.new_remedial_score),
     nilai_akhir: scoreLabel(log.old_score, log.new_score),
     user: log.user_name,
   })));
@@ -30,6 +31,7 @@
     { key: 'jenis', label: 'Jenis' },
     { key: 'aksi', label: 'Aksi', align: 'center' as const },
     { key: 'nilai_awal', label: 'Nilai Awal', align: 'right' as const },
+    { key: 'nilai_remedial', label: 'Nilai Remedial', align: 'right' as const },
     { key: 'nilai_akhir', label: 'Nilai Akhir', align: 'right' as const },
     { key: 'user', label: 'Oleh' },
   ];

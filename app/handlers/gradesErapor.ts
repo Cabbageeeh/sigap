@@ -53,6 +53,7 @@ const auditGradeChanges = (changes: ReturnType<typeof saveEraporGradeChanges>, u
       new_score: change.new_score,
       old_initial_score: change.old_initial_score,
       new_initial_score: change.new_initial_score,
+      old_remedial_score: change.old_remedial_score, new_remedial_score: change.new_remedial_score,
       user_id: userId,
     });
   }

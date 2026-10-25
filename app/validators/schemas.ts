@@ -287,6 +287,7 @@ export const GradeSchema = z.object({
   type: gradeTypeSlug,
   score: z.number().min(0, 'Score must be at least 0').max(100, 'Score must be at most 100'),
   initial_score: z.number().min(0, 'Nilai awal minimal 0').max(100, 'Nilai awal maksimal 100').nullable().optional(),
+  remedial_score: z.number().min(0, 'Nilai remedial minimal 0').max(100, 'Nilai remedial maksimal 100').nullable().optional(),
   date: z.number({ message: 'Date is required' }),
   teacher_user_id: z.string().uuid('Invalid teacher user ID').optional(),
 });
@@ -299,6 +300,7 @@ export const BulkGradesSchema = z.object({
     student_id: z.string().uuid('Invalid student ID'),
     score: z.number().min(0, 'Score must be at least 0').max(100, 'Score must be at most 100'),
     initial_score: z.number().min(0, 'Nilai awal minimal 0').max(100, 'Nilai awal maksimal 100').nullable().default(null),
+    remedial_score: z.number().min(0, 'Nilai remedial minimal 0').max(100, 'Nilai remedial maksimal 100').nullable().optional(),
   })).min(1, 'At least one entry is required').max(200),
 });
 

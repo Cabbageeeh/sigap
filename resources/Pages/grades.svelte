@@ -14,15 +14,12 @@
   import { Download, FileSpreadsheet, LockKeyhole, Save, Loader2, Plus, Pencil, Trash2 } from '@lucide/svelte';
   import Modal from '../Components/Modal.svelte';
   import ConfirmDialog from '../Components/ConfirmDialog.svelte';
-
   const GRADE_TYPES = [
     { value: 'task', label: 'Tugas' },
     { value: 'daily_quiz', label: 'Kuis Harian' },
     { value: 'midterm', label: 'UTS' },
     { value: 'final', label: 'UAS' },
   ] as const;
-
-
   let {
     permissions,
     students = [],
@@ -49,7 +46,6 @@
   let filterClassId = $state(classId);
   let filterSubjectId = $state(subjectId);
   let filterType = $state<string>(typeProp);
-
   let editingCell = $state<string | null>(null);
   let editValue = $state('');
   let pending = $state<Record<string, number | null>>({});
@@ -62,7 +58,6 @@
   let isRenameOpen = $state(false);
   let renameTypeName = $state('');
   let isDeleteTypeOpen = $state(false);
-
   const canEdit = $derived(!!permissions.canEdit || !!permissions.canCreate);
   const typeOptions = $derived(
     summary?.components?.length
@@ -71,7 +66,6 @@
   );
   const typeLabel = $derived(typeOptions.find(t => t.value === filterType)?.label ?? filterType);
   const weightTotal = $derived(weightRows.reduce((sum, row) => sum + (Number(row.weight) || 0), 0));
-
   $effect(() => {
     if (!summary) return;
     calculationMode = summary.calculation_mode;
@@ -102,7 +96,6 @@
       router.visit(`/grades?class_id=${filterClassId}&subject_id=${filterSubjectId}`, { preserveScroll: true });
     }
   }
-
   const selectedTypeExists = $derived(!!summary?.components?.some(c => c.type === filterType));
 
   function openRenameType(): void {
@@ -137,9 +130,10 @@
     }
   }
 
-  type ScoreField = 'initial' | 'final';
+  type ScoreField = 'initial' | 'remedial' | 'final';
   const scoreFields = [
     { key: 'initial', label: 'Nilai awal' },
+    { key: 'remedial', label: 'Nilai remedial' },
     { key: 'final', label: 'Nilai akhir' },
   ] as const;
 
@@ -147,10 +141,11 @@
     return `${studentId}:${filterType}:${field}`;
   }
 
-  function sourceScore(row: ClassSubjectSummary['rows'][number], field: ScoreField): number | null {
+  function sourceScore(row: ClassSubjectSummary['rows'][number], field: ScoreField, type = filterType): number | null {
+    if (field === 'remedial') return row.remedial_scores[type] ?? null;
     return field === 'initial'
-      ? row.initial_scores[filterType] ?? null
-      : row.scores[filterType] ?? null;
+      ? row.initial_scores[type] ?? null
+      : row.scores[type] ?? null;
   }
 
   function displayScore(row: ClassSubjectSummary['rows'][number], field: ScoreField): number | null {
@@ -194,7 +189,6 @@
     if (e.key === 'Enter') { e.preventDefault(); commitEdit(row, field); }
     if (e.key === 'Escape') { editingCell = null; }
   }
-
   const pendingCount = $derived(Object.keys(pending).length);
 
   async function saveAll(): Promise<void> {
@@ -204,14 +198,17 @@
       const row = summary.rows.find(item => item.student_id === student_id);
       if (!row) return null;
       const initialKey = cellKey(student_id, 'initial');
+      const remedialKey = cellKey(student_id, 'remedial');
       const finalKey = cellKey(student_id, 'final');
-      const score = finalKey in pending ? pending[finalKey] : sourceScore(row, 'final');
+      const remedial_score = remedialKey in pending ? pending[remedialKey] : sourceScore(row, 'remedial');
+      const finalScore = finalKey in pending ? pending[finalKey] : sourceScore(row, 'final');
       const initial_score = initialKey in pending ? pending[initialKey] : sourceScore(row, 'initial');
+      const score = finalScore ?? remedial_score ?? initial_score;
       if (score === null) return null;
-      return { student_id, score, initial_score };
+      return { student_id, score, initial_score, remedial_score };
     });
     if (entries.some(entry => entry === null)) {
-      Toast('Isi Nilai Akhir untuk siswa sebelum menyimpan Nilai Awal', 'error');
+      Toast('Isi setidaknya satu nilai untuk siswa sebelum menyimpan', 'error');
       return;
     }
     const validEntries = entries.filter((entry): entry is NonNullable<typeof entry> => entry !== null);
@@ -255,7 +252,6 @@
 <Sidebar group="grades" />
 <PageShell>
   <PageHeader eyebrow="Penilaian" title="Nilai." description="Pilih kelas, mapel, dan jenis penilaian — lalu isi nilai langsung di tabel rekap." />
-
   {#if confirmationRequired}
     <div class="relative overflow-hidden bg-card border border-primary/30 rounded-2xl p-6 max-w-2xl shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none" in:fly={{ y: 20, duration: 700, delay: 100 }}>
       <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
@@ -305,7 +301,6 @@
         {/if}
       </div>
     </div>
-
     {#if summary}
       <div in:fly={{ y: 20, duration: 700, delay: 150 }}>
         <div class="mb-5 rounded-2xl border border-border bg-card p-5 shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
@@ -313,7 +308,7 @@
             <div class="max-w-2xl">
               <h2 class="font-heading font-semibold">Perhitungan Nilai Akhir Mapel</h2>
               <p class="mt-1 text-sm text-muted-foreground">
-                Pengaturan ini hanya berlaku untuk {summary.subjectName} kelas {summary.className} pada akun guru Anda. Nilai akhir tiap penilaian diisi manual dan dipakai untuk menghitung nilai akhir mapel.
+                Pengaturan ini hanya berlaku untuk {summary.subjectName} kelas {summary.className} pada akun guru Anda. Catat nilai awal dan remedial secara terpisah. Nilai akhir ditentukan guru dan dipakai untuk menghitung nilai mapel. Jika nilai akhir pertama belum diisi, nilainya mengikuti remedial atau nilai awal.
               </p>
             </div>
             {#if canEdit}
@@ -350,20 +345,18 @@
             </div>
           {/if}
         </div>
-
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-3">
             <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10"><FileSpreadsheet class="h-4.5 w-4.5 text-primary" /></span>
             <div>
               <h2 class="font-heading font-semibold tracking-[-0.02em]">Rekap Nilai — {summary.subjectName} ({summary.className})</h2>
               <p class="text-xs text-muted-foreground mt-0.5">
-                {#if canEdit}Klik kolom Nilai Awal atau Nilai Akhir pada <strong class="text-foreground">{typeLabel}</strong> untuk mengisi nilai.{:else}Mode lihat saja.{/if}
+                {#if canEdit}Klik kolom Nilai Awal, Nilai Remedial, atau Nilai Akhir pada <strong class="text-foreground">{typeLabel}</strong> untuk mengisi nilai.{:else}Mode lihat saja.{/if}
               </p>
             </div>
           </div>
           <p class="text-xs text-muted-foreground font-mono-accent">KKM {summary.kkm} · {summary.calculation_mode === 'weighted' ? 'bobot khusus guru' : 'rata-rata biasa'}</p>
         </div>
-
         <div class="relative overflow-x-auto rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgba(32,36,38,0.04),0_10px_30px_-12px_rgba(32,36,38,0.10)] dark:shadow-none">
           <div class="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-foreground/[0.03] to-transparent dark:from-white/[0.03]"></div>
           <table class="w-full text-sm">
@@ -371,7 +364,7 @@
               <tr>
                 <th rowspan="2" class="px-4 py-3.5 text-left font-heading text-[10px] uppercase tracking-[0.13em] font-semibold text-muted-foreground">Siswa</th>
                 {#each summary.components as c}
-                  <th colspan="2" class="px-4 py-3.5 text-center font-heading text-[10px] uppercase tracking-[0.13em] font-semibold {c.type === filterType ? 'text-primary' : 'text-muted-foreground'}">
+                  <th colspan={scoreFields.length} class="px-4 py-3.5 text-center font-heading text-[10px] uppercase tracking-[0.13em] font-semibold {c.type === filterType ? 'text-primary' : 'text-muted-foreground'}">
                     {c.name}{#if c.type === filterType} <span class="normal-case">· edit</span>{/if}
                   </th>
                 {/each}
@@ -389,7 +382,7 @@
             </thead>
             <tbody class="divide-y divide-border">
               {#if summary.rows.length === 0}
-                <tr><td colspan={summary.components.length * 2 + 4} class="px-4 py-12 text-center text-sm text-muted-foreground">Belum ada siswa di kelas ini.</td></tr>
+                <tr><td colspan={summary.components.length * scoreFields.length + 4} class="px-4 py-12 text-center text-sm text-muted-foreground">Belum ada siswa di kelas ini.</td></tr>
               {:else}
                 {#each summary.rows as row (row.student_id)}
                   <tr class="odd:bg-secondary/[0.12] hover:bg-secondary/40 transition-colors">
@@ -401,7 +394,7 @@
                       {#each scoreFields as field}
                         {@const editable = canEdit && c.type === filterType}
                         {@const key = cellKey(row.student_id, field.key)}
-                        {@const val = c.type === filterType ? displayScore(row, field.key) : (field.key === 'initial' ? (row.initial_scores[c.type] ?? null) : (row.scores[c.type] ?? null))}
+                        {@const val = c.type === filterType ? displayScore(row, field.key) : sourceScore(row, field.key, c.type)}
                         <td
                           class="px-3 py-3 text-right whitespace-nowrap {editable ? 'cursor-cell' : ''} {c.type === filterType ? 'bg-primary/[0.04]' : ''}"
                           onclick={() => editable && startEdit(row, field.key)}
@@ -441,7 +434,6 @@
             </tbody>
           </table>
         </div>
-
         {#if canEdit}
           <div class="sticky bottom-4 z-20 mt-4 flex justify-end">
             <div class="flex items-center gap-3 rounded-2xl border border-border bg-card/90 px-4 py-3 shadow-[0_8px_30px_-8px_rgba(32,36,38,0.25)] backdrop-blur-md dark:bg-card/80">
@@ -465,7 +457,6 @@
       </div>
     {/if}
   {/if}
-
 <Modal bind:open={isTypeOpen} title="Tambah Jenis Nilai" description="Jenis baru (misal Tugas 1, Praktikum) muncul sebagai kolom di rekap dan tidak mempengaruhi bobot nilai akhir.">
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); addType(); }}>
     <div class="flex flex-col gap-0">
@@ -478,7 +469,6 @@
     </div>
   </form>
 </Modal>
-
 <Modal bind:open={isRenameOpen} title="Ubah Nama Jenis Nilai" description={`Ganti nama "${typeLabel}". Nama baru berlaku untuk semua kelas pada tahun ajaran ini.`}>
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); renameType(); }}>
     <div class="flex flex-col gap-0">
@@ -491,6 +481,5 @@
     </div>
   </form>
 </Modal>
-
 <ConfirmDialog bind:open={isDeleteTypeOpen} title="Hapus Jenis Nilai" description={`Jenis "${typeLabel}" beserta seluruh nilai yang sudah diisi akan dihapus permanen untuk tahun ajaran ini. Lanjutkan?`} confirmLabel="Hapus" cancelLabel="Batal" onConfirm={deleteType} destructive />
 </PageShell>

@@ -10,9 +10,9 @@
 
 ## Stats
 
-- Files indexed: 338
-- Total lines: 38667
-- Total exports: 1054
+- Files indexed: 340
+- Total lines: 38840
+- Total exports: 1056
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -52,9 +52,9 @@
 - `classes.ts` (114L) — classesPage, listClasses, classData, addClass, editClass, removeClass
 - `dashboard.ts` (31L) — dashboardPage
 - `gradeAudit.ts` (39L) — gradeAuditPage, gradeAuditData
-- `grades.ts` (421L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, saveGradeCalculationSettings, addGradeComponentType, +4
-- `gradesErapor.ts` (488L) — gradesEraporPage, saveEraporColumnMappings, saveEraporDefaultColumnMappings, saveEraporGrades, exportEraporGrades
-- `gradesEraporImport.ts` (266L) — eraporImportMiddleware, importEraporGrades
+- `grades.ts` (425L) — gradesPage, listGrades, gradesByStudent, gradeData, addGrade, saveGradesBulk, saveGradeCalculationSettings, addGradeComponentType, +4
+- `gradesErapor.ts` (489L) — gradesEraporPage, saveEraporColumnMappings, saveEraporDefaultColumnMappings, saveEraporGrades, exportEraporGrades
+- `gradesEraporImport.ts` (267L) — eraporImportMiddleware, importEraporGrades
 - `gradesEraporSettings.ts` (22L) — saveEraporTeacherMappingAccess
 - `headmaster.ts` (111L) — headmasterDashboardPage, headmasterDashboardData, headmasterReportsPage, headmasterClassGradesPage, headmasterTeacherAttendancePage, listOutsideConfirmations
 - `home.ts` (17L) — landingPage
@@ -62,7 +62,7 @@
 - `journals.ts` (303L) — journalsPage, listJournals, journalData, addJournal, editJournal, removeJournal
 - `loginSecuritySettings.ts` (36L) — loginSecuritySettingsPage, saveLoginSecuritySettings
 - `notifications.ts` (20L) — notificationsData, markNotificationsRead
-- `parent.ts` (124L) — parentDashboardPage, parentDashboardData, childAttendancePage, parentGradesPage
+- `parent.ts` (126L) — parentDashboardPage, parentDashboardData, childAttendancePage, parentGradesPage
 - `parents.ts` (63L) — parentsPage, listParents, parentData, parentByUser
 - `rapor.ts` (71L) — raporPage
 - `reportExports.ts` (356L) — exportClassAttendancePdf, exportClassRosterPdf, exportClassGradesPdf, exportTeacherPresencePdf, exportJournalLogPdf
@@ -102,10 +102,10 @@
 - `appSettings.ts` (47L) — ERAPOR_TEACHER_MAPPING_ACCESS_KEY, LOGIN_LOCKOUT_MINUTES_KEY, findSetting, findSettingNumber, findLoginLockoutMinutes, upsertSetting, isTeacherEraporMappingEnabled, findTeacherPresenceMode, +1
 - `assets.ts` (23L) — createAsset, findAssetsByUserId
 - `classes.ts` (95L) — findAllClasses, findAllClassesWithHomeroom, findClassesByAcademicYearWithHomeroom, findClassById, findClassByName, findClassesByAcademicYear, findClassesByGrade, findClassesByTeacherUser, +5
-- `eraporGrades.ts` (379L) — findEraporGradeTemplate, findEraporStudentMappings, findEraporGradeTemplatesByClass, findEraporColumnMappings, findEraporDefaultColumnMappingsByYear, saveEraporDefaultColumnMappings, findEraporColumnMappingsByClassSubject, saveEraporTemplateSetup, +14
-- `gradeAuditLogs.ts` (41L) — logGradeChange, getGradeAuditLogsPaginated
+- `eraporGrades.ts` (382L) — findEraporGradeTemplate, findEraporStudentMappings, findEraporGradeTemplatesByClass, findEraporColumnMappings, findEraporDefaultColumnMappingsByYear, saveEraporDefaultColumnMappings, findEraporColumnMappingsByClassSubject, saveEraporTemplateSetup, +14
+- `gradeAuditLogs.ts` (43L) — logGradeChange, getGradeAuditLogsPaginated
 - `gradeComponents.ts` (64L) — findGradeComponentsByYear, upsertGradeComponents, addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent
-- `grades.ts` (435L) — findTeacherGradeCalculationSettings, saveTeacherGradeCalculationSettings, findAllGrades, findGradeById, findGradesByStudent, findGradesByStudentForParent, findGradesByStudentForTeacher, findGradesByClassSubject, +18
+- `grades.ts` (449L) — findTeacherGradeCalculationSettings, saveTeacherGradeCalculationSettings, findAllGrades, findGradeById, findGradesByStudent, findGradesByStudentForParent, findGradesByStudentForTeacher, findGradesByClassSubject, +18
 - `headmaster.ts` (474L) — getTodaySessions, getMissedConfirmations, getJournalCompleteness, getGradeProgress, getClassOverview, getTeacherAttendanceOverview, getTeacherAttendanceHistory, findClassGradeDetails, +5
 - `index.ts` (27L)
 - `journals.ts` (98L) — findAllJournals, findJournalById, findJournalsBySchedule, findJournalByScheduleAndDate, findJournalsByTeacher, findJournalsByDateRange, findJournalReportRows, createJournal, +4
@@ -149,14 +149,14 @@
 
 ### app/types/
 
-- `models.ts` (323L) — User, Session, Role, Permission, Asset, UserRole, RolePermission, AcademicYear, +24
+- `models.ts` (326L) — User, Session, Role, Permission, Asset, UserRole, RolePermission, AcademicYear, +24
 - `schoolMessages.ts` (51L) — SchoolConversation, SchoolMessage, SchoolContact, SchoolChild, SchoolMessageReport
-- `shared.ts` (440L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +38
+- `shared.ts` (446L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +38
 
 ### app/validators/
 
 - `index.ts` (110L) — zodToErrors
-- `schemas.ts` (420L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +82
+- `schemas.ts` (422L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +82
 - `schoolMessages.ts` (22L) — StartSchoolConversationSchema, SendSchoolMessageSchema, ReportSchoolMessageSchema, SchoolConversationStatusSchema, SchoolCommunicationSettingsSchema, SchoolCommunicationRestrictionSchema
 
 ### migrations/
@@ -210,6 +210,7 @@
 - `20261003000002_create_erapor_configuration_audit_logs.ts` (43L) — up, down
 - `20261007000001_create_school_messages.ts` (32L) — up, down
 - `20261014000001_add_teacher_grade_calculation_settings.ts` (44L) — up, down
+- `20261025000001_add_remedial_scores.ts` (12L) — up, down
 
 ### resources/
 
@@ -269,8 +270,8 @@
 - `announcements.svelte` (106L)
 - `classes.svelte` (102L)
 - `dashboard.svelte` (196L)
-- `gradeAudit.svelte` (79L)
-- `grades.svelte` (497L)
+- `gradeAudit.svelte` (81L)
+- `grades.svelte` (486L)
 - `gradesErapor.svelte` (423L)
 - `journals.svelte` (258L)
 - `landing.svelte` (57L)
@@ -309,7 +310,7 @@
 
 - `attendance.svelte` (28L)
 - `dashboard.svelte` (92L)
-- `grades.svelte` (152L)
+- `grades.svelte` (175L)
 
 ### resources/Pages/reports/
 
@@ -442,6 +443,7 @@
 ### tests/queries/
 
 - `classes.test.ts` (44L)
+- `gradeRemedial.test.ts` (109L)
 - `grades.test.ts` (37L)
 - `headmaster.test.ts` (214L)
 - `roles.test.ts` (125L)
@@ -1823,6 +1825,11 @@
 - `const` **up**
 - `const` **down**
 
+### `migrations/20261025000001_add_remedial_scores.ts`
+
+- `const` **up**
+- `const` **down**
+
 ### `resources/Components/Badge.svelte`
 
 - `const` **badgeVariants**
@@ -2284,6 +2291,7 @@
 - `tests/middlewares/requestId.test.ts` → `../../app/middlewares/requestId`, `../helpers/mocks`
 - `tests/middlewares/securityHeaders.test.ts` → `../../app/middlewares/securityHeaders`, `../helpers/mocks`
 - `tests/queries/classes.test.ts` → `../../app/queries/classes`, `@services/SQLite`
+- `tests/queries/gradeRemedial.test.ts` → `../../app/queries/eraporGrades`, `../../app/queries/gradeAuditLogs`, `../../app/queries/grades`, `../../app/services/SQLite`, `../../app/validators/schemas`, `../../migrations/20261025000001_add_remedial_scores`
 - `tests/queries/grades.test.ts` → `../../app/queries/grades`, `@services/SQLite`
 - `tests/queries/headmaster.test.ts` → `@services/SQLite`
 - `tests/queries/roles.test.ts` → `@services/SQLite`

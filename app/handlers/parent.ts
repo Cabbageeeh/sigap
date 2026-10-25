@@ -14,7 +14,7 @@ interface ParentEraporScoreGroup {
   subject_id: string;
   subject_name: string;
   semester: number;
-  columns: Array<{ external_id: string; label: string; score: number | null }>;
+  columns: Array<{ external_id: string; label: string; score: number | null; initial_score: number | null; remedial_score: number | null }>;
 }
 
 const findParentEraporScores = (studentId: string, classId: string): ParentEraporScoreGroup[] => {
@@ -36,6 +36,8 @@ const findParentEraporScores = (studentId: string, classId: string): ParentErapo
           external_id: column.externalId,
           label: column.label,
           score: grades.find(grade => grade.type === (sourceTypes.get(column.externalId) ?? column.gradeType))?.score ?? null,
+          initial_score: grades.find(grade => grade.type === (sourceTypes.get(column.externalId) ?? column.gradeType))?.initial_score ?? null,
+          remedial_score: grades.find(grade => grade.type === (sourceTypes.get(column.externalId) ?? column.gradeType))?.remedial_score ?? null,
         })),
       }];
     } catch (error: unknown) {

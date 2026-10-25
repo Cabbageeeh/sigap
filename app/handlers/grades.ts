@@ -172,6 +172,7 @@ export const addGrade = (req: NaraRequest, res: NaraResponse) => {
       new_score: parsed.data.score,
       old_initial_score: null,
       new_initial_score: parsed.data.initial_score ?? null,
+      old_remedial_score: null, new_remedial_score: item.remedial_score,
       user_id: req.user.id,
     });
     return jsonCreated(res, 'Grade created', item);
@@ -204,6 +205,7 @@ export const saveGradesBulk = (req: NaraRequest, res: NaraResponse) => {
         grade_id: r.grade_id, student_id: r.student_id, subject_id, class_id, type,
         action: r.action, old_score: r.old_score, new_score: r.new_score, user_id: req.user.id,
         old_initial_score: r.old_initial_score, new_initial_score: r.new_initial_score,
+        old_remedial_score: r.old_remedial_score, new_remedial_score: r.new_remedial_score,
       });
     }
     return jsonSuccess(res, `${results.length} nilai berhasil disimpan`, { saved: results.length });
@@ -377,7 +379,8 @@ export const editGrade = (req: NaraRequest, res: NaraResponse) => {
       old_score: existing.score,
       new_score: parsed.data.score ?? existing.score,
       old_initial_score: existing.initial_score,
-      new_initial_score: parsed.data.initial_score ?? existing.initial_score,
+      new_initial_score: item.initial_score,
+      old_remedial_score: existing.remedial_score, new_remedial_score: item.remedial_score,
       user_id: req.user.id,
     });
     return jsonSuccess(res, 'Grade updated', item);
@@ -414,6 +417,7 @@ export const removeGrade = (req: NaraRequest, res: NaraResponse) => {
     new_score: null,
     old_initial_score: existing.initial_score,
     new_initial_score: null,
+    old_remedial_score: existing.remedial_score, new_remedial_score: null,
     user_id: req.user.id,
   });
   return jsonSuccess(res, 'Grade deleted');
