@@ -10,9 +10,9 @@
 
 ## Stats
 
-- Files indexed: 340
-- Total lines: 38840
-- Total exports: 1056
+- Files indexed: 341
+- Total lines: 39001
+- Total exports: 1063
 - Entry points (★): `app/core/index.ts`, `resources/app.ts`, `routes/web.ts`, `server.ts`
 
 ## File Tree
@@ -45,7 +45,7 @@
 ### app/handlers/
 
 - `academicYears.ts` (161L) — academicYearsPage, listAcademicYears, activeAcademicYearData, addAcademicYear, editAcademicYear, removeAcademicYear, activateAcademicYear, gradeComponentsData, +2
-- `announcements.ts` (75L) — announcementsPage, listAnnouncements, latestAnnouncementsData, addAnnouncement, editAnnouncement, removeAnnouncement
+- `announcements.ts` (103L) — announcementsPage, listAnnouncements, latestAnnouncementsData, addAnnouncement, editAnnouncement, removeAnnouncement
 - `assets.ts` (209L) — avatarMiddleware, uploadAsset, serveDistAsset, servePublicAsset
 - `attendance.ts` (32L) — attendanceReportData
 - `auth.ts` (96L) — loginPage, submitLogin, logout, changePassword
@@ -62,7 +62,7 @@
 - `journals.ts` (303L) — journalsPage, listJournals, journalData, addJournal, editJournal, removeJournal
 - `loginSecuritySettings.ts` (36L) — loginSecuritySettingsPage, saveLoginSecuritySettings
 - `notifications.ts` (20L) — notificationsData, markNotificationsRead
-- `parent.ts` (126L) — parentDashboardPage, parentDashboardData, childAttendancePage, parentGradesPage
+- `parent.ts` (131L) — parentDashboardPage, parentDashboardData, childAttendancePage, parentGradesPage
 - `parents.ts` (63L) — parentsPage, listParents, parentData, parentByUser
 - `rapor.ts` (71L) — raporPage
 - `reportExports.ts` (356L) — exportClassAttendancePdf, exportClassRosterPdf, exportClassGradesPdf, exportTeacherPresencePdf, exportJournalLogPdf
@@ -98,10 +98,10 @@
 ### app/queries/
 
 - `academicYears.ts` (40L) — findAllAcademicYears, findAcademicYearById, findActiveAcademicYear, createAcademicYear, updateAcademicYear, deleteAcademicYear, setActiveAcademicYear
-- `announcements.ts` (45L) — findAllAnnouncements, findLatestAnnouncements, findAnnouncementById, createAnnouncement, updateAnnouncement, deleteAnnouncement
+- `announcements.ts` (87L) — findAllAnnouncements, findLatestAnnouncements, findClassTaskAnnouncementsByTeacher, findClassTaskAnnouncementsForParent, createClassTaskAnnouncement, findAnnouncementById, createAnnouncement, updateAnnouncement, +1
 - `appSettings.ts` (47L) — ERAPOR_TEACHER_MAPPING_ACCESS_KEY, LOGIN_LOCKOUT_MINUTES_KEY, findSetting, findSettingNumber, findLoginLockoutMinutes, upsertSetting, isTeacherEraporMappingEnabled, findTeacherPresenceMode, +1
 - `assets.ts` (23L) — createAsset, findAssetsByUserId
-- `classes.ts` (95L) — findAllClasses, findAllClassesWithHomeroom, findClassesByAcademicYearWithHomeroom, findClassById, findClassByName, findClassesByAcademicYear, findClassesByGrade, findClassesByTeacherUser, +5
+- `classes.ts` (106L) — findAllClasses, findAllClassesWithHomeroom, findClassesByAcademicYearWithHomeroom, findClassById, findClassByName, findClassesByAcademicYear, findClassesByGrade, findClassesByTeacherUser, +6
 - `eraporGrades.ts` (382L) — findEraporGradeTemplate, findEraporStudentMappings, findEraporGradeTemplatesByClass, findEraporColumnMappings, findEraporDefaultColumnMappingsByYear, saveEraporDefaultColumnMappings, findEraporColumnMappingsByClassSubject, saveEraporTemplateSetup, +14
 - `gradeAuditLogs.ts` (43L) — logGradeChange, getGradeAuditLogsPaginated
 - `gradeComponents.ts` (64L) — findGradeComponentsByYear, upsertGradeComponents, addGradeComponent, findGradeComponent, renameGradeComponent, deleteGradeComponent
@@ -149,14 +149,14 @@
 
 ### app/types/
 
-- `models.ts` (326L) — User, Session, Role, Permission, Asset, UserRole, RolePermission, AcademicYear, +24
+- `models.ts` (328L) — User, Session, Role, Permission, Asset, UserRole, RolePermission, AcademicYear, +24
 - `schoolMessages.ts` (51L) — SchoolConversation, SchoolMessage, SchoolContact, SchoolChild, SchoolMessageReport
-- `shared.ts` (446L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +38
+- `shared.ts` (450L) — User, Role, RoleInfo, Permission, Session, PaginationMeta, PaginatedResponse, ApiSuccessResponse, +38
 
 ### app/validators/
 
-- `index.ts` (110L) — zodToErrors
-- `schemas.ts` (422L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +82
+- `index.ts` (111L) — zodToErrors
+- `schemas.ts` (429L) — LoginSchema, RegisterSchema, ChangePasswordSchema, CreateUserSchema, UpdateUserSchema, DeleteUsersSchema, ChangeProfileSchema, CreateRoleSchema, +83
 - `schoolMessages.ts` (22L) — StartSchoolConversationSchema, SendSchoolMessageSchema, ReportSchoolMessageSchema, SchoolConversationStatusSchema, SchoolCommunicationSettingsSchema, SchoolCommunicationRestrictionSchema
 
 ### migrations/
@@ -211,6 +211,7 @@
 - `20261007000001_create_school_messages.ts` (32L) — up, down
 - `20261014000001_add_teacher_grade_calculation_settings.ts` (44L) — up, down
 - `20261025000001_add_remedial_scores.ts` (12L) — up, down
+- `20261030000001_add_class_task_announcements.ts` (12L) — up, down
 
 ### resources/
 
@@ -267,7 +268,7 @@
 ### resources/Pages/
 
 - `academicYears.svelte` (181L)
-- `announcements.svelte` (106L)
+- `announcements.svelte` (131L)
 - `classes.svelte` (102L)
 - `dashboard.svelte` (196L)
 - `gradeAudit.svelte` (81L)
@@ -309,7 +310,7 @@
 ### resources/Pages/parent/
 
 - `attendance.svelte` (28L)
-- `dashboard.svelte` (92L)
+- `dashboard.svelte` (116L)
 - `grades.svelte` (175L)
 
 ### resources/Pages/reports/
@@ -899,6 +900,9 @@
 
 - `const` **findAllAnnouncements**
 - `const` **findLatestAnnouncements**
+- `const` **findClassTaskAnnouncementsByTeacher**
+- `const` **findClassTaskAnnouncementsForParent**
+- `const` **createClassTaskAnnouncement**
 - `const` **findAnnouncementById**
 - `const` **createAnnouncement**
 - `const` **updateAnnouncement**
@@ -931,6 +935,7 @@
 - `const` **findClassesByAcademicYear**
 - `const` **findClassesByGrade**
 - `const` **findClassesByTeacherUser**
+- `const` **findActiveClassesByTeacherUser**
 - `const` **createClass**
 - `const` **updateClass**
 - `const` **deleteClass**
@@ -1531,6 +1536,7 @@
 - `const` **EraporDefaultColumnMappingsSchema**
 - `const` **EraporTeacherMappingAccessSchema**
 - `const` **AnnouncementSchema**
+- `const` **ClassTaskAnnouncementSchema**
 - `const` **UpdateAnnouncementSchema**
 - `type` **LoginInput**
 - `type` **RegisterInput**
@@ -1830,6 +1836,11 @@
 - `const` **up**
 - `const` **down**
 
+### `migrations/20261030000001_add_class_task_announcements.ts`
+
+- `const` **up**
+- `const` **down**
+
 ### `resources/Components/Badge.svelte`
 
 - `const` **badgeVariants**
@@ -2087,7 +2098,7 @@
 - `app/core/Router.ts` → `./types`
 - `app/core/types.ts` → `../types/shared`
 - `app/handlers/academicYears.ts` → `@core`, `@queries/academicYears`, `@queries/gradeComponents`, `@queries/notifications`, `@queries/users`, `@services/Logger`, `@validators`
-- `app/handlers/announcements.ts` → `@core`, `@queries/announcements`, `@queries/users`, `@services/Logger`, `@validators`
+- `app/handlers/announcements.ts` → `@core`, `@queries/announcements`, `@queries/classes`, `@queries/teacherClassAssignments`, `@queries/users`, `@services/Logger`, `@validators`
 - `app/handlers/assets.ts` → `@config/constants`, `@core`, `@queries/assets`, `@queries/users`, `@services`, `@services/CacheStore`, `@services/Logger`
 - `app/handlers/attendance.ts` → `@core`, `@queries/studentAttendance`, `@queries/students`, `@queries/users`
 - `app/handlers/auth.ts` → `@core`, `@queries`, `@services/Authenticate`, `@services/Logger`, `@services/LoginThrottle`, `@validators`
@@ -2103,7 +2114,7 @@
 - `app/handlers/journals.ts` → `../types/shared`, `@core`, `@queries/academicYears`, `@queries/appSettings`, `@queries/journals`, `@queries/schedules`, `@queries/schoolCalendar`, `@queries/studentAttendance`, `@queries/students`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Logger`, `@types`, `@validators`
 - `app/handlers/loginSecuritySettings.ts` → `@core`, `@queries/appSettings`, `@queries/users`, `@services/Logger`, `@services/LoginThrottle`, `@validators`
 - `app/handlers/notifications.ts` → `@core`, `@queries/notifications`
-- `app/handlers/parent.ts` → `@core`, `@queries/eraporGrades`, `@queries/grades`, `@queries/parents`, `@queries/studentAttendance`, `@queries/students`, `@queries/subjects`, `@queries/users`, `@services/EraporWorkbook`, `@services/Logger`
+- `app/handlers/parent.ts` → `@core`, `@queries/announcements`, `@queries/eraporGrades`, `@queries/grades`, `@queries/parents`, `@queries/studentAttendance`, `@queries/students`, `@queries/subjects`, `@queries/users`, `@services/EraporWorkbook`, `@services/Logger`
 - `app/handlers/parents.ts` → `@core`, `@queries/parents`, `@queries/students`, `@queries/users`
 - `app/handlers/rapor.ts` → `@core`, `@queries/grades`, `@queries/studentAttendance`, `@queries/students`, `@queries/teacherClassAssignments`, `@queries/users`, `@types`
 - `app/handlers/reportExports.ts` → `@core`, `@queries/appSettings`, `@queries/classes`, `@queries/headmaster`, `@queries/journals`, `@queries/schedules`, `@queries/schoolLocations`, `@queries/studentAttendance`, `@queries/students`, `@queries/subjects`, `@queries/teacherClassAssignments`, `@queries/teacherConfirmations`, `@queries/users`, `@services/Pdf`

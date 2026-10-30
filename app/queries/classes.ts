@@ -66,6 +66,17 @@ export const findClassesByTeacherUser = (teacherUserId: string): Class[] =>
     ORDER BY c.academic_year_id DESC, c.grade, c.name
   `;
 
+export const findActiveClassesByTeacherUser = (teacherUserId: string): Class[] =>
+  SQLite.many<Class>`
+    SELECT DISTINCT c.*
+    FROM classes c
+    INNER JOIN academic_years ay ON ay.id = c.academic_year_id AND ay.is_active = 1
+    INNER JOIN teacher_class_assignments tca ON tca.class_id = c.id AND tca.academic_year_id = c.academic_year_id
+    INNER JOIN teachers t ON t.id = tca.teacher_id
+    WHERE t.user_id = ${teacherUserId}
+    ORDER BY c.grade, c.name
+  `;
+
 export const createClass = (data: Omit<Class, 'id' | 'created_at' | 'updated_at'>): Class => {
   const now = Date.now();
   const id = randomUUID();

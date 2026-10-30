@@ -61,6 +61,7 @@ export {
   EraporGradeSaveSchema,
   gradeTypeSlug,
   AnnouncementSchema,
+  ClassTaskAnnouncementSchema,
   UpdateAnnouncementSchema,
 } from './schemas';
 

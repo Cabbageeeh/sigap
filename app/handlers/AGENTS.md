@@ -25,7 +25,7 @@ Request handlers — functions that receive `NaraRequest` / `NaraResponse` and r
 | `gradesEraporSettings.ts` | Admin control for teacher e-Rapor mapping access |
 | `gradesEraporImport.ts` | e-Rapor file preview, admin- or assigned-teacher-confirmed student creation, template import, and grade import |
 | `gradeAudit.ts` | grade audit history page + data (grades.audit permission) |
-| `announcements.ts` | announcement CRUD (admin) + latest list for dashboards |
+| `announcements.ts` | school announcement management + teacher class-task publishing and parent-visible task delivery |
 | `notifications.ts` | in-app notifications data + mark read |
 | `rapor.ts` | printable student rapor page |
 | `headmaster.ts` | headmaster reports and dashboards |

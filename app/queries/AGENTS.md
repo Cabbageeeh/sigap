@@ -35,7 +35,7 @@ Raw SQL functions in `app/queries/`. The only layer that touches `SQLite`. Handl
 | `gradeComponents.ts` | Assessment component names per academic year (find by year + bulk upsert) |
 | `gradeAuditLogs.ts` | Append-only grade change history (log + paginated list with names) |
 | `headmaster.ts` | Headmaster oversight: today sessions, missed sessions, journal completeness, grade progress, outside confirmations |
-| `announcements.ts` | Announcement CRUD + latest list with author names |
+| `announcements.ts` | School announcements and class tasks scoped to teacher assignments or parent-linked students |
 | `notifications.ts` | In-app notifications (create on grade publish, list, unread count, mark read) |
 | `stats.ts` | Dashboard + class-subject aggregated metrics |
 | `appSettings.ts` | Key-value application settings (find, findNumber, upsert) — used for QR, e-Rapor mapping access, and login lockout duration |

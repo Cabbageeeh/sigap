@@ -309,6 +309,8 @@ export interface Announcement {
   title: string;
   body: string;
   author_user_id: string;
+  class_id: string | null;
+  due_date: string | null;
   created_at: number;
   updated_at: number;
 }

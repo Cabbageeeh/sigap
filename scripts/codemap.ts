@@ -33,7 +33,7 @@ const ROOT = path.resolve(__dirname, '..');
 const OUTPUT = path.join(ROOT, 'CODEMAP.md');
 
 const SKIP_DIRS = new Set([
-  'node_modules', 'dist', 'build', '.git', 'storage', 'database',
+  'node_modules', 'dist', 'build', '.git', 'storage', 'database', 'tmp', 'deliverables',
   'logs', '.vscode', '.github', '.playwright-mcp', '.agents',
 ]);
 

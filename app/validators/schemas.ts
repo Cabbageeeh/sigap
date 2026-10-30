@@ -373,6 +373,13 @@ export const AnnouncementSchema = z.object({
   body: z.string().min(1, 'Body is required').max(5000, 'Body must be at most 5000 characters'),
 });
 
+export const ClassTaskAnnouncementSchema = z.object({
+  title: z.string().trim().min(1, 'Judul tugas wajib diisi').max(200, 'Judul tugas maksimal 200 karakter'),
+  body: z.string().trim().min(1, 'Rincian tugas wajib diisi').max(5000, 'Rincian tugas maksimal 5000 karakter'),
+  class_id: z.string().uuid('Pilih kelas yang valid'),
+  due_date: z.union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Pilih tanggal yang valid'), z.literal('')]).optional(),
+});
+
 export const UpdateAnnouncementSchema = AnnouncementSchema.partial().refine(
   data => data.title !== undefined || data.body !== undefined,
   { message: 'At least one field is required to update', path: ['_root'] }

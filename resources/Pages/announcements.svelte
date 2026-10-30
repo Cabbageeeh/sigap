@@ -14,12 +14,19 @@
   import { Pencil, Trash2, Megaphone } from '@lucide/svelte';
   import type { AnnouncementView } from '../types';
 
-  let { canManage = false, announcements = [] }: { canManage?: boolean; announcements?: AnnouncementView[] } = $props();
+  let { canManage = false, canCreateClassTasks = false, classes = [], announcements = [] }: {
+    canManage?: boolean;
+    canCreateClassTasks?: boolean;
+    classes?: Array<{ id: string; name: string; grade: string }>;
+    announcements?: AnnouncementView[];
+  } = $props();
 
   let isOpen = $state(false);
   let isDeleteOpen = $state(false);
   let title = $state('');
   let body = $state('');
+  let classId = $state('');
+  let dueDate = $state('');
   let selected: AnnouncementView | null = $state(null);
 
   const displayRows = $derived(announcements.map(a => ({
@@ -28,12 +35,16 @@
     isi: a.body,
     oleh: a.author_name,
     tanggal: new Date(a.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }),
+    kelas: a.class_name ?? 'Semua warga sekolah',
+    batas: a.due_date ? new Date(`${a.due_date}T00:00:00`).toLocaleDateString('id-ID', { dateStyle: 'medium' }) : 'Tanpa batas waktu',
   })));
 
   const columns = [
     { key: 'judul', label: 'Judul' },
     { key: 'isi', label: 'Isi' },
     { key: 'oleh', label: 'Oleh' },
+    { key: 'kelas', label: 'Sasaran' },
+    { key: 'batas', label: 'Batas tugas' },
     { key: 'tanggal', label: 'Tanggal' },
   ];
 
@@ -41,6 +52,8 @@
     selected = null;
     title = '';
     body = '';
+    classId = classes[0]?.id ?? '';
+    dueDate = '';
     isOpen = true;
   }
 
@@ -59,7 +72,9 @@
   async function submit(): Promise<void> {
     const result = selected
       ? await api(() => axios.put(`/announcements/${selected!.id}`, { title, body }))
-      : await api(() => axios.post('/announcements', { title, body }));
+      : await api(() => axios.post('/announcements', canCreateClassTasks
+        ? { title, body, class_id: classId, due_date: dueDate }
+        : { title, body }));
     if (result.success) { isOpen = false; router.visit('/announcements', { preserveScroll: true }); }
   }
 
@@ -79,24 +94,34 @@
 
 <Sidebar group="announcements" />
 <PageShell>
-  <PageHeader eyebrow="Informasi Sekolah" title="Pengumuman." description="Informasi resmi sekolah yang terlihat di dashboard guru, orang tua, dan kepala sekolah.">
+  <PageHeader eyebrow={canCreateClassTasks ? 'Tugas Kelas' : 'Informasi Sekolah'} title={canCreateClassTasks ? 'Tugas untuk murid.' : 'Pengumuman.'} description={canCreateClassTasks ? 'Bagikan tugas untuk kelas yang Anda ajar. Orang tua siswa di kelas tersebut akan melihatnya di dashboard.' : 'Informasi resmi sekolah yang terlihat di dashboard guru, orang tua, dan kepala sekolah.'}>
     {#snippet actions()}
-      {#if canManage}<Button onclick={openCreate} size="lg"><Megaphone class="w-4 h-4 mr-1" /> Buat Pengumuman</Button>{/if}
+      {#if canManage || (canCreateClassTasks && classes.length > 0)}<Button onclick={openCreate} size="lg"><Megaphone class="w-4 h-4 mr-1" /> {canCreateClassTasks ? 'Bagikan Tugas' : 'Buat Pengumuman'}</Button>{/if}
     {/snippet}
   </PageHeader>
-  <DataTable {columns} rows={displayRows} rowAction={rowActions} emptyMessage="Belum ada pengumuman." />
+  <DataTable {columns} rows={displayRows} rowAction={rowActions} emptyMessage={canCreateClassTasks ? 'Belum ada tugas yang Anda bagikan.' : 'Belum ada pengumuman.'} />
 
-<Modal bind:open={isOpen} title={selected ? 'Edit Pengumuman' : 'Buat Pengumuman'} description="Tulis judul dan isi pengumuman.">
+<Modal bind:open={isOpen} title={selected ? 'Edit Pengumuman' : canCreateClassTasks ? 'Bagikan tugas kelas' : 'Buat Pengumuman'} description={canCreateClassTasks ? 'Tugas akan tampil di dashboard orang tua siswa dari kelas yang dipilih.' : 'Tulis judul dan isi pengumuman.'}>
   <form class="flex flex-col gap-4" onsubmit={(e) => { e.preventDefault(); submit(); }}>
+    {#if canCreateClassTasks}
+      <div class="flex flex-col gap-0"><Label for="task-class" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Kelas</Label>
+        <select id="task-class" bind:value={classId} required class="h-10 rounded-xl border border-input bg-card px-3 text-sm text-foreground">
+          {#each classes as item (item.id)}<option value={item.id}>{item.grade} · {item.name}</option>{/each}
+        </select>
+      </div>
+    {/if}
     <div class="flex flex-col gap-0"><Label for="title" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Judul</Label><Input id="title" bind:value={title} required /></div>
+    {#if canCreateClassTasks}
+      <div class="flex flex-col gap-0"><Label for="due-date" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Batas pengumpulan (opsional)</Label><Input id="due-date" type="date" bind:value={dueDate} /></div>
+    {/if}
     <div class="flex flex-col gap-0">
-      <Label for="body" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">Isi</Label>
+      <Label for="body" class="text-xs uppercase tracking-[0.2em] font-heading text-muted-foreground mb-1.5">{canCreateClassTasks ? 'Rincian tugas' : 'Isi'}</Label>
       <textarea id="body" bind:value={body} required rows={5}
         class="w-full rounded-xl border border-input bg-card px-3.5 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-[color,box-shadow] focus:border-ring focus:ring-2 focus:ring-ring/30"></textarea>
     </div>
     <div class="flex justify-end gap-2 pt-4 border-t border-border mt-2">
       <Button variant="outline" onclick={() => isOpen = false}>Batal</Button>
-      <Button type="submit">{selected ? 'Perbarui' : 'Terbitkan'}</Button>
+      <Button type="submit">{selected ? 'Perbarui' : canCreateClassTasks ? 'Bagikan tugas' : 'Terbitkan'}</Button>
     </div>
   </form>
 </Modal>

@@ -11,11 +11,14 @@
 
   let children = $state<ChildSummary[]>([]);
   let announcements = $state<AnnouncementView[]>([]);
+  let classTasks = $state<AnnouncementView[]>([]);
 
   $effect(() => {
     api(() => axios.get('/parent/dashboard/data'), { showSuccessToast: false }).then(result => {
       if (result.success && result.data) {
-        children = (result.data as { children: ChildSummary[] }).children;
+        const data = result.data as { children: ChildSummary[]; classTasks?: AnnouncementView[] };
+        children = data.children;
+        classTasks = data.classTasks ?? [];
       }
     });
     api(() => axios.get('/announcements/latest'), { showSuccessToast: false }).then(result => {
@@ -69,6 +72,27 @@
         </article>
       {/each}
     </div>
+  {/if}
+
+  {#if classTasks.length > 0}
+    <section class="mt-10" in:fly={{ y: 20, duration: 700, delay: 130 }}>
+      <div class="mb-3 flex items-end justify-between gap-4">
+        <div><p class="font-heading text-[10px] font-semibold uppercase tracking-[0.14em] text-primary mb-1">Informasi untuk anak</p><h2 class="font-heading font-semibold tracking-[-0.02em]">Tugas dari guru</h2></div>
+        <span class="text-xs text-muted-foreground">{classTasks.length} tugas</span>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        {#each classTasks as task (task.id)}
+          <article class="bg-card border border-border rounded-2xl px-5 py-4 border-l-4 border-l-primary">
+            <div class="flex items-start justify-between gap-4">
+              <div><p class="text-[10px] uppercase tracking-wider text-primary font-semibold">{task.class_name} · {task.child_name}</p><h3 class="font-heading text-base font-semibold text-foreground mt-1">{task.title}</h3></div>
+              {#if task.due_date}<span class="shrink-0 rounded-full bg-secondary px-3 py-1 text-[10px] text-muted-foreground">Batas {new Date(`${task.due_date}T00:00:00`).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>{/if}
+            </div>
+            <p class="text-sm text-muted-foreground mt-2 whitespace-pre-line">{task.body}</p>
+            <p class="text-[10px] text-muted-foreground/70 mt-3">Dari {task.author_name} · {new Date(task.created_at).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</p>
+          </article>
+        {/each}
+      </div>
+    </section>
   {/if}
 
   {#if announcements.length > 0}

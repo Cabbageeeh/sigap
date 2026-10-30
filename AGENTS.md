@@ -151,7 +151,7 @@ Communication uses `school_conversations` (student and parent/teacher participan
 | `teacher_class_assignments` | id (uuid), teacher_id, class_id, academic_year_id, is_homeroom | junction: `teachers` ↔ `classes`, one homeroom per class/year |
 |`grade_components`|id (uuid), academic_year_id, type, name, weight|belongs to `academic_years`|
 |`grade_audit_logs`|id (uuid), grade_id, student_id, subject_id, class_id, type, action, old_score, new_score, user_id|append-only history of grade changes|
-|`announcements`|id (uuid), title, body, author_user_id|belongs to `users`|
+|`announcements`|id (uuid), title, body, author_user_id, class_id (nullable), due_date (nullable)|school-wide notice or class task; targeted task belongs to class|
 |`notifications`|id (uuid), user_id, type, title, body, read_at|belongs to `users`|
 | `schedules` | id (uuid), class_id, subject_id, teacher_user_id, day_of_week, start_time, end_time, academic_year_id | belongs to `classes`, `subjects`, `users`, `academic_years` |
 | `school_locations` | id (uuid), name, npsn (nullable), headmaster_name (nullable), phone (nullable), email (nullable), address, latitude (nullable), longitude (nullable), radius_meters (nullable), start_time HH:MM (nullable), is_active | school profile; geofence enforced when lat/long/radius all set; start_time is the on-time arrival threshold |

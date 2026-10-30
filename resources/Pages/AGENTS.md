@@ -23,7 +23,7 @@ Inertia.js pages rendered by Svelte 5. Each page is a route destination — the 
 | `grades.svelte` | Grade CRUD + initial/remedial/final scores and per class/subject recap |
 | `gradesErapor.svelte` | Import e-Rapor templates, enter semester scores, configure teacher mapping access, and download exports |
 | `gradeAudit.svelte` | Grade change audit history |
-| `announcements.svelte` | Announcement management (admin) |
+| `announcements.svelte` | School announcements for admins and class-task publishing for teachers |
 | `journals.svelte` | Journal CRUD |
 | `landing.svelte` | Public landing page |
 | `parents.svelte` | Read-only parent account summary; parent data is managed from student detail |
@@ -48,7 +48,7 @@ Inertia.js pages rendered by Svelte 5. Each page is a route destination — the 
 | `headmaster/teacher-attendance.svelte` | Read-only teacher attendance history and QR confirmation detail |
 | `headmaster/reports.svelte` | Outside confirmations report |
 | `parent/attendance.svelte` | Parent view of child attendance |
-| `parent/dashboard.svelte` | Parent children summary |
+| `parent/dashboard.svelte` | Parent children summary, school notices, and class tasks from teachers |
 | `parent/grades.svelte` | Parent view of child initial/remedial/final grades |
 | `teacher/confirm.svelte` | Anti-fraud confirmation capture |
 | `teacher/schedule.svelte` | Teacher daily schedule |

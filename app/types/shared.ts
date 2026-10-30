@@ -429,6 +429,10 @@ export interface AnnouncementView {
   title: string;
   body: string;
   author_name: string;
+  class_id?: string | null;
+  class_name?: string | null;
+  due_date?: string | null;
+  child_name?: string;
   created_at: number;
 }
 

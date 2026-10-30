@@ -9,6 +9,7 @@ import { findAttendanceByStudent } from '@queries/studentAttendance';
 import { hasRole } from '@queries/users';
 import { parseEraporWorkbook } from '@services/EraporWorkbook';
 import Logger from '@services/Logger';
+import { findClassTaskAnnouncementsForParent } from '@queries/announcements';
 
 interface ParentEraporScoreGroup {
   subject_id: string;
@@ -71,7 +72,11 @@ export const parentDashboardData = (req: NaraRequest, res: NaraResponse) => {
     };
   });
 
-  return jsonSuccess(res, 'OK', { parent, children: summaries });
+  return jsonSuccess(res, 'OK', {
+    parent,
+    children: summaries,
+    classTasks: findClassTaskAnnouncementsForParent(parent.user_id),
+  });
 };
 
 export const childAttendancePage = (req: NaraRequest, res: NaraResponse) => {

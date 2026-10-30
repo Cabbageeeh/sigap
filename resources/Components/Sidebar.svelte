@@ -176,7 +176,7 @@
       label: 'Laporan & Informasi',
       links: [
         { href: '/headmaster/reports', label: 'Laporan Kehadiran Guru', group: 'headmaster-reports', icon: ChartColumn, show: isHeadmaster && presenceOn },
-        { href: '/announcements', label: 'Pengumuman', group: 'announcements', icon: Megaphone, show: isAdmin },
+        { href: '/announcements', label: isTeacher ? 'Tugas untuk Murid' : 'Pengumuman', group: 'announcements', icon: Megaphone, show: isAdmin || isTeacher },
       ],
     },
     {
